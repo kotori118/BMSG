@@ -1,0 +1,54 @@
+// Imported from kotori118/BMSG-PJ CrossLinksApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+/**
+ * PHASE5 cross-feature read-only adapters.
+ * Cross-feature data belongs here so PROFILE / LYRICS / ANALYSIS / CARD
+ * can stay focused on their own service responsibilities.
+ */
+function getUniverseMemberCreativeCredits(memberId) {
+  try {
+    const id = asId_(memberId);
+    if (!id) throw new Error('MemberID is required.');
+
+    const cache = CacheService.getScriptCache();
+    const cacheKey = 'UNIVERSE_CROSSLINK_CREDITS_V2_' + id;
+    const cached = cache.get(cacheKey);
+    if (cached) return JSON.parse(cached);
+
+    const members = readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.MEMBERS);
+    const member = members.find(function(row) { return asId_(row.MemberID) === id; });
+    if (!member) throw new Error('Member not found: ' + id);
+    const memberName = String(member.DisplayName || '').trim();
+    if (!memberName) throw new Error('Member name is empty: ' + id);
+
+    const songs = readUniverseSongs_();
+    const credits = readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.SONG_CREDITS);
+    const creditsBySong = {};
+    credits.forEach(function(row) { creditsBySong[asId_(row.SongID)] = row; });
+
+    const creditSongs = songs.map(function(song) {
+      const songId = asId_(song.SongID);
+      const credit = creditsBySong[songId] || {};
+      const lyricists = splitUniverseCreditNames_(credit.Lyricists);
+      const composers = splitUniverseCreditNames_(credit.Composers);
+      const choreographers = splitUniverseCreditNames_(credit.Choreographers);
+      const roles = [];
+      if (lyricists.indexOf(memberName) >= 0) roles.push('作詞');
+      if (composers.indexOf(memberName) >= 0) roles.push('作曲');
+      if (choreographers.indexOf(memberName) >= 0) roles.push('コレオ');
+      if (!roles.length) return null;
+      return {
+        songId: songId,
+        title: String(song.Title || songId).trim(),
+        artist: String(song.Artist || '').trim(),
+        roles: roles
+      };
+    }).filter(Boolean);
+
+    const response = { ok: true, data: { memberId: id, memberName: memberName, songs: creditSongs } };
+    cache.put(cacheKey, JSON.stringify(response), UNIVERSE_CONFIG.PROFILE_CACHE_SECONDS);
+    return response;
+  } catch (error) {
+    console.error(error);
+    return { ok: false, error: { code: 'CROSS_LINK_CREDITS_LOAD_FAILED', message: 'クレジット参加曲の読み込みに失敗しました。' } };
+  }
+}
