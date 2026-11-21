@@ -31,8 +31,8 @@
   :is(.skeleton-block,.profile-member-skeleton)::after{content:"";position:absolute;inset:0;transform:translateX(-110%);background:linear-gradient(90deg,transparent,var(--u-skeleton-shine),transparent);animation:universeSkeletonSweep 1.35s ease-in-out infinite}
 
   .universe-toast{
-    min-height: 48px;
-    padding: 0 18px;
+    min-height: 56px;
+    padding: 0 24px;
     border: 1px solid rgba(156, 236, 255, .14);
     border-radius: 999px;
     color: rgba(247,251,255,.88);
@@ -44,8 +44,9 @@
     align-items: center;
     justify-content: center;
     font-family: "Zen Kaku Gothic New", sans-serif;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: .04em;
     opacity: 0;
     transform: translateY(10px) scale(.985);
     animation: toast-in 190ms var(--ease) forwards;
@@ -127,7 +128,9 @@
     function renderUniverseLoading(label, accent) {
       const safeAccent = normalizeUniverseLoadingAccent(accent);
       const hasLabel = label !== false && label !== null;
-      const text = hasLabel ? String(label || 'LOADING...') : '';
+      // Screens still pass the old English label; show Japanese everywhere.
+      const raw = hasLabel ? String(label || '') : '';
+      const text = hasLabel ? (!raw || /^LOADING\.*$/i.test(raw) ? '読み込み中…' : raw) : '';
       const safeLabel = typeof escapeHtml === 'function' ? escapeHtml(text) : text;
       return '<div class="universe-loading" role="status" aria-live="polite" style="--loading-accent:' + safeAccent + '"><span class="universe-spinner" aria-hidden="true"></span>' + (hasLabel ? '<span>' + safeLabel + '</span>' : '') + '</div>';
     }

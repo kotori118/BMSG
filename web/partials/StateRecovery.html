@@ -32,7 +32,7 @@
   window.renderUniverseRecoveryState=function(message,retryCode){
     const text=recoveryEscape_(message||'読み込みに失敗しました。');
     const action=String(retryCode||'').replace(/"/g,'&quot;');
-    return '<section class="universe-recovery-state" role="alert"><div class="universe-recovery-state-inner"><h2>ERROR</h2><p>'+text+'</p>'+(action?'<button type="button" class="universe-recovery-retry" onclick="'+action+'">再試行</button>':'')+'</div></section>';
+    return '<section class="universe-recovery-state" role="alert"><div class="universe-recovery-state-inner"><h2>エラー</h2><p>'+text+'</p>'+(action?'<button type="button" class="universe-recovery-retry" onclick="'+action+'">再試行</button>':'')+'</div></section>';
   };
 
   let karaokeRetryParams_={};

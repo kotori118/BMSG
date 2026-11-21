@@ -1,0 +1,44 @@
+<script>
+  // Top-left menu. Navigation goes through navigateTo(), so unsaved-change guards still apply.
+  function openAppMenu() {
+    const menu = document.getElementById('appMenu');
+    const button = document.getElementById('appMenuButton');
+    if (!menu) return;
+    const route = typeof currentRoute === 'string' ? currentRoute : '';
+    const parent = typeof ROUTES !== 'undefined' && ROUTES[route] ? ROUTES[route].parent : '';
+    menu.querySelectorAll('[data-menu-route]').forEach(function (item) {
+      const target = item.getAttribute('data-menu-route');
+      if (target === route || (target === 'home' && parent === 'home' && route === 'home')) item.setAttribute('aria-current', 'page');
+      else item.removeAttribute('aria-current');
+    });
+    menu.hidden = false;
+    document.body.classList.add('app-menu-open');
+    if (button) button.setAttribute('aria-expanded', 'true');
+    const first = menu.querySelector('[aria-current="page"]') || menu.querySelector('button');
+    if (first) first.focus({ preventScroll: true });
+  }
+
+  function closeAppMenu() {
+    const menu = document.getElementById('appMenu');
+    const button = document.getElementById('appMenuButton');
+    if (!menu || menu.hidden) return;
+    menu.hidden = true;
+    document.body.classList.remove('app-menu-open');
+    if (button) button.setAttribute('aria-expanded', 'false');
+  }
+
+  function toggleAppMenu() {
+    const menu = document.getElementById('appMenu');
+    if (menu && menu.hidden) openAppMenu();
+    else closeAppMenu();
+  }
+
+  function appMenuGo(route) {
+    closeAppMenu();
+    if (typeof navigateTo === 'function') navigateTo(route);
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') closeAppMenu();
+  });
+</script>

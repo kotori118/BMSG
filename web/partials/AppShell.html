@@ -1,11 +1,16 @@
     <div class="page-wrap">
-      <div class="utility-actions" aria-label="Utility actions">
-            <button class="utility-btn utility-home" onclick="navigateTo('home')" aria-label="Home">
+      <div class="utility-actions" aria-label="画面の操作">
+            <button id="appMenuButton" class="utility-btn utility-menu" type="button" onclick="toggleAppMenu()" aria-label="メニュー" aria-expanded="false" aria-controls="appMenu">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4.5 7h15M4.5 12h15M4.5 17h15"></path>
+              </svg>
+            </button>
+            <button class="utility-btn utility-home" onclick="navigateTo('home')" aria-label="ホーム">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4.5 10.7L12 4.5l7.5 6.2v8.1H14.8v-5.2H9.2v5.2H4.5z"></path>
               </svg>
             </button>
-            <button class="utility-btn" onclick="openSearch()" aria-label="Search">
+            <button class="utility-btn utility-search" onclick="openSearch()" aria-label="検索">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="10.8" cy="10.8" r="6.2"></circle>
                 <path d="M15.4 15.4L20 20"></path>
@@ -14,7 +19,7 @@
             <button id="favoritePageButton" class="utility-btn utility-favorite" type="button" hidden aria-pressed="false" aria-label="お気に入りに追加" onclick="toggleCurrentFavorite()">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path class="favorite-heart-path" d="M12 20.2 4.2 12.7A5.15 5.15 0 0 1 11.5 5.4L12 6l.5-.6a5.15 5.15 0 0 1 7.3 7.3z"></path></svg>
             </button>
-            <button class="utility-btn" onclick="openSettings()" aria-label="Settings">
+            <button class="utility-btn utility-settings" onclick="openSettings()" aria-label="設定">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="7"></circle>
                 <circle cx="12" cy="12" r="3.1"></circle>
@@ -23,6 +28,25 @@
             </button>
           </div>
       <main id="pageContent" class="page-content" aria-live="polite"></main>
+    </div>
+
+    <div id="appMenu" class="app-menu" hidden>
+      <div class="app-menu-backdrop" onclick="closeAppMenu()"></div>
+      <nav class="app-menu-panel" aria-label="メニュー">
+        <button type="button" data-menu-route="home" onclick="appMenuGo('home')">ホーム</button>
+        <p class="app-menu-group">データ</p>
+        <button type="button" data-menu-route="profile" onclick="appMenuGo('profile')">プロフィール</button>
+        <button type="button" data-menu-route="lyrics" onclick="appMenuGo('lyrics')">歌詞</button>
+        <button type="button" data-menu-route="analysis" onclick="appMenuGo('analysis')">分析</button>
+        <p class="app-menu-group">ラボ</p>
+        <button type="button" data-menu-route="quiz" onclick="appMenuGo('quiz')">クイズ</button>
+        <button type="button" data-menu-route="cards" onclick="appMenuGo('cards')">トレーディングカード</button>
+        <button type="button" data-menu-route="poker" onclick="appMenuGo('poker')">ポーカー</button>
+        <button type="button" data-menu-route="cover" onclick="appMenuGo('cover')">カバーメーカー</button>
+        <p class="app-menu-group">その他</p>
+        <button type="button" onclick="closeAppMenu();openSearch()">検索</button>
+        <button type="button" onclick="closeAppMenu();openSettings()">設定</button>
+      </nav>
     </div>
 
     <nav class="bottom-nav" aria-label="Main navigation">

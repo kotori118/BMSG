@@ -30,14 +30,20 @@ BMSG Universe の移行先リポジトリ。フロントを Cloudflare Pages、�
 - 応答：`{"ok":true,"data":...}` または `{"ok":false,"error":{"code":"...","message":"..."}}`
 - 引数は `google.script.run` のときと同じ並びで渡す。認証はなし（各 action の既存の userId 検査はそのまま）。
 
-## フロントの生成
+## フロント（画面）の編集
+
+画面の正本は `web/partials/` と `web/src/index.template.html`。編集したら `web/index.html` を組み立て直してコミットする（Cloudflare Pages はビルドせずに `web/` をそのまま配信する）。
 
 ```sh
-node scripts/import-web-sources.mjs <BMSG-PJのパス>
-npm run test:browser   # Chromium が必要
+node scripts/build-web.mjs          # web/index.html を作る
+npm test                            # 組み立て忘れもここで検出
+npm run test:browser                # Chromium が必要
+node tests/browser/screens.mjs <出力先> data lab   # 実データで画面を撮る（確認用）
 ```
 
-PERFORMANCE TIMER の不整合（クライアント `'101'`、サーバー `'M101'`）は、生成時の置換で `'M101'` に揃える。置換は一致が1箇所のときだけ適用される。
+- 新デザイン（白基調・すりガラス・細い枠線）は `web/partials/UniverseTheme.html`。`AppCore.html` の `ROUTES` で `theme: 'v2'` にした画面だけに当たる。見本は `/design-sample/`。
+- 新デザイン済み：データ、ラボ、左上のメニュー、通知。
+- `scripts/import-web-sources.mjs` は移行時に一度使ったもの。再実行すると `web/partials/` の変更が上書きされるので使わない。
 
 ## 生成し直す
 
