@@ -26,6 +26,7 @@
   --font: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", sans-serif;
   --font-head: "Orbitron", "Exo 2", sans-serif;     /* 見出し・数字 */
   --font-label: "Exo 2", "Roboto", sans-serif;      /* 英字の小さな見出し */
+  --font-num: "Exo 2", "Roboto", sans-serif;        /* 数字（読みやすさ優先） */
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; }
@@ -47,9 +48,7 @@ body {
   border-bottom: 1px solid var(--glass-line);
 }
 .menu-btn {
-  width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--glass-line);
-  background: var(--glass); box-shadow: var(--shadow-soft); cursor: pointer;
-  display: grid; place-items: center; padding: 0;
+  width: 44px; height: 44px; border-radius: 2px; border: 1px solid rgba(20,30,40,.22); background: rgba(255,255,255,.25); cursor: pointer; display: grid; place-items: center; padding: 0;
 }
 .menu-btn span { display: block; width: 18px; height: 2px; background: var(--text); border-radius: 2px; position: relative; }
 .menu-btn span::before, .menu-btn span::after { content: ""; position: absolute; left: 0; width: 18px; height: 2px; background: var(--text); border-radius: 2px; }
@@ -60,14 +59,17 @@ body {
 
 /* ---- メニューの中身（開閉） ---- */
 .drawer {
-  position: fixed; top: 60px; left: 12px; z-index: 30; width: 240px; padding: 8px;
-  background: rgba(255,255,255,.8); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-  border: 1px solid var(--glass-line); border-radius: var(--radius); box-shadow: var(--shadow-soft);
-  display: none;
+  position: fixed; top: 60px; left: 12px; z-index: 30; width: 240px; padding: 0;
+  background: rgba(255,255,255,.85); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(20,30,40,.22); border-radius: 2px; box-shadow: none; display: none;
 }
 .drawer.open { display: block; }
-.drawer a { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: var(--radius-sm); color: var(--text); text-decoration: none; font-weight: 600; font-size: 15px; }
-.drawer a:hover, .drawer a[aria-current="page"] { background: var(--accent-soft); color: var(--accent-deep); }
+.drawer a {
+  display: flex; align-items: center; min-height: 48px; padding: 0 18px; color: var(--text); text-decoration: none; font-weight: 700; font-size: 14px; letter-spacing: .08em; border-bottom: 1px solid var(--line);
+}
+.drawer a:hover, .drawer a[aria-current="page"] {
+  background: rgba(255,255,255,.6); color: var(--accent-deep); box-shadow: inset 3px 0 0 var(--accent-deep);
+}
 
 h1 { font-family: var(--font-head); font-weight: 700; font-size: 30px; letter-spacing: .02em; margin: 8px 0 4px; line-height: 1.15; }
 h2 { font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-deep); margin: 36px 0 12px; }
@@ -103,18 +105,32 @@ h2 { font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-sp
 }
 .glass + .glass { margin-top: 12px; }
 .card-title { font-size: 12px; color: var(--text-sub); letter-spacing: .08em; margin: 0 0 6px; font-family: var(--font-label); font-weight: 600; }
-.card-value { font-family: var(--font-head); font-size: 26px; font-weight: 700; color: var(--accent-deep); margin: 0; letter-spacing: .02em; }
+.card-value {
+  font-family: var(--font-num); font-size: 28px; font-weight: 700; color: var(--accent-deep); margin: 0; letter-spacing: .01em; font-variant-numeric: tabular-nums;
+}
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
 /* ---- タブ ---- */
-.tabs { display: flex; gap: 6px; overflow-x: auto; padding: 4px; background: var(--glass); border: 1px solid var(--glass-line); border-radius: 999px; box-shadow: var(--shadow-soft); }
-.tab { font: inherit; font-weight: 700; font-size: 14px; min-height: 40px; padding: 0 16px; background: none; border: 0; border-radius: 999px; color: var(--text-sub); cursor: pointer; white-space: nowrap; }
-.tab[aria-selected="true"] { background: #fff; color: var(--accent-deep); box-shadow: 0 4px 12px -6px rgba(20,40,60,.3); }
+.tabs {
+  display: flex; overflow-x: auto; padding: 0; background: rgba(255,255,255,.25); border: 1px solid rgba(20,30,40,.22); border-radius: 2px;
+}
+.tab {
+  display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 700; font-size: 14px; letter-spacing: .06em; min-height: 46px; padding: 0 16px; background: none; border: 0; border-right: 1px solid var(--line); border-radius: 0; color: var(--text-sub); cursor: pointer; white-space: nowrap; flex: 1 0 auto; justify-content: center;
+}
+.tab[aria-selected="true"] {
+  background: rgba(255,255,255,.7); color: var(--accent-deep); box-shadow: inset 0 -2px 0 var(--accent-deep);
+}
 
 /* ---- セグメント ---- */
-.segment { display: inline-flex; background: var(--glass); border: 1px solid var(--glass-line); border-radius: 999px; padding: 4px; gap: 4px; box-shadow: var(--shadow-soft); }
-.segment button { font: inherit; font-size: 14px; font-weight: 600; min-height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: none; color: var(--text-sub); cursor: pointer; }
-.segment button[aria-pressed="true"] { background: #fff; color: var(--accent-deep); box-shadow: 0 4px 12px -6px rgba(20,40,60,.3); }
+.segment {
+  display: inline-flex; background: rgba(255,255,255,.25); border: 1px solid rgba(20,30,40,.22); border-radius: 2px; padding: 0; gap: 0; box-shadow: none;
+}
+.segment button {
+  font: inherit; font-size: 14px; font-weight: 700; letter-spacing: .06em; min-height: 42px; padding: 0 18px; border: 0; border-right: 1px solid var(--line); border-radius: 0; background: none; color: var(--text-sub); cursor: pointer;
+}
+.segment button[aria-pressed="true"] {
+  background: rgba(255,255,255,.7); color: var(--accent-deep); box-shadow: inset 0 -2px 0 var(--accent-deep);
+}
 
 /* ---- スイッチ ---- */
 .toggle { display: inline-flex; align-items: center; gap: 12px; font-size: 15px; min-height: 44px; font-weight: 600; }
@@ -167,8 +183,13 @@ h2 { font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-sp
   background: rgba(255,255,255,.55); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
   border-top: 1px solid var(--glass-line); gap: 6px;
 }
-.bottom-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; color: var(--text-sub); text-decoration: none; font-family: var(--font-label); letter-spacing: .06em; }
-.bottom-nav a[aria-current="page"] { color: var(--accent-deep); background: rgba(255,255,255,.8); box-shadow: 0 6px 16px -8px rgba(20,40,60,.35); }
+.bottom-nav a {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; border: 1px solid transparent; border-radius: 2px; font-size: 12px; font-weight: 700; color: var(--text-sub); text-decoration: none; font-family: var(--font-label); letter-spacing: .06em;
+}
+.bottom-nav a[aria-current="page"] {
+  color: var(--accent-deep); background: rgba(255,255,255,.7); border: 1px solid var(--accent-deep); border-radius: 2px; box-shadow: none;
+}
+.tab svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 </style>
 </head>
 <body>
@@ -208,10 +229,10 @@ h2 { font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-sp
 
 <h2>タブ</h2>
 <div class="tabs" role="tablist">
-  <button class="tab" role="tab" aria-selected="true">概要</button>
-  <button class="tab" role="tab" aria-selected="false">楽曲</button>
-  <button class="tab" role="tab" aria-selected="false">メンバー</button>
-  <button class="tab" role="tab" aria-selected="false">履歴</button>
+  <button class="tab" role="tab" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5"/><rect x="13.5" y="4" width="6.5" height="6.5"/><rect x="4" y="13.5" width="6.5" height="6.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5"/></svg>概要</button>
+  <button class="tab" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>楽曲</button>
+  <button class="tab" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg>メンバー</button>
+  <button class="tab" role="tab" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2"/></svg>履歴</button>
 </div>
 
 <h2>切り替え</h2>
