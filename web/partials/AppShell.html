@@ -5,6 +5,7 @@
                 <path d="M4.5 7h15M4.5 12h15M4.5 17h15"></path>
               </svg>
             </button>
+            <span class="utility-brand" aria-hidden="true">BMSG UNIVERSE</span>
             <button class="utility-btn utility-home" onclick="navigateTo('home')" aria-label="ホーム">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4.5 10.7L12 4.5l7.5 6.2v8.1H14.8v-5.2H9.2v5.2H4.5z"></path>
@@ -33,6 +34,9 @@
     <div id="appMenu" class="app-menu" hidden>
       <div class="app-menu-backdrop" onclick="closeAppMenu()"></div>
       <nav class="app-menu-panel" aria-label="メニュー">
+        <button type="button" class="app-menu-close" onclick="closeAppMenu()" aria-label="メニューを閉じる">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 5.5l13 13M18.5 5.5l-13 13"></path></svg>
+        </button>
         <button type="button" data-menu-route="home" onclick="appMenuGo('home')">ホーム</button>
         <p class="app-menu-group">データ</p>
         <button type="button" data-menu-route="profile" onclick="appMenuGo('profile')">プロフィール</button>

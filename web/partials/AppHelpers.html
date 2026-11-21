@@ -24,11 +24,11 @@
       window.scrollTo({ top: 0, left: 0, behavior });
     }
 
-    // 'v2' is the new white design (UniverseTheme.html). It builds on the light theme.
+    // 'v2' is the new monochrome design (UniverseTheme.html). It builds on the dark base.
     function setTheme(theme) {
       document.body.classList.toggle(
         'theme-light',
-        theme === 'light' || theme === 'v2'
+        theme === 'light'
       );
       document.body.classList.toggle('ui-v2', theme === 'v2');
     }
