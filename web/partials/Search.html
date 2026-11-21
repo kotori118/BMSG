@@ -1,0 +1,127 @@
+<script>
+  let universeSearchResults = [];
+  let universeSearchBusy = false;
+
+  function openSearch() {
+    searchOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const input = document.getElementById('globalSearchInput');
+    const status = document.getElementById('searchStatus');
+    const results = document.getElementById('searchResults');
+    universeSearchResults = [];
+    universeSearchBusy = false;
+    if (input) input.value = '';
+    if (status) status.textContent = '';
+    if (results) results.innerHTML = '';
+    setTimeout(function(){ if(input) input.focus(); }, 80);
+  }
+
+  function closeSearch() {
+    searchOverlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function renderUniverseSearchLoading() {
+    const row = '<button type="button" class="search-result universe-search-result" disabled aria-hidden="true"><span class="universe-search-type skeleton-block" style="display:block;width:52px;height:8px;border-radius:5px"></span><span class="search-result-name skeleton-block" style="display:block;width:58%;height:13px;border-radius:6px"></span><span class="universe-search-subtitle skeleton-block" style="display:block;width:42%;height:9px;border-radius:5px"></span><span class="universe-search-arrow" aria-hidden="true">›</span></button>';
+    return '<div class="universe-search-loading">'+row+row+row+'</div>';
+  }
+
+  function runUniverseSearch(event) {
+    if (event && typeof event.preventDefault === 'function') event.preventDefault();
+    if (universeSearchBusy) return false;
+    const input = document.getElementById('globalSearchInput');
+    const status = document.getElementById('searchStatus');
+    const results = document.getElementById('searchResults');
+    const query = String(input && input.value || '').trim();
+    if (!query) {
+      universeSearchResults = [];
+      if (status) status.textContent = '';
+      if (results) results.innerHTML = '';
+      return false;
+    }
+
+    universeSearchBusy = true;
+    if (status) status.textContent = '';
+    if (results) results.innerHTML = renderUniverseSearchLoading();
+
+    google.script.run
+      .withSuccessHandler(function(response){
+        universeSearchBusy = false;
+        if (!response || !response.ok) {
+          renderUniverseSearchError(response && response.error ? response.error.message : '検索に失敗しました。');
+          return;
+        }
+        renderUniverseSearchResults(response.results || []);
+      })
+      .withFailureHandler(function(error){
+        universeSearchBusy = false;
+        renderUniverseSearchError(error && error.message ? error.message : String(error || '検索に失敗しました。'));
+      })
+      .getUniverseSearchResults(query);
+    return false;
+  }
+
+  function renderUniverseSearchResults(items) {
+    const status = document.getElementById('searchStatus');
+    const results = document.getElementById('searchResults');
+    universeSearchResults = Array.isArray(items) ? items : [];
+    if (!results) return;
+    if (!universeSearchResults.length) {
+      if (status) status.textContent = '';
+      results.innerHTML = '<p class="universe-search-empty">該当するデータがありません。</p>';
+      return;
+    }
+    if (status) status.textContent = '検索結果 ' + universeSearchResults.length + '件';
+    results.innerHTML = universeSearchResults.map(function(item, index){
+      return '<button type="button" class="search-result universe-search-result" data-search-index="'+index+'" onclick="openUniverseSearchResult(this)">'
+        + '<span class="universe-search-type">'+escapeHtml(item.type || '')+'</span>'
+        + '<span class="search-result-name">'+escapeHtml(item.title || '')+'</span>'
+        + '<span class="universe-search-subtitle">'+escapeHtml(item.subtitle || '')+'</span>'
+        + '<span class="universe-search-arrow" aria-hidden="true">›</span>'
+        + '</button>';
+    }).join('');
+  }
+
+  function renderUniverseSearchError(message) {
+    const status = document.getElementById('searchStatus');
+    const results = document.getElementById('searchResults');
+    if (status) status.textContent = '';
+    if (results) results.innerHTML = '<p class="universe-search-empty">'+escapeHtml(message || '検索に失敗しました。')+'</p>';
+  }
+
+  function openUniverseSearchResult(button) {
+    const index = Number(button && button.dataset ? button.dataset.searchIndex : -1);
+    const item = universeSearchResults[index];
+    if (!item) return;
+    closeSearch();
+    if (item.type === 'MEMBER') {
+      navigateToWithParams('profile', {member:item.memberId || item.id});
+      return;
+    }
+    if (item.type === 'ANALYSIS') {
+      navigateToWithParams('analysis', {view:'member', member:item.memberName || ''});
+      return;
+    }
+    if (item.type === 'SONG' || item.type === 'LYRICS') {
+      navigateToWithParams('lyrics', {song:item.songId || item.id});
+      return;
+    }
+    if (item.type === 'CARD') {
+      navigateToWithParams('cards', {member:item.memberId || '', image:item.imageId || item.id, rarity:item.rarity || ''});
+    }
+  }
+</script>
+
+<style>
+  .universe-search-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
+  .universe-search-form .search-field{margin:0}
+  .universe-search-submit{min-width:86px;padding:0 16px;border:1px solid rgba(156,236,255,.30);border-radius:16px;background:rgba(156,236,255,.10);color:var(--cyan);font:700 11px "Exo 2","Zen Kaku Gothic New",Roboto,sans-serif;letter-spacing:.12em;cursor:pointer}
+  .universe-search-loading{display:grid;gap:10px;margin-top:14px}
+  .universe-search-result{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"type arrow" "name arrow" "sub arrow";align-items:center;gap:4px 16px;padding:17px 18px;text-align:left}
+  .universe-search-type{grid-area:type;color:var(--cyan);font:700 9px "Exo 2","Zen Kaku Gothic New",Roboto,sans-serif;letter-spacing:.15em}
+  .universe-search-result .search-result-name{grid-area:name;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .universe-search-subtitle{grid-area:sub;color:rgba(247,251,255,.48);font:500 11px "Zen Kaku Gothic New",Roboto,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .universe-search-arrow{grid-area:arrow;color:var(--cyan);font-size:26px;line-height:1}
+  .universe-search-empty{margin:38px 0 0;color:rgba(247,251,255,.58);font:500 14px/1.8 "Zen Kaku Gothic New",Roboto,sans-serif;text-align:center}
+  @media(max-width:520px){.universe-search-form{grid-template-columns:1fr}.universe-search-submit{min-height:48px}.universe-search-result{padding:15px 16px}}
+</style>

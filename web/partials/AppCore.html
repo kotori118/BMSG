@@ -1,0 +1,96 @@
+<script>
+    const ROUTES = Object.freeze({
+      home: {
+        title: 'BMSG UNIVERSE',
+        parent: 'home',
+        theme: 'dark'
+      },
+      data: {
+        title: 'DATA',
+        parent: 'data',
+        theme: 'dark'
+      },
+      profile: {
+        title: 'PROFILE',
+        parent: 'data',
+        theme: 'dark'
+      },
+      lyrics: {
+        title: 'LYRICS / KARAOKE',
+        parent: 'data',
+        theme: 'light'
+      },
+      karaoke: {
+        title: 'KARAOKE',
+        parent: 'data',
+        theme: 'light'
+      },
+      analysis: {
+        title: 'ANALYSIS',
+        parent: 'data',
+        theme: 'dark'
+      },
+      lab: {
+        title: 'LAB',
+        parent: 'lab',
+        theme: 'dark'
+      },
+      quiz: {
+        title: 'QUIZ',
+        parent: 'lab',
+        theme: 'dark'
+      },
+      cards: {
+        title: 'TRADING CARD',
+        parent: 'lab',
+        theme: 'dark'
+      },
+      poker: {
+        title: 'POKER',
+        parent: 'lab',
+        theme: 'dark'
+      },
+      cover: {
+        title: 'COVER MAKER',
+        parent: 'lab',
+        theme: 'light'
+      },
+      manage: { title: 'MANAGEMENT', parent: 'settings', theme: 'dark' },
+      metrics: {
+        title: '歌唱・ダンス秒数計測',
+        parent: 'settings',
+        theme: 'light'
+      }
+    });
+
+    const pageContent = document.getElementById('pageContent');
+    const searchOverlay = document.getElementById('searchOverlay');
+    const settingsOverlay = document.getElementById('settingsOverlay');
+    const toastRegion = document.getElementById('toastRegion');
+
+    let homeIntroPlayed = false;
+    let toastTimer = null;
+    let currentRoute = 'home';
+
+    function lockAppOverscroll() {
+      const scroller = document.querySelector('.page-wrap');
+      if (!scroller || scroller.dataset.overscrollLocked === 'true') return;
+      scroller.dataset.overscrollLocked = 'true';
+
+      let touchStartY = 0;
+      scroller.addEventListener('touchstart', event => {
+        if (event.touches.length === 1) touchStartY = event.touches[0].clientY;
+      }, { passive: true });
+
+      scroller.addEventListener('touchmove', event => {
+        if (event.touches.length !== 1) return;
+        const deltaY = event.touches[0].clientY - touchStartY;
+        const atTop = scroller.scrollTop <= 0;
+        const atBottom = Math.ceil(scroller.scrollTop + scroller.clientHeight) >= scroller.scrollHeight;
+        if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) event.preventDefault();
+      }, { passive: false });
+    }
+
+    lockAppOverscroll();
+
+</script>

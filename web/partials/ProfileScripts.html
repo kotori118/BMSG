@@ -1,0 +1,110 @@
+<script>
+  const PROFILE_VIEWS = Object.freeze({
+    home: { eyebrow: 'PROFILE HOME', title: 'MEMBERS', copy: 'メンバー一覧をここへREAD ONLYで接続します。' },
+    map: { eyebrow: 'RELATION MAP', title: 'MAP', copy: '世代・出身地・家族構成などの相関図をここへ接続します。' },
+    search: { eyebrow: 'TAG SEARCH', title: 'SEARCH', copy: '複数条件のAND検索をここへ接続します。' },
+    chemistry: { eyebrow: 'TWO PEOPLE', title: 'CHEMISTRY', copy: '2人の共通点と動的な一致度計算をここへ接続します。' },
+    discover: { eyebrow: 'FIND SIMILAR', title: 'DISCOVER', copy: '選んだメンバーと似ている順のランキングをここへ接続します。' }
+  });
+
+  const PROFILE_GROUPS = {
+    all: 'ALL MEMBERS', befirst: 'BE:FIRST', mazzel: 'MAZZEL', starglow: 'STARGLOW', hana: 'HANA'
+  };
+
+  let profileCurrentView = 'home';
+  let profileCurrentGroup = 'all';
+  let profileSelectedMemberId = '';
+  let profileDetailReturnView = 'home';
+
+  function renderProfile() {
+    const template = document.getElementById('profilePageTemplate');
+    return template ? template.innerHTML : '';
+  }
+
+  function initProfilePage() {
+    profileCurrentView = 'home';
+    const preferredGroup = typeof getUniversePreferredProfileGroupKey === 'function' ? getUniversePreferredProfileGroupKey() : 'all';
+    profileCurrentGroup = PROFILE_GROUPS[preferredGroup] ? preferredGroup : 'all';
+    profileSelectedMemberId = '';
+    profileDetailReturnView = 'home';
+    setProfileDetailMode(false);
+    updateProfileControls();
+    renderProfilePanel();
+    loadProfileMembers();
+  }
+
+  function selectProfileView(view) {
+    if (!PROFILE_VIEWS[view]) return;
+    profileSelectedMemberId = '';
+    setProfileDetailMode(false);
+    profileCurrentView = view;
+    updateProfileControls();
+    renderProfilePanel();
+  }
+
+  function selectProfileGroup(group) {
+    if (!PROFILE_GROUPS[group]) return;
+    profileSelectedMemberId = '';
+    setProfileDetailMode(false);
+    profileCurrentGroup = group;
+    updateProfileControls();
+    renderProfilePanel();
+  }
+
+  function updateProfileControls() {
+    document.querySelectorAll('[data-profile-view]').forEach(button => {
+      const active = button.dataset.profileView === profileCurrentView;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-current', active ? 'page' : 'false');
+    });
+    document.querySelectorAll('[data-profile-group]').forEach(button => {
+      const active = button.dataset.profileGroup === profileCurrentGroup;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+  }
+
+  function renderProfilePanel() {
+    const panel = document.getElementById('profilePanel');
+    const view = PROFILE_VIEWS[profileCurrentView];
+    if (!panel || !view) return;
+
+    if (profileSelectedMemberId) {
+      renderProfileMemberDetail();
+      return;
+    }
+    if (profileCurrentView === 'home') {
+      renderProfileMembersPanel();
+      return;
+    }
+    if (profileCurrentView === 'map') {
+      loadProfileMap();
+      return;
+    }
+    if (profileCurrentView === 'search') {
+      loadProfileSearch();
+      return;
+    }
+    if (profileCurrentView === 'chemistry') {
+      loadProfileChemistry();
+      return;
+    }
+    if (profileCurrentView === 'discover') {
+      loadProfileDiscover();
+    }
+  }
+
+  function setProfileDetailMode(active) {
+    const page = document.querySelector('.profile-page');
+    if (!page) return;
+
+    const isDetail = Boolean(active);
+    page.classList.toggle('profile-page-detail-mode', isDetail);
+
+    const heading = page.querySelector('.profile-heading');
+    if (heading) heading.style.display = 'grid';
+
+    const serviceBack = page.querySelector('.profile-service-back');
+    if (serviceBack) serviceBack.style.display = isDetail ? 'none' : '';
+  }
+</script>

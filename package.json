@@ -4,7 +4,9 @@
   "type": "module",
   "scripts": {
     "import:gas": "node scripts/import-gas-sources.mjs",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.test.mjs",
+    "import:web": "node scripts/import-web-sources.mjs",
+    "test:browser": "node tests/browser/smoke.mjs"
   },
   "devDependencies": {
     "acorn": "8.14.0",

@@ -1,0 +1,130 @@
+<script>
+  const UNIVERSE_USERS = Object.freeze([
+    { id: 'U001', name: 'ももたん' },
+    { id: 'U002', name: 'みおたん' },
+    { id: 'U003', name: 'りおたん' }
+  ]);
+
+  function readUniverseUserId() {
+    const savedId = String(localStorage.getItem('bmsgUniverseUserId') || '').trim();
+    return UNIVERSE_USERS.some(function(user) { return user.id === savedId; }) ? savedId : '';
+  }
+
+  function getUniverseUserId() {
+    return readUniverseUserId();
+  }
+
+  function getCurrentUniverseUser() {
+    const savedId = readUniverseUserId();
+    return UNIVERSE_USERS.find(function(user) { return user.id === savedId; }) || null;
+  }
+
+  function isLyricsEditMode() { return localStorage.getItem('bmsgLyricsEditMode') === 'true'; }
+  function syncLyricsEditMode() {
+    const status = document.getElementById('lyricsEditModeStatus');
+    if (status) { status.textContent = isLyricsEditMode() ? 'ON' : 'OFF'; status.classList.toggle('active', isLyricsEditMode()); }
+  }
+  function toggleLyricsEditMode() {
+    const turningOff=isLyricsEditMode();
+    if(turningOff&&typeof lyricsState!=='undefined'&&lyricsState.song&&typeof confirmDiscardLyricsChanges_==='function'&&!confirmDiscardLyricsChanges_()){syncLyricsEditMode();return;}
+    localStorage.setItem('bmsgLyricsEditMode', turningOff ? 'false' : 'true');
+    syncLyricsEditMode();
+    if (typeof lyricsState !== 'undefined' && lyricsState.song && typeof renderLyricsSong === 'function') renderLyricsSong();
+  }
+
+  function syncSettingsUserName() {
+    const label = document.getElementById('settingsUserName');
+    const current = getCurrentUniverseUser();
+    if (label) label.textContent = current ? current.name : '未選択';
+  }
+
+  function syncUserChooser() {
+    const currentId = readUniverseUserId();
+    document.querySelectorAll('#userChooserOverlay .user-choice').forEach(function(button) {
+      button.classList.toggle('is-current', button.dataset.userId === currentId);
+    });
+  }
+
+  function openUserChooser(required) {
+    const overlay = document.getElementById('userChooserOverlay');
+    if (!overlay) return;
+    closeSettings();
+    overlay.classList.toggle('is-required', !!required);
+    syncUserChooser();
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeUserChooser() {
+    const overlay = document.getElementById('userChooserOverlay');
+    if (!overlay) return;
+    if (overlay.classList.contains('is-required') && !readUniverseUserId()) return;
+    overlay.classList.remove('open', 'is-required');
+    document.body.style.overflow = '';
+  }
+
+  function closeUserChooserOnBackdrop(event) {
+    if (event.target && event.target.id === 'userChooserOverlay') closeUserChooser();
+  }
+
+  function refreshUniverseUserContext() {
+    if (typeof google !== 'undefined' && google.script && google.script.url && typeof google.script.url.getLocation === 'function') {
+      google.script.url.getLocation(function(location) {
+        const params = location && location.parameter ? location.parameter : {};
+        const route = params.page || (typeof currentRoute !== 'undefined' && currentRoute ? currentRoute : 'home');
+        if (typeof renderRoute === 'function') renderRoute(route, params);
+      });
+      return;
+    }
+    if (typeof renderRoute === 'function') renderRoute(typeof currentRoute !== 'undefined' && currentRoute ? currentRoute : 'home', {});
+  }
+
+  function selectUniverseUser(userId) {
+    const user = UNIVERSE_USERS.find(function(item) { return item.id === userId; });
+    if (!user) return;
+    const previousId = readUniverseUserId();
+    if(previousId!==user.id&&currentRoute==='manage'&&!managementCanLeave_())return;
+    if(previousId!==user.id&&typeof currentRoute!=='undefined'&&currentRoute==='lyrics'&&typeof lyricsState!=='undefined'&&lyricsState.song&&typeof confirmDiscardLyricsChanges_==='function'&&!confirmDiscardLyricsChanges_()){syncUserChooser();return;}
+    localStorage.setItem('bmsgUniverseUserId', user.id);
+    if(previousId!==user.id&&typeof setKaraokeLatestShortcutState_==='function')setKaraokeLatestShortcutState_(null,[]);
+    syncSettingsUserName();
+    syncUserChooser();
+    closeUserChooser();
+    if (previousId !== user.id && typeof resetUniversePreferencesClient_ === 'function') resetUniversePreferencesClient_();
+    if (previousId !== user.id) refreshUniverseUserContext();
+    if (typeof loadUniverseUserPreferences_ === 'function') loadUniverseUserPreferences_(user.id);
+  }
+
+  function ensureUniverseUserSelection() {
+    if (!readUniverseUserId()) openUserChooser(true);
+  }
+
+  function openSettings() {
+    document.getElementById('managementSettingsGroup').hidden=!getUniverseUserId();
+    const isLyricsRoute = currentRoute === 'lyrics';
+    if (isLyricsRoute && typeof ensureKaraokeFavoriteSettingsEntry === 'function') ensureKaraokeFavoriteSettingsEntry();
+    const karaokeFavoriteSection = document.getElementById('karaokeFavoriteSettingsSection');
+    if (karaokeFavoriteSection) karaokeFavoriteSection.hidden = !isLyricsRoute;
+    if (isLyricsRoute && typeof ensureKaraokeFavoriteSettingsModal === 'function') ensureKaraokeFavoriteSettingsModal();
+    if (isLyricsRoute && typeof preloadKaraokeFavoriteSettings === 'function') preloadKaraokeFavoriteSettings();
+    syncSettingsUserName();
+    syncLyricsEditMode();
+    if (typeof syncUniversePreferenceSettingsUI_ === 'function') syncUniversePreferenceSettingsUI_();
+    const lyricsSection = document.getElementById('lyricsSettingsSection');
+    if (lyricsSection) lyricsSection.hidden = !isLyricsRoute;
+    settingsOverlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const userId = readUniverseUserId();
+    if (userId && typeof loadUniverseUserPreferences_ === 'function' && (!universePreferencesClient.loaded || universePreferencesClient.userId !== userId)) {
+      loadUniverseUserPreferences_(userId);
+    }
+  }
+  function openPerformanceTool() { closeSettings(); navigateTo('metrics'); }
+  function closeSettings() { settingsOverlay.classList.remove('open'); document.body.style.overflow = ''; }
+
+  syncSettingsUserName();
+  syncLyricsEditMode();
+  setTimeout(function() {
+    ensureUniverseUserSelection();
+  }, 0);
+</script>

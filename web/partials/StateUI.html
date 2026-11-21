@@ -1,0 +1,168 @@
+<style>
+  /* Shared state/loading primitives only. Page-specific loading layout belongs to each page. */
+  :root{
+    --u-state-radius:18px;
+    --u-state-line-light:rgba(75,165,184,.18);
+    --u-state-light-bg:linear-gradient(145deg,#fff,rgba(156,236,255,.055));
+    --u-loading-accent:#9cecff;
+    --u-loading-track-dark:rgba(247,251,255,.16);
+    --u-loading-track-light:rgba(21,24,32,.16);
+    --u-loading-size:18px;
+    --u-loading-ring:2px;
+    --u-loading-gap:12px;
+    --u-loading-speed:.8s;
+    --u-loading-label-dark:rgba(232,242,247,.62);
+    --u-loading-label-light:rgba(21,24,32,.46);
+    --u-skeleton-base:rgba(247,251,255,.065);
+    --u-skeleton-line:rgba(156,236,255,.09);
+    --u-skeleton-shine:rgba(156,236,255,.15);
+  }
+  body.theme-light{
+    --u-skeleton-base:rgba(47,115,130,.065);
+    --u-skeleton-line:rgba(63,139,156,.055);
+    --u-skeleton-shine:rgba(112,213,236,.17);
+  }
+
+  :is(.state-card,.profile-members-state,.karaoke-history-empty,.lyrics-empty){border-radius:var(--u-state-radius)}
+  body.theme-light :is(.state-card,.profile-members-state,.karaoke-history-empty,.lyrics-empty){border-color:var(--u-state-line-light);color:rgba(21,24,32,.50);background:var(--u-state-light-bg);box-shadow:inset 0 1px 0 rgba(255,255,255,.84)}
+
+  /* Common Skeleton primitive: real page frames stay visible; only unknown content uses this. */
+  :is(.skeleton-block,.profile-member-skeleton){position:relative;overflow:hidden;background:var(--u-skeleton-base)}
+  :is(.skeleton-block,.profile-member-skeleton)::after{content:"";position:absolute;inset:0;transform:translateX(-110%);background:linear-gradient(90deg,transparent,var(--u-skeleton-shine),transparent);animation:universeSkeletonSweep 1.35s ease-in-out infinite}
+
+  .universe-toast{
+    min-height: 48px;
+    padding: 0 18px;
+    border: 1px solid rgba(156, 236, 255, .14);
+    border-radius: 999px;
+    color: rgba(247,251,255,.88);
+    background: rgba(7, 13, 22, .94);
+    box-shadow: 0 14px 42px rgba(0,0,0,.24);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Zen Kaku Gothic New", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(10px) scale(.985);
+    animation: toast-in 190ms var(--ease) forwards;
+  }
+
+  .universe-toast.toast-out{
+    animation: toast-out 170ms var(--ease) forwards;
+  }
+
+  @keyframes toast-in {
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  @keyframes toast-out {
+    to {
+      opacity: 0;
+      transform: translateY(8px) scale(.99);
+    }
+  }
+
+
+  .universe-toast{border:1px solid rgba(156,236,255,.22);border-radius:16px;background:linear-gradient(145deg,rgba(10,16,26,.96),rgba(5,10,18,.98));box-shadow:0 18px 46px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.04)}
+  body.theme-light .universe-toast{border-color:rgba(75,165,184,.24);color:var(--ink);background:linear-gradient(145deg,#fff,rgba(156,236,255,.13));box-shadow:0 16px 36px rgba(21,24,32,.12),inset 0 1px 0 rgba(255,255,255,.86)}
+
+  /* Spinner authority for genuine processing / transitions. */
+  .universe-loading,.profile-detail-loading,.profile-map-loading,.profile-search-loading,.karaoke-loading,.lyrics-loading,
+  .profile-management-loading,.image-management-loading,.slm-loading{
+    --loading-accent:var(--u-loading-accent);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:var(--u-loading-gap);
+    color:var(--u-loading-label-dark)!important;
+    font:600 10px "Exo 2","Zen Kaku Gothic New",Roboto,sans-serif!important;
+    letter-spacing:.12em!important;
+  }
+  body.theme-light :is(.universe-loading,.profile-detail-loading,.profile-map-loading,.profile-search-loading,.karaoke-loading,.lyrics-loading,.profile-management-loading,.image-management-loading,.slm-loading){color:var(--u-loading-label-light)!important}
+  .universe-spinner,.profile-detail-spinner,.profile-map-spinner,.profile-search-spinner,.karaoke-loading::before,.lyrics-loading::before,
+  .profile-management-loading::before,.image-management-loading::before,.slm-loading::before{
+    box-sizing:border-box;
+    width:var(--u-loading-size);
+    height:var(--u-loading-size);
+    flex:0 0 auto;
+    border:var(--u-loading-ring) solid var(--u-loading-track-dark)!important;
+    border-top-color:var(--loading-accent,var(--u-loading-accent))!important;
+    border-right-color:var(--loading-accent,var(--u-loading-accent))!important;
+    border-radius:50%;
+    animation:universeSpinner var(--u-loading-speed) linear infinite!important;
+    box-shadow:0 0 12px rgba(156,236,255,.12);
+  }
+  body.theme-light :is(.universe-spinner,.profile-detail-spinner,.profile-map-spinner,.profile-search-spinner,.karaoke-loading::before,.lyrics-loading::before,.profile-management-loading::before,.image-management-loading::before,.slm-loading::before){border-color:var(--u-loading-track-light)!important;border-top-color:var(--loading-accent,var(--u-loading-accent))!important;border-right-color:var(--loading-accent,var(--u-loading-accent))!important}
+  .karaoke-loading::before,.lyrics-loading::before,.profile-management-loading::before,.image-management-loading::before,.slm-loading::before{content:""}
+  .karaoke-loading.is-shared::before,.lyrics-loading.is-shared::before{display:none!important;content:none!important}
+  .profile-member-detail .profile-detail-loading{--loading-accent:var(--member-accent,var(--u-loading-accent))}
+  .profile-map-loading,.profile-search-loading,.karaoke-loading,.lyrics-loading,.profile-management-loading,.image-management-loading,.slm-loading{--loading-accent:#9cecff}
+  .lyrics-room-card.is-loading{min-height:118px;display:grid;place-items:center}
+  .lyrics-room-card.is-loading::before{display:none!important;content:none!important}
+  .lyrics-room-card.is-loading .universe-loading{gap:0}
+
+  /* Management overlays use exactly one loading rhythm. Local files may choose only the vertical space. */
+  :is(.profile-management-loading,.image-management-loading,.slm-loading){min-height:72px;padding:24px 0!important;text-align:center}
+
+  @keyframes universeSpinner{to{transform:rotate(360deg)}}
+  @keyframes universeSkeletonSweep{to{transform:translateX(115%)}}
+  @media(prefers-reduced-motion:reduce){
+    :is(.skeleton-block,.profile-member-skeleton)::after{animation:none!important;display:none}
+    .universe-spinner,.profile-detail-spinner,.profile-map-spinner,.profile-search-spinner,.karaoke-loading::before,.lyrics-loading::before,.profile-management-loading::before,.image-management-loading::before,.slm-loading::before{animation:none!important}
+  }
+</style>
+<script>
+    function normalizeUniverseLoadingAccent(value) {
+      const color = String(value || '').trim();
+      return /^#[0-9a-f]{6}$/i.test(color) ? color : '#9cecff';
+    }
+
+    function renderUniverseLoading(label, accent) {
+      const safeAccent = normalizeUniverseLoadingAccent(accent);
+      const hasLabel = label !== false && label !== null;
+      const text = hasLabel ? String(label || 'LOADING...') : '';
+      const safeLabel = typeof escapeHtml === 'function' ? escapeHtml(text) : text;
+      return '<div class="universe-loading" role="status" aria-live="polite" style="--loading-accent:' + safeAccent + '"><span class="universe-spinner" aria-hidden="true"></span>' + (hasLabel ? '<span>' + safeLabel + '</span>' : '') + '</div>';
+    }
+
+    function closeOnBackdrop(event, id) {
+      if (event.target && event.target.id === id) {
+        if (id === 'settingsOverlay') closeSettings();
+      }
+    }
+
+    function showToast(message = '保存しました') {
+      if (!toastRegion) return;
+
+      if (toastTimer) {
+        clearTimeout(toastTimer);
+        toastTimer = null;
+      }
+
+      toastRegion.innerHTML = `
+        <div class="universe-toast" role="status">
+          ${escapeHtml(message)}
+        </div>
+      `;
+
+      toastTimer = setTimeout(() => {
+        const toast = toastRegion.querySelector('.universe-toast');
+        if (!toast) return;
+
+        toast.classList.add('toast-out');
+
+        setTimeout(() => {
+          toastRegion.innerHTML = '';
+          toastTimer = null;
+        }, 180);
+      }, 1800);
+    }
+
+</script>

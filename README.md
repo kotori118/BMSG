@@ -16,7 +16,12 @@ BMSG Universe の移行先リポジトリ。フロントを Cloudflare Pages、�
 | `gas/ApiActions.gs`、`gas/DbBridge.gs`、`gas/pj/`、`gas/db/` | 移行元から生成したコード。直接編集しない |
 | `scripts/import-gas-sources.mjs` | 生成スクリプト |
 | `docs/migration/` | 棚卸し（P0）と生成レポート |
-| `tests/` | GAS ソースの検証 |
+| `web/` | フロント（Cloudflare Pages の出力ディレクトリ）。`index.html` は生成物 |
+| `web/partials/` | 移行元 HTML の複製（生成物） |
+| `web/js/gas-shim.js` | `google.script` の代替。画面のコードは変えずに JSON API を呼ぶ（手で管理） |
+| `web/config.js` | API の URL（`/exec` で終わる Apps Script の URL）。デプロイ後に設定（手で管理） |
+| `scripts/import-web-sources.mjs` | `web/` の生成スクリプト |
+| `tests/` | GAS ソースの検証（`npm test`）。ブラウザの確認は `npm run test:browser` |
 
 ## API
 
@@ -24,6 +29,15 @@ BMSG Universe の移行先リポジトリ。フロントを Cloudflare Pages、�
 - 書込み：`POST <exec URL>`、`Content-Type: text/plain`、本文 `{"action":"<名前>","args":[...]}`。`application/json` にするとブラウザがプリフライトを送り、GAS が応答しないため失敗する。
 - 応答：`{"ok":true,"data":...}` または `{"ok":false,"error":{"code":"...","message":"..."}}`
 - 引数は `google.script.run` のときと同じ並びで渡す。認証はなし（各 action の既存の userId 検査はそのまま）。
+
+## フロントの生成
+
+```sh
+node scripts/import-web-sources.mjs <BMSG-PJのパス>
+npm run test:browser   # Chromium が必要
+```
+
+PERFORMANCE TIMER の不整合（クライアント `'101'`、サーバー `'M101'`）は、生成時の置換で `'M101'` に揃える。置換は一致が1箇所のときだけ適用される。
 
 ## 生成し直す
 

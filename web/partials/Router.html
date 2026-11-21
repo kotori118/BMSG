@@ -1,0 +1,78 @@
+<script>
+  function renderRoute(route, routeParams) {
+    if((currentRoute==='manage'||route==='manage')&&typeof parkManagementEditors_==='function')parkManagementEditors_();
+    if(typeof resetUniverseCrossLinks==='function')resetUniverseCrossLinks();
+    if(currentRoute==='metrics'&&route!=='metrics'&&typeof cleanupPerformanceTimerPage==='function')cleanupPerformanceTimerPage();
+    const meta = ROUTES[route]; currentRoute = route; setPageAtmosphere(route);
+    if (!meta) { setTheme('dark'); setActiveNav(null); pageContent.innerHTML=render404(route); document.title='404 | BMSG UNIVERSE'; scrollAppToTop('smooth'); syncCurrentFavoriteButton(); return; }
+    setTheme(meta.theme); setActiveNav(meta.parent);
+    if (route === 'home') {
+      const playIntro=!homeIntroPlayed; pageContent.innerHTML=renderHome(); initHomePage();
+      if(playIntro){document.body.classList.add('home-intro-running');homeIntroPlayed=true;setTimeout(function(){document.body.classList.remove('home-intro-running');},800);}
+    } else if(route==='data'){pageContent.innerHTML=renderData();}
+    else if(route==='lab'){pageContent.innerHTML=renderLab();}
+    else if(route==='manage'){pageContent.innerHTML=renderManagementPage();initManagementPage(routeParams||{});}
+    else if(route==='metrics'){pageContent.innerHTML=renderPerformanceTimer();initPerformanceTimerPage(routeParams||{});}
+    else if(route==='profile'){pageContent.innerHTML=renderProfile();initProfilePage();}
+    else if(route==='lyrics'){pageContent.innerHTML=renderLyrics();initLyricsPage(routeParams||{});}
+    else if(route==='karaoke'){pageContent.innerHTML=renderKaraoke();initKaraokePage(routeParams||{});}
+    else if(route==='analysis'){pageContent.innerHTML=renderAnalysis();initAnalysisPage(routeParams||{});}
+    else if(route==='cards'){pageContent.innerHTML=renderCards();initCardPage(routeParams||{});}
+    else if(route==='poker'){pageContent.innerHTML=renderPoker();initPokerPage(routeParams||{});}
+    else if(route==='quiz'){pageContent.innerHTML=renderQuiz();initQuizPage(routeParams||{});}
+    else if(route==='cover'){pageContent.innerHTML=renderCover();initCoverPage(routeParams||{});}
+    else{pageContent.innerHTML=renderPlaceholder(route);}
+    if(typeof initUniverseCrossLinks==='function')initUniverseCrossLinks(route,routeParams||{});
+    if(typeof syncKaraokeLatestShortcut_==='function')syncKaraokeLatestShortcut_();
+    document.title=meta.title+' | BMSG UNIVERSE'; scrollAppToTop('smooth'); syncCurrentFavoriteButton();
+  }
+
+  function lyricsSaveNavigationLocked_(){
+    return currentRoute==='lyrics'&&typeof lyricsState!=='undefined'&&!!lyricsState.editSaving;
+  }
+
+  function restoreCurrentLyricsHistoryState_(){
+    if(typeof lyricsState==='undefined')return;
+    const state={page:'lyrics'};
+    if(lyricsState.group)state.group=lyricsState.group;
+    if(lyricsState.unit)state.unit=lyricsState.unit;
+    if(lyricsState.song&&lyricsState.song.songId)state.song=lyricsState.song.songId;
+    google.script.history.replace(state,state,'');
+  }
+
+  function canNavigateUniverse_(route){
+    if(currentRoute==='manage'&&!managementCanLeave_())return false;
+    if(lyricsSaveNavigationLocked_()){if(typeof showToast==='function')showToast('保存中です');return false;}
+    const hasLyricsEditSession=currentRoute==='lyrics'&&typeof lyricsEditSessionActive_==='function'&&lyricsEditSessionActive_();
+    if(hasLyricsEditSession&&typeof confirmDiscardLyricsChanges_==='function'&&!confirmDiscardLyricsChanges_())return false;
+    if(currentRoute==='cover'&&typeof coverConfirmExternalNavigation==='function'&&coverConfirmExternalNavigation(route))return false;
+    if(currentRoute==='quiz'&&typeof quizCanLeave_==='function'&&!quizCanLeave_())return false;
+    if(currentRoute==='metrics'&&route!=='metrics'&&typeof performanceTimerCanLeave_==='function'&&!performanceTimerCanLeave_())return false;
+    if(!hasLyricsEditSession&&route==='home'&&(currentRoute==='lyrics'||currentRoute==='karaoke')&&!window.confirm('この画面を離れてHOMEへ戻りますか？'))return false;
+    if(!hasLyricsEditSession&&route==='data'&&currentRoute==='lyrics'&&!window.confirm('この画面を離れてDATAへ戻りますか？'))return false;
+    return true;
+  }
+
+  function navigateTo(route){navigateToWithParams(route,{});}
+  function navigateToWithParams(route,params){
+    if(!canNavigateUniverse_(route))return;
+    if(!ROUTES[route]){renderRoute(route);return;}
+    const state=Object.assign({page:route},params||{});
+    google.script.history.push(state,state,'');renderRoute(route,state);
+  }
+
+  function renderInitialUniverseRoute_(page, params) {
+    const userId = typeof getUniverseUserId === 'function' ? getUniverseUserId() : '';
+    const preferencesReady = typeof universePreferencesClient !== 'undefined' && universePreferencesClient.loaded && universePreferencesClient.userId === userId;
+    if (userId && !preferencesReady && typeof loadUniverseUserPreferences_ === 'function') {
+      loadUniverseUserPreferences_(userId, function() {
+        renderRoute(page, params || {});
+      });
+      return;
+    }
+    renderRoute(page, params || {});
+  }
+
+  function initRouter(){google.script.history.setChangeHandler(function(event){const page=event&&event.location&&event.location.parameter&&event.location.parameter.page?event.location.parameter.page:'home';if(currentRoute==='manage'&&!managementCanLeave_()){restoreManagementHistory_();return;}if(lyricsSaveNavigationLocked_()){restoreCurrentLyricsHistoryState_();if(typeof showToast==='function')showToast('保存中です');return;}if(currentRoute==='lyrics'&&typeof lyricsEditSessionActive_==='function'&&lyricsEditSessionActive_()&&typeof confirmDiscardLyricsChanges_==='function'&&!confirmDiscardLyricsChanges_()){restoreCurrentLyricsHistoryState_();return;}if(currentRoute==='cover'&&coverState&&coverState.dirty){google.script.history.replace({page:'cover'},{page:'cover'},'');if(typeof coverConfirmExternalNavigation==='function')coverConfirmExternalNavigation(page);return;}if(currentRoute==='quiz'&&typeof quizCanLeave_==='function'&&!quizCanLeave_()){const state={page:'quiz'};if(quizState&&quizState.game&&quizState.game.roomId)state.room=quizState.game.roomId;google.script.history.replace(state,state,'');return;}if(currentRoute==='metrics'&&page!=='metrics'&&typeof performanceTimerCanLeave_==='function'&&!performanceTimerCanLeave_()){google.script.history.replace({page:'metrics'},{page:'metrics'},'');return;}renderRoute(page,event.location.parameter||{});});google.script.url.getLocation(function(location){const page=location&&location.parameter&&location.parameter.page?location.parameter.page:'home';const params=location&&location.parameter?location.parameter:{};if(!location.parameter||!location.parameter.page){google.script.history.replace({page:'home'},{page:'home'},'');}renderInitialUniverseRoute_(page,params);});}
+  initRouter();
+</script>

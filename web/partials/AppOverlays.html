@@ -1,0 +1,146 @@
+    <section id="searchOverlay" class="screen-overlay" aria-label="検索">
+      <div class="overlay-inner">
+        <header class="overlay-head">
+          <h2 class="overlay-title">SEARCH</h2>
+          <button class="overlay-close" onclick="closeSearch()" aria-label="検索を閉じる">×</button>
+        </header>
+
+        <form class="universe-search-form" onsubmit="return runUniverseSearch(event)">
+          <label class="search-field">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10.8" cy="10.8" r="6.2"></circle>
+              <path d="M15.4 15.4L20 20"></path>
+            </svg>
+            <input
+              id="globalSearchInput"
+              class="search-input"
+              type="search"
+              placeholder="BMSG Universeを検索"
+              autocomplete="off"
+            >
+          </label>
+          <button class="universe-search-submit" type="submit">SEARCH</button>
+        </form>
+
+        <div id="searchStatus" class="search-status"></div>
+        <div id="searchResults" class="search-results"></div>
+      </div>
+    </section>
+
+    <div id="settingsOverlay" class="modal-overlay" onclick="closeOnBackdrop(event, 'settingsOverlay')">
+      <section class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <header class="modal-head">
+          <div><h2 id="settingsTitle" class="modal-title">SETTINGS</h2></div>
+          <button class="overlay-close" onclick="closeSettings()" aria-label="設定を閉じる">×</button>
+        </header>
+
+        <section class="settings-group">
+          <p class="settings-section-title">アカウント</p>
+          <div class="settings-row">
+            <div class="settings-row-copy"><small>現在のユーザー</small><strong id="settingsUserName">未選択</strong></div>
+            <button class="settings-action" onclick="openUserChooser(false)">変更</button>
+          </div>
+        </section>
+
+        <section class="settings-group">
+          <p class="settings-section-title">MY UNIVERSE</p>
+          <button class="settings-row settings-row-button" onclick="openUniverseFavoriteMemberChooser()">
+            <span class="settings-row-copy"><strong>推しメン</strong><small id="settingsFavoriteMemberMeta">推しメンを1人選択</small></span>
+            <span class="settings-value-with-arrow"><b id="settingsFavoriteMemberName">未設定</b><span class="settings-arrow">›</span></span>
+          </button>
+          <button id="settingsMemberColorModeButton" class="settings-row settings-row-button" onclick="toggleUniverseMemberColorMode()">
+            <span class="settings-row-copy"><strong>メンバーカラー</strong><small>Universeのシアンを推しカラーに変更</small></span>
+            <span id="settingsMemberColorModeStatus" class="settings-switch">OFF</span>
+          </button>
+          <button id="settingsFavoriteGroupStartButton" class="settings-row settings-row-button" onclick="toggleUniverseFavoriteGroupStartMode()">
+            <span class="settings-row-copy"><strong>推しグループを初期表示</strong><small id="settingsFavoriteGroupStartMeta">推しメン設定後に利用できます</small></span>
+            <span id="settingsFavoriteGroupStartStatus" class="settings-switch">OFF</span>
+          </button>
+        </section>
+
+        <section id="lyricsSettingsSection" class="settings-group">
+          <p class="settings-section-title">LYRICS</p>
+          <button class="settings-row settings-row-button" onclick="toggleLyricsEditMode()">
+            <span class="settings-row-copy"><strong>歌詞編集</strong><small>歌詞・歌割りを変更</small></span>
+            <span id="lyricsEditModeStatus" class="settings-switch">OFF</span>
+          </button>
+        </section>
+
+        <section class="settings-group">
+          <p class="settings-section-title">ツール</p>
+          <button class="settings-row settings-row-button" onclick="openPerformanceTool()">
+            <span class="settings-row-copy"><strong>歌唱・ダンス秒数計測</strong><small>PERFORMANCE TIMER</small></span>
+            <span class="settings-arrow">›</span>
+          </button>
+        </section>
+        <section id="managementSettingsGroup" class="settings-group" hidden>
+          <p class="settings-section-title">管理</p>
+          <button class="settings-row settings-row-button" type="button" onclick="openManagementPage()">
+            <span class="settings-row-copy"><strong>管理ページを開く</strong><small>楽曲・メンバー・画像を管理</small></span><span class="settings-arrow">›</span>
+          </button>
+        </section>
+      </section>
+    </div>
+
+    <div id="userChooserOverlay" class="modal-overlay user-chooser-overlay" onclick="closeUserChooserOnBackdrop(event)">
+      <section class="settings-panel user-chooser-panel" role="dialog" aria-modal="true" aria-labelledby="userChooserTitle">
+        <header class="modal-head">
+          <div><h2 id="userChooserTitle" class="modal-title">USER</h2></div>
+          <button id="userChooserClose" class="overlay-close" onclick="closeUserChooser()" aria-label="ユーザー選択を閉じる">×</button>
+        </header>
+        <p class="user-chooser-copy">利用するユーザーを選択</p>
+        <div class="user-chooser-list">
+          <button type="button" class="user-choice" data-user-id="U001" onclick="selectUniverseUser('U001')"><span>U001</span><strong>ももたん</strong><b>›</b></button>
+          <button type="button" class="user-choice" data-user-id="U002" onclick="selectUniverseUser('U002')"><span>U002</span><strong>みおたん</strong><b>›</b></button>
+          <button type="button" class="user-choice" data-user-id="U003" onclick="selectUniverseUser('U003')"><span>U003</span><strong>りおたん</strong><b>›</b></button>
+        </div>
+      </section>
+    </div>
+
+    <div id="favoriteMemberChooserOverlay" class="modal-overlay favorite-member-chooser-overlay" onclick="closeUniverseFavoriteMemberChooserOnBackdrop(event)">
+      <section class="settings-panel favorite-member-chooser-panel" role="dialog" aria-modal="true" aria-labelledby="favoriteMemberChooserTitle">
+        <header class="modal-head">
+          <div><h2 id="favoriteMemberChooserTitle" class="modal-title">FAVORITE MEMBER</h2></div>
+          <button class="overlay-close" onclick="closeUniverseFavoriteMemberChooser()" aria-label="推しメン選択を閉じる">×</button>
+        </header>
+        <p class="user-chooser-copy">MY UNIVERSEの推しメンを選択</p>
+        <div id="favoriteMemberChooserList" class="favorite-member-chooser-list"></div>
+      </section>
+    </div>
+
+    <div
+      id="toastRegion"
+      class="toast-region"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
+
+    <style>
+      .user-chooser-overlay,.favorite-member-chooser-overlay{z-index:1200}
+      .user-chooser-panel{max-width:520px}
+      .user-chooser-copy{margin:8px 2px 18px;color:var(--gray);font:500 13px "Zen Kaku Gothic New",Roboto,sans-serif}
+      .user-chooser-list{display:grid;gap:10px}
+      .user-choice{width:100%;min-height:72px;padding:0 18px;display:grid;grid-template-columns:54px 1fr 24px;align-items:center;text-align:left;border:1px solid rgba(156,236,255,.16);border-radius:18px;background:linear-gradient(145deg,rgba(156,236,255,.055),rgba(255,255,255,.02));color:var(--white)}
+      .user-choice span{color:rgba(156,236,255,.58);font:600 10px "Exo 2","Zen Kaku Gothic New",Roboto,sans-serif;letter-spacing:.12em}
+      .user-choice strong{font:700 18px "Zen Kaku Gothic New",Roboto,sans-serif}
+      .user-choice b{color:rgba(156,236,255,.62);font:400 28px/1 Roboto,"Zen Kaku Gothic New",sans-serif;text-align:right}
+      .user-choice.is-current{border-color:rgba(156,236,255,.48);background:linear-gradient(145deg,rgba(156,236,255,.14),rgba(255,255,255,.028))}
+      .user-chooser-overlay.is-required #userChooserClose{display:none}
+      .settings-value-with-arrow{display:flex;align-items:center;gap:10px;min-width:0;margin-left:12px}
+      .settings-value-with-arrow b{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--cyan);font:700 13px "Zen Kaku Gothic New",Roboto,sans-serif}
+      .settings-row-button.is-disabled{opacity:.56}
+      .favorite-member-chooser-panel{max-width:560px;max-height:min(82vh,760px);display:flex;flex-direction:column}
+      .favorite-member-chooser-list{display:grid;gap:8px;overflow:auto;padding:2px 2px 8px}
+      .favorite-member-choice{--favorite-member-color:var(--cyan);width:100%;min-height:66px;padding:10px 14px;display:grid;grid-template-columns:16px minmax(0,1fr) 22px;align-items:center;gap:13px;text-align:left;border:1px solid rgba(156,236,255,.13);border-radius:16px;background:rgba(255,255,255,.025);color:var(--white);cursor:pointer}
+      .favorite-member-choice>i{width:11px;height:38px;border-radius:999px;background:var(--favorite-member-color);box-shadow:0 0 16px color-mix(in srgb,var(--favorite-member-color) 42%,transparent)}
+      .favorite-member-choice>span{min-width:0;display:grid;gap:3px}
+      .favorite-member-choice strong{font:700 15px "Zen Kaku Gothic New",Roboto,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+      .favorite-member-choice small{color:rgba(255,255,255,.46);font:600 9px "Exo 2","Zen Kaku Gothic New",sans-serif;letter-spacing:.11em}
+      .favorite-member-choice>b{color:rgba(156,236,255,.56);font:400 24px/1 Roboto,sans-serif;text-align:right}
+      .favorite-member-choice.is-current{border-color:color-mix(in srgb,var(--favorite-member-color) 62%,transparent);background:color-mix(in srgb,var(--favorite-member-color) 10%,rgba(255,255,255,.025))}
+      body.theme-light .user-choice{border-color:rgba(75,165,184,.22);background:linear-gradient(145deg,#fff,rgba(156,236,255,.10));color:var(--ink)}
+      body.theme-light .user-choice span,body.theme-light .user-choice b{color:var(--cyan-ink,#2f7382)}
+      body.theme-light .user-choice.is-current{border-color:rgba(75,165,184,.48);background:linear-gradient(145deg,#fff,rgba(156,236,255,.22))}
+      body.theme-light .favorite-member-choice{color:var(--ink);background:#fff}
+      body.theme-light .favorite-member-choice small{color:rgba(21,24,32,.5)}
+    </style>

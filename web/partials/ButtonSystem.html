@@ -1,0 +1,288 @@
+<style>
+  /* =========================================================
+     Universe Shared Button System v4
+     HOME is the visual source of truth.
+     Every button inherits one interaction/focus/disabled system;
+     semantic families only override layout, never create a new
+     independent interaction language.
+     ========================================================= */
+  :root{
+    --btn-radius:18px;
+    --btn-radius-compact:14px;
+    --btn-line-dark:rgba(194,232,244,.14);
+    --btn-line-dark-hover:rgba(156,236,255,.42);
+    --btn-line-light:rgba(75,165,184,.24);
+    --btn-line-light-hover:rgba(75,165,184,.42);
+    --btn-bg-dark:linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.022));
+    --btn-bg-dark-hover:linear-gradient(145deg,rgba(255,255,255,.072),rgba(255,255,255,.03));
+    --btn-bg-light:linear-gradient(145deg,#fff,rgba(156,236,255,.10));
+    --btn-bg-light-hover:linear-gradient(145deg,#fff,rgba(156,236,255,.18));
+    --btn-bg-karaoke-light:linear-gradient(145deg,#fff,rgba(156,236,255,.14));
+    --btn-bg-karaoke-active:linear-gradient(145deg,#fff,rgba(156,236,255,.23));
+    --btn-shadow-dark:inset 0 1px 0 rgba(255,255,255,.04);
+    --btn-shadow-light:0 8px 22px rgba(75,165,184,.08),inset 0 1px 0 rgba(255,255,255,.88);
+  }
+
+  button{
+    -webkit-appearance:none;
+    appearance:none;
+    font:inherit;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
+    cursor:pointer;
+    transition:border-color var(--fast) var(--ease),background var(--fast) var(--ease),color var(--fast) var(--ease),box-shadow var(--fast) var(--ease),transform var(--fast) var(--ease),opacity var(--fast) var(--ease);
+  }
+  button:not(:disabled):active{transform:scale(.985)}
+  button:focus-visible{outline:2px solid rgba(156,236,255,.72);outline-offset:3px}
+  button:disabled{cursor:default;opacity:.48}
+
+  :is(
+    .u-btn,.home-link,.settings-action,
+    .profile-universe-home,.profile-detail-back,.profile-retry-button,
+    .lyrics-list-back,.lyrics-subhead-back,.lyrics-latest-shortcut,.lyrics-group-return,.lyrics-karaoke-icon,.lyrics-editor-actions button,.lyrics-room-primary,.lyrics-room-join button,.lyrics-room-subactions button,
+    .karaoke-primary,.karaoke-secondary,.karaoke-start,.karaoke-save-favorite,.karaoke-join button,.karaoke-actions button,.karaoke-back-link,.karaoke-top-back,.karaoke-history-heading button,.karaoke-song-footer button,.karaoke-history-actions button,.karaoke-room-actions button,
+    .quiz-choice,.quiz-answer,.quiz-player,.quiz-award,.quiz-action,.quiz-join-button
+  ){
+    border:1px solid var(--btn-line-dark);
+    border-radius:var(--btn-radius);
+    color:var(--white);
+    background:var(--btn-bg-dark);
+    box-shadow:var(--btn-shadow-dark);
+  }
+
+  @media(hover:hover){
+    :is(
+      .u-btn,.home-link,.settings-action,
+      .profile-universe-home,.profile-detail-back,.profile-retry-button,
+      .lyrics-list-back,.lyrics-subhead-back,.lyrics-latest-shortcut,.lyrics-group-return,.lyrics-karaoke-icon,.lyrics-editor-actions button,.lyrics-room-primary,.lyrics-room-join button,.lyrics-room-subactions button,
+      .karaoke-primary,.karaoke-secondary,.karaoke-start,.karaoke-save-favorite,.karaoke-join button,.karaoke-actions button,.karaoke-back-link,.karaoke-top-back,.karaoke-history-heading button,.karaoke-song-footer button,.karaoke-history-actions button,.karaoke-room-actions button,
+      .quiz-choice,.quiz-answer,.quiz-player,.quiz-award,.quiz-action,.quiz-join-button
+    ):not(:disabled):hover{border-color:var(--btn-line-dark-hover);background:var(--btn-bg-dark-hover)}
+  }
+
+  body.theme-light :is(
+    .u-btn,.home-link,.settings-action,
+    .lyrics-list-back,.lyrics-subhead-back,.lyrics-latest-shortcut,.lyrics-group-return,.lyrics-karaoke-icon,.lyrics-editor-actions button,.lyrics-room-primary,.lyrics-room-join button,.lyrics-room-subactions button,
+    .karaoke-primary,.karaoke-secondary,.karaoke-start,.karaoke-save-favorite,.karaoke-join button,.karaoke-actions button,.karaoke-back-link,.karaoke-top-back,.karaoke-history-heading button,.karaoke-song-footer button,.karaoke-history-actions button,.karaoke-room-actions button
+  ){
+    border-color:var(--btn-line-light);
+    color:var(--ink);
+    background:var(--btn-bg-light);
+    box-shadow:var(--btn-shadow-light);
+  }
+
+  @media(hover:hover){
+    body.theme-light :is(
+      .u-btn,.home-link,.settings-action,
+      .lyrics-list-back,.lyrics-subhead-back,.lyrics-latest-shortcut,.lyrics-group-return,.lyrics-karaoke-icon,.lyrics-editor-actions button,.lyrics-room-primary,.lyrics-room-join button,.lyrics-room-subactions button,
+      .karaoke-primary,.karaoke-secondary,.karaoke-start,.karaoke-save-favorite,.karaoke-join button,.karaoke-actions button,.karaoke-back-link,.karaoke-top-back,.karaoke-history-heading button,.karaoke-song-footer button,.karaoke-history-actions button,.karaoke-room-actions button
+    ):not(:disabled):hover{border-color:var(--btn-line-light-hover);background:var(--btn-bg-light-hover)}
+  }
+
+  /* Utility/icon family shares one HOME-derived texture. */
+  .app-shell .utility-actions .utility-btn,.overlay-close{
+    border:1px solid var(--btn-line-dark);
+    color:var(--white);
+    background:var(--btn-bg-dark);
+    box-shadow:var(--btn-shadow-dark);
+  }
+  @media(hover:hover){
+    .app-shell .utility-actions .utility-btn:not(:disabled):hover,
+    .overlay-close:not(:disabled):hover{
+      border-color:var(--btn-line-dark-hover);
+      color:var(--white);
+      background:var(--btn-bg-dark-hover);
+      box-shadow:var(--btn-shadow-dark);
+    }
+  }
+  body.theme-light .app-shell .utility-actions .utility-btn,
+  body.theme-light .overlay-close{
+    border-color:rgba(75,165,184,.30);
+    color:var(--ink);
+    background:linear-gradient(145deg,#fff,rgba(156,236,255,.22));
+    box-shadow:var(--btn-shadow-light);
+  }
+  @media(hover:hover){
+    body.theme-light .app-shell .utility-actions .utility-btn:not(:disabled):hover,
+    body.theme-light .overlay-close:not(:disabled):hover{
+      border-color:var(--btn-line-light-hover);
+      color:var(--ink);
+      background:var(--btn-bg-light-hover);
+      box-shadow:var(--btn-shadow-light);
+    }
+  }
+
+  /* Shared favorite utility icon authority. */
+  .utility-btn[hidden]{display:none!important}
+  .utility-favorite svg{width:25px;height:25px}
+  .utility-favorite .favorite-heart-path{fill:transparent;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:fill var(--fast) var(--ease),stroke var(--fast) var(--ease),transform var(--fast) var(--ease)}
+  .utility-favorite.is-favorite{color:var(--cyan,#9cecff)}
+  .utility-favorite.is-favorite .favorite-heart-path{fill:currentColor}
+  .utility-favorite:active .favorite-heart-path{transform:scale(.9);transform-origin:center}
+
+  /* Content-card family keeps its layout/content identity. */
+  :is(.category-card,.lyrics-song-card,.lyrics-gacha-card,.karaoke-groups button,.karaoke-song-list button,.karaoke-history-list button,
+      .profile-member-card,.profile-map-member,.profile-search-member,.profile-chemistry-member,.profile-discover-member){
+    transform:translateZ(0);
+  }
+  @media(hover:hover){
+    :is(.category-card,.lyrics-song-card,.lyrics-gacha-card,.karaoke-groups button,.karaoke-song-list button,.karaoke-history-list button,
+        .profile-member-card,.profile-map-member,.profile-search-member,.profile-chemistry-member,.profile-discover-member):not(:disabled):hover{
+      border-color:rgba(156,236,255,.34);
+    }
+  }
+  body.theme-light :is(.lyrics-song-card,.lyrics-gacha-card,.karaoke-groups button,.karaoke-song-list button,.karaoke-history-list button){
+    border-color:rgba(21,24,32,.12);
+    background:linear-gradient(145deg,#fff,rgba(156,236,255,.035));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.86);
+  }
+
+  :is(.profile-group-chip,.profile-local-tab,.profile-search-tag,.profile-search-field-toggle,.nav-btn){
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* =========================================================
+     KARAOKE + ROOM exact surface authority
+     All action buttons use one identical light gradient.
+     This intentionally overrides old service CSS, including
+     legacy !important rules for RANDOM / START.
+     ========================================================= */
+  body.theme-light :is(
+    .lyrics-room-card .lyrics-room-primary,
+    .lyrics-room-card .lyrics-room-join button,
+    .lyrics-room-card .lyrics-room-subactions button,
+    .lyrics-page .lyrics-subhead-back,
+    .lyrics-page .lyrics-latest-shortcut,
+    .lyrics-page .lyrics-group-return,
+    .lyrics-page .lyrics-karaoke-icon,
+    .karaoke-page .karaoke-primary,
+    .karaoke-page .karaoke-secondary,
+    .karaoke-page .karaoke-join button,
+    .karaoke-page .karaoke-actions button,
+    .karaoke-page .karaoke-back-link,
+    .karaoke-page .karaoke-top-back,
+    .karaoke-page .karaoke-history-heading button,
+    .karaoke-page .karaoke-song-footer button,
+    .karaoke-page .karaoke-history-actions button,
+    .karaoke-page .karaoke-room-actions button
+  ){
+    box-sizing:border-box;
+    border:1px solid rgba(75,165,184,.28)!important;
+    border-radius:15px!important;
+    color:var(--ink)!important;
+    background:var(--btn-bg-karaoke-light)!important;
+    box-shadow:var(--btn-shadow-light)!important;
+    filter:none!important;
+  }
+
+  body.theme-light .lyrics-room-card :is(.lyrics-room-primary,.lyrics-room-join button,.lyrics-room-subactions button){
+    min-height:50px;
+    height:50px;
+  }
+
+  body.theme-light .lyrics-page :is(.lyrics-subhead-back,.lyrics-group-return){
+    border-radius:15px!important;
+    background:linear-gradient(145deg,#fff,rgba(156,236,255,.18))!important;
+  }
+  body.theme-light .lyrics-page :is(.lyrics-latest-shortcut,.lyrics-karaoke-icon){
+    border-radius:15px!important;
+    background:linear-gradient(145deg,#fff,rgba(156,236,255,.28))!important;
+  }
+
+  body.theme-light .karaoke-page :is(.karaoke-primary,.karaoke-secondary,.karaoke-join button,.karaoke-actions button,.karaoke-back-link,.karaoke-song-footer button){
+    min-height:50px;
+  }
+
+  body.theme-light :is(
+    .lyrics-room-card .lyrics-room-primary,
+    .lyrics-room-card .lyrics-room-join button,
+    .lyrics-room-card .lyrics-room-subactions button,
+    .karaoke-page .karaoke-primary,
+    .karaoke-page .karaoke-secondary,
+    .karaoke-page .karaoke-join button,
+    .karaoke-page .karaoke-actions button,
+    .karaoke-page .karaoke-back-link,
+    .karaoke-page .karaoke-top-back,
+    .karaoke-page .karaoke-history-heading button,
+    .karaoke-page .karaoke-song-footer button
+  ):not(:disabled):active{
+    background:var(--btn-bg-karaoke-active)!important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.88)!important;
+    transform:scale(.985);
+  }
+
+  /* =========================================================
+     MANAGEMENT authority
+     PROFILE / IMAGE / SONG+LYRICS management must not invent
+     local button surfaces. Layout may stay feature-specific,
+     but visual state always comes from the shared button system.
+     ========================================================= */
+  :is(
+    .profile-management-primary,.profile-management-add-button,
+    .image-management-primary,.image-management-secondary,.image-management-repair button,
+    .slm-choice,.slm-icon-btn,.universe-singer-remove,.universe-singer-add
+  ){
+    box-sizing:border-box!important;
+    border:1px solid var(--btn-line-dark)!important;
+    border-radius:15px!important;
+    color:var(--white)!important;
+    background:var(--btn-bg-dark)!important;
+    box-shadow:var(--btn-shadow-dark)!important;
+    filter:none!important;
+  }
+  :is(
+    .profile-management-primary,.profile-management-add-button,
+    .image-management-primary,.image-management-secondary,.image-management-repair button,
+    .universe-singer-add
+  ){min-height:50px!important}
+  :is(.slm-icon-btn,.universe-singer-remove){border-radius:12px!important;color:var(--cyan)!important}
+  :is(.profile-management-primary,.image-management-primary){color:var(--cyan)!important}
+
+  body.theme-light :is(
+    .profile-management-primary,.profile-management-add-button,
+    .image-management-primary,.image-management-secondary,.image-management-repair button,
+    .slm-choice,.slm-icon-btn,.universe-singer-remove,.universe-singer-add
+  ){
+    border-color:var(--btn-line-light)!important;
+    color:var(--ink)!important;
+    background:var(--btn-bg-light)!important;
+    box-shadow:var(--btn-shadow-light)!important;
+  }
+  body.theme-light :is(.slm-icon-btn,.universe-singer-remove){color:#3f8b9c!important}
+
+  @media(hover:hover){
+    :is(
+      .profile-management-primary,.profile-management-add-button,
+      .image-management-primary,.image-management-secondary,.image-management-repair button,
+      .slm-choice,.slm-icon-btn,.universe-singer-remove,.universe-singer-add
+    ):not(:disabled):hover{
+      border-color:var(--btn-line-dark-hover)!important;
+      background:var(--btn-bg-dark-hover)!important;
+    }
+    body.theme-light :is(
+      .profile-management-primary,.profile-management-add-button,
+      .image-management-primary,.image-management-secondary,.image-management-repair button,
+      .slm-choice,.slm-icon-btn,.universe-singer-remove,.universe-singer-add
+    ):not(:disabled):hover{
+      border-color:var(--btn-line-light-hover)!important;
+      background:var(--btn-bg-light-hover)!important;
+    }
+  }
+
+  /* Existing .u-btn actions inside management screens share the same size/radius. */
+  :is(.profile-management-panel,.image-management-panel,.image-replace-panel,.slm-panel,.slm-confirm-panel) .u-btn{
+    min-height:50px!important;
+    border-radius:15px!important;
+    padding:0 18px!important;
+  }
+  :is(.slm-back){width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;padding:0!important;border-radius:14px!important;display:grid!important;place-items:center!important;font-size:28px!important;line-height:1!important}
+
+  @media(prefers-reduced-motion:reduce){
+    button{transition:none!important}
+    button:not(:disabled):active{transform:none!important}
+  }
+  /* Shared 46px service/local navigation authority. */
+  :is(.profile-service-back,.profile-detail-back,.analysis-service-back,.card-service-back,.poker-home-btn,.audit-local-back,.cover-back-btn){width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;flex:0 0 46px!important;padding:0!important;border-radius:14px!important;display:grid!important;place-items:center!important;font-size:32px!important;line-height:1!important}
+  .profile-detail-back span{display:none!important}
+  .profile-detail-back svg{width:20px!important;height:20px!important}
+</style>

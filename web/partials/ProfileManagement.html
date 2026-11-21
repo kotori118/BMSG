@@ -1,0 +1,314 @@
+<div id="profileManagementOverlay" class="management-editor" hidden>
+  <section class="management-editor-panel profile-management-panel">
+
+
+    <div id="profileManagementLoading" class="management-loading profile-management-loading">LOADING...</div>
+
+    <div id="profileManagementBody" hidden>
+      <div class="profile-management-selectors">
+        <label class="management-field profile-management-field">
+          <span>グループ</span>
+          <select id="profileManagementGroup" onchange="changeProfileManagementGroup()">
+            <option value="">選択してください</option>
+          </select>
+        </label>
+        <label class="management-field profile-management-field">
+          <span>メンバー</span>
+          <select id="profileManagementMember" onchange="changeProfileManagementMember()" disabled>
+            <option value="">先にグループを選択してください</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="profileManagementMemberLoading" class="management-loading profile-management-loading" hidden>LOADING...</div>
+      <form id="profileManagementForm" class="profile-management-form" onsubmit="return submitProfileManagement(event)" hidden>
+        <div id="profileManagementSections"></div>
+        <p id="profileManagementError" class="management-error profile-management-error" role="alert" hidden></p>
+        <button id="profileManagementSubmit" class="profile-management-primary" type="submit" disabled>プロフィールを保存する</button>
+      </form>
+    </div>
+  </section>
+</div>
+
+<style>
+
+
+
+    .profile-management-selectors{display:grid;gap:14px;margin-top:12px;padding-bottom:20px;border-bottom:1px solid rgba(156,236,255,.12)}
+  .profile-management-form{display:grid;gap:18px;margin-top:20px}
+
+
+
+
+  .profile-management-section{display:grid;gap:15px;padding-top:2px}
+  .profile-management-section+.profile-management-section{padding-top:22px;border-top:1px solid rgba(156,236,255,.12)}
+  .profile-management-section-title{margin:0;color:var(--cyan);font:700 12px "Exo 2","Zen Kaku Gothic New",sans-serif;letter-spacing:.08em}
+  .profile-management-control{display:grid;gap:7px}
+  .profile-management-number-wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:9px}
+  .profile-management-unit{color:rgba(255,255,255,.56);font:700 12px "Zen Kaku Gothic New",sans-serif}
+  .profile-management-tags{display:flex;flex-wrap:wrap;gap:7px;min-height:0}
+  .profile-management-tag{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 10px;border:1px solid rgba(156,236,255,.22);border-radius:999px;background:rgba(156,236,255,.07);color:var(--white);font:600 12px "Zen Kaku Gothic New",sans-serif}
+  .profile-management-tag button{width:22px;height:22px;padding:0;border:0;background:transparent;color:rgba(255,255,255,.58);font-size:17px;line-height:1;cursor:pointer}
+  .profile-management-tag-add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+  .profile-management-add-button{min-width:76px}
+
+
+
+  body.theme-light .profile-management-tag{color:var(--ink);background:rgba(75,165,184,.08)}
+  body.theme-light .profile-management-tag button{color:rgba(21,24,32,.5)}
+  @media(max-width:520px){.profile-management-tag-add{grid-template-columns:minmax(0,1fr) 78px}}
+</style>
+
+<script>
+  const profileManagementState = {
+    bootstrap:null,
+    groupName:'',
+    memberId:'',
+    values:{},
+    baseline:'',
+    dirty:false,busy:false,
+    loadToken:0
+  };
+
+  function openProfileManagement(){
+    closeSettings();
+    const overlay=document.getElementById('profileManagementOverlay');
+    if(!overlay)return;
+    overlay.hidden=false;
+    clearProfileManagementError();
+    if(profileManagementState.bootstrap){
+      renderProfileManagementBootstrap(profileManagementState.bootstrap);
+      return;
+    }
+    profileManagementState.busy=true;setProfileManagementLoading(true);
+    managementRunner_()
+      .withSuccessHandler(function(data){profileManagementState.busy=false;profileManagementState.bootstrap=data;renderProfileManagementBootstrap(data);
+        const id=managementState.initialMemberId;
+        if(id){const group=(data.groups||[]).find(function(g){return g.members.some(function(m){return String(m.memberId)===id;});});if(group){document.getElementById('profileManagementGroup').value=group.name;changeProfileManagementGroup();document.getElementById('profileManagementMember').value=id;changeProfileManagementMember();}managementState.initialMemberId='';}})
+      .withFailureHandler(function(error){profileManagementState.busy=false;showProfileManagementError(readProfileManagementError(error));setProfileManagementLoading(false);})
+      .getProfileManagementBootstrap();
+  }
+
+  function setProfileManagementLoading(loading){
+    const loadingNode=document.getElementById('profileManagementLoading');
+    const body=document.getElementById('profileManagementBody');
+    if(loadingNode)loadingNode.hidden=!loading;
+    if(body)body.hidden=loading;
+  }
+
+  function renderProfileManagementBootstrap(data){
+    const group=document.getElementById('profileManagementGroup');
+    group.innerHTML='<option value="">選択してください</option>'+(data.groups||[]).map(function(item){
+      return '<option value="'+escapeProfileManagementHtml(item.name)+'">'+escapeProfileManagementHtml(item.name)+'</option>';
+    }).join('');
+    group.value=profileManagementState.groupName||'';
+    setProfileManagementLoading(false);
+    renderProfileManagementMemberOptions();
+    if(profileManagementState.memberId){
+      document.getElementById('profileManagementMember').value=profileManagementState.memberId;
+      renderProfileManagementForm();
+    }
+  }
+
+  function changeProfileManagementGroup(){
+    if(profileManagementState.busy)return;
+    const select=document.getElementById('profileManagementGroup');
+    const next=select.value;
+    if(profileManagementState.dirty&&!window.confirm('変更内容が保存されていません。\nこのまま移動しますか？')){
+      select.value=profileManagementState.groupName;
+      return;
+    }
+    profileManagementState.groupName=next;
+    profileManagementState.memberId='';
+    profileManagementState.values={};
+    setProfileManagementBaseline_();
+    renderProfileManagementMemberOptions();
+    hideProfileManagementForm_();
+  }
+
+  function renderProfileManagementMemberOptions(){
+    const select=document.getElementById('profileManagementMember');
+    if(!select)return;
+    const group=(profileManagementState.bootstrap&&profileManagementState.bootstrap.groups||[]).find(function(item){return item.name===profileManagementState.groupName;});
+    if(!group){
+      select.disabled=true;
+      select.innerHTML='<option value="">先にグループを選択してください</option>';
+      return;
+    }
+    select.disabled=false;
+    select.innerHTML='<option value="">選択してください</option>'+group.members.map(function(item){
+      return '<option value="'+escapeProfileManagementHtml(item.memberId)+'">'+escapeProfileManagementHtml(item.name)+'</option>';
+    }).join('');
+    select.value=profileManagementState.memberId||'';
+  }
+
+  function changeProfileManagementMember(){
+    const select=document.getElementById('profileManagementMember');
+    const next=select.value;
+    if(profileManagementState.dirty&&!window.confirm('変更内容が保存されていません。\nこのまま移動しますか？')){
+      select.value=profileManagementState.memberId;
+      return;
+    }
+    profileManagementState.memberId=next;
+    profileManagementState.values={};
+    setProfileManagementBaseline_();
+    if(!next){hideProfileManagementForm_();return;}
+    loadProfileManagementMember_(next);
+  }
+
+  function loadProfileManagementMember_(memberId){
+    clearProfileManagementError();
+    const token=++profileManagementState.loadToken;
+    const loading=document.getElementById('profileManagementMemberLoading');
+    const form=document.getElementById('profileManagementForm');
+    if(loading)loading.hidden=false;
+    if(form)form.hidden=true;
+    managementRunner_()
+      .withSuccessHandler(function(data){
+        if(token!==profileManagementState.loadToken||memberId!==profileManagementState.memberId)return;
+        profileManagementState.values=data&&data.values?data.values:{};
+        managementMutationDone_();profileManagementState.busy=false;managementState.dirty=false;document.querySelectorAll('#profileManagementOverlay select').forEach(function(el){el.disabled=false;});setProfileManagementBaseline_();
+        if(loading)loading.hidden=true;
+        renderProfileManagementForm();
+      })
+      .withFailureHandler(function(error){
+        if(token!==profileManagementState.loadToken)return;
+        if(loading)loading.hidden=true;
+        showProfileManagementError(readProfileManagementError(error));
+      })
+      .getProfileManagementMember(memberId);
+  }
+
+  function renderProfileManagementForm(){
+    const fields=(profileManagementState.bootstrap&&profileManagementState.bootstrap.fields||[]).slice().sort(function(a,b){return Number(a.displayOrder)-Number(b.displayOrder);});
+    const groups=[];
+    fields.forEach(function(field){
+      let group=groups.find(function(item){return item.name===field.displayGroup;});
+      if(!group){group={name:field.displayGroup,fields:[]};groups.push(group);}
+      group.fields.push(field);
+    });
+    const target=document.getElementById('profileManagementSections');
+    target.innerHTML=groups.map(function(group){
+      return '<section class="profile-management-section"><h3 class="profile-management-section-title">'+escapeProfileManagementHtml(group.name)+'</h3>'+group.fields.map(renderProfileManagementField_).join('')+'</section>';
+    }).join('');
+    const form=document.getElementById('profileManagementForm');
+    form.hidden=false;
+    bindProfileManagementInputs_();
+    updateProfileManagementSubmit_();
+  }
+
+  function renderProfileManagementField_(field){
+    const id='profileManagementField_'+field.profileId;
+    const value=profileManagementState.values[field.profileId];
+    if(field.isMultiValue){
+      const tags=Array.isArray(value)?value:[];
+      return '<div class="profile-management-control" data-profile-id="'+escapeProfileManagementHtml(field.profileId)+'"><span class="management-label profile-management-label">'+escapeProfileManagementHtml(field.label)+'</span><div class="profile-management-tags" id="'+id+'_tags">'+tags.map(function(tag,index){return renderProfileManagementTag_(field.profileId,tag,index);}).join('')+'</div><div class="profile-management-tag-add"><input class="management-input profile-management-input" id="'+id+'_input" type="text" autocomplete="off"><button class="profile-management-add-button" type="button" onclick="addProfileManagementTag(\''+escapeProfileManagementJs_(field.profileId)+'\')">＋追加</button></div></div>';
+    }
+    const type=field.dataType==='DATE'?'date':field.dataType==='NUMBER'?'number':'text';
+    const step=field.dataType==='NUMBER'?' step="any"':'';
+    const input='<input class="management-input profile-management-input" id="'+id+'" data-profile-input="'+escapeProfileManagementHtml(field.profileId)+'" type="'+type+'"'+step+' value="'+escapeProfileManagementHtml(value==null?'':value)+'" autocomplete="off">';
+    return '<label class="profile-management-control"><span class="management-label profile-management-label">'+escapeProfileManagementHtml(field.label)+'</span>'+(field.unit?'<span class="profile-management-number-wrap">'+input+'<b class="profile-management-unit">'+escapeProfileManagementHtml(field.unit)+'</b></span>':input)+'</label>';
+  }
+
+  function renderProfileManagementTag_(profileId,tag,index){
+    return '<span class="profile-management-tag">'+escapeProfileManagementHtml(tag)+'<button type="button" aria-label="削除" onclick="removeProfileManagementTag(\''+escapeProfileManagementJs_(profileId)+'\','+index+')">×</button></span>';
+  }
+
+  function bindProfileManagementInputs_(){
+    document.querySelectorAll('#profileManagementForm [data-profile-input]').forEach(function(input){
+      input.addEventListener('input',function(){
+        profileManagementState.values[input.dataset.profileInput]=input.value;
+        markProfileManagementDirty_();
+      });
+    });
+  }
+
+  function addProfileManagementTag(profileId){
+    const input=document.getElementById('profileManagementField_'+profileId+'_input');
+    const value=String(input&&input.value||'').trim();
+    if(!value)return;
+    const list=Array.isArray(profileManagementState.values[profileId])?profileManagementState.values[profileId].slice():[];
+    list.push(value);
+    profileManagementState.values[profileId]=list;
+    if(input)input.value='';
+    refreshProfileManagementTags_(profileId);
+    markProfileManagementDirty_();
+  }
+
+  function removeProfileManagementTag(profileId,index){
+    const list=Array.isArray(profileManagementState.values[profileId])?profileManagementState.values[profileId].slice():[];
+    list.splice(index,1);
+    profileManagementState.values[profileId]=list;
+    refreshProfileManagementTags_(profileId);
+    markProfileManagementDirty_();
+  }
+
+  function refreshProfileManagementTags_(profileId){
+    const target=document.getElementById('profileManagementField_'+profileId+'_tags');
+    if(!target)return;
+    const list=Array.isArray(profileManagementState.values[profileId])?profileManagementState.values[profileId]:[];
+    target.innerHTML=list.map(function(tag,index){return renderProfileManagementTag_(profileId,tag,index);}).join('');
+  }
+
+  function markProfileManagementDirty_(){
+    profileManagementState.dirty=serializeProfileManagementValues_()!==profileManagementState.baseline;
+    updateProfileManagementSubmit_();
+  }
+
+  function setProfileManagementBaseline_(){
+    profileManagementState.baseline=serializeProfileManagementValues_();
+    profileManagementState.dirty=false;
+    updateProfileManagementSubmit_();
+  }
+
+  function serializeProfileManagementValues_(){
+    const fields=(profileManagementState.bootstrap&&profileManagementState.bootstrap.fields||[]).slice().sort(function(a,b){return String(a.profileId).localeCompare(String(b.profileId));});
+    const object={};
+    fields.forEach(function(field){
+      const value=profileManagementState.values[field.profileId];
+      object[field.profileId]=field.isMultiValue?(Array.isArray(value)?value:[]):String(value==null?'':value);
+    });
+    return JSON.stringify(object);
+  }
+
+  function updateProfileManagementSubmit_(){
+    const button=document.getElementById('profileManagementSubmit');
+    if(button)button.disabled=profileManagementState.busy||!profileManagementState.memberId||!profileManagementState.dirty;
+  }
+
+  function submitProfileManagement(event){
+    if(event)event.preventDefault();
+    if(profileManagementState.busy||!profileManagementState.memberId||!profileManagementState.dirty)return false;
+    profileManagementState.busy=true;
+    clearProfileManagementError();
+    const button=document.getElementById('profileManagementSubmit');
+    document.querySelectorAll('#profileManagementOverlay input,#profileManagementOverlay select,#profileManagementOverlay button').forEach(function(el){el.disabled=true;});
+    button.disabled=true;
+    managementRunner_()
+      .withSuccessHandler(function(result){
+        managementMutationDone_();profileManagementState.busy=false;managementState.dirty=false;document.querySelectorAll('#profileManagementOverlay select').forEach(function(el){el.disabled=false;});setProfileManagementBaseline_();
+        changeProfileManagementMember();
+        showProfileManagementToast((result&&result.message)||'プロフィールを保存しました。');
+      })
+      .withFailureHandler(function(error){
+        profileManagementState.busy=false;document.querySelectorAll('#profileManagementOverlay input,#profileManagementOverlay select,#profileManagementOverlay button').forEach(function(el){el.disabled=false;});updateProfileManagementSubmit_();
+        showProfileManagementError(readProfileManagementError(error));
+      })
+      .saveProfileManagementMember({userId:getUniverseUserId(),groupName:profileManagementState.groupName,memberId:profileManagementState.memberId,values:profileManagementState.values});
+    return false;
+  }
+
+  function hideProfileManagementForm_(){
+    const form=document.getElementById('profileManagementForm');
+    const loading=document.getElementById('profileManagementMemberLoading');
+    if(form)form.hidden=true;
+    if(loading)loading.hidden=true;
+  }
+
+  function showProfileManagementError(message){const node=document.getElementById('profileManagementError');if(!node)return;node.textContent=message||'処理に失敗しました。';node.hidden=false;}
+  function clearProfileManagementError(){const node=document.getElementById('profileManagementError');if(node){node.textContent='';node.hidden=true;}}
+  function showProfileManagementToast(message){if(typeof showToast==='function'){showToast(message);return;}alert(message);}
+  function readProfileManagementError(error){return String(error&&error.message?error.message:error||'処理に失敗しました。').replace(/^Exception:\s*/,'');}
+  function escapeProfileManagementHtml(value){return String(value==null?'':value).replace(/[&<>'"]/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch];});}
+  function escapeProfileManagementJs_(value){return String(value==null?'':value).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+</script>

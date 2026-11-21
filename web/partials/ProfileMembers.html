@@ -1,0 +1,249 @@
+<script>
+  const PROFILE_MEMBERS_SESSION_KEY = 'bmsgProfileMembersV1';
+  const PROFILE_MEMBERS_SESSION_TTL = 5 * 60 * 1000;
+
+  let profileMembersState = {
+    status: 'idle', groups: [], members: [], error: '',
+    detailStatus: 'idle', detailMemberId: '', detailFields: [], detailError: ''
+  };
+
+  function readProfileMembersSessionCache() {
+    try {
+      const raw = sessionStorage.getItem(PROFILE_MEMBERS_SESSION_KEY);
+      if (!raw) return null;
+      const cached = JSON.parse(raw);
+      if (!cached || !cached.savedAt || Date.now() - Number(cached.savedAt) > PROFILE_MEMBERS_SESSION_TTL) {
+        sessionStorage.removeItem(PROFILE_MEMBERS_SESSION_KEY);
+        return null;
+      }
+      if (!Array.isArray(cached.groups) || !Array.isArray(cached.members)) return null;
+      return cached;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function writeProfileMembersSessionCache() {
+    try {
+      sessionStorage.setItem(PROFILE_MEMBERS_SESSION_KEY, JSON.stringify({
+        savedAt: Date.now(),
+        groups: profileMembersState.groups,
+        members: profileMembersState.members
+      }));
+    } catch (error) {
+      // sessionStorage is only a speed cache; PROFILE must still work without it.
+    }
+  }
+
+  function loadProfileMembers(forceReload = false) {
+    if (!forceReload && (profileMembersState.status === 'loading' || profileMembersState.status === 'ready')) {
+      renderProfileMembersPanel(); return;
+    }
+
+    if (!forceReload) {
+      const cached = readProfileMembersSessionCache();
+      if (cached) {
+        profileMembersState.status = 'ready';
+        profileMembersState.groups = cached.groups;
+        profileMembersState.members = cached.members;syncProfileGroupChoices_();
+        profileMembersState.error = '';
+        renderProfileMembersPanel();
+        return;
+      }
+    }
+
+    profileMembersState.status = 'loading'; profileMembersState.error = '';
+    renderProfilePanel();
+    google.script.run.withSuccessHandler(handleProfileMembersSuccess)
+      .withFailureHandler(handleProfileMembersFailure).getProfileMembers();
+  }
+
+  function handleProfileMembersSuccess(response) {
+    if (!response || !response.ok || !response.data) {
+      handleProfileMembersFailure(response && response.error ? response.error.message : 'プロフィールの読み込みに失敗しました。');
+      return;
+    }
+    profileMembersState.status = 'ready';
+    profileMembersState.groups = Array.isArray(response.data.groups) ? response.data.groups : [];
+    profileMembersState.members = Array.isArray(response.data.members) ? response.data.members : [];
+    profileMembersState.error = '';
+    syncProfileGroupChoices_();writeProfileMembersSessionCache();
+    renderProfilePanel();
+    if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
+  }
+
+  function handleProfileMembersFailure(error) {
+    profileMembersState.status = 'error';
+    profileMembersState.error = error && error.message ? error.message : String(error || 'プロフィールの読み込みに失敗しました。');
+    renderProfileMembersPanel();
+  }
+
+  function getVisibleProfileMembers() {
+    const members = profileMembersState.members.slice();
+    if (profileCurrentGroup === 'all') return members.sort((a, b) => a.displayOrder - b.displayOrder);
+    const selectedGroup = profileMembersState.groups.find(group => group.key === profileCurrentGroup);
+    if (!selectedGroup) return [];
+    return members.filter(member => member.groupIds.includes(selectedGroup.groupId)).sort((a, b) =>
+      Number(memberGroupOrder(a, selectedGroup.groupId)) - Number(memberGroupOrder(b, selectedGroup.groupId)) || a.displayOrder - b.displayOrder
+    );
+  }
+
+  function memberGroupOrder(member, groupId) {
+    if (!member || !member.groupOrders) return 9999;
+    const value = member.groupOrders[groupId];
+    return Number.isFinite(Number(value)) ? Number(value) : 9999;
+  }
+
+  function renderProfileMembersPanel() {
+    const panel = document.getElementById('profilePanel');
+    if (!panel || profileCurrentView !== 'home') return;
+    if (profileMembersState.status === 'loading' || profileMembersState.status === 'idle') {
+      panel.innerHTML = renderProfileMemberSkeletons(); return;
+    }
+    if (profileMembersState.status === 'error') {
+      panel.innerHTML = `<article class="profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileMembersState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileMembers(true)">再試行</button></article>`;
+      return;
+    }
+    const members = getVisibleProfileMembers();
+    if (!members.length) {
+      panel.innerHTML = `<article class="profile-members-state"><p class="profile-panel-eyebrow">PROFILE HOME</p><h2 class="profile-members-state-title">NO DATA</h2><p class="profile-panel-copy">表示できるメンバーがいません。</p></article>`;
+      return;
+    }
+    panel.innerHTML = `<div class="profile-members-head"><div><p class="profile-panel-eyebrow">PROFILE HOME</p><h2 class="profile-members-title">MEMBERS</h2></div><span class="profile-members-count">${members.length}</span></div><div class="profile-member-grid">${members.map(renderProfileMemberCard).join('')}</div>`;
+  }
+
+  function renderProfileMemberCard(member) {
+    const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
+    const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
+    const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
+    return `<article class="profile-member-card" style="--member-accent:${escapeHtml(accent)}" role="button" tabindex="0" data-member-id="${escapeHtml(member.memberId)}" aria-label="${escapeHtml(member.displayName)}のプロフィールを開く" onclick="openProfileMemberDetail(this.dataset.memberId)" onkeydown="handleProfileMemberCardKey(event, this.dataset.memberId)"><div class="profile-member-visual"><span class="profile-member-fallback" aria-hidden="true">${escapeHtml(initial)}</span>${image}<span class="profile-member-accent" aria-hidden="true"></span></div><div class="profile-member-body"><p class="profile-member-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h3 class="profile-member-name">${escapeHtml(member.displayName)}</h3></div></article>`;
+  }
+
+  function handleProfileMemberCardKey(event, memberId) {
+    if (!event || (event.key !== 'Enter' && event.key !== ' ')) return;
+    event.preventDefault(); openProfileMemberDetail(memberId);
+  }
+
+  function openProfileMemberDetail(memberId) {
+    const member = profileMembersState.members.find(item => item.memberId === memberId);
+    if (!member) return;
+    profileDetailReturnView = profileCurrentView;
+    profileSelectedMemberId = memberId;
+    profileMembersState.detailStatus = 'loading';
+    profileMembersState.detailMemberId = memberId;
+    profileMembersState.detailFields = [];
+    profileMembersState.detailError = '';
+    setProfileDetailMode(true); renderProfileMemberDetail();
+    scrollAppToTop('smooth');
+    google.script.run.withSuccessHandler(response => handleProfileMemberDetailSuccess(memberId, response))
+      .withFailureHandler(error => handleProfileMemberDetailFailure(memberId, error))
+      .getProfileMemberDetail(memberId);
+  }
+
+  function handleProfileMemberDetailSuccess(memberId, response) {
+    if (profileSelectedMemberId !== memberId) return;
+    if (!response || !response.ok || !response.data) {
+      handleProfileMemberDetailFailure(memberId, response && response.error ? response.error.message : 'プロフィール詳細の読み込みに失敗しました。'); return;
+    }
+    profileMembersState.detailStatus = 'ready';
+    profileMembersState.detailFields = Array.isArray(response.data.fields) ? response.data.fields : [];
+    profileMembersState.detailError = '';
+    renderProfileMemberDetail();
+  }
+
+  function handleProfileMemberDetailFailure(memberId, error) {
+    if (profileSelectedMemberId !== memberId) return;
+    profileMembersState.detailStatus = 'error';
+    profileMembersState.detailError = error && error.message ? error.message : String(error || 'プロフィール詳細の読み込みに失敗しました。');
+    renderProfileMemberDetail();
+  }
+
+  function closeProfileMemberDetail() {
+    profileSelectedMemberId = '';
+    profileMembersState.detailStatus = 'idle';
+    profileMembersState.detailMemberId = '';
+    profileMembersState.detailFields = [];
+    profileMembersState.detailError = '';
+    setProfileDetailMode(false);
+    profileCurrentView = profileDetailReturnView || 'home';
+    profileDetailReturnView = 'home';
+    updateProfileControls();
+    renderProfilePanel();
+    scrollAppToTop('smooth');
+  }
+
+  function renderProfileMemberDetail() {
+    const panel = document.getElementById('profilePanel');
+    if (!panel) return;
+    const member = profileMembersState.members.find(item => item.memberId === profileSelectedMemberId);
+    if (!member) { closeProfileMemberDetail(); return; }
+    const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
+    const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
+    const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="${escapeHtml(member.displayName)}" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
+    panel.innerHTML = `<article class="profile-member-detail" style="--member-accent:${escapeHtml(accent)}"><button class="profile-detail-back" type="button" onclick="closeProfileMemberDetail()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span>MEMBERS</span></button><div class="profile-detail-hero"><div class="profile-detail-visual"><span class="profile-member-fallback" aria-hidden="true">${escapeHtml(initial)}</span>${image}<span class="profile-detail-line" aria-hidden="true"></span></div><div class="profile-detail-identity"><p class="profile-detail-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h2 class="profile-detail-name">${escapeHtml(member.displayName)}</h2></div></div>${renderProfileDetailContent()}</article>`;
+    if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
+  }
+
+  function renderProfileDetailContent() {
+    if (profileMembersState.detailStatus === 'loading') {
+      const row = () => `<div class="profile-detail-row" aria-hidden="true"><dt><span class="skeleton-block" style="display:block;width:72%;height:11px;border-radius:6px"></span></dt><dd><span class="skeleton-block" style="display:block;width:86%;height:13px;border-radius:6px"></span></dd></div>`;
+      const section = (rows) => `<section class="profile-detail-section" aria-hidden="true"><h3 class="profile-detail-section-title"><span class="skeleton-block" style="display:block;width:74px;height:10px;border-radius:5px"></span></h3><dl class="profile-detail-list">${Array.from({length:rows},row).join('')}</dl></section>`;
+      return `<div class="profile-detail-sections">${section(3)}${section(2)}</div>`;
+    }
+    if (profileMembersState.detailStatus === 'error') return `<div class="profile-detail-message"><p>${escapeHtml(profileMembersState.detailError)}</p><button class="profile-retry-button" type="button" onclick="openProfileMemberDetail(profileSelectedMemberId)">再試行</button></div>`;
+    const fields = profileMembersState.detailFields || [];
+    if (!fields.length) return `<div class="profile-detail-message"><p>表示できるプロフィール項目がありません。</p></div>`;
+    const groups = [];
+    fields.forEach(field => {
+      const name = String(field.displayGroup || 'PROFILE');
+      let group = groups.find(item => item.name === name);
+      if (!group) { group = { name, fields: [] }; groups.push(group); }
+      group.fields.push(field);
+    });
+    return `<div class="profile-detail-sections">${groups.map(group => `<section class="profile-detail-section"><h3 class="profile-detail-section-title">${escapeHtml(group.name)}</h3><dl class="profile-detail-list">${group.fields.map(field => `<div class="profile-detail-row"><dt>${escapeHtml(field.label || field.profileId)}</dt><dd>${escapeHtml(field.value || '—')}</dd></div>`).join('')}</dl></section>`).join('')}</div>`;
+  }
+
+  function handleProfileImageError(image) {
+    if (!image) return;
+    const fallback = image.dataset.fallbackSrc || '';
+    const fallbackTried = image.dataset.fallbackTried === 'true';
+    if (fallback && !fallbackTried) { image.dataset.fallbackTried = 'true'; image.src = fallback; return; }
+    image.style.display = 'none';
+  }
+
+  function renderProfileMemberSkeletons() {
+    return `<div class="profile-members-head profile-members-head-loading"><div><span class="profile-member-skeleton profile-member-skeleton-label"></span><span class="profile-member-skeleton profile-member-skeleton-heading"></span></div></div><div class="profile-member-grid">${Array.from({ length: 6 }, () => `<div class="profile-member-card profile-member-card-loading"><div class="profile-member-skeleton profile-member-skeleton-image"></div><div class="profile-member-body"><span class="profile-member-skeleton profile-member-skeleton-copy"></span><span class="profile-member-skeleton profile-member-skeleton-name"></span></div></div>`).join('')}</div>`;
+  }
+  function syncProfileGroupChoices_(){
+    const host=document.querySelector('.profile-group-scroll');if(!host)return;
+    Object.keys(PROFILE_GROUPS).forEach(function(key){if(key!=='all')delete PROFILE_GROUPS[key];});
+    profileMembersState.groups.forEach(function(g){PROFILE_GROUPS[g.key]=g.name;});
+    host.innerHTML='<button class="profile-group-chip" data-profile-group="all" onclick="selectProfileGroup(\'all\')">ALL</button>'+profileMembersState.groups.map(function(g){return '<button class="profile-group-chip" data-profile-group="'+escapeHtml(g.key)+'" onclick="selectProfileGroup(this.dataset.profileGroup)">'+escapeHtml(g.name)+'</button>';}).join('');
+    if(!PROFILE_GROUPS[profileCurrentGroup])profileCurrentGroup='all';updateProfileControls();
+  }
+</script>
+
+<style>
+  /* Detail is profile-first: keep the member image as a compact identity cue. */
+  .profile-detail-hero { min-height: 124px; display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: stretch; border-radius: clamp(20px, 5vw, 28px); }
+  .profile-detail-visual { min-height: 124px; aspect-ratio: auto; }
+  .profile-detail-line { left: 14px; bottom: 12px; width: 30px; }
+  .profile-detail-identity { min-width: 0; padding: 18px clamp(18px, 5vw, 28px); display: flex; flex-direction: column; justify-content: center; }
+  .profile-detail-name { font-size: clamp(27px, 8vw, 48px); }
+  .profile-detail-sections { display: grid; gap: 14px; margin-top: 0; }
+  .profile-detail-section { overflow: hidden; border: 1px solid rgba(156,236,255,.16); border-radius: 18px; background: rgba(255,255,255,.025); padding: 18px; }
+  .profile-detail-section-title { margin: 0 0 12px; color: var(--member-accent); font-family: Orbitron,"Zen Kaku Gothic New", sans-serif; font-size: 12px; letter-spacing: .14em; }
+  .profile-detail-list { margin: 0; }
+  .profile-detail-row { display: grid; grid-template-columns: minmax(105px, 34%) 1fr; gap: 14px; padding: 11px 0; border-top: 1px solid rgba(255,255,255,.08); }
+  .profile-detail-row:first-child { border-top: 0; }
+  .profile-detail-row dt { color: rgba(255,255,255,.56); font-size: 12px; }
+  .profile-detail-row dd { margin: 0; color: #fff; font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; }
+  .profile-detail-loading, .profile-detail-message { display: flex; align-items: center; justify-content: center; min-height: 140px; margin-top: 24px; }
+  .profile-detail-message { gap: 12px; color: rgba(255,255,255,.68); font-family: Orbitron,"Zen Kaku Gothic New", sans-serif; font-size: 11px; letter-spacing: .12em; }
+  @media (max-width: 560px) { .profile-detail-section { padding: 15px; } .profile-detail-row { grid-template-columns: 96px 1fr; gap: 10px; } }
+  @media (min-width: 720px) {
+    .profile-detail-hero { grid-template-columns: 150px minmax(0, 1fr); min-height: 176px; }
+    .profile-detail-visual { min-height: 176px; }
+    .profile-detail-identity { padding: 30px 36px; justify-content: center; }
+  }
+</style>
