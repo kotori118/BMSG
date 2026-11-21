@@ -4,122 +4,202 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BMSG Universe デザインサンプル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Exo+2:wght@500;600;700&family=Roboto:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* ---- デザインの基本（色・形・文字をここで一か所に決める） ---- */
+/* ---- 基本の決まり（色・形・文字はここで一か所に決める） ---- */
 :root {
   --accent: #9cecff;                 /* 推しカラー（Universeの設定で変わる。初期値はシアン） */
-  --accent-deep: #1f6f86;            /* 文字や線に使う濃い色（シアンは白背景で読めないため） */
-  --accent-soft: #eafbff;            /* 選択中などの薄い背景 */
-  --text: #1f2933;                   /* 本文 */
-  --text-sub: #5b6670;               /* 補足 */
-  --line: #e3e7eb;                   /* 枠線 */
-  --bg: #ffffff;                     /* 画面の背景（白基調） */
-  --bg-sub: #f6f8fa;                 /* 区切りの背景 */
-  --danger: #c2410c;                 /* 削除など注意が必要な操作 */
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
+  --accent-deep: #1f6f86;            /* 文字に使う濃い色 */
+  --accent-soft: #e6f9ff;            /* 薄い背景 */
+  --text: #1d2630;
+  --text-sub: #66727d;
+  --line: rgba(20,30,40,.08);
+  --bg: #f4f7fa;                     /* 画面の背景（白に近い、ごく薄いグレー） */
+  --glass: rgba(255,255,255,.55);    /* すりガラスのカード */
+  --glass-line: rgba(255,255,255,.85);
+  --danger: #c2410c;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow-soft: 0 10px 30px -12px rgba(20,40,60,.25), 0 2px 6px rgba(20,40,60,.06);
   --font: "Zen Kaku Gothic New", "Hiragino Sans", "Noto Sans JP", sans-serif;
-  --font-en: "Exo 2", "Roboto", sans-serif;
+  --font-head: "Orbitron", "Exo 2", sans-serif;     /* 見出し・数字 */
+  --font-label: "Exo 2", "Roboto", sans-serif;      /* 英字の小さな見出し */
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); line-height: 1.6; }
-body { padding: 0 16px 96px; max-width: 720px; margin: 0 auto; }
-h1 { font-family: var(--font-en); font-size: 22px; margin: 24px 0 4px; }
-h2 { font-size: 17px; margin: 32px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 500px at 10% -10%, var(--accent-soft), transparent 60%),
+    radial-gradient(700px 500px at 110% 20%, #e8edf5, transparent 60%),
+    var(--bg);
+  padding: 76px 16px 110px;
+  max-width: 720px; margin: 0 auto;
+}
+
+/* ---- 上部バー（左上にメニュー） ---- */
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+  height: 60px; display: flex; align-items: center; gap: 12px; padding: 0 12px;
+  background: rgba(255,255,255,.55); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-line);
+}
+.menu-btn {
+  width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--glass-line);
+  background: var(--glass); box-shadow: var(--shadow-soft); cursor: pointer;
+  display: grid; place-items: center; padding: 0;
+}
+.menu-btn span { display: block; width: 18px; height: 2px; background: var(--text); border-radius: 2px; position: relative; }
+.menu-btn span::before, .menu-btn span::after { content: ""; position: absolute; left: 0; width: 18px; height: 2px; background: var(--text); border-radius: 2px; }
+.menu-btn span::before { top: -6px; }
+.menu-btn span::after { top: 6px; }
+.brand { font-family: var(--font-head); font-weight: 700; font-size: 15px; letter-spacing: .08em; }
+.brand small { font-family: var(--font-label); font-weight: 500; color: var(--text-sub); margin-left: 6px; letter-spacing: .04em; }
+
+/* ---- メニューの中身（開閉） ---- */
+.drawer {
+  position: fixed; top: 60px; left: 12px; z-index: 30; width: 240px; padding: 8px;
+  background: rgba(255,255,255,.8); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--glass-line); border-radius: var(--radius); box-shadow: var(--shadow-soft);
+  display: none;
+}
+.drawer.open { display: block; }
+.drawer a { display: flex; align-items: center; min-height: 48px; padding: 0 14px; border-radius: var(--radius-sm); color: var(--text); text-decoration: none; font-weight: 600; font-size: 15px; }
+.drawer a:hover, .drawer a[aria-current="page"] { background: var(--accent-soft); color: var(--accent-deep); }
+
+h1 { font-family: var(--font-head); font-weight: 700; font-size: 30px; letter-spacing: .02em; margin: 8px 0 4px; line-height: 1.15; }
+h2 { font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent-deep); margin: 36px 0 12px; }
 .note { color: var(--text-sub); font-size: 13px; margin: 0 0 12px; }
-.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 
-/* ---- ボタン：種類は3つだけ（主・副・削除） ---- */
-.btn { font: inherit; font-weight: 600; font-size: 15px; min-height: 44px; padding: 0 20px; border-radius: 999px; border: 1px solid transparent; cursor: pointer; }
-.btn-primary { background: var(--accent); color: #0b2e38; }
-.btn-secondary { background: var(--bg); color: var(--accent-deep); border-color: var(--accent); }
-.btn-danger { background: var(--bg); color: var(--danger); border-color: #f1c4a8; }
-.btn:disabled { opacity: .45; cursor: not-allowed; }
-.btn-block { width: 100%; }
+/* ---- ボタン：やわらかく浮いた質感（3種類だけ） ---- */
+.btn {
+  font: inherit; font-weight: 700; font-size: 15px; min-height: 48px; padding: 0 22px;
+  border-radius: var(--radius-sm); border: 1px solid var(--glass-line); cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn:active { transform: translateY(1px) scale(.99); }
+.btn-primary {
+  background: linear-gradient(180deg, #f8feff, var(--accent-soft));
+  color: var(--accent-deep);
+  box-shadow: 0 10px 22px -10px rgba(20,120,150,.45), inset 0 1px 0 #fff, inset 0 -2px 0 rgba(156,236,255,.6);
+}
+.btn-secondary {
+  background: var(--glass); color: var(--text);
+  box-shadow: var(--shadow-soft), inset 0 1px 0 #fff;
+}
+.btn-danger {
+  background: linear-gradient(180deg, #fffaf7, #fff0e8); color: var(--danger);
+  box-shadow: 0 10px 22px -12px rgba(194,65,12,.45), inset 0 1px 0 #fff;
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; box-shadow: none; }
 
-/* ---- カード ---- */
-.card { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px; }
-.card + .card { margin-top: 12px; }
-.card-title { font-size: 13px; color: var(--text-sub); margin: 0 0 4px; }
-.card-value { font-family: var(--font-en); font-size: 28px; font-weight: 700; color: var(--accent-deep); margin: 0; }
+/* ---- すりガラスのカード ---- */
+.glass {
+  background: var(--glass); border: 1px solid var(--glass-line); border-radius: var(--radius);
+  box-shadow: var(--shadow-soft); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  padding: 18px;
+}
+.glass + .glass { margin-top: 12px; }
+.card-title { font-size: 12px; color: var(--text-sub); letter-spacing: .08em; margin: 0 0 6px; font-family: var(--font-label); font-weight: 600; }
+.card-value { font-family: var(--font-head); font-size: 26px; font-weight: 700; color: var(--accent-deep); margin: 0; letter-spacing: .02em; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 
-/* ---- タブ（画面の中の切り替え） ---- */
-.tabs { display: flex; border-bottom: 1px solid var(--line); gap: 4px; overflow-x: auto; }
-.tab { font: inherit; font-weight: 600; min-height: 44px; padding: 0 14px; background: none; border: 0; color: var(--text-sub); border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
-.tab[aria-selected="true"] { color: var(--accent-deep); border-bottom-color: var(--accent); }
+/* ---- タブ ---- */
+.tabs { display: flex; gap: 6px; overflow-x: auto; padding: 4px; background: var(--glass); border: 1px solid var(--glass-line); border-radius: 999px; box-shadow: var(--shadow-soft); }
+.tab { font: inherit; font-weight: 700; font-size: 14px; min-height: 40px; padding: 0 16px; background: none; border: 0; border-radius: 999px; color: var(--text-sub); cursor: pointer; white-space: nowrap; }
+.tab[aria-selected="true"] { background: #fff; color: var(--accent-deep); box-shadow: 0 4px 12px -6px rgba(20,40,60,.3); }
 
-/* ---- セグメント（2〜4択の切り替え） ---- */
-.segment { display: inline-flex; background: var(--bg-sub); border-radius: 999px; padding: 4px; gap: 4px; }
-.segment button { font: inherit; font-size: 14px; min-height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: none; color: var(--text-sub); cursor: pointer; }
-.segment button[aria-pressed="true"] { background: var(--bg); color: var(--accent-deep); box-shadow: var(--shadow); font-weight: 600; }
+/* ---- セグメント ---- */
+.segment { display: inline-flex; background: var(--glass); border: 1px solid var(--glass-line); border-radius: 999px; padding: 4px; gap: 4px; box-shadow: var(--shadow-soft); }
+.segment button { font: inherit; font-size: 14px; font-weight: 600; min-height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: none; color: var(--text-sub); cursor: pointer; }
+.segment button[aria-pressed="true"] { background: #fff; color: var(--accent-deep); box-shadow: 0 4px 12px -6px rgba(20,40,60,.3); }
 
-/* ---- トグル（ON/OFF） ---- */
-.toggle { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; min-height: 44px; }
-.toggle input { appearance: none; width: 48px; height: 28px; border-radius: 999px; background: var(--line); position: relative; cursor: pointer; transition: background .2s; }
-.toggle input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: transform .2s; }
+/* ---- スイッチ ---- */
+.toggle { display: inline-flex; align-items: center; gap: 12px; font-size: 15px; min-height: 44px; font-weight: 600; }
+.toggle input { appearance: none; width: 50px; height: 30px; border-radius: 999px; background: #d9e0e7; position: relative; cursor: pointer; transition: background .2s; box-shadow: inset 0 1px 3px rgba(0,0,0,.12); }
+.toggle input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.2); transition: transform .2s; }
 .toggle input:checked { background: var(--accent); }
 .toggle input:checked::after { transform: translateX(20px); }
 
 /* ---- 入力欄 ---- */
 .field { display: grid; gap: 6px; margin-bottom: 14px; }
-.field label { font-size: 14px; font-weight: 600; }
-.field input, .field select, .field textarea { font: inherit; font-size: 16px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--bg); color: var(--text); }
-.field input:focus, .field select:focus, .field textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.field label { font-size: 14px; font-weight: 700; }
+.field input, .field textarea { font: inherit; font-size: 16px; min-height: 48px; padding: 10px 14px; border: 1px solid var(--glass-line); border-radius: var(--radius-sm); background: rgba(255,255,255,.7); color: var(--text); box-shadow: inset 0 1px 3px rgba(20,40,60,.06); }
+.field input:focus, .field textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
 .field .help { font-size: 12px; color: var(--text-sub); }
 .field .error { font-size: 12px; color: var(--danger); }
 
-/* ---- バッジ（状態表示） ---- */
-.badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); }
+/* ---- バッジ ---- */
+.badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-deep); }
 .badge-danger { background: #fff1ea; color: var(--danger); }
 
-/* ---- 一覧（楽曲・メンバーなど） ---- */
-.list { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-.list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 56px; padding: 12px 16px; background: var(--bg); border-top: 1px solid var(--line); }
+/* ---- 一覧 ---- */
+.list { list-style: none; margin: 0; padding: 0; background: var(--glass); border: 1px solid var(--glass-line); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-soft); }
+.list li { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 60px; padding: 12px 16px; border-top: 1px solid var(--line); }
 .list li:first-child { border-top: 0; }
-.list li:hover { background: var(--bg-sub); }
+.list li:hover { background: rgba(255,255,255,.6); }
 .list .sub { font-size: 13px; color: var(--text-sub); }
 
-/* ---- 状態表示（読み込み中・空・エラー）：どの画面でも同じ見た目 ---- */
-.state { text-align: center; padding: 32px 16px; color: var(--text-sub); border: 1px dashed var(--line); border-radius: var(--radius); }
+/* ---- 状態表示 ---- */
+.state { text-align: center; padding: 32px 16px; color: var(--text-sub); background: var(--glass); border: 1px dashed rgba(20,30,40,.15); border-radius: var(--radius); }
 .state strong { display: block; color: var(--text); font-size: 15px; margin-bottom: 4px; }
-.skeleton { height: 56px; border-radius: var(--radius-sm); background: linear-gradient(90deg, var(--bg-sub), var(--line), var(--bg-sub)); background-size: 200% 100%; animation: shimmer 1.2s infinite; }
+.skeleton { height: 60px; border-radius: var(--radius-sm); background: linear-gradient(90deg, rgba(255,255,255,.5), rgba(220,228,236,.8), rgba(255,255,255,.5)); background-size: 200% 100%; animation: shimmer 1.2s infinite; }
 @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
 
-/* ---- トースト（短い通知）：画面の下に一時的に出る ---- */
-.toast { position: fixed; left: 50%; bottom: 88px; transform: translateX(-50%); background: var(--text); color: #fff; font-size: 14px; padding: 12px 18px; border-radius: 999px; box-shadow: 0 6px 18px rgba(0,0,0,.2); }
+/* ---- トースト ---- */
+.toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%); background: rgba(29,38,48,.9); color: #fff; font-size: 14px; padding: 12px 18px; border-radius: 999px; box-shadow: 0 10px 24px rgba(0,0,0,.2); backdrop-filter: blur(8px); }
 
-/* ---- モーダル（画面の上に出る確認窓） ---- */
-.modal-backdrop { position: fixed; inset: 0; background: rgba(16,24,40,.4); display: flex; align-items: center; justify-content: center; padding: 16px; }
-.modal { background: var(--bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; width: 100%; max-width: 360px; }
-.modal h3 { margin: 0 0 8px; font-size: 17px; }
-.modal .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+/* ---- 確認窓 ---- */
+.modal { background: rgba(255,255,255,.85); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid var(--glass-line); border-radius: var(--radius); box-shadow: var(--shadow-soft); padding: 22px; max-width: 360px; margin: 0 auto; }
+.modal h3 { margin: 0 0 8px; font-family: var(--font-head); font-size: 17px; letter-spacing: .02em; }
+.modal .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
 
-/* ---- 下部ナビゲーション（ホーム・データ・ラボなど） ---- */
-.bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); padding-bottom: env(safe-area-inset-bottom); max-width: 720px; margin: 0 auto; }
-.bottom-nav a { display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 56px; justify-content: center; font-size: 12px; color: var(--text-sub); text-decoration: none; }
-.bottom-nav a[aria-current="page"] { color: var(--accent-deep); font-weight: 700; }
-.bottom-nav a[aria-current="page"]::before { content: ""; width: 28px; height: 3px; border-radius: 3px; background: var(--accent); margin-bottom: 4px; }
+/* ---- 戻る ---- */
+.back { font: inherit; font-size: 14px; font-weight: 700; min-height: 44px; border: 0; background: none; color: var(--accent-deep); padding: 0 4px; cursor: pointer; }
 
-/* ---- 戻る（階層の戻りボタン）：行き先を文字で示す ---- */
-.back { font: inherit; font-size: 14px; min-height: 44px; border: 0; background: none; color: var(--accent-deep); padding: 0 4px; cursor: pointer; }
+/* ---- 下部ナビ（ホーム・データ・ラボの3つ） ---- */
+.bottom-nav {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; max-width: 720px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3, 1fr); padding: 6px 12px calc(6px + env(safe-area-inset-bottom));
+  background: rgba(255,255,255,.55); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--glass-line); gap: 6px;
+}
+.bottom-nav a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; color: var(--text-sub); text-decoration: none; font-family: var(--font-label); letter-spacing: .06em; }
+.bottom-nav a[aria-current="page"] { color: var(--accent-deep); background: rgba(255,255,255,.8); box-shadow: 0 6px 16px -8px rgba(20,40,60,.35); }
 </style>
 </head>
 <body>
 
-<p class="note" style="margin-top:16px">デザインサンプル（データは見本です。実際の画面には反映されていません）</p>
-<h1>BMSG Universe</h1>
-<p class="note">この画面で、部品の形・色・文字の大きさを確認します。推しカラーはUniverseの設定で変わります。</p>
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="メニューを開く" aria-expanded="false" aria-controls="drawer"><span></span></button>
+  <div class="brand">BMSG UNIVERSE<small>デザイン見本</small></div>
+</header>
+
+<nav class="drawer" id="drawer" aria-label="メニュー">
+  <a href="#" aria-current="page">ホーム</a>
+  <a href="#">データ</a>
+  <a href="#">ラボ</a>
+  <a href="#">プロフィール</a>
+  <a href="#">歌詞</a>
+  <a href="#">カラオケ</a>
+  <a href="#">管理</a>
+</nav>
+
+<p class="note">データは見本です。実際の画面には反映されていません。</p>
+<h1>BMSG UNIVERSE</h1>
+<p class="note">推しカラーはUniverseの設定で変わります。初期値はシアンです。</p>
 
 <h2>色</h2>
 <div class="grid-2">
-  <div class="card"><p class="card-title">推しカラー（アクセント）</p><div style="height:40px;border-radius:8px;background:var(--accent)"></div><p class="note" style="margin:8px 0 0">初期値：シアン</p></div>
-  <div class="card"><p class="card-title">文字（本文・補足）</p><p style="margin:0;font-size:16px">本文の文字です。</p><p class="note" style="margin:4px 0 0">補足の文字です。</p></div>
+  <div class="glass"><p class="card-title">推しカラー</p><div style="height:44px;border-radius:12px;background:var(--accent);box-shadow:0 10px 22px -12px rgba(20,120,150,.5)"></div><p class="note" style="margin:10px 0 0">初期値：シアン</p></div>
+  <div class="glass"><p class="card-title">文字</p><p style="margin:0;font-size:16px;font-weight:600">本文の文字です。</p><p class="note" style="margin:4px 0 0">補足の文字です。</p></div>
 </div>
 
-<h2>ボタン（種類は3つだけ）</h2>
+<h2>ボタン</h2>
 <div class="row">
   <button class="btn btn-primary">保存する</button>
   <button class="btn btn-secondary">キャンセル</button>
@@ -127,7 +207,7 @@ h2 { font-size: 17px; margin: 32px 0 12px; padding-bottom: 8px; border-bottom: 1
   <button class="btn btn-primary" disabled>保存できません</button>
 </div>
 
-<h2>タブ（画面の中の切り替え）</h2>
+<h2>タブ</h2>
 <div class="tabs" role="tablist">
   <button class="tab" role="tab" aria-selected="true">概要</button>
   <button class="tab" role="tab" aria-selected="false">楽曲</button>
@@ -135,59 +215,70 @@ h2 { font-size: 17px; margin: 32px 0 12px; padding-bottom: 8px; border-bottom: 1
   <button class="tab" role="tab" aria-selected="false">履歴</button>
 </div>
 
-<h2>セグメント（2〜4択の切り替え）</h2>
+<h2>切り替え</h2>
 <div class="segment" role="group">
   <button aria-pressed="true">すべて</button>
   <button aria-pressed="false">BE:FIRST</button>
   <button aria-pressed="false">ALLSTARS</button>
 </div>
 
-<h2>数値のカード</h2>
+<h2>数値</h2>
 <div class="grid-2">
-  <div class="card"><p class="card-title">登録者数</p><p class="card-value">1,400,000</p><p class="sub" style="font-size:13px;color:var(--text-sub);margin:4px 0 0">前回比 +0</p></div>
-  <div class="card"><p class="card-title">総再生回数</p><p class="card-value">1.80億</p><p style="font-size:13px;color:var(--text-sub);margin:4px 0 0">前回比 +75</p></div>
+  <div class="glass"><p class="card-title">登録者数</p><p class="card-value">1,400,000</p><p class="note" style="margin:6px 0 0">前回比 +0</p></div>
+  <div class="glass"><p class="card-title">総再生回数</p><p class="card-value">1.80億</p><p class="note" style="margin:6px 0 0">前回比 +75</p></div>
 </div>
 
 <h2>一覧</h2>
 <ul class="list">
-  <li><div><div>Be Myself</div><div class="sub">2025年 / シングル</div></div><span class="badge">公開中</span></li>
-  <li><div><div>Hot Summer</div><div class="sub">2024年 / アルバム</div></div><span class="badge badge-danger">未公開</span></li>
-  <li><div><div>夏の終わりに</div><div class="sub">2023年 / デジタル</div></div><span class="badge">公開中</span></li>
+  <li><div><div style="font-weight:700">Be Myself</div><div class="sub">2025年 / シングル</div></div><span class="badge">公開中</span></li>
+  <li><div><div style="font-weight:700">Hot Summer</div><div class="sub">2024年 / アルバム</div></div><span class="badge badge-danger">未公開</span></li>
+  <li><div><div style="font-weight:700">夏の終わりに</div><div class="sub">2023年 / デジタル</div></div><span class="badge">公開中</span></li>
 </ul>
 
-<h2>入力欄</h2>
-<div class="field"><label for="f1">曲名</label><input id="f1" value="Be Myself"><span class="help">曲名は正式な表記で入力してください。</span></div>
-<div class="field"><label for="f2">歌詞（行ごと）</label><textarea id="f2" rows="3">歌詞の一行目</textarea></div>
-<div class="field"><label for="f3">メンバー</label><input id="f3" value="" aria-invalid="true"><span class="error">メンバーを選んでください。</span></div>
+<h2>入力</h2>
+<div class="glass">
+  <div class="field"><label for="f1">曲名</label><input id="f1" value="Be Myself"><span class="help">正式な表記で入力してください。</span></div>
+  <div class="field"><label for="f2">歌詞（行ごと）</label><textarea id="f2" rows="3">歌詞の一行目</textarea></div>
+  <div class="field"><label for="f3">メンバー</label><input id="f3" value="" aria-invalid="true"><span class="error">メンバーを選んでください。</span></div>
+</div>
 
 <h2>スイッチ</h2>
 <label class="toggle"><input type="checkbox" checked> 推しカラーを使う</label>
 
-<h2>状態の表示（読み込み中・空・エラー）</h2>
-<div class="card"><div class="skeleton"></div></div>
+<h2>読み込み中・空・エラー</h2>
+<div class="glass"><div class="skeleton"></div></div>
 <div class="state" style="margin-top:12px"><strong>該当するデータがありません</strong>検索条件を変えてみてください。</div>
-<div class="state" style="margin-top:12px;border-color:#f1c4a8"><strong style="color:var(--danger)">読み込めませんでした</strong>通信の状態を確認して、もう一度お試しください。<div style="margin-top:12px"><button class="btn btn-secondary">もう一度読み込む</button></div></div>
+<div class="state" style="margin-top:12px"><strong style="color:var(--danger)">読み込めませんでした</strong>通信の状態を確認して、もう一度お試しください。<div style="margin-top:14px"><button class="btn btn-secondary">もう一度読み込む</button></div></div>
 
-<h2>戻る（階層の移動）</h2>
+<h2>戻る</h2>
 <button class="back">‹ データに戻る</button>
 
-<h2>確認窓（モーダル）</h2>
-<div class="modal" style="position:relative;margin:0 auto;box-shadow:var(--shadow);border:1px solid var(--line)">
+<h2>確認</h2>
+<div class="modal">
   <h3>この曲を削除しますか？</h3>
   <p class="note" style="margin:0">削除すると元に戻せません。</p>
   <div class="actions"><button class="btn btn-secondary">キャンセル</button><button class="btn btn-danger">削除する</button></div>
 </div>
 
-<h2>通知（トースト）</h2>
-<p class="note">保存が完了すると、画面の下に短い通知が出ます。</p>
+<h2>通知</h2>
 <div class="toast" style="position:static;transform:none;display:inline-block">保存しました</div>
 
 <nav class="bottom-nav" aria-label="主な画面">
   <a href="#" aria-current="page">ホーム</a>
   <a href="#">データ</a>
   <a href="#">ラボ</a>
-  <a href="#">設定</a>
 </nav>
 
+<script>
+  // メニューの開閉（見本の動きだけ。実際の画面では同じ仕組みを使います）
+  (function () {
+    var btn = document.getElementById('menuBtn');
+    var drawer = document.getElementById('drawer');
+    btn.addEventListener('click', function () {
+      var open = drawer.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+    });
+  })();
+</script>
 </body>
 </html>
