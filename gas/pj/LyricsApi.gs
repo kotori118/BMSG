@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ LyricsApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ LyricsApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 const LYRICS_CATEGORIES_ = Object.freeze(['ALL', 'BE:FIRST', 'MAZZEL', 'STARGLOW', 'HANA', 'UNIT']);
 
 function getLyricsCatalog() {

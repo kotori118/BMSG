@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ ProfileManagementApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ ProfileManagementApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 const PROFILE_MGMT_GROUPS_ = Object.freeze(['BE:FIRST','MAZZEL','STARGLOW','HANA','BMSG POSSE']);
 
 /**

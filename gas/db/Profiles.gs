@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-DB Profiles.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-DB Profiles.gs (2026-11-21). This repository is now the source: edit this file directly.
 /** 入力_プロフィール → 02_Members / 05_Profiles */
 
 const BU_PROFILE = Object.freeze({

@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ Config.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ Config.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * BMSG Universe shared configuration.
  */
@@ -17,7 +17,7 @@ const UNIVERSE_CONFIG = Object.freeze({
     LYRICS_PARTS: '08_LyricsParts', IMAGES: '09_Images', PERFORMANCE_METRICS: '10_PerformanceMetrics',
     PROFILE_SETTINGS: 'ProfileSettings', USERS: 'Users', ID_REGISTRY: 'IDRegistry',
     KARAOKE_ROOMS: 'KARAOKE_Rooms', KARAOKE_RESULTS: 'KARAOKE_ShuffleResults', KARAOKE_FAVORITES: 'KARAOKE_FavoriteSets',
-    CARD_COLLECTIONS: 'CardCollections', USER_FAVORITES: 'UserFavorites', RECENT_ACTIVITIES: 'RecentActivities',
+    CARD_COLLECTIONS: 'CardCollections',
     POKER_ROOMS: 'PokerRooms', POKER_PLAYERS: 'PokerPlayers',
     POKER_VOTES: 'PokerVotes', POKER_HIGHLIGHTS: 'PokerHighlights',
     QUIZ_ROOMS: 'QuizRooms', QUIZ_QUESTIONS: 'QuizQuestions',

@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-DB MetricsTransfers.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-DB MetricsTransfers.gs (2026-11-21). This repository is now the source: edit this file directly.
 
 /**
  * New-song writer only: append a single metrics row instead of clearing and

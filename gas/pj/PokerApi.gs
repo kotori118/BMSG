@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ PokerApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ PokerApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 const POKER_RULES_ = Object.freeze(['A','B']);
 const POKER_ROOM_MS_ = 24 * 60 * 60 * 1000;
 const POKER_MAX_PLAYERS_ = 3;
@@ -173,10 +173,6 @@ function finalizePokerHand(userId, roomId) {
     if (!context.player.isFinalized) {
       updatePokerPlayerRow_(getLogSheet_(UNIVERSE_CONFIG.SHEETS.POKER_PLAYERS), context.player.rowNumber, {
         IsFinalized: true, FinalizedAt: new Date(), UpdatedAt: new Date()
-      });
-      appendByHeaders_(getLogSheet_(UNIVERSE_CONFIG.SHEETS.RECENT_ACTIVITIES), {
-        ActivityID: Utilities.getUuid(), UserID: uid, ActivityType: 'PLAY_POKER',
-        TargetID: context.room.gameId, OccurredAt: new Date()
       });
     }
     const players = getPokerPlayerRows_(context.room.gameId);

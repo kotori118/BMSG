@@ -1,6 +1,5 @@
-// Imported from kotori118/BMSG-PJ LogRepository.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ LogRepository.gs (2026-11-21). This repository is now the source: edit this file directly.
 // Shared repository for BMSG Universe Log sheet access helpers.
-const UNIVERSE_RECENT_LIMIT_ = 10;
 
 function getLogSheet_(name) {
   const sheet = SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID).getSheetByName(name);
@@ -42,10 +41,6 @@ function readSheetObjectsWithRows_(sheet) {
 }
 
 function appendByHeaders_(sheet, record) {
-  if (sheet.getName() === UNIVERSE_CONFIG.SHEETS.RECENT_ACTIVITIES) {
-    appendRecentActivity_(sheet, record);
-    return;
-  }
   appendRawByHeaders_(sheet, record);
 }
 
@@ -56,38 +51,6 @@ function appendRawByHeaders_(sheet, record) {
   }));
 }
 
-function appendRecentActivity_(sheet, record) {
-  const userId = String(record && record.UserID || '').trim();
-  const activityType = String(record && record.ActivityType || '').trim();
-  const targetId = String(record && record.TargetID || '').trim();
-  if (!userId || !activityType || !targetId) throw new Error('Recent activity requires UserID, ActivityType and TargetID.');
-
-  const rows = readSheetObjectsWithRows_(sheet)
-    .filter(function(row) { return String(row.UserID || '').trim() === userId; })
-    .sort(function(a, b) { return a.__rowNumber - b.__rowNumber; });
-  const latest = rows.length ? rows[rows.length - 1] : null;
-  const isViewActivity = activityType === 'VIEW_MEMBER' || activityType === 'VIEW_LYRICS';
-  const shouldMerge = latest &&
-    String(latest.ActivityType || '').trim() === activityType &&
-    (!isViewActivity || String(latest.TargetID || '').trim() === targetId);
-
-  if (shouldMerge) {
-    updateByHeaders_(sheet, latest.__rowNumber, {OccurredAt: record.OccurredAt || new Date()});
-  } else {
-    appendRawByHeaders_(sheet, record);
-  }
-
-  const currentRows = readSheetObjectsWithRows_(sheet)
-    .filter(function(row) { return String(row.UserID || '').trim() === userId; })
-    .sort(function(a, b) { return a.__rowNumber - b.__rowNumber; });
-  const excess = currentRows.length - UNIVERSE_RECENT_LIMIT_;
-  if (excess > 0) {
-    currentRows.slice(0, excess)
-      .map(function(row) { return row.__rowNumber; })
-      .sort(function(a, b) { return b - a; })
-      .forEach(function(rowNumber) { sheet.deleteRow(rowNumber); });
-  }
-}
 
 function updateByHeaders_(sheet, rowNumber, record) {
   if (!rowNumber || rowNumber < 2) throw new Error('Invalid row number.');

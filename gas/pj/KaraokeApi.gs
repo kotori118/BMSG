@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ KaraokeApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ KaraokeApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 const KARAOKE_TZ_ = 'Asia/Tokyo';
 const KARAOKE_ROOM_MS_ = 24 * 60 * 60 * 1000;
 

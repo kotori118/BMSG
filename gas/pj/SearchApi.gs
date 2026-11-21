@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ SearchApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ SearchApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * READ ONLY cross-content search for BMSG Universe.
  * Sources remain the existing Core DB / Log DB masters; no search index sheet is persisted.

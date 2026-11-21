@@ -86,11 +86,13 @@ test('every API action resolves to a defined function', () => {
   const ctx = loadProject();
   const actions = ctx.universeApiActions_();
   const names = Object.keys(actions);
-  assert.deepEqual(names.slice().sort(), report.apiActions.slice().sort());
-  assert.equal(names.length, 99);
+  // Favorites and recent history were removed on 2026-11-22.
+  const removed = ['getUniverseFavorites', 'setUniverseFavorite', 'recordUniverseActivity'];
+  assert.deepEqual(names.slice().sort(), report.apiActions.filter((n) => !removed.includes(n)).sort());
+  assert.equal(names.length, 96);
   for (const n of names) assert.equal(typeof actions[n].fn, 'function', n);
-  for (const n of report.apiExcluded) assert.ok(!(n in actions), `${n} must not be exposed`);
-  assert.equal(names.filter((n) => actions[n].read).length, 45);
+  for (const n of [...report.apiExcluded, ...removed]) assert.ok(!(n in actions), `${n} must not be exposed`);
+  assert.equal(names.filter((n) => actions[n].read).length, 44);
 });
 
 test('every DB writer PJ selects by name resolves through universeDbWriter_', () => {
@@ -119,12 +121,12 @@ test('dispatcher: health check, GET read, POST write, positional args', () => {
   const seen = [];
   ctx.getProfileMembers = (...args) => { seen.push(['getProfileMembers', args]); return [{ id: 'M101' }]; };
   ctx.saveUniverseUserPreferences = (...args) => { seen.push(['saveUniverseUserPreferences', args]); return { ok: true }; };
-  ctx.recordUniverseActivity = () => undefined;
+  ctx.leaveKaraokeRoom = () => undefined;
 
   assert.deepEqual(call(ctx, 'GET', { parameter: {} }), { ok: true, data: { service: 'bmsg-universe-api' } });
   assert.deepEqual(call(ctx, 'GET', { parameter: { action: 'getProfileMembers', args: '["U001",{"x":1}]' } }), { ok: true, data: [{ id: 'M101' }] });
   assert.deepEqual(call(ctx, 'POST', { postData: { contents: JSON.stringify({ action: 'saveUniverseUserPreferences', args: ['U002', { mode: 'ON' }] }) } }), { ok: true, data: { ok: true } });
-  assert.deepEqual(call(ctx, 'POST', { postData: { contents: JSON.stringify({ action: 'recordUniverseActivity' }) } }), { ok: true, data: null });
+  assert.deepEqual(call(ctx, 'POST', { postData: { contents: JSON.stringify({ action: 'leaveKaraokeRoom' }) } }), { ok: true, data: null });
   // Arrays built inside the vm have another realm's prototype, so compare serialized values.
   assert.equal(JSON.stringify(seen), JSON.stringify([
     ['getProfileMembers', ['U001', { x: 1 }]],
@@ -168,4 +170,11 @@ test('manifest runs as the owner, open to anonymous callers, with no library dep
 test('gas/ holds only files clasp should push', () => {
   const walkAll = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => d.isDirectory() ? walkAll(path.join(dir, d.name)) : [path.relative(GAS, path.join(dir, d.name))]);
   for (const rel of walkAll(GAS)) assert.ok(rel.endsWith('.gs') || rel === 'appsscript.json', `unexpected file in gas/: ${rel}`);
+});
+
+test('favorites and recent history are gone from the server', () => {
+  const all = files.map((f) => f.src).join('\n');
+  for (const word of ['RECENT_ACTIVITIES', 'USER_FAVORITES', 'appendRecentActivity_', 'appendCoverActivity_', 'readUniverseFavorites_', 'readUniverseRecent_']) {
+    assert.ok(!all.includes(word), `${word} should be removed`);
+  }
 });

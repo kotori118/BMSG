@@ -18,7 +18,12 @@ import { execFileSync } from 'node:child_process';
 import * as acorn from 'acorn';
 import * as walk from 'acorn-walk';
 
-const [pjDir, dbDir] = process.argv.slice(2);
+// Retired: this repository is now the source of truth. Re-running would overwrite edits made here.
+if (!process.argv.includes('--force')) {
+  console.error('This import was a one-time migration step and is retired. Edit the files in this repository instead. (Use --force only to deliberately re-import and discard local edits.)');
+  process.exit(1);
+}
+const [pjDir, dbDir] = process.argv.slice(2).filter((a) => a !== '--force');
 if (!pjDir || !dbDir) {
   console.error('Usage: node scripts/import-gas-sources.mjs <BMSG-PJ dir> <BMSG-DB dir>');
   process.exit(2);

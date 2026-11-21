@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ CatalogManagementApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ CatalogManagementApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 /** Shared management access uses the existing Universe user selection. */
 function catalogManagementSiteAccess_(userId) {
   const uid=String(userId||'').trim();

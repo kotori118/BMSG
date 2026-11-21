@@ -17,7 +17,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-const pjDir = process.argv[2];
+// Retired: this repository is now the source of truth. Re-running would overwrite edits made here.
+if (!process.argv.includes('--force')) {
+  console.error('This import was a one-time migration step and is retired. Edit the files in this repository instead. (Use --force only to deliberately re-import and discard local edits.)');
+  process.exit(1);
+}
+const pjDir = process.argv.slice(2).filter((a) => a !== '--force')[0];
 if (!pjDir) {
   console.error('Usage: node scripts/import-web-sources.mjs <BMSG-PJ dir>');
   process.exit(2);

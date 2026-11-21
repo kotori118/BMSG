@@ -13,33 +13,24 @@
     if(!userId){homeState.status='idle';homeState.error='';renderHomeDynamic_();return;}
     homeState.status='loading';homeState.error='';renderHomeDynamic_();
     google.script.run.withSuccessHandler(function(response){
-      if(!response||!response.ok||!response.data){homeState.status='error';homeState.error='HOMEの読み込みに失敗しました。';renderHomeDynamic_();return;}
-      homeState.status='ready';homeState.data=response.data;setUniverseStateCache({favorites:response.data.favorites,recent:response.data.recent});renderHomeDynamic_();
-    }).withFailureHandler(function(error){homeState.status='error';homeState.error=error&&error.message?error.message:'HOMEの読み込みに失敗しました。';renderHomeDynamic_();}).getUniverseHomeBootstrap(userId);
+      if(!response||!response.ok||!response.data){homeState.status='error';homeState.error='ホームの読み込みに失敗しました。';renderHomeDynamic_();return;}
+      homeState.status='ready';homeState.data=response.data;renderHomeDynamic_();
+    }).withFailureHandler(function(error){homeState.status='error';homeState.error=error&&error.message?error.message:'ホームの読み込みに失敗しました。';renderHomeDynamic_();}).getUniverseHomeBootstrap(userId);
   }
 
   function renderHomeDynamic_(){
     const host=document.getElementById('homeDynamic');if(!host)return;
     if(homeState.status==='loading'||homeState.status==='idle'){host.innerHTML=renderHomeSkeleton_();return;}
-    if(homeState.status==='error'){host.innerHTML='<div class="home-state"><strong>ERROR</strong><p>'+escapeHtml(homeState.error)+'</p><button type="button" onclick="initHomePage()">RETRY</button></div>';return;}
+    if(homeState.status==='error'){host.innerHTML='<div class="home-state"><strong>エラー</strong><p>'+escapeHtml(homeState.error)+'</p><button type="button" onclick="initHomePage()">もう一度読み込む</button></div>';return;}
     const data=homeState.data||{};
-    host.innerHTML=renderHomeToday_(data.todaySong,data.luckyMember,data.birthdayMembers||[])+renderHomeListSection_('お気に入り',data.favoritePreview||[],'favorites')+renderHomeListSection_('履歴',data.recentPreview||[],'recent');
+    host.innerHTML=renderHomeToday_(data.todaySong,data.luckyMember,data.birthdayMembers||[]);
   }
 
   function renderHomeSkeleton_(){
     return '<section class="home-today-grid home-skeleton-group" aria-busy="true">'
       +'<article class="home-feature-card home-song-card home-skeleton-card"><span class="home-feature-label">TODAY\'S SONG</span><span class="home-skeleton-line home-skeleton-title"></span><span class="home-skeleton-line home-skeleton-meta"></span><span class="home-skeleton-line home-skeleton-action"></span></article>'
       +'<article class="home-feature-card home-member-card home-skeleton-card"><span class="home-feature-label">LUCKY MEMBER</span><span class="home-skeleton-line home-skeleton-title short"></span><span class="home-skeleton-line home-skeleton-action"></span></article>'
-      +'</section>'
-      +renderHomeSkeletonList_('お気に入り')
-      +renderHomeSkeletonList_('履歴');
-  }
-
-  function renderHomeSkeletonList_(title){
-    return '<section class="home-list-section home-skeleton-group" aria-busy="true"><div class="home-section-head"><div><h2>'+escapeHtml(title)+'</h2></div></div><div class="home-list home-skeleton-list">'
-      +'<div class="home-skeleton-row"><span class="home-skeleton-line home-skeleton-row-meta"></span><span class="home-skeleton-line home-skeleton-row-title"></span></div>'
-      +'<div class="home-skeleton-row"><span class="home-skeleton-line home-skeleton-row-meta"></span><span class="home-skeleton-line home-skeleton-row-title short"></span></div>'
-      +'</div></section>';
+      +'</section>';
   }
 
   function renderHomeToday_(song,member,birthdayMembers){
@@ -57,40 +48,4 @@
     return '<article class="home-feature-card home-member-card home-birthday-card"><span class="home-feature-label">HAPPY BIRTHDAY! 🎂</span><div class="home-birthday-copy"><strong>'+label+'</strong><small>今日は特別なLUCKY MEMBER DAY</small></div><div class="home-birthday-members">'+buttons+'</div><i class="home-birthday-sparkle sparkle-one" aria-hidden="true">✦</i><i class="home-birthday-sparkle sparkle-two" aria-hidden="true">✧</i><i class="home-birthday-sparkle sparkle-three" aria-hidden="true">✦</i></article>';
   }
 
-  function renderHomeListSection_(title,items,kind){
-    items=Array.isArray(items)?items:[];
-    const rows=items.length?items.map(function(item){return '<button class="home-list-row" type="button" onclick=\'openUniverseTarget('+JSON.stringify({route:item.route,params:item.params||{}}).replace(/'/g,"&#39;")+')\'><span><small>'+escapeHtml(homeListMeta_(item,kind))+'</small><strong>'+escapeHtml(item.label||'')+'</strong></span><b>›</b></button>';}).join(''):'<p class="home-empty">まだありません。</p>';
-    const more='<button class="home-more" type="button" onclick="openHomeCollection(\''+kind+'\')">もっと見る</button>';
-    return '<section class="home-list-section"><div class="home-section-head"><div><h2>'+escapeHtml(title)+'</h2></div>'+more+'</div><div class="home-list">'+rows+'</div></section>';
-  }
-
-  function homeListMeta_(item,kind){
-    if(kind==='favorites')return item.targetType==='PAGE'?'PAGE':item.targetType;
-    const labels={VIEW_MEMBER:'PROFILE',VIEW_LYRICS:'LYRICS',PLAY_QUIZ:'QUIZ',PLAY_POKER:'POKER',DRAW_CARD:'TRADING CARD',CREATE_COVER:'COVER MAKER'};
-    return labels[item.activityType]||item.activityType||'';
-  }
-
-  function openHomeCollection(kind){
-    if(homeState.status!=='ready')return;
-    const source=kind==='favorites'?(homeState.data.favorites||[]):(homeState.data.recent||[]);
-    const title=kind==='favorites'?'お気に入り':'履歴';
-    const removable=kind==='favorites';
-    const body=source.length?source.map(function(item,index){
-      const displayLabel=String(item&&item.label||item&&item.targetId||'').trim()||'NO DATA';
-      const open='<button class="home-collection-open" type="button" onclick=\'openHomeCollectionItem("'+kind+'",'+index+')\'><span class="home-collection-copy"><small>'+escapeHtml(homeListMeta_(item,kind))+'</small><span class="home-collection-title">'+escapeHtml(displayLabel)+'</span></span><b>›</b></button>';
-      const remove=removable?'<button class="home-collection-remove" type="button" aria-label="お気に入りから削除" onclick="removeHomeFavorite('+index+')">×</button>':'';
-      return '<div class="home-collection-row '+(removable?'is-removable':'is-readonly')+'">'+open+remove+'</div>';
-    }).join(''):'<p class="home-empty">まだありません。</p>';
-    const existing=document.getElementById('homeCollectionOverlay');if(existing)existing.remove();
-    const overlay=document.createElement('div');overlay.id='homeCollectionOverlay';overlay.className='modal-overlay home-collection-overlay open';overlay.innerHTML='<section class="settings-panel home-collection-panel" role="dialog" aria-modal="true"><header class="modal-head"><h2 class="modal-title">'+title+'</h2><button class="overlay-close" type="button" onclick="closeHomeCollection()">×</button></header><div class="home-collection-list">'+body+'</div></section>';overlay.addEventListener('click',function(event){if(event.target===overlay)closeHomeCollection();});document.body.appendChild(overlay);document.body.style.overflow='hidden';
-  }
-
-  function closeHomeCollection(){const overlay=document.getElementById('homeCollectionOverlay');if(overlay)overlay.remove();document.body.style.overflow='';}
-  function openHomeCollectionItem(kind,index){const source=kind==='favorites'?(homeState.data.favorites||[]):(homeState.data.recent||[]);const item=source[index];closeHomeCollection();openUniverseTarget(item);}
-  function removeHomeFavorite(index){
-    const item=homeState.data&&homeState.data.favorites?homeState.data.favorites[index]:null;if(!item||!window.confirm('お気に入りから削除しますか？'))return;
-    const userId=typeof getUniverseUserId==='function'?getUniverseUserId():'';
-    google.script.run.withSuccessHandler(function(response){if(!response||!response.ok)return;homeState.data.favorites=response.data.favorites||[];homeState.data.favoritePreview=homeState.data.favorites.slice(0,5);setUniverseStateCache({favorites:homeState.data.favorites,recent:homeState.data.recent||[]});renderHomeDynamic_();openHomeCollection('favorites');}).withFailureHandler(function(){}).setUniverseFavorite({userId:userId,targetType:item.targetType,targetId:item.targetId,favorite:false});
-  }
-  function refreshHomeFavorites(){if(currentRoute==='home')initHomePage();}
 </script>

@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ ManagementOperationsApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ ManagementOperationsApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 /** Routed advanced editors: only explicit library operations are exposed. */
 function getManagementOperationsBootstrap(userId){
   catalogManagementSiteAccess_(userId);

@@ -16,3 +16,10 @@ test('every partial in web/partials is included in the page', () => {
   const partials = fs.readdirSync(path.join(ROOT, 'web', 'partials')).filter((f) => f.endsWith('.html')).map((f) => f.slice(0, -5));
   assert.deepEqual(partials.filter((p) => !included.has(p)), []);
 });
+
+test('favorites and recent history are gone from the screens', () => {
+  const page = fs.readFileSync(path.join(ROOT, 'web', 'index.html'), 'utf8');
+  for (const word of ['getUniverseFavorites', 'setUniverseFavorite', 'recordUniverseActivity', 'favoritePageButton', 'MutationObserver(function(){\n      syncCurrentFavoriteButton']) {
+    assert.ok(!page.includes(word), `${word} should be removed`);
+  }
+});

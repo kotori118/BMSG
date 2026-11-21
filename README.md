@@ -13,7 +13,7 @@ BMSG Universe の移行先リポジトリ。フロントを Cloudflare Pages、�
 | `gas/` | Apps Script プロジェクト（clasp の rootDir）。ここにあるものだけが GAS に push される |
 | `gas/Dispatcher.gs` | `doGet`／`doPost`。JSON API の入口（手で管理） |
 | `gas/appsscript.json` | マニフェスト：`executeAs=USER_DEPLOYING`、`access=ANYONE_ANONYMOUS`（手で管理） |
-| `gas/ApiActions.gs`、`gas/DbBridge.gs`、`gas/pj/`、`gas/db/` | 移行元から生成したコード。直接編集しない |
+| `gas/ApiActions.gs`、`gas/DbBridge.gs`、`gas/pj/`、`gas/db/` | 移行元から取り込んだコード。今はこのリポジトリが正本なので、直接編集する。API を増減したら `ApiActions.gs` も直す |
 | `scripts/import-gas-sources.mjs` | 生成スクリプト |
 | `docs/migration/` | 棚卸し（P0）と生成レポート |
 | `web/` | フロント（Cloudflare Pages の出力ディレクトリ）。`index.html` は生成物 |
@@ -45,13 +45,13 @@ node tests/browser/screens.mjs <出力先> data lab   # 実データで画面を
 - 新デザイン済み：データ、ラボ、左上のメニュー、通知。
 - `scripts/import-web-sources.mjs` は移行時に一度使ったもの。再実行すると `web/partials/` の変更が上書きされるので使わない。
 
-## 生成し直す
+## 取り込みスクリプトについて
 
-```sh
-npm install
-node scripts/import-gas-sources.mjs <BMSG-PJのパス> <BMSG-DBのパス>
-npm test
-```
+`scripts/import-gas-sources.mjs` と `scripts/import-web-sources.mjs` は移行時に一度だけ使ったもの。再実行するとこのリポジトリでの変更が上書きされるため、`--force` を付けない限り動かない。
+
+## 廃止した機能
+
+- お気に入り・履歴（2026-11-22）：画面、API（`getUniverseFavorites`、`setUniverseFavorite`、`recordUniverseActivity`）、カード・カバー・ポーカー・クイズでの履歴の書き込み、全画面を監視していた処理を削除。Log DB の `UserFavorites`、`RecentActivities` シートとデータは残してある（アプリからは使わない）。
 
 ## デプロイ
 

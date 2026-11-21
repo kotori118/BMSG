@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ PerformanceTimerApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ PerformanceTimerApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * PERFORMANCE TIMER API
  * Universe SETTINGS > TOOLS / 歌唱・ダンス秒数計測

@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ QuizApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ QuizApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 const QUIZ_MODES_ = Object.freeze(['ONLINE', 'OFFLINE']);
 const QUIZ_GENRES_ = Object.freeze(['LYRICS']);
 const QUIZ_DIFFICULTIES_ = Object.freeze(['NORMAL', 'ADVANCED']);

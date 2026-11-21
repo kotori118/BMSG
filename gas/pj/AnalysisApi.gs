@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ AnalysisApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ AnalysisApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * ANALYSIS PHASE4 data adapter.
  * Existing BE:FIRST ANALYSIS calculations are preserved while data is read

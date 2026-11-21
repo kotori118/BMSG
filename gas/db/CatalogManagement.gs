@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-DB CatalogManagement.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-DB CatalogManagement.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * Catalog management v1 (staged feature).
  * All mutations are performed by BMSG-DB, never by the client or a Sheets menu.

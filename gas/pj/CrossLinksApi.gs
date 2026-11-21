@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ CrossLinksApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ CrossLinksApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * PHASE5 cross-feature read-only adapters.
  * Cross-feature data belongs here so PROFILE / LYRICS / ANALYSIS / CARD

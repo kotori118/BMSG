@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ QuizRepository.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ QuizRepository.gs (2026-11-21). This repository is now the source: edit this file directly.
 const QUIZ_RETENTION_MS_ = 30 * 24 * 60 * 60 * 1000;
 
 function getRecentQuizRooms_(uid) {
@@ -117,7 +117,6 @@ function saveQuizUserResult_(game, uid, score, totalMs, details) {
   const now = new Date();
   appendByHeaders_(getLogSheet_(UNIVERSE_CONFIG.SHEETS.QUIZ_RESULTS), { QuizGameID: game.gameId, UserID: uid, Score: score, TotalAnswerTimeMs: Math.max(0, Math.round(totalMs || 0)), AnswerDetailsJSON: JSON.stringify(details || []), AnsweredAt: now });
   appendByHeaders_(getLogSheet_(UNIVERSE_CONFIG.SHEETS.QUIZ_SCORES), { QuizScoreID: Utilities.getUuid(), SourceGameID: game.gameId, UserID: uid, Mode: game.mode, Genre: quizGenreStorage_(game.genre), Course: quizCourseStorage_(game.course), Difficulty: quizDifficultyStorage_(game.difficulty), Score: score, PlayedAt: now });
-  appendByHeaders_(getLogSheet_(UNIVERSE_CONFIG.SHEETS.RECENT_ACTIVITIES), { ActivityID: Utilities.getUuid(), UserID: uid, ActivityType: 'PLAY_QUIZ', TargetID: game.gameId, OccurredAt: now });
 }
 
 function saveQuizGameRows_(params, generated) {

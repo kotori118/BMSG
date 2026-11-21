@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ CacheInvalidation.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ CacheInvalidation.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * Shared cache invalidation for management writes.
  * Keep mutation-to-cache dependencies here so feature APIs do not drift apart.

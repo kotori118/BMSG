@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-DB CatalogMemberMaintenance.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-DB CatalogMemberMaintenance.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * Shared member maintenance for registered Universe users. Never invoked by legacy Sheet menus.
  * Catalog schema, backup, reference and confirmation checks are retained.

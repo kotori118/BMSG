@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ CardApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ CardApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 const CARD_RARITY_WEIGHTS_ = Object.freeze({N:70,R:24,SR:5,SSR:1});
 const CARD_RARITY_ORDER_ = Object.freeze({N:0,R:1,SR:2,SSR:3});
 const CARD_CATALOG_CACHE_KEY_ = 'trading_card_catalog_v3';
@@ -44,8 +44,6 @@ function drawTradingCard(userId, groupName) {
       cacheCardCollectionIds_(uid, collected);
     }
 
-    const activitySheet = requireUniverseSheet_(log, UNIVERSE_CONFIG.SHEETS.RECENT_ACTIVITIES);
-    appendByHeaders_(activitySheet, {ActivityID:Utilities.getUuid(),UserID:uid,ActivityType:'DRAW_CARD',TargetID:card.imageId,OccurredAt:new Date()});
     return {card:card,isNew:!already,totalCount:model.cards.length,collectedCount:model.cards.reduce(function(sum,item){return sum + (collected[item.imageId] ? 1 : 0);},0)};
   });
 }

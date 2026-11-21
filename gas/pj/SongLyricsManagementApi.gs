@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ SongLyricsManagementApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ SongLyricsManagementApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 /** SETTINGS > 管理 > 楽曲・歌詞管理
  * Reads stay in BMSG-PJ. All Song / Lyrics / Guest writes are delegated to the
  * version-pinned BMSG-DB library for locking, validation and IDRegistry allocation.

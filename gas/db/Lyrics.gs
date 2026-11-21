@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-DB Lyrics.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-DB Lyrics.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * BMSG Universe 本体GAS
  * Lyrics.gs v1.0 - 歌詞自由入力解析・確認登録

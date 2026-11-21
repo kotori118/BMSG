@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ CoreRepository.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ CoreRepository.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * Read a Core DB sheet as header-keyed objects.
  * No write methods are defined in this repository.

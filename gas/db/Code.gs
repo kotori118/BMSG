@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-DB Code.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-DB Code.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * BMSG Universe 管理GAS
  * 共通設定・メニュー・安全な読書きヘルパー

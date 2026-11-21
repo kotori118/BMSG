@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ CoverApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ CoverApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 /** BMSG Universe COVER MAKER */
 const COVER_ALL_ID_ = '99';
 const COVER_ALLSTARS_GROUP_ID_ = 'U8';
@@ -339,7 +339,6 @@ function saveCoverProject(payload) {
       SpreadsheetApp.flush();
       assertCoverSaved_(projectSheet, assignmentSheet, sourceSheet, memberSheet, projectRowNumber, assignmentWrite, sourceWrite, memberWrite, projectId, uid, isExternal?'':songId, groupId, title, assignments, sourceRecords, memberRecords);
 
-      if (nowComplete && !wasComplete) try { appendCoverActivity_(uid, 'CREATE_COVER', projectId); } catch (error) { console.error(error); }
       return {ok:true,projectId:projectId,title:title,isComplete:nowComplete,requiresConfirm:false,project:{
         projectId:projectId,creatorUserId:uid,creatorDisplayName:coverUserDisplayName_(uid),sourceSongId:isExternal?'':songId,
         sourceTitle:String(song.Title||''),sourceArtist:String(song.Artist||''),coverGroupId:groupId,
@@ -896,7 +895,3 @@ function coverRollbackError_(error, rollbackErrors) {
   return new Error(rollbackErrors&&rollbackErrors.length?message+'\n復元にも失敗しました: '+rollbackErrors.join(' / '):message);
 }
 
-function appendCoverActivity_(userId, activityType, targetId) {
-  const sheet=getCoverLogSheet_(UNIVERSE_CONFIG.SHEETS.RECENT_ACTIVITIES);
-  appendByHeaders_(sheet,{ActivityID:Utilities.getUuid(),UserID:userId,ActivityType:activityType,TargetID:targetId,OccurredAt:new Date()});
-}

@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ UserPreferencesApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ UserPreferencesApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * User-scoped SETTINGS preferences.
  * Personal preferences are stored on the existing BMSG_ Universe_Log Users row.

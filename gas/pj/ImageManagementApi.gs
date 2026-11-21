@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ ImageManagementApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ ImageManagementApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 const IMAGE_MGMT_GROUPS_ = Object.freeze(['BE:FIRST','MAZZEL','STARGLOW','HANA','BMSG POSSE']);
 const IMAGE_MGMT_RARITIES_ = Object.freeze(['SSR','SR','R','N']);
 const IMAGE_MGMT_MIME_EXT_ = Object.freeze({'image/jpeg':'jpg','image/png':'png'});

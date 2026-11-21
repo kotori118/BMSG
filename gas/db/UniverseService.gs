@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-DB UniverseService.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-DB UniverseService.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * BMSG Universe から利用する共通Writer。
  * Song / Lyrics / Guest の書込、検証、採番、ロールバックをBMSG-DBに集約する。

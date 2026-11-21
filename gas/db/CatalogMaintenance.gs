@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-DB CatalogMaintenance.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-DB CatalogMaintenance.gs (2026-11-21). This repository is now the source: edit this file directly.
 /** Management maintenance: shared lock, optimistic row revisions, verified rollback.
  * No operation runs at startup. Logos are retired separately after preview/backup.
  */

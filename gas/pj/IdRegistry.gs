@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ IdRegistry.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ IdRegistry.gs (2026-11-21). This repository is now the source: edit this file directly.
 /** Shared ID registry for BMSG Universe runtime-owned IMAGE IDs only. */
 const UNIVERSE_ID_REGISTRY_HEADERS_ = Object.freeze([
   'EntityType','Scope','IssuedID','NumericValue','Status','RequestID','Source','IssuedAt','UpdatedAt','Note'

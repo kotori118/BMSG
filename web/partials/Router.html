@@ -4,7 +4,7 @@
     if(typeof resetUniverseCrossLinks==='function')resetUniverseCrossLinks();
     if(currentRoute==='metrics'&&route!=='metrics'&&typeof cleanupPerformanceTimerPage==='function')cleanupPerformanceTimerPage();
     const meta = ROUTES[route]; currentRoute = route; setPageAtmosphere(route);
-    if (!meta) { setTheme('dark'); setActiveNav(null); pageContent.innerHTML=render404(route); document.title='404 | BMSG UNIVERSE'; scrollAppToTop('smooth'); syncCurrentFavoriteButton(); return; }
+    if (!meta) { setTheme('dark'); setActiveNav(null); pageContent.innerHTML=render404(route); document.title='404 | BMSG UNIVERSE'; scrollAppToTop('smooth'); return; }
     setTheme(meta.theme); setActiveNav(meta.parent);
     if (route === 'home') {
       const playIntro=!homeIntroPlayed; pageContent.innerHTML=renderHome(); initHomePage();
@@ -24,7 +24,7 @@
     else{pageContent.innerHTML=renderPlaceholder(route);}
     if(typeof initUniverseCrossLinks==='function')initUniverseCrossLinks(route,routeParams||{});
     if(typeof syncKaraokeLatestShortcut_==='function')syncKaraokeLatestShortcut_();
-    document.title=meta.title+' | BMSG UNIVERSE'; scrollAppToTop('smooth'); syncCurrentFavoriteButton();
+    document.title=meta.title+' | BMSG UNIVERSE'; scrollAppToTop('smooth');
   }
 
   function lyricsSaveNavigationLocked_(){

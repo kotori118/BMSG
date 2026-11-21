@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-DB CatalogUnitMembership.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-DB CatalogUnitMembership.gs (2026-11-21). This repository is now the source: edit this file directly.
 /**
  * Site-only management of UNIT memberships in Core 04_GroupMembers.
  * Group/Member master tables and all other memberships remain untouched.

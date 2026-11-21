@@ -1,4 +1,4 @@
-// Imported from kotori118/BMSG-PJ KaraokeFavoriteApi.gs by scripts/import-gas-sources.mjs. Edit the generator or re-import; do not hand-edit.
+// Originally imported from kotori118/BMSG-PJ KaraokeFavoriteApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 function getKaraokeFavoriteSet(groupId) {
   const core = getKaraokeFavoriteCoreSnapshot_();
   const group = getKaraokeFavoriteEligibleGroup_(groupId, core);
