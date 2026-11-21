@@ -41,7 +41,7 @@ npm run test:browser                # Chromium が必要
 node tests/browser/screens.mjs <出力先> data lab   # 実データで画面を撮る（確認用）
 ```
 
-- 新デザイン（黒基調・モノクロ・縦長の英字見出し）は `web/partials/UniverseTheme.html`。`AppCore.html` の `ROUTES` で `theme: 'v2'` にした画面だけに当たる。（`/design-sample/` は以前の白基調の見本で、今の方針とは違う）。
+- 新デザイン（モノトーン：黒基調・太い英字見出し・方眼とひし形のタイル）は `web/partials/UniverseTheme.html`。`AppCore.html` の `ROUTES` で `theme: 'v2'` にした画面だけに当たる。（`/design-sample/` は以前の白基調の見本で、今の方針とは違う）。
 - 新デザイン済み：データ、ラボ、左上のメニュー、通知。
 - `scripts/import-web-sources.mjs` は移行時に一度使ったもの。再実行すると `web/partials/` の変更が上書きされるので使わない。
 

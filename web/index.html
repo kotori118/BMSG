@@ -6,7 +6,7 @@
   <script src="config.js"></script>
   <script src="js/gas-shim.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Exo+2:wght@500;600;700&family=Orbitron:wght@500;600;700&family=Roboto:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&family=Oswald:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Exo+2:wght@500;600;700&family=Orbitron:wght@500;600;700&family=Roboto:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
 <!-- Styles.html -->
@@ -3332,7 +3332,7 @@
 <!-- UniverseTheme.html -->
 <style>
   /* =========================================================
-     BMSG Universe 新デザイン（黒基調・モノクロ・縦長の英字見出し）
+     BMSG Universe 新デザイン（モノトーン）
      - 画面ごとに ROUTES の theme を 'v2' にすると、その画面だけに当たる（body.ui-v2）。
      - まだ切り替えていない画面は、これまでの見た目のまま動く。
      - 色・形・文字はこのファイルの先頭で一か所に決める。
@@ -3347,7 +3347,7 @@
 
   .app-menu { position: fixed; inset: 0; z-index: 150; }
   .app-menu[hidden] { display: none; }
-  .app-menu-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .55); }
+  .app-menu-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .6); }
   .app-menu-panel {
     position: absolute;
     top: 0;
@@ -3356,13 +3356,13 @@
     width: min(360px, 88vw);
     overflow-y: auto;
     padding: max(18px, env(safe-area-inset-top)) 0 max(24px, env(safe-area-inset-bottom));
-    border-right: 1px solid rgba(255, 255, 255, .14);
-    background: #000;
+    border-right: 1px solid rgba(255, 255, 255, .12);
+    background: #0d0d0d;
     color: #fff;
     font-family: "Noto Sans JP", "Zen Kaku Gothic New", sans-serif;
-    animation: app-menu-in 200ms cubic-bezier(.22, .8, .28, 1);
+    animation: app-menu-in 220ms cubic-bezier(.22, .8, .28, 1);
   }
-  @keyframes app-menu-in { from { transform: translateX(-24px); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes app-menu-in { from { transform: translateX(-28px); opacity: 0; } to { transform: none; opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .app-menu-panel { animation: none; } }
   .app-menu-panel .app-menu-close {
     display: grid;
@@ -3378,11 +3378,11 @@
   }
   .app-menu-close svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
   .app-menu-group {
-    margin: 22px 22px 8px;
-    color: rgba(255, 255, 255, .5);
+    margin: 24px 22px 8px;
+    color: rgba(255, 255, 255, .45);
     font-size: 12px;
-    font-weight: 500;
-    letter-spacing: .16em;
+    font-weight: 700;
+    letter-spacing: .2em;
   }
   .app-menu-panel button:not(.app-menu-close) {
     position: relative;
@@ -3392,12 +3392,12 @@
     min-height: 54px;
     padding: 0 44px 0 22px;
     border: 0;
-    border-top: 1px solid rgba(255, 255, 255, .12);
+    border-top: 1px solid rgba(255, 255, 255, .1);
     background: none;
     color: inherit;
     font: inherit;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 700;
     letter-spacing: .06em;
     text-align: left;
     cursor: pointer;
@@ -3408,52 +3408,59 @@
     right: 22px;
     width: 8px;
     height: 8px;
-    border-top: 1.5px solid rgba(255, 255, 255, .7);
-    border-right: 1.5px solid rgba(255, 255, 255, .7);
+    border-top: 1.5px solid rgba(255, 255, 255, .6);
+    border-right: 1.5px solid rgba(255, 255, 255, .6);
     transform: rotate(45deg);
   }
   .app-menu-panel button:not(.app-menu-close):hover,
-  .app-menu-panel button:not(.app-menu-close):focus-visible { background: #161616; outline: none; }
-  .app-menu-panel button[aria-current="page"] { background: #1b1b1b; box-shadow: inset 3px 0 0 #fff; }
+  .app-menu-panel button:not(.app-menu-close):focus-visible { background: #171717; outline: none; }
+  .app-menu-panel button[aria-current="page"] { background: #f2f2f2; color: #111; }
+  .app-menu-panel button[aria-current="page"]::after { border-color: #111; }
 
   /* ---- 新デザインの基本 ---- */
   body.ui-v2 {
-    --ui-bg: #000;
-    --ui-panel: #1b1b1b;
-    --ui-panel-hover: #242424;
-    --ui-line: rgba(255, 255, 255, .14);
-    --ui-line-strong: rgba(255, 255, 255, .9);
+    --ui-bg: #0e0e0e;
+    --ui-panel: #181818;
+    --ui-panel-2: #1f1f1f;
+    --ui-line: rgba(255, 255, 255, .12);
+    --ui-line-strong: rgba(255, 255, 255, .42);
     --ui-text: #fff;
-    --ui-text-sub: rgba(255, 255, 255, .6);
-    --ui-accent: var(--universe-accent, #9cecff);
-    --ui-radius: 8px;
+    --ui-text-sub: rgba(255, 255, 255, .56);
+    --ui-active-bg: #f2f2f2;
+    --ui-active-text: #111;
+    --ui-radius: 6px;
     --ui-font: "Noto Sans JP", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
-    --ui-font-display: Oswald, "Noto Sans JP", sans-serif;   /* 英字の見出し（縦長・太字） */
-    --ui-font-num: Oswald, "Exo 2", sans-serif;
+    --ui-font-display: Inter, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;   /* 英字の大きな見出し */
     color: var(--ui-text);
     background: var(--ui-bg);
   }
-  html:has(body.ui-v2) { background: #000; }
-  body.ui-v2 .app-shell,
-  body.ui-v2 .page-wrap { background: var(--ui-bg); color: var(--ui-text); }
+  html:has(body.ui-v2) { background: #0e0e0e; }
+  body.ui-v2 .app-shell {
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(255, 255, 255, .06), transparent 60%),
+      var(--ui-bg);
+  }
+  body.ui-v2 .page-wrap { background: transparent; color: var(--ui-text); }
 
   /* ---- 上のバー（メニュー・サイト名・検索） ---- */
   body.ui-v2 .utility-actions {
     align-items: center;
     border-bottom: 1px solid var(--ui-line);
-    background: #000;
+    background: rgba(14, 14, 14, .92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
   body.ui-v2 .utility-brand {
     display: block;
     position: absolute;
     left: 50%;
-    bottom: 22px;
+    bottom: 24px;
     transform: translateX(-50%);
     color: #fff;
     font-family: var(--ui-font-display);
-    font-size: 20px;
-    font-weight: 600;
-    letter-spacing: .08em;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: .02em;
     white-space: nowrap;
     pointer-events: none;
   }
@@ -3463,7 +3470,7 @@
     width: 44px;
     height: 44px;
     border: 0;
-    border-radius: 0;
+    border-radius: var(--ui-radius);
     color: #fff;
     background: transparent;
     box-shadow: none;
@@ -3474,120 +3481,198 @@
     body.ui-v2 .app-shell .utility-actions .utility-btn:not(:disabled):hover {
       border: 0;
       color: #fff;
-      background: #161616;
+      background: #1c1c1c;
       box-shadow: none;
     }
   }
 
-  /* ---- 下のメニュー（HOME・DATA・LAB） ---- */
+  /* ---- 下のメニュー（HOME・DATA・LAB）：選択中は白く塗る ---- */
   body.ui-v2 .bottom-nav {
+    gap: 10px;
     border-top: 1px solid var(--ui-line);
-    background: rgba(0, 0, 0, .94);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
+    background: rgba(14, 14, 14, .94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
   body.ui-v2 .nav-btn {
-    position: relative;
     border: 0;
-    border-radius: 0;
-    color: rgba(255, 255, 255, .45);
+    border-radius: var(--ui-radius);
+    color: rgba(255, 255, 255, .62);
     background: transparent;
     font-family: var(--ui-font-display);
     font-size: 12px;
-    font-weight: 500;
-    letter-spacing: .14em;
+    font-weight: 800;
+    letter-spacing: .2em;
   }
-  body.ui-v2 .nav-btn.active { color: #fff; background: transparent; }
-  body.ui-v2 .nav-btn.active::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: 2px;
-    width: 28px;
-    height: 2px;
-    background: #fff;
-    transform: translateX(-50%);
-  }
+  body.ui-v2 .nav-btn.active { color: var(--ui-active-text); background: var(--ui-active-bg); }
+  body.ui-v2 .nav-btn .nav-icon svg { stroke-width: 1.7; }
 
-  /* ---- データ・ラボの一覧 ---- */
-  body.ui-v2 .category-page { padding-top: 104px; }
-  body.ui-v2 .category-title {
-    color: #fff;
-    font-family: var(--ui-font);
-    font-size: clamp(28px, 7.5vw, 36px);
-    font-weight: 700;
-    letter-spacing: .08em;
-    line-height: 1.2;
-    text-transform: none;
+  /* ---- データ・ラボ：見出し ---- */
+  body.ui-v2 .category-page { padding-top: 96px; }
+  body.ui-v2 .category-header {
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--ui-line);
   }
-  body.ui-v2 .category-cards { gap: 0; border-top: 1px solid var(--ui-line); }
+  body.ui-v2 .category-title {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    color: #fff;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1;
+  }
+  body.ui-v2 .category-title-en {
+    font-family: var(--ui-font-display);
+    font-size: clamp(58px, 17vw, 96px);
+    font-weight: 900;
+    letter-spacing: -.045em;
+    line-height: .88;
+  }
+  body.ui-v2 .category-title-ja {
+    display: block;
+    color: var(--ui-text-sub);
+    font-family: var(--ui-font);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .22em;
+  }
+  .category-title-ja { display: none; }
+
+  /* ---- データ・ラボ：タイル（方眼の上にひし形の枠とアイコン） ---- */
+  body.ui-v2 .category-cards {
+    counter-reset: ui-tile;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    border: 0;
+  }
   body.ui-v2 .category-card {
     position: relative;
-    min-height: 84px;
-    padding: 16px 48px 16px 18px;
-    border: 0;
-    border-bottom: 1px solid var(--ui-line);
-    border-radius: 0;
+    min-height: 0;
+    padding: 0;
+    border: 1px solid var(--ui-line);
+    border-radius: var(--ui-radius);
+    overflow: hidden;
     color: #fff;
     background: var(--ui-panel);
     box-shadow: none;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     transform: none;
+    text-align: left;
+    transition: border-color 180ms ease, transform 180ms ease;
   }
-  body.ui-v2 .category-card::before { display: none; }
-  body.ui-v2 .category-card::after {
+  body.ui-v2 .category-card::before,
+  body.ui-v2 .category-card::after { display: none; }
+  body.ui-v2 .category-card-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    gap: 0;
+  }
+  body.ui-v2 .category-card-symbol {
+    order: -1;
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1.45;
+    border: 0;
+    border-bottom: 1px solid var(--ui-line);
+    border-radius: 0;
+    color: #fff;
+    background:
+      linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px) 0 0 / 22px 22px,
+      linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px) 0 0 / 22px 22px,
+      var(--ui-panel-2);
+    -webkit-mask-image: none;
+  }
+  /* 方眼を中央に寄せて、周りはなじませる */
+  body.ui-v2 .category-card-symbol::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, transparent 30%, var(--ui-panel) 92%);
+    pointer-events: none;
+  }
+  /* ひし形の枠 */
+  body.ui-v2 .category-card-symbol::before {
     content: "";
     position: absolute;
     top: 50%;
-    right: 22px;
-    width: 9px;
-    height: 9px;
-    border-top: 1.5px solid rgba(255, 255, 255, .75);
-    border-right: 1.5px solid rgba(255, 255, 255, .75);
-    transform: translateY(-50%) rotate(45deg);
+    left: 50%;
+    z-index: 1;
+    width: 36%;
+    aspect-ratio: 1;
+    border: 1px solid var(--ui-line-strong);
+    background: #121212;
+    transform: translate(-50%, -50%) rotate(45deg);
+    transition: border-color 180ms ease, background 180ms ease;
   }
-  body.ui-v2 .category-card:hover { background: var(--ui-panel-hover); }
-  body.ui-v2 .category-card:active { transform: none; background: var(--ui-panel-hover); }
-  body.ui-v2 .category-card-inner {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 16px;
+  body.ui-v2 .category-card-symbol svg {
+    position: relative;
+    z-index: 2;
+    width: 25%;
+    height: auto;
+    aspect-ratio: 1;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
-  body.ui-v2 .category-card-meta { display: grid; gap: 4px; text-align: left; }
+  body.ui-v2 .category-card { counter-increment: ui-tile; }
+  body.ui-v2 .category-card-meta {
+    display: grid;
+    gap: 6px;
+    padding: 14px 16px 20px;
+    text-align: left;
+  }
+  /* タイルの番号（01, 02 …） */
+  body.ui-v2 .category-card-meta::before {
+    content: counter(ui-tile, decimal-leading-zero);
+    color: var(--ui-text-sub);
+    font-family: var(--ui-font-display);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .24em;
+  }
   body.ui-v2 .category-card-name {
     color: #fff;
     font-family: var(--ui-font);
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 700;
-    letter-spacing: .06em;
+    letter-spacing: .04em;
     line-height: 1.4;
     text-transform: none;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: keep-all;      /* 改行は <wbr> の位置で */
+    overflow-wrap: normal;
   }
   body.ui-v2 .category-card-desc {
+    text-wrap: pretty;
     display: block;
     color: var(--ui-text-sub);
     font-family: var(--ui-font);
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.5;
+    font-size: 12.5px;
+    font-weight: 500;
+    line-height: 1.65;
   }
   .category-card-desc { display: none; }
-  body.ui-v2 .category-card-symbol {
-    flex: none;
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--ui-line);
-    border-radius: 50%;
-    color: #fff;
+  @media (hover: hover) {
+    body.ui-v2 .category-card:hover { border-color: var(--ui-line-strong); background: var(--ui-panel); }
+    body.ui-v2 .category-card:hover .category-card-symbol::before { border-color: #fff; background: #161616; }
   }
-  body.ui-v2 .category-card-symbol svg { width: 22px; height: 22px; stroke: currentColor; }
+  body.ui-v2 .category-card:active { transform: scale(.985); background: var(--ui-panel); }
+  body.ui-v2 .category-card:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
   /* ---- ボタン（白い枠線の四角／白く塗った丸） ---- */
   body.ui-v2 .ui-btn,
@@ -3595,36 +3680,30 @@
     min-height: 52px;
     padding: 0 28px;
     border: 1px solid #fff;
-    border-radius: 0;
+    border-radius: var(--ui-radius);
     color: #fff;
     background: transparent;
     font-family: var(--ui-font);
     font-size: 15px;
-    font-weight: 500;
-    letter-spacing: .2em;
+    font-weight: 700;
+    letter-spacing: .16em;
     cursor: pointer;
   }
-  body.ui-v2 .ui-btn-solid {
-    border-color: #fff;
-    border-radius: 999px;
-    color: #000;
-    background: #fff;
-    font-weight: 700;
-  }
+  body.ui-v2 .ui-btn-solid { color: #111; background: #f2f2f2; border-color: #f2f2f2; }
 
   /* ---- 通知・読み込み・エラー ---- */
   body.ui-v2 .universe-toast {
     border: 0;
-    border-radius: 0;
-    color: #000;
-    background: #fff;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, .5);
-    letter-spacing: .08em;
+    border-radius: var(--ui-radius);
+    color: #111;
+    background: #f2f2f2;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, .55);
+    letter-spacing: .06em;
   }
   body.ui-v2 .universe-loading { color: var(--ui-text-sub); }
   body.ui-v2 .universe-recovery-state {
     border: 1px solid var(--ui-line);
-    border-radius: 0;
+    border-radius: var(--ui-radius);
     background: var(--ui-panel);
   }
   body.ui-v2 .universe-recovery-state h2 { color: #fff; font-family: var(--ui-font); letter-spacing: .12em; }
@@ -3702,10 +3781,8 @@
       <button class="nav-btn" data-nav="data" onclick="navigateTo('data')">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="6" cy="7" r="1.4"></circle>
-            <circle cx="18" cy="7" r="1.4"></circle>
-            <circle cx="12" cy="17" r="1.4"></circle>
-            <path d="M7.3 7.7l3.5 7.2M16.7 7.7l-3.5 7.2M7.5 7h9"></path>
+            <path d="M4 7h16M4 12h16M4 17h16"></path>
+            <path d="M9 5v4M15 10v4M8 15v4"></path>
           </svg>
         </span>
         <span class="nav-label">DATA</span>
@@ -3714,8 +3791,8 @@
       <button class="nav-btn" data-nav="lab" onclick="navigateTo('lab')">
         <span class="nav-icon">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M9 3h6M10 3v6l-5 8.2A2.4 2.4 0 0 0 7.1 21h9.8a2.4 2.4 0 0 0 2.1-3.8L14 9V3"></path>
-            <path d="M7.8 16h8.4"></path>
+            <path d="M12 3.2 19.6 7.5v9L12 20.8 4.4 16.5v-9z"></path>
+            <path d="M4.6 7.6 12 11.8l7.4-4.2M12 11.8v8.8"></path>
           </svg>
         </span>
         <span class="nav-label">LAB</span>
@@ -6464,11 +6541,26 @@
 
 <!-- Pages.html -->
 <script>
+    // Icons for the data/lab tiles (new design). Line icons on a 24px grid; color comes from CSS.
+    function categoryIconSvg(name) {
+      const paths = {
+        profile: '<path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><circle cx="12" cy="10" r="2.8"/><path d="M7.5 17c.9-2.3 2.5-3.5 4.5-3.5s3.6 1.2 4.5 3.5"/>',
+        lyrics: '<path d="M6.5 3.5h7.5l4 4v12a1 1 0 0 1-1 1h-10.5a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z"/><path d="M13.5 3.5v4.5h4.5M9 13h6M9 16.5h6"/>',
+        analysis: '<path d="M4.5 4v15.5H20"/><path d="M7.5 15.5l3.5-4 3 2.5 4.5-6"/><circle cx="18.5" cy="8" r=".9"/>',
+        quiz: '<path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9.8 9.8a2.3 2.3 0 1 1 3.4 2c-.8.45-1.2.95-1.2 1.85"/><circle cx="12" cy="16.3" r=".6"/>',
+        cards: '<path d="M7.5 6.5 4.6 7.3a1 1 0 0 0-.7 1.2l2.7 10.2"/><rect x="8" y="4" width="11.5" height="16" rx="1.2"/><circle cx="13.75" cy="10" r="2.4"/><path d="M10.3 16.3c.6-1.7 1.8-2.6 3.45-2.6s2.85.9 3.45 2.6"/>',
+        poker: '<path d="M8.3 3.5h7.4l4.8 4.8v7.4l-4.8 4.8H8.3l-4.8-4.8V8.3z"/><path d="M12 7.2c-1.7 2.1-4.2 3.6-4.2 5.8a2.3 2.3 0 0 0 4 1.6M12 7.2c1.7 2.1 4.2 3.6 4.2 5.8a2.3 2.3 0 0 1-4 1.6M12 13.6v3.4M10.2 17h3.6"/>',
+        cover: '<path d="M4 10.5v3M7 8v8M10 5v14M13 8.5v7M16 6.5v11M19 10v4"/>'
+      };
+      return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (paths[name] || '') + '</svg>';
+    }
+</script>
+<script>
     function renderData() {
       return `
         <section class="view category-page">
           <header class="category-header">
-            <h1 class="category-title">データ</h1>
+            <h1 class="category-title"><span class="category-title-en">DATA</span><span class="category-title-ja">データ</span></h1>
           </header>
 
           <div class="category-cards data-grid">
@@ -6478,7 +6570,7 @@
                   <span class="category-card-name">プロフィール</span>
                   <span class="category-card-desc">メンバーの情報・相性・マップ</span>
                 </span>
-                <span class="category-card-symbol">${iconSvg('profile')}</span>
+                <span class="category-card-symbol">${categoryIconSvg('profile')}</span>
               </span>
             </button>
 
@@ -6488,7 +6580,7 @@
                   <span class="category-card-name">歌詞</span>
                   <span class="category-card-desc">歌詞・歌割り・カラオケ</span>
                 </span>
-                <span class="category-card-symbol">${iconSvg('lyrics')}</span>
+                <span class="category-card-symbol">${categoryIconSvg('lyrics')}</span>
               </span>
             </button>
 
@@ -6498,7 +6590,7 @@
                   <span class="category-card-name">分析</span>
                   <span class="category-card-desc">BE:FIRSTの歌唱とセンターの秒数</span>
                 </span>
-                <span class="category-card-symbol">${iconSvg('analysis')}</span>
+                <span class="category-card-symbol">${categoryIconSvg('analysis')}</span>
               </span>
             </button>
           </div>
@@ -6510,7 +6602,7 @@
       return `
         <section class="view category-page">
           <header class="category-header">
-            <h1 class="category-title">ラボ</h1>
+            <h1 class="category-title"><span class="category-title-en">LAB</span><span class="category-title-ja">ラボ</span></h1>
           </header>
 
           <div class="category-cards lab-grid">
@@ -6520,17 +6612,17 @@
                   <span class="category-card-name">クイズ</span>
                   <span class="category-card-desc">歌詞から曲とメンバーを当てる</span>
                 </span>
-                <span class="category-card-symbol">${iconSvg('quiz')}</span>
+                <span class="category-card-symbol">${categoryIconSvg('quiz')}</span>
               </span>
             </button>
 
             <button class="category-card" onclick="navigateTo('cards')">
               <span class="category-card-inner">
                 <span class="category-card-meta">
-                  <span class="category-card-name">トレーディングカード</span>
+                  <span class="category-card-name">トレーディング<wbr>カード</span>
                   <span class="category-card-desc">メンバーのカードを集める</span>
                 </span>
-                <span class="category-card-symbol">${iconSvg('profile')}</span>
+                <span class="category-card-symbol">${categoryIconSvg('cards')}</span>
               </span>
             </button>
 
@@ -6540,7 +6632,7 @@
                   <span class="category-card-name">ポーカー</span>
                   <span class="category-card-desc">カードで役を作って投票する</span>
                 </span>
-                <span class="category-card-symbol">${iconSvg('poker')}</span>
+                <span class="category-card-symbol">${categoryIconSvg('poker')}</span>
               </span>
             </button>
 
@@ -6550,7 +6642,7 @@
                   <span class="category-card-name">カバーメーカー</span>
                   <span class="category-card-desc">歌割りを組み替えて保存する</span>
                 </span>
-                <span class="category-card-symbol">${iconSvg('cover')}</span>
+                <span class="category-card-symbol">${categoryIconSvg('cover')}</span>
               </span>
             </button>
           </div>
