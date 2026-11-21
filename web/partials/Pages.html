@@ -10,7 +10,9 @@
         poker: '<circle class="s" cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.6"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.6 5.6l1.7 1.7M16.7 16.7l1.7 1.7M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7"/><path class="f" d="M12 8.6c-1.3 1.6-3 2.5-3 4a1.7 1.7 0 0 0 2.9 1.2l-.5 2h1.2l-.5-2A1.7 1.7 0 0 0 15 12.6c0-1.5-1.7-2.4-3-4z"/>',
         cover: '<rect class="s" x="9" y="2.8" width="6" height="11" rx="3"/><rect x="9" y="2.8" width="6" height="11" rx="3"/><path d="M6.2 11a5.8 5.8 0 0 0 11.6 0M12 16.8V21M9 21h6"/><path d="M3 9.5v3M20.9 9.5v3"/><path class="f" d="M9 8h6v1.4H9z"/>'
       };
-      return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (paths[name] || '') + '</svg>';
+      // Corner brackets frame every icon like a viewfinder (class "b": thin, dim).
+      const frame = '<path class="b" d="M1.5 6V1.5H6M18 1.5h4.5V6M22.5 18v4.5H18M6 22.5H1.5V18"/>';
+      return '<svg viewBox="0 0 24 24" aria-hidden="true">' + frame + (paths[name] || '') + '</svg>';
     }
 </script>
 <script>
