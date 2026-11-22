@@ -50,7 +50,7 @@
     if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="management-error">この操作は利用できません。</p>';nav.innerHTML='<button class="u-btn" onclick="managementGo_()">管理トップに戻る</button>';return;}
     const back=p.action?"managementGo_('"+p.section+"')":p.section?'managementGo_()':"navigateTo('home')";
     const crumbs=section?'<nav class="management-breadcrumb" aria-label="管理ページの階層"><button class="u-btn" onclick="managementGo_()">管理ページ</button><span aria-hidden="true">›</span>'+(action?'<button class="u-btn" onclick="managementGo_(\''+p.section+'\')">'+section.title+'</button>':'<span aria-current="page">'+section.title+'</span>')+'</nav>':'';
-    nav.innerHTML='<div class="management-local-navigation"><button class="u-btn management-back" type="button" onclick="'+back+'">‹ '+(section?'戻る':'ホームへ')+'</button>'+crumbs+'</div>';
+    nav.innerHTML='<div class="management-local-navigation"><button class="ui-back" type="button" onclick="'+back+'"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>'+crumbs+'</div>';
 
     if(!managementState.access.registered){root.innerHTML='<p class="management-lead">利用ユーザーを選択してください。</p>';return;}
     if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="management-error">この操作は利用できません。</p>';return;}

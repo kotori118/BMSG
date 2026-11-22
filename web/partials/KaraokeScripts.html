@@ -40,7 +40,7 @@
     karaokeState.partsBySong=data.partsBySong||{};
     if(params&&params.mode==='latest'){
       const article='<article aria-hidden="true"><div class="karaoke-owner"><span class="skeleton-block" style="display:block;width:42%;height:11px;border-radius:6px"></span></div><p><span class="skeleton-block" style="display:block;width:88%;height:14px;border-radius:7px"></span><span class="skeleton-block" style="display:block;width:64%;height:14px;border-radius:7px;margin-top:9px"></span></p></article>';
-      document.getElementById('karaokeView').innerHTML='<button class="karaoke-top-back karaoke-group-return" type="button" disabled aria-hidden="true"><span class="skeleton-block" style="display:block;width:116px;height:12px;border-radius:6px"></span></button><div class="karaoke-title"><h2><span class="skeleton-block" style="display:block;width:58%;height:24px;border-radius:8px"></span></h2></div><section class="karaoke-lyrics">'+article+article+article+article+'</section><div class="karaoke-song-footer is-single" aria-hidden="true"><button type="button" disabled><span class="skeleton-block" style="display:block;width:116px;height:12px;border-radius:6px"></span></button></div>';
+      document.getElementById('karaokeView').innerHTML='<button class="ui-back ui-back-icon" type="button" disabled aria-hidden="true"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><div class="karaoke-title"><h2><span class="skeleton-block" style="display:block;width:58%;height:24px;border-radius:8px"></span></h2></div><section class="karaoke-lyrics">'+article+article+article+article+'</section><div class="karaoke-song-footer is-single" aria-hidden="true"><button type="button" disabled><span class="skeleton-block" style="display:block;width:116px;height:12px;border-radius:6px"></span></button></div>';
       loadKaraokeRoom(params.room,function(){
         if(karaokeState.history.length)openKaraokeResultSong(karaokeState.history[0]);
         else{renderKaraokeEntry();showKaraokeError('まだ振り分け結果がありません。');}
@@ -83,7 +83,7 @@
   function renderKaraokeEntry(){
     karaokeState.screen='entry';
     document.getElementById('karaokeView').innerHTML=
-      '<button class="karaoke-top-back karaoke-group-return" type="button" onclick="navigateTo(\'lyrics\')"><span>グループ選択に戻る</span></button>'+
+      '<button class="ui-back" type="button" onclick="navigateTo(\'lyrics\')"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>'+
       '<section class="karaoke-room-card"><div id="karaokeRoomBody"></div></section>'+
       '<section id="karaokeHistoryArea" class="karaoke-history-area"></section>';
     updateKaraokeRoomCard();
@@ -118,12 +118,12 @@
     karaokeState.screen='ranking';
     const today=karaokeDayKey(new Date());
     const daily=karaokeState.history.filter(function(item){return karaokeDayKey(item.createdAt)===today;});
-    document.getElementById('karaokeView').innerHTML='<button class="karaoke-top-back karaoke-group-return" type="button" onclick="renderKaraokeEntry()"><span>履歴に戻る</span></button><div class="karaoke-title"><p>本日の集計</p><h2>担当者ランキング</h2></div><section class="karaoke-member-ranking">'+karaokeState.users.map(function(user){
+    document.getElementById('karaokeView').innerHTML='<button class="ui-back" type="button" onclick="renderKaraokeEntry()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><div class="karaoke-title"><p>本日の集計</p><h2>担当者ランキング</h2></div><section class="karaoke-member-ranking">'+karaokeState.users.map(function(user){
       const counts={};
       daily.forEach(function(item){((item.assignments&&item.assignments[user.userId])||[]).forEach(function(slot){const name=typeof slot==='string'?slot:(slot.name||slot.memberId||'');if(name)counts[name]=(counts[name]||0)+1;});});
       const rows=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a]||a.localeCompare(b,'ja');});
       return '<article><h3>'+escapeLyrics(user.displayName)+'</h3>'+(rows.length?'<ol>'+rows.map(function(name,index){return '<li><b>'+(index+1)+'</b><span>'+escapeLyrics(name)+'</span><strong>'+counts[name]+'回</strong></li>';}).join('')+'</ol>':'<p>今日の振り分けはまだありません</p>')+'</article>';
-    }).join('')+'</section><button class="karaoke-back-link" type="button" onclick="renderKaraokeEntry()">履歴へ戻る</button>';
+    }).join('')+'</section><button class="ui-back" type="button" onclick="renderKaraokeEntry()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>';
     scrollKaraokeTop();
   }
 
@@ -207,7 +207,7 @@
   }
 
   function karaokeSongTopNavigation_(){
-    return '<div class="karaoke-song-top-nav"><button class="karaoke-top-back karaoke-lyrics-return" type="button" onclick="returnToLyricsFromKaraoke()"><span>歌詞に戻る</span></button><button class="karaoke-top-back karaoke-group-return" type="button" onclick="navigateTo(\'lyrics\')"><span>グループ選択に戻る</span></button></div>';
+    return '<div class="karaoke-song-top-nav"><button class="ui-back" type="button" onclick="returnToLyricsFromKaraoke()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button class="ui-back" type="button" onclick="navigateTo(\'lyrics\')"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button></div>';
   }
 
   function renderKaraokeSetup(){

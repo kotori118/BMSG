@@ -23,14 +23,14 @@
   .management-lead{
     margin:4px 0 0;
     color:rgba(255,255,255,.48);
-    font:500 11px "Zen Kaku Gothic New",Roboto,sans-serif;
+    font:500 11px var(--font-body),var(--font-body),sans-serif;
   }
   .management-loading[hidden]{display:none!important}
 
   .management-field{display:grid;gap:7px;min-width:0}
   .management-field>span,.management-label{
     color:rgba(255,255,255,.55);
-    font:700 11px "Zen Kaku Gothic New",Roboto,sans-serif;
+    font:700 11px var(--font-body),var(--font-body),sans-serif;
   }
   .management-field input:not([type="checkbox"]):not([type="file"]),
   .management-field select,
@@ -42,7 +42,7 @@
     border:1px solid rgba(156,236,255,.18);
     border-radius:var(--mgmt-field-radius);
     background:#0b0f16;color:var(--white);
-    font:600 15px "Zen Kaku Gothic New",Roboto,sans-serif;
+    font:600 15px var(--font-body),var(--font-body),sans-serif;
     outline:none;
   }
   .management-field input[type="date"]{
@@ -68,7 +68,7 @@
   }
   .management-section-title{
     margin:0;color:var(--cyan);
-    font:700 12px "Exo 2","Zen Kaku Gothic New",sans-serif;
+    font:700 12px var(--font-body),var(--font-body),sans-serif;
     letter-spacing:.06em;
   }
   .management-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
@@ -76,7 +76,7 @@
     margin:0;padding:11px 13px;
     border:1px solid rgba(255,120,120,.28);
     border-radius:12px;background:rgba(255,80,80,.07);
-    color:#ffb6b6;font:600 12px "Zen Kaku Gothic New",Roboto,sans-serif;
+    color:#ffb6b6;font:600 12px var(--font-body),var(--font-body),sans-serif;
   }
 
   body.theme-light .management-lead,

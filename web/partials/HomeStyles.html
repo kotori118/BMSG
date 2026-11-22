@@ -2,7 +2,7 @@
   /* HOME owns all active HOME layout/visual rules. */
   .home{min-height:calc(100dvh - var(--nav-height) - 66px);display:flex;flex-direction:column;justify-content:center;padding:clamp(78px,12vh,118px) 0 clamp(16px,3vh,30px)}
   .home-title-wrap{position:relative;width:min(100%,820px);margin:0 auto;text-align:left}
-  .home-title{margin:0;text-align:left;font-family:Orbitron,"Zen Kaku Gothic New","Arial Black",sans-serif;font-size:clamp(42px,11vw,86px);font-weight:600;line-height:.92;letter-spacing:.025em;text-transform:uppercase;text-shadow:0 0 22px rgba(156,236,255,.055),0 0 70px rgba(156,236,255,.035)}
+  .home-title{margin:0;text-align:left;font-family:var(--font-display),var(--font-body),"Arial Black",sans-serif;font-size:clamp(42px,11vw,86px);font-weight:600;line-height:.92;letter-spacing:.025em;text-transform:uppercase;text-shadow:0 0 22px rgba(156,236,255,.055),0 0 70px rgba(156,236,255,.035)}
   .home-title .line{display:block}
   .home-divider{width:min(42vw,210px);height:1px;margin:clamp(24px,5vw,40px) 0 0;background:linear-gradient(90deg,transparent,rgba(156,236,255,.5),transparent);box-shadow:0 0 14px rgba(156,236,255,.14)}
   .home-title-wrap:after{content:"";position:absolute;left:50%;top:calc(100% + 22px);width:min(116vw,1080px);height:min(25vw,180px);transform:translateX(-50%);border-top:1px solid rgba(133,224,243,.24);border-radius:50% 50% 0 0 / 100% 100% 0 0;box-shadow:0 -1px 0 rgba(129,221,240,.03),0 -14px 44px rgba(86,194,218,.02);pointer-events:none}
@@ -17,13 +17,13 @@
   button.home-feature-card{cursor:pointer}
   .home-feature-card:before{content:"";position:absolute;inset:auto -35% -45% auto;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(156,236,255,.2),transparent 68%);pointer-events:none}
   .home-member-card:before{background:radial-gradient(circle,var(--home-accent,#9cecff),transparent 70%);opacity:.22}
-  .home-feature-label{position:absolute;top:22px;left:24px;color:rgba(156,236,255,.84);font:700 12px "Exo 2","Zen Kaku Gothic New",sans-serif;letter-spacing:.16em}
-  .home-feature-card strong{position:relative;min-width:0;max-width:100%;font:700 clamp(25px,5vw,42px)/1.04 Orbitron,"Zen Kaku Gothic New",sans-serif;letter-spacing:-.025em;overflow-wrap:anywhere;word-break:break-word}
+  .home-feature-label{position:absolute;top:22px;left:24px;color:rgba(156,236,255,.84);font:700 12px var(--font-body),var(--font-body),sans-serif;letter-spacing:.16em}
+  .home-feature-card strong{position:relative;min-width:0;max-width:100%;font:700 clamp(25px,5vw,42px)/1.04 var(--font-display),var(--font-body),sans-serif;letter-spacing:-.025em;overflow-wrap:anywhere;word-break:break-word}
   .home-song-card{justify-content:flex-start;padding-top:72px}
   .home-song-title{font-size:clamp(18px,3.6vw,28px)!important;line-height:1.12!important;letter-spacing:-.025em!important}
   .home-member-card:not(.home-birthday-card){min-height:176px;justify-content:flex-start;padding-top:72px;padding-bottom:20px}
-  .home-feature-card small{position:relative;max-width:100%;margin-top:9px;color:rgba(255,255,255,.58);font:500 12px "Zen Kaku Gothic New",Roboto,sans-serif;overflow-wrap:anywhere}
-  .home-feature-card b{position:relative;margin-top:22px;color:rgba(156,236,255,.78);font:600 10px "Exo 2","Zen Kaku Gothic New",sans-serif;letter-spacing:.14em}
+  .home-feature-card small{position:relative;max-width:100%;margin-top:9px;color:rgba(255,255,255,.58);font:500 12px var(--font-body),var(--font-body),sans-serif;overflow-wrap:anywhere}
+  .home-feature-card b{position:relative;margin-top:22px;color:rgba(156,236,255,.78);font:600 10px var(--font-body),var(--font-body),sans-serif;letter-spacing:.14em}
   .home-birthday-card{justify-content:flex-end;border-color:rgba(255,255,255,.34);background:radial-gradient(circle at 85% 15%,rgba(156,236,255,.22),transparent 30%),linear-gradient(145deg,rgba(9,27,42,.98),rgba(20,18,39,.94));box-shadow:0 18px 54px rgba(0,0,0,.28),0 0 34px rgba(156,236,255,.10)}
   .home-birthday-card:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 18%,rgba(255,255,255,.06) 46%,transparent 72%);transform:translateX(-120%);animation:homeBirthdayShine 4.8s ease-in-out infinite;pointer-events:none}
   .home-birthday-card .home-feature-label{color:#fff;text-shadow:0 0 16px rgba(156,236,255,.7)}
@@ -32,7 +32,7 @@
   .home-birthday-copy small{margin:0;color:rgba(255,255,255,.72)}
   .home-birthday-members{position:relative;z-index:2;width:100%;display:grid;gap:8px}
   .home-birthday-member{min-height:52px;width:100%;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid color-mix(in srgb,var(--home-accent,#9cecff) 48%,transparent);border-radius:15px;background:rgba(255,255,255,.055);color:#fff;text-align:left;cursor:pointer;backdrop-filter:blur(8px)}
-  .home-birthday-member span{font:700 16px "Zen Kaku Gothic New",Roboto,sans-serif}
+  .home-birthday-member span{font:700 16px var(--font-body),var(--font-body),sans-serif}
   .home-birthday-member b{margin:0;color:var(--home-accent,#9cecff);font-size:9px}
   .home-birthday-sparkle{position:absolute;z-index:1;color:rgba(255,255,255,.9);font-style:normal;text-shadow:0 0 14px rgba(156,236,255,.8);animation:homeBirthdaySparkle 2.4s ease-in-out infinite}
   .sparkle-one{top:50px;right:34px;font-size:22px}.sparkle-two{top:91px;right:82px;font-size:13px;animation-delay:.7s}.sparkle-three{top:36%;right:25px;font-size:16px;animation-delay:1.3s}
@@ -40,18 +40,18 @@
   @keyframes homeBirthdayShine{0%,58%{transform:translateX(-120%)}78%,100%{transform:translateX(120%)}}
   .home-list-section{display:grid;gap:12px}
   .home-section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;padding:0 2px}
-  .home-section-head h2{margin:0;color:#fff;font:700 clamp(19px,4vw,26px) Orbitron,"Zen Kaku Gothic New",sans-serif;letter-spacing:.01em}
-  .home-more{border:0;background:transparent;color:rgba(156,236,255,.72);font:600 11px "Zen Kaku Gothic New",sans-serif;cursor:pointer}
+  .home-section-head h2{margin:0;color:#fff;font:700 clamp(19px,4vw,26px) var(--font-display),var(--font-body),sans-serif;letter-spacing:.01em}
+  .home-more{border:0;background:transparent;color:rgba(156,236,255,.72);font:600 11px var(--font-body),sans-serif;cursor:pointer}
   .home-list{overflow:hidden;border:1px solid rgba(156,236,255,.13);border-radius:22px;background:rgba(6,15,26,.62);backdrop-filter:blur(16px)}
   .home-list-row,.home-collection-open{width:100%;min-height:68px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;border:0;border-top:1px solid rgba(255,255,255,.065);background:transparent;color:#fff;text-align:left;cursor:pointer}
   .home-list-row:first-child{border-top:0}
   .home-list-row span{min-width:0;display:grid;gap:3px}
-  .home-list-row small,.home-collection-open small{color:rgba(156,236,255,.54);font:600 9px "Exo 2","Zen Kaku Gothic New",sans-serif;letter-spacing:.14em}
-  .home-list-row strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 14px "Zen Kaku Gothic New",Roboto,sans-serif}
-  .home-list-row b,.home-collection-open b{color:rgba(156,236,255,.52);font:400 25px/1 Roboto,sans-serif}
-  .home-empty{margin:0;padding:24px 18px;color:rgba(255,255,255,.44);font:500 12px "Zen Kaku Gothic New",sans-serif}
+  .home-list-row small,.home-collection-open small{color:rgba(156,236,255,.54);font:600 9px var(--font-body),var(--font-body),sans-serif;letter-spacing:.14em}
+  .home-list-row strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:600 14px var(--font-body),var(--font-body),sans-serif}
+  .home-list-row b,.home-collection-open b{color:rgba(156,236,255,.52);font:400 25px/1 var(--font-body),sans-serif}
+  .home-empty{margin:0;padding:24px 18px;color:rgba(255,255,255,.44);font:500 12px var(--font-body),sans-serif}
   .home-state{min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#fff;text-align:center}
-  .home-state strong{font:700 18px Orbitron,sans-serif}.home-state p{margin:0;color:rgba(255,255,255,.58);font-size:13px}.home-state button{min-height:42px;padding:0 18px;border:1px solid rgba(156,236,255,.28);border-radius:14px;background:rgba(156,236,255,.08);color:#fff}
+  .home-state strong{font:700 18px var(--font-display),sans-serif}.home-state p{margin:0;color:rgba(255,255,255,.58);font-size:13px}.home-state button{min-height:42px;padding:0 18px;border:1px solid rgba(156,236,255,.28);border-radius:14px;background:rgba(156,236,255,.08);color:#fff}
   .home-skeleton-card{pointer-events:none}
   .home-skeleton-line{position:relative;display:block;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.07)}
   .home-skeleton-line:after{content:"";position:absolute;inset:0;transform:translateX(-120%);background:linear-gradient(90deg,transparent,rgba(156,236,255,.17),transparent);animation:homeSkeletonShimmer 1.6s ease-in-out infinite}
@@ -68,7 +68,7 @@
   .home-collection-open{min-height:72px;border-top:0;padding:13px 18px}
   .home-collection-copy{display:flex;min-width:0;flex:1;flex-direction:column;justify-content:center;gap:6px;overflow:visible}
   .home-collection-open small{display:block;line-height:1.15}
-  .home-collection-title{display:block;min-height:20px;max-width:100%;color:#fff;font:600 14px/1.35 "Zen Kaku Gothic New",Roboto,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;visibility:visible;opacity:1}
+  .home-collection-title{display:block;min-height:20px;max-width:100%;color:#fff;font:600 14px/1.35 var(--font-body),var(--font-body),sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;visibility:visible;opacity:1}
   .home-collection-open b{flex:0 0 auto;align-self:center;margin:0;line-height:1}
   .home-collection-remove{border:0;border-left:1px solid rgba(255,255,255,.08);background:transparent;color:rgba(255,255,255,.55);font-size:22px;cursor:pointer}
   @media(max-width:620px){.home{padding-top:82px}.home-title-wrap:after{top:calc(100% + 18px);height:92px}.home-dynamic{gap:24px;margin-top:22px}.home-today-grid{grid-template-columns:1fr}.home-feature-card{min-height:190px;padding:22px}.home-feature-label{top:20px;left:22px;font-size:13px}.home-song-card{padding-top:64px;justify-content:flex-start}.home-song-title{font-size:clamp(17px,5.2vw,23px)!important;line-height:1.13!important}.home-member-card:not(.home-birthday-card){min-height:154px;padding:64px 22px 16px;justify-content:flex-start}.home-member-card:not(.home-birthday-card) b{margin-top:18px}.home-feature-card strong:not(.home-song-title){font-size:clamp(28px,8vw,38px)}.home-collection-row.is-readonly,.home-collection-row.is-readonly .home-collection-open{min-height:88px}.home-collection-row.is-readonly .home-collection-open{padding:14px 16px}.home-collection-open{min-height:70px;padding:12px 16px}.home-collection-title{font-size:13px}.sparkle-one{right:24px}.sparkle-two{right:66px}.sparkle-three{right:18px}}

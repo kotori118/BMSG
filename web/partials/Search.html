@@ -115,13 +115,13 @@
 <style>
   .universe-search-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
   .universe-search-form .search-field{margin:0}
-  .universe-search-submit{min-width:86px;padding:0 16px;border:1px solid rgba(156,236,255,.30);border-radius:16px;background:rgba(156,236,255,.10);color:var(--cyan);font:700 11px "Exo 2","Zen Kaku Gothic New",Roboto,sans-serif;letter-spacing:.12em;cursor:pointer}
+  .universe-search-submit{min-width:86px;padding:0 16px;border:1px solid rgba(156,236,255,.30);border-radius:16px;background:rgba(156,236,255,.10);color:var(--cyan);font:700 11px var(--font-body),var(--font-body),var(--font-body),sans-serif;letter-spacing:.12em;cursor:pointer}
   .universe-search-loading{display:grid;gap:10px;margin-top:14px}
   .universe-search-result{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"type arrow" "name arrow" "sub arrow";align-items:center;gap:4px 16px;padding:17px 18px;text-align:left}
-  .universe-search-type{grid-area:type;color:var(--cyan);font:700 9px "Exo 2","Zen Kaku Gothic New",Roboto,sans-serif;letter-spacing:.15em}
+  .universe-search-type{grid-area:type;color:var(--cyan);font:700 9px var(--font-body),var(--font-body),var(--font-body),sans-serif;letter-spacing:.15em}
   .universe-search-result .search-result-name{grid-area:name;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .universe-search-subtitle{grid-area:sub;color:rgba(247,251,255,.48);font:500 11px "Zen Kaku Gothic New",Roboto,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .universe-search-subtitle{grid-area:sub;color:rgba(247,251,255,.48);font:500 11px var(--font-body),var(--font-body),sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .universe-search-arrow{grid-area:arrow;color:var(--cyan);font-size:26px;line-height:1}
-  .universe-search-empty{margin:38px 0 0;color:rgba(247,251,255,.58);font:500 14px/1.8 "Zen Kaku Gothic New",Roboto,sans-serif;text-align:center}
+  .universe-search-empty{margin:38px 0 0;color:rgba(247,251,255,.58);font:500 14px/1.8 var(--font-body),var(--font-body),sans-serif;text-align:center}
   @media(max-width:520px){.universe-search-form{grid-template-columns:1fr}.universe-search-submit{min-height:48px}.universe-search-result{padding:15px 16px}}
 </style>

@@ -3,7 +3,7 @@
      BMSG UNIVERSE デザイントークン（数値の正本）
      仕様は docs/design/universe-design-system.md。値を変えるときは両方を直す。
      ========================================================= */
-  body.ui-v2 {
+  :root {
     /* 色 */
     --ui-bg: #0e0e0e;
     --ui-panel: #181818;
@@ -17,7 +17,9 @@
     --ui-danger: #c2410c;
 
     /* フォント */
-    --ui-font: Manrope, "Noto Sans JP", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;   /* 英字の本文は Manrope、日本語は Noto Sans JP */
+    --ui-font: Manrope, "Noto Sans JP", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    --font-body: var(--ui-font);
+    --font-display: Inter, "Noto Sans JP", sans-serif;
     --ui-font-display: Inter, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
 
     /* 文字の大きさ（6種類だけ） */

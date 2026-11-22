@@ -27,7 +27,7 @@
     border-right: 1px solid rgba(255, 255, 255, .12);
     background: #0d0d0d;
     color: #fff;
-    font-family: "Noto Sans JP", "Zen Kaku Gothic New", sans-serif;
+    font-family: "Noto Sans JP", var(--font-body), sans-serif;
     animation: app-menu-in 220ms cubic-bezier(.22, .8, .28, 1);
   }
   @keyframes app-menu-in { from { transform: translateX(-28px); opacity: 0; } to { transform: none; opacity: 1; } }
@@ -97,7 +97,7 @@
     --ui-active-bg: #f2f2f2;
     --ui-active-text: #111;
     --ui-radius: 6px;
-    --ui-font: "Noto Sans JP", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
+    --ui-font: "Noto Sans JP", var(--font-body), "Hiragino Sans", sans-serif;
     --ui-font-display: Inter, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;   /* 英字の大きな見出し */
     color: var(--ui-text);
     background: var(--ui-bg);
@@ -860,25 +860,25 @@
 
   /* ============ 共通の戻るボタン（全画面で同じ部品）============ */
   /* 枠なし。矢印（線）と BACK の文字、下に細い線。アイコンだけの版は矢印のみ */
-  body.ui-v2 .ui-back {
+  .ui-back {
     position: relative;
     display: inline-flex; align-items: center; gap: 8px; flex: none;
     height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 4px;
     border: 0; border-radius: 0; background: transparent; color: #fff; cursor: pointer;
     font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap;
   }
-  body.ui-v2 .ui-back::after {
+  .ui-back::after {
     content: ""; position: absolute; left: 4px; right: 4px; bottom: 10px; height: 1px; background: rgba(255, 255, 255, .45);
     transition: background .2s ease;
   }
-  body.ui-v2 .ui-back .ui-back-chevron,
-  body.ui-v2 .ui-back svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  body.ui-v2 .ui-back .ui-back-label { letter-spacing: .18em; }
+  .ui-back .ui-back-chevron,
+  .ui-back svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ui-back .ui-back-label { letter-spacing: .18em; }
   /* アイコンだけ：枠なし、下線なし */
-  body.ui-v2 .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; justify-content: center; }
-  body.ui-v2 .ui-back.ui-back-icon::after { display: none; }
-  body.ui-v2 .ui-back.ui-back-icon > span { display: none; }
-  @media (hover: hover) { body.ui-v2 .ui-back:hover::after { background: #fff; } }
+  .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; justify-content: center; }
+  .ui-back.ui-back-icon::after { display: none; }
+  .ui-back.ui-back-icon > span { display: none; }
+  @media (hover: hover) { .ui-back:hover::after { background: #fff; } }
 
   /* 共通の小さいボタン（変更・もう一度など） */
   body.ui-v2 .ui-btn-compact { min-height: 40px; padding: 0 16px; font-size: var(--ui-fs-label); }
