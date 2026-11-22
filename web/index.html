@@ -1563,10 +1563,14 @@
 
 <!-- PokerStyles.html -->
 <style>
+  /* 選ぶ画面：番号つきの行（renderUniverseIndexRows）と、見出しつきの区切り */
+  .poker-section { display: grid; gap: 10px; padding: 18px 0; }
+  .poker-section-label { margin: 18px 0 10px; }
+  .poker-section > .poker-section-label { margin: 0; }
+
   .poker-page{max-width:980px;margin:0 auto;padding-bottom:50px}
   .poker-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:24px}.poker-header .title{margin:3px 0 0}
-  .poker-app{min-height:440px}.poker-mode-grid,.poker-rule-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.poker-mode-card,.poker-rule-card{min-height:150px;padding:22px;text-align:left;display:flex;flex-direction:column;justify-content:space-between}.poker-mode-card span,.poker-rule-card span{line-height:1.75}
-  .poker-mode-card.is-wide{grid-column:1/-1;min-height:86px;flex-direction:row;align-items:center}.poker-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}.poker-section-head h2{margin:0}.poker-section-head p{margin:5px 0 0}.poker-back{width:46px;height:46px;min-width:46px;padding:0}
+  .poker-app{min-height:440px}.poker-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}.poker-section-head h2{margin:0}.poker-section-head p{margin:5px 0 0}.poker-back{width:46px;height:46px;min-width:46px;padding:0}
   .poker-panel{padding:18px}.poker-panel+.poker-panel{margin-top:14px}.poker-panel-label{display:block;margin-bottom:10px}.poker-join{display:grid;grid-template-columns:1fr auto;gap:10px}.poker-input{min-width:0;height:50px;box-sizing:border-box;padding:0 16px;text-align:center}.poker-join .ui-btn{min-width:110px}.poker-room-meta{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
   .poker-player-list{display:grid;gap:8px;margin:16px 0}.poker-player-row{display:flex;align-items:center;justify-content:space-between;min-height:50px;padding:0 14px}
   .poker-actions{display:flex;gap:10px;margin-top:16px}.poker-actions .ui-btn{flex:1;min-height:50px;padding:10px 14px}.poker-actions.is-stack{flex-direction:column}
@@ -1574,19 +1578,16 @@
   .poker-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;width:100%;perspective:1000px}.poker-card.is-back::before{content:'BMSG';position:absolute;inset:9px;display:flex;align-items:center;justify-content:center}
   .poker-final-grid{display:grid;gap:14px}.poker-final-player{padding:15px}.poker-final-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.poker-vote-btn{width:100%;min-height:44px;margin-top:12px}.poker-result{text-align:center;padding:22px}.poker-result-name{margin-top:8px}.poker-waiting{padding:28px;text-align:center;line-height:1.8}
   .poker-highlight-list{display:grid;gap:14px}.poker-empty{padding:40px 18px;text-align:center}
-  @media(max-width:560px){.poker-mode-grid,.poker-rule-grid{grid-template-columns:1fr}.poker-mode-card.is-wide{grid-column:auto}.poker-mode-card{min-height:118px}.poker-panel{padding:14px}.poker-board{gap:4px}.poker-card.is-back::before{inset:5px}.poker-actions{flex-direction:column}.poker-room-meta{align-items:flex-start;flex-direction:column}.poker-join{grid-template-columns:1fr}.poker-join .ui-btn{min-height:50px}}
+  @media(max-width:560px){.poker-panel{padding:14px}.poker-board{gap:4px}.poker-card.is-back::before{inset:5px}.poker-actions{flex-direction:column}.poker-room-meta{align-items:flex-start;flex-direction:column}.poker-join{grid-template-columns:1fr}.poker-join .ui-btn{min-height:50px}}
   /* 2026-09-11: final POKER style authority absorbed from PokerUiFixes + PokerPolishV2. */
   .poker-page{padding-top:74px;}
   .poker-header .eyebrow{display:none!important;}
   .poker-header{align-items:center;}
   .poker-header .title{margin:0;}
-  .poker-mode-card,.poker-rule-card{min-height:104px;justify-content:center;align-items:flex-start;}
-  .poker-mode-card span,.poker-rule-card span,.poker-section-head p{display:none!important;}
-  .poker-mode-card.is-wide{min-height:74px;}
-  .poker-mode-badge{display:block;margin:0 0 12px;text-align:center;}
+  .poker-section-head p{display:none!important;}
+  .poker-mode-badge{display:table;margin:0 auto 12px;text-align:center;}
   @keyframes pokerSimpleFlip{0%{transform:rotateY(88deg) scale(.96);opacity:.42;}58%{transform:rotateY(-4deg) scale(1.01);opacity:1;}100%{transform:rotateY(0deg) scale(1);opacity:1;}}
   @media(max-width:680px){.poker-page{padding-top:70px;}}
-  @media(max-width:560px){.poker-mode-card,.poker-rule-card{min-height:88px;}.poker-mode-card.is-wide{min-height:68px;}}
   .poker-header{align-items:center;justify-content:flex-start;gap:14px;}
   .poker-header > div{min-width:0;}
   .poker-home-btn{order:-1;margin:0;flex:none;}
@@ -1594,9 +1595,6 @@
   .poker-section-head > div{min-width:0;}
   .poker-back{order:-1;margin:0;flex:0 0 46px;}
   .poker-section-head h2{text-align:left;}
-  .poker-mode-card,.poker-rule-card{text-align:left;align-items:flex-start;justify-content:center;}
-  .poker-mode-card strong,.poker-rule-card strong{display:block!important;width:100%;text-align:left;}
-  .poker-mode-card.is-wide{flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;}
   .poker-confirm-overlay{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;padding:24px;}
   .poker-confirm-panel{width:min(100%,420px);box-sizing:border-box;padding:22px;}
   .poker-confirm-panel h3{margin:0;line-height:1.5;text-align:left;}
@@ -7253,11 +7251,11 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function pokerModeLabel(mode){return String(mode||'').toUpperCase()==='ONLINE'?'みんなで':'1人で';}
   function markPokerFlip(indices){if(pokerState.flipTimer)clearTimeout(pokerState.flipTimer);pokerState.flipIndices=Array.isArray(indices)?indices.slice():[indices];pokerState.flipTimer=setTimeout(function(){pokerState.flipIndices=[];pokerState.flipTimer=null;},640);}
 
-  function renderPokerMenu(){stopPokerPolling();pokerState.screen='menu';pokerState.room=null;pokerState.flipIndices=[];const host=document.getElementById('pokerApp');if(!host)return;host.innerHTML='<div class="poker-mode-grid"><button type="button" class="ui-card poker-mode-card" onclick="renderPokerOfflineRules()"><strong class="ui-heading">1人で</strong></button><button type="button" class="ui-card poker-mode-card" onclick="renderPokerOnlineMenu()"><strong class="ui-heading">みんなで</strong></button><button type="button" class="ui-card poker-mode-card is-wide" onclick="openPokerHighlights()"><strong class="ui-heading">神回</strong></button></div>';}
+  function renderPokerMenu(){stopPokerPolling();pokerState.screen='menu';pokerState.room=null;pokerState.flipIndices=[];const host=document.getElementById('pokerApp');if(!host)return;host.innerHTML=renderUniverseIndexRows([{title:'1人で',desc:'ひとりでカードを引いて手札を作る',onclick:'renderPokerOfflineRules()'},{title:'みんなで',desc:'ルームを作って、みんなで遊ぶ',onclick:'renderPokerOnlineMenu()'},{title:'神回',desc:'保存したプレイ結果を見る',onclick:'openPokerHighlights()'}],'poker-menu');}
   function pokerSectionHead(title,copy,back){return '<div class="poker-section-head"><div><h2 class="ui-heading-lg">'+escapeHtml(title)+'</h2></div><button type="button" class="ui-back" onclick="'+back+'" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button></div>';}
-  function ruleCard(rule,handler){return '<button type="button" class="ui-card poker-rule-card" onclick="'+handler+'(\''+rule+'\')"><strong class="ui-heading">'+pokerRuleLabel(rule)+'</strong></button>';}
+  function pokerRuleRows(handler){return renderUniverseIndexRows([{title:pokerRuleLabel('A'),desc:'何回でもカードを交換できる',onclick:handler+'(\'A\')'},{title:pokerRuleLabel('B'),desc:'カードの交換は1回だけ',onclick:handler+'(\'B\')'}],'poker-rules');}
 
-  function renderPokerOfflineRules(){pokerState.screen='offline-rules';const host=document.getElementById('pokerApp');host.innerHTML=pokerSectionHead('1人で','','renderPokerMenu()')+'<div class="poker-rule-grid">'+ruleCard('A','startOfflinePoker')+ruleCard('B','startOfflinePoker')+'</div>';}
+  function renderPokerOfflineRules(){pokerState.screen='offline-rules';const host=document.getElementById('pokerApp');host.innerHTML=pokerSectionHead('1人で','','renderPokerMenu()')+'<p class="ui-label poker-section-label">ルールを選ぶ</p>'+pokerRuleRows('startOfflinePoker');}
   function startOfflinePoker(rule){pokerState.offline={gameId:'OFF-'+Date.now()+'-'+Math.random().toString(36).slice(2,9),ruleType:rule,hand:[],drawnIds:[],exchangeCount:0,finalized:false,saved:false,revealCount:0};pokerState.sortIndex=-1;pokerState.exchangeIndices=[];pokerState.interaction='sort';renderOfflinePoker();}
   function renderOfflinePoker(){pokerState.screen='offline';const game=pokerState.offline;if(!game)return renderPokerOfflineRules();const drawn=game.hand.length;const status=drawn<5?'カードを引く':(game.finalized?'手札確定':(pokerState.interaction==='exchange'?'交換するカードを選ぶ':'手札を並べ替える'));let actions='';if(drawn<5){actions='<div class="poker-actions"><button type="button" class="ui-btn ui-btn-solid poker-primary" onclick="drawOfflinePokerCard()">カードを引く</button></div>';}else if(game.finalized){actions='<div class="poker-actions is-stack"><button type="button" class="ui-btn ui-btn-solid poker-primary" '+(game.saved?'disabled':'onclick="saveOfflinePoker()"')+'>'+(game.saved?'保存済み':'保存する')+'</button><button type="button" class="ui-btn" onclick="startOfflinePoker(\''+game.ruleType+'\')">もう一度プレイ</button><button type="button" class="ui-btn" onclick="renderPokerMenu()">終了する</button></div>';}else if(pokerState.interaction==='exchange'){actions='<div class="poker-actions"><button type="button" class="ui-btn ui-btn-solid poker-primary" onclick="executeOfflineExchange()">交換する</button><button type="button" class="ui-btn" onclick="cancelPokerExchange()">キャンセル</button></div>';}else{const canExchange=game.ruleType==='A'||game.exchangeCount<1;actions='<div class="poker-actions"><button type="button" class="ui-btn" '+(canExchange?'onclick="enterPokerExchange()"':'disabled')+'>交換する</button><button type="button" class="ui-btn ui-btn-solid poker-primary" onclick="finalizeOfflinePoker()">確定する</button></div>';}const host=document.getElementById('pokerApp');host.innerHTML=pokerSectionHead('1人で','','confirmExitOfflinePoker()')+'<span class="ui-badge poker-mode-badge">'+pokerRuleLabel(game.ruleType)+'</span><div class="poker-status"><strong class="ui-heading">'+status+'</strong></div>'+renderPokerHand(game.hand,drawn,'offline')+actions;}
   function drawOfflinePokerCard(){const game=pokerState.offline;if(!game||game.hand.length>=5)return;const card=choosePokerClientCard(game.hand,game.drawnIds);if(!card)return pokerNotify('カードを引けませんでした。');game.hand.push(card);game.drawnIds.push(card.imageId);markPokerFlip(game.hand.length-1);renderOfflinePoker();}
@@ -7265,7 +7263,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function finalizeOfflinePoker(){pokerState.offline.finalized=true;pokerState.interaction='sort';pokerState.exchangeIndices=[];renderOfflinePoker();}
   function confirmExitOfflinePoker(){if(pokerState.offline&&!pokerState.offline.finalized&&!window.confirm('このゲームを終了しますか？'))return;renderPokerMenu();}
 
-  function renderPokerOnlineMenu(){pokerState.screen='online-menu';const host=document.getElementById('pokerApp');host.innerHTML=pokerSectionHead('みんなで','','renderPokerMenu()')+'<div class="ui-panel poker-panel"><span class="ui-label poker-panel-label">ルームを作る</span><div class="poker-rule-grid">'+ruleCard('A','createOnlinePokerRoom')+ruleCard('B','createOnlinePokerRoom')+'</div></div><div class="ui-panel poker-panel"><span class="ui-label poker-panel-label">ルームに参加</span><div class="poker-join"><input id="pokerRoomInput" class="ui-input poker-input" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="ルームID"><button type="button" class="ui-btn ui-btn-solid poker-primary" onclick="joinOnlinePokerRoom()">参加する</button></div></div>';}
+  function renderPokerOnlineMenu(){pokerState.screen='online-menu';const host=document.getElementById('pokerApp');host.innerHTML=pokerSectionHead('みんなで','','renderPokerMenu()')+'<section class="poker-section"><p class="ui-label poker-section-label">ルームを作る（ルールを選ぶ）</p>'+pokerRuleRows('createOnlinePokerRoom')+'</section><section class="ui-divider-top poker-section"><p class="ui-label poker-section-label">ルームに参加</p><div class="poker-join"><input id="pokerRoomInput" class="ui-input poker-input" inputmode="numeric" maxlength="4" placeholder="4桁のルームID" aria-label="ルームID"><button type="button" class="ui-btn ui-btn-solid poker-primary" onclick="joinOnlinePokerRoom()">参加する</button></div></section>';}
   function createOnlinePokerRoom(rule){if(pokerState.busy)return;setPokerBusy(true);pokerLoading();google.script.run.withSuccessHandler(function(room){setPokerBusy(false);pokerState.room=room;pokerState.screen='online';renderPokerRoom();startPokerPolling();pokerNotify('ROOM '+room.roomId+' を作成しました。');}).withFailureHandler(function(error){setPokerBusy(false);pokerFailure(error);renderPokerOnlineMenu();}).createPokerRoom(pokerState.userId,rule);}
   function joinOnlinePokerRoom(){const input=document.getElementById('pokerRoomInput');const id=String(input&&input.value||'').replace(/\D/g,'');if(id.length!==4)return pokerNotify('4桁のROOM IDを入力してください。');setPokerBusy(true);pokerLoading();google.script.run.withSuccessHandler(function(room){setPokerBusy(false);pokerState.room=room;pokerState.screen='online';renderPokerRoom();startPokerPolling();pokerNotify('ROOM '+room.roomId+' に参加しました。');}).withFailureHandler(function(error){setPokerBusy(false);pokerFailure(error);renderPokerOnlineMenu();}).joinPokerRoom(pokerState.userId,id);}
   function leaveOnlinePokerRoom(){const room=pokerState.room;if(!room)return renderPokerMenu();const message=room.status==='WAITING'?(room.isCreator?'ROOMを削除しますか？':'ROOMから退出しますか？'):'ゲーム画面を閉じますか？';if(!window.confirm(message))return;stopPokerPolling();google.script.run.withSuccessHandler(function(){pokerState.room=null;renderPokerMenu();}).withFailureHandler(pokerFailure).leavePokerRoom(pokerState.userId,room.roomId);}
