@@ -1,37 +1,29 @@
 <style>
   .cover-group-tiles { margin-bottom: 14px; }
   /* 線の色（メンバー・グループの色）を部品の --accent に渡す */
-  .cover-content-card, .cover-song-row, .cover-project-row { --accent: var(--cover-accent, var(--ui-line-strong)); }
+  .cover-content-card, .cover-project-row { --accent: var(--cover-accent, var(--ui-line-strong)); }
   .cover-member-option { --accent: var(--member-color, var(--ui-line-strong)); }
 
   .cover-page{min-height:100%;padding:22px 0 96px}
   .cover-header{display:flex;align-items:center;gap:12px;margin:0 0 18px}
-  .cover-back-btn{width:46px;height:46px;min-width:46px;padding:0}
   .cover-title{margin:0}
   .cover-app{max-width:760px;margin:0 auto}
   .cover-section-title{margin:0 0 14px}
   .cover-stack{display:grid;grid-template-columns:1fr;gap:10px}
   .cover-choice-stack{max-width:520px;margin:0 auto}
-  .cover-content-card,.cover-song-row,.cover-project-row{width:100%;min-height:58px;text-align:left;justify-content:flex-start;padding:14px 16px}
+  .cover-content-card,.cover-project-row{width:100%;min-height:58px;text-align:left;justify-content:flex-start;padding:14px 16px}
   .cover-content-card{min-height:54px}
-  .cover-content-card strong,.cover-song-row strong,.cover-project-row strong{display:block;line-height:1.35}
+  .cover-content-card strong,.cover-project-row strong{display:block;line-height:1.35}
   .cover-row-meta{display:block;margin-top:4px;opacity:.62}
   .cover-home-actions{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:28px}
   .cover-home-actions .ui-btn{min-height:62px;justify-content:flex-start;text-align:left;padding:0 18px}
   .cover-empty{padding:30px 16px;text-align:center;opacity:.62}
   .cover-search-wrap{margin:0 0 12px}
   .cover-search{width:100%;height:48px;padding:0 14px}
-  .cover-editor-head{position:sticky;top:0;z-index:5;padding:0 0 12px}
   .cover-song-heading{margin:0 0 4px;line-height:1.35}
   .cover-song-context{opacity:.6;margin-bottom:12px}
-  .cover-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:360px;margin:0 auto 12px}
-  .cover-tabs .ui-btn{min-height:42px;padding:0 14px}
-  .cover-tools{display:flex;justify-content:center;align-items:center;gap:10px;margin:0 auto;flex-wrap:wrap}
-  .cover-tools .ui-btn{width:auto;min-width:128px;min-height:48px;padding:0 18px;justify-content:center}
   .cover-lyrics{padding-bottom:96px}
   .cover-lyric-row{padding:15px 2px 16px}
-  .cover-assignee{padding:0;margin:0 0 7px;text-align:left;min-height:28px;display:inline-flex;align-items:center;gap:7px}
-  .cover-assignee[disabled]{opacity:.9}
   .cover-lyric-text{white-space:pre-wrap;line-height:1.9}
   .cover-original-label{margin:0 0 7px;opacity:.62}
   .cover-save-bar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
@@ -60,15 +52,13 @@
   .cover-view-actions{display:flex;justify-content:center;gap:10px;margin:14px 0}
   .cover-view-actions .ui-btn{width:auto;min-width:128px;min-height:48px}
   .cover-view-actions.is-single{display:flex}
-  @media(max-width:600px){.cover-page{padding-top:14px}.cover-header{margin-bottom:14px}.cover-app{max-width:none}.cover-editor-head{top:0}.cover-tools{gap:8px}.cover-tools .ui-btn{min-width:118px;padding:0 14px}.cover-choice-stack{max-width:none}.cover-content-card{min-height:52px}.cover-member-list{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.cover-page{padding-top:14px}.cover-header{margin-bottom:14px}.cover-app{max-width:none}.cover-choice-stack{max-width:none}.cover-content-card{min-height:52px}.cover-member-list{grid-template-columns:1fr 1fr}}
   @media(min-width:780px){.cover-save-bar{position:sticky;bottom:0;margin-top:10px;padding-left:0;padding-right:0}.cover-sheet{align-items:center}.cover-sheet-panel{max-height:70vh}.cover-page{padding-bottom:36px}}
   /* 2026-09-11: final COVER style authority absorbed from CoverPolishV2/V3/V4. */
   .app-shell:has(#pageContent > .cover-page) .cosmic-bg{display:none!important}
   .cover-page{min-width:0;padding-top:86px}
   .app-shell:has(#pageContent > .cover-page) .utility-actions{z-index:40}
   .cover-header{display:flex!important;flex-direction:column;align-items:flex-start;gap:14px;margin:0 0 28px}
-  .cover-back-btn{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;display:grid!important;place-items:center;line-height:1}
-  .cover-page.is-cover-home .cover-back-btn{display:none!important}
   .cover-title{margin:0;max-width:100%;line-height:.96}
   .cover-section-title{margin:0 0 16px}
   .cover-page.is-cover-choice .cover-choice-stack{max-width:none;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -76,32 +66,21 @@
   .cover-page.is-cover-choice .cover-content-card::after{content:'';position:absolute;z-index:-1;right:-28px;bottom:-30px;width:76px;height:76px;pointer-events:none}
   .cover-page.is-cover-choice .cover-content-card strong{position:relative;z-index:1;display:block;line-height:1.2;overflow-wrap:anywhere}
   .cover-page.is-cover-group .cover-content-card:last-child:nth-child(odd),.cover-page.is-cover-artist .cover-content-card:last-child:nth-child(odd){grid-column:1}
-  .cover-song-row,.cover-project-row{min-height:68px;padding:15px 17px}
-  .cover-song-row .cover-row-meta{display:none!important}
+  .cover-project-row{min-height:68px;padding:15px 17px}
   .cover-search{height:52px}
   .cover-page.is-cover-editor .cover-header{margin-bottom:16px}
-  .cover-page.is-cover-editor .cover-editor-head{top:0;padding:0 0 14px;position:sticky;isolation:isolate}
-  .cover-page.is-cover-editor .cover-editor-head::before{content:'';position:absolute;z-index:-1;left:-2px;right:-2px;bottom:100%;height:120px;pointer-events:none}
-  .cover-page.is-cover-editor .cover-tabs,.cover-page.is-cover-editor .cover-tools{display:grid!important;grid-template-columns:repeat(2,minmax(0,152px));justify-content:center;gap:10px;max-width:none;margin-left:auto;margin-right:auto}
-  .cover-page.is-cover-editor .cover-tabs{margin-bottom:10px}
-  .cover-page.is-cover-editor .cover-tab,.cover-page.is-cover-editor .cover-tools .ui-btn{width:100%;min-width:0;min-height:52px;padding:0 12px;justify-content:center;text-align:center}
   .cover-page .cover-member-list{grid-template-columns:1fr;gap:10px}
   .cover-page .cover-member-option{min-height:54px;padding:10px;justify-content:center;text-align:center}
-  .cover-page .cover-assignee{min-height:44px;padding-block:8px}
-  .cover-page.is-cover-songs .cover-song-row{min-height:64px;padding:14px 16px;transition:transform var(--fast) var(--ease),border-color var(--fast) var(--ease)}
   .cover-page .cover-project-row{min-height:70px;padding:14px 16px}
   .cover-page .cover-project-row strong{line-height:1.35}
   .cover-page .cover-project-row .cover-row-meta{margin-top:5px;opacity:1}
   .cover-inline-back{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;margin:0 0 16px;display:grid!important;place-items:center;line-height:1}
   .cover-page.is-cover-editor .cover-back-btn{display:none!important}
-  .cover-page.is-cover-saved-view .cover-editor-head{position:static;top:auto}
-  .cover-page.is-cover-saved-view .cover-editor-head::before{display:none!important;content:none}
   .cover-page.is-cover-saved-view .cover-view-actions{margin:14px 0 18px}
-  @media(max-width:600px){.cover-page{padding-top:82px}.cover-page.is-cover-choice .cover-content-card{min-height:94px;padding:16px}.cover-page.is-cover-editor .cover-tab,.cover-page.is-cover-editor .cover-tools .ui-btn{min-height:50px}}
+  @media(max-width:600px){.cover-page{padding-top:82px}.cover-page.is-cover-choice .cover-content-card{min-height:94px;padding:16px}}
   @media(max-width:380px){.cover-page.is-cover-choice .cover-choice-stack{gap:9px}.cover-page.is-cover-choice .cover-content-card{min-height:90px;padding:13px}}
   /* Confirmation actions use the same substantial tap geometry as the rest of Universe. */
   .cover-dialog-actions .ui-btn{min-height:50px;padding:0 14px;justify-content:center;text-align:center}
-  .cover-page.is-cover-home .cover-back-btn{display:grid!important}
   /* 2026-09-30: COVER external source + BMSG ALLSTARS selection. */
   .cover-page .cover-allstar-member-card{display:flex!important;flex-direction:column;justify-content:center;gap:7px}
   .cover-member-select-state{min-height:14px}
@@ -123,9 +102,18 @@
     .cover-external-part{padding:13px}
     .cover-external-actions{grid-template-columns:1fr}
   }
+
+  /* 曲の詳細：題は流れる。ORIGINAL/COVER と道具の帯だけ上に止める（上のバーの下） */
+  .cover-editor-head { display: grid; gap: 8px; padding-bottom: 12px; }
+  .cover-toolbar { position: sticky; top: var(--ui-bar-h); z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 4px; padding: 8px 0; }
+  .cover-tabs { flex: 0 1 220px; }
+  .cover-tools { display: flex; flex: none; gap: 14px; }
+  .cover-page.is-cover-saved-view .cover-toolbar { position: static; }
+  /* 歌唱者：歌詞と同じ「点＋名前」。編集中は「変更」を添える */
+  .cover-assignee { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; margin-bottom: 4px; }
+  .cover-register-song { margin-top: 14px; }
 </style>
 <style data-content>
   /* 中身の見た目（絵柄・レア度・メンバーカラー）。ボタン・入力欄はここに書かない */
-  .cover-assignee-dot{width:7px;height:7px;border-radius:50%;background:var(--cover-member-color,#777)}
   .cover-ratio-fill{height:100%;background:var(--member-color,#9cecff);border-radius:inherit}
 </style>
