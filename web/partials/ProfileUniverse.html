@@ -1,0 +1,258 @@
+<style>
+  /* =========================================================
+     プロフィール（統一版）。色・文字・間隔はすべて UniverseTokens の変数。
+     古い指定（光・青緑・固有の大きさ）は使わない。
+     ========================================================= */
+
+  /* ---- 共通の面と枠 ---- */
+  .profile-page { padding-top: 96px; color: var(--ui-text); }
+  .profile-page button { font: inherit; }
+
+  /* 見出し・説明の補助（ラベルは表示しない方針） */
+  .profile-panel-eyebrow,
+  .profile-panel-copy,
+  .profile-discover-sub { display: none; }
+
+  .profile-panel { display: grid; gap: 24px; margin-top: 32px; }
+  .profile-members-head,
+  .profile-discover-head,
+  .profile-search-head,
+  .profile-chemistry-head,
+  .profile-map-head {
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
+    padding-bottom: 14px; border-bottom: 1px solid var(--ui-line);
+  }
+  .profile-members-title,
+  .profile-discover-head .profile-members-title,
+  .profile-search-title,
+  .profile-chemistry-title,
+  .profile-map-title {
+    margin: 0; color: #fff;
+    font-family: var(--ui-font-display); font-size: clamp(30px, 8vw, 40px); font-weight: 900;
+    letter-spacing: -.035em; line-height: .95; text-transform: uppercase;
+  }
+  .profile-members-count,
+  .profile-search-result-count { color: var(--ui-text-sub); font-family: var(--ui-font-num); font-size: var(--ui-fs-body-sm); }
+
+  /* 面（すべての箱はこれ） */
+  .profile-member-card,
+  .profile-members-state,
+  .profile-map-group,
+  .profile-search-box,
+  .profile-search-field,
+  .profile-search-member,
+  .profile-search-empty,
+  .profile-chemistry-slot,
+  .profile-chemistry-picker,
+  .profile-chemistry-result,
+  .profile-chemistry-compare,
+  .profile-discover-rank-card,
+  .profile-discover-member,
+  .profile-detail-section {
+    border: 1px solid var(--ui-line); border-radius: var(--ui-radius);
+    background: var(--ui-panel); color: var(--ui-text);
+  }
+
+  /* 入力欄・選択欄（共通の .ui-input と同じ） */
+  .profile-search-box input,
+  .profile-map-select-label select,
+  .profile-search-field-options select {
+    display: block; width: 100%; min-height: var(--ui-button-h); padding: 0 16px;
+    border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius);
+    background-color: var(--ui-panel-2); color: #fff;
+    font-family: var(--ui-font); font-size: var(--ui-fs-body); letter-spacing: var(--ui-ls-body);
+    appearance: none; -webkit-appearance: none; outline: none;
+  }
+  .profile-search-box input::placeholder { color: var(--ui-text-sub); }
+
+  /* ボタン（共通の .ui-btn と同じ） */
+  .profile-retry-button,
+  .profile-detail-back,
+  .profile-search-selected-head button,
+  .profile-chemistry-detail-error button,
+  .profile-chemistry-slot-remove,
+  .profile-search-field-toggle {
+    min-height: var(--ui-button-h); padding: 0 20px;
+    border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius);
+    background: transparent; color: #fff;
+    font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800;
+    letter-spacing: var(--ui-ls-label); text-transform: uppercase; cursor: pointer;
+  }
+
+  /* 表示切り替え（上の5つ）は universe の枠の形 */
+  .profile-local-nav {
+    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr));
+    border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); overflow: hidden;
+  }
+  .profile-local-tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    min-width: 0; min-height: 64px; padding: 8px 2px;
+    border: 0; border-right: 1px solid var(--ui-line); border-radius: 0;
+    background: transparent; color: var(--ui-text-sub);
+    font-family: var(--ui-font); font-size: 11px; font-weight: 700;
+  }
+  .profile-local-tab:last-child { border-right: 0; }
+  .profile-local-tab svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  .profile-local-tab.active { background: var(--ui-active-bg); color: var(--ui-active-text); }
+
+  /* ---- メンバー（ホーム） ---- */
+  .profile-member-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .profile-member-card { position: relative; display: grid; overflow: hidden; padding: 0; text-align: left; cursor: pointer; }
+  .profile-member-card:active { background: var(--ui-panel-2); }
+  .profile-member-visual { position: relative; aspect-ratio: 1; background: var(--ui-panel-2); border-bottom: 1px solid var(--ui-line); overflow: hidden; }
+  .profile-member-visual img,
+  .profile-member-fallback,
+  .profile-detail-visual img,
+  .profile-map-avatar img,
+  .profile-search-avatar img,
+  .profile-discover-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .profile-member-fallback { display: grid; place-items: center; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: 48px; font-weight: 900; }
+  .profile-member-accent { display: none; }
+  .profile-member-body { display: grid; gap: 4px; padding: 14px 16px 16px; }
+  .profile-member-group { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .profile-member-name { color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 900; letter-spacing: -.01em; text-transform: uppercase; }
+  .profile-members-state { padding: 24px 16px; text-align: center; }
+  .profile-members-state-title { margin: 0 0 6px; color: #fff; font-size: var(--ui-fs-heading); font-weight: 700; }
+
+  /* 読み込み中：同じ形の面を流す（光なし） */
+  .profile-member-skeleton,
+  .skeleton-block {
+    display: block; border-radius: var(--ui-radius);
+    background: linear-gradient(100deg, #1c1c1c 30%, #2b2b2b 50%, #1c1c1c 70%) 0 0 / 220% 100%;
+    animation: uiShimmer 1.4s linear infinite; box-shadow: none;
+  }
+  .profile-member-skeleton-image { aspect-ratio: 1; border-radius: 0; }
+  .profile-member-skeleton-label,
+  .profile-member-skeleton-copy { height: 10px; width: 40%; }
+  .profile-member-skeleton-heading,
+  .profile-member-skeleton-name { height: 16px; width: 70%; }
+  @media (prefers-reduced-motion: reduce) { .profile-member-skeleton, .skeleton-block { animation: none; } }
+
+  /* ---- 詳細（メンバーを開いた画面） ---- */
+  .profile-member-detail { display: grid; gap: 16px; }
+  .profile-detail-hero { display: grid; grid-template-columns: 120px 1fr; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); overflow: hidden; background: var(--ui-panel); }
+  .profile-detail-visual { aspect-ratio: 1; background: var(--ui-panel-2); }
+  .profile-detail-identity { display: grid; align-content: center; gap: 6px; padding: 16px 18px; }
+  .profile-detail-line { display: none; }
+  .profile-detail-group { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .profile-detail-name { margin: 0; color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-title); font-weight: 900; letter-spacing: -.01em; text-transform: uppercase; }
+  .profile-detail-sections { display: grid; gap: 12px; }
+  .profile-detail-section { padding: 16px 18px; }
+  .profile-detail-section-title { margin: 0 0 10px; color: #fff; font-family: var(--ui-font); font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
+  .profile-detail-list { display: grid; margin: 0; }
+  .profile-detail-row { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 10px 0; border-top: 1px solid var(--ui-line); }
+  .profile-detail-row:first-child { border-top: 0; }
+  .profile-detail-row dt { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+  .profile-detail-row dd { margin: 0; color: #fff; font-size: var(--ui-fs-body); }
+  .profile-detail-message,
+  .profile-detail-loading { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+
+  /* ---- マップ ---- */
+  .profile-map-select-label { display: grid; gap: 8px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .profile-map-groups { display: grid; gap: 12px; }
+  .profile-map-group { padding: 16px 18px; }
+  .profile-map-group h3 { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; padding-bottom: 12px; border-bottom: 1px solid var(--ui-line); color: #fff; font-family: var(--ui-font); font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
+  .profile-map-group h3 b { color: var(--ui-text-sub); font-family: var(--ui-font-num); font-size: var(--ui-fs-body-sm); font-weight: 700; }
+  .profile-map-member-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .profile-map-member { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 4px 16px 4px 4px; border: 1px solid var(--ui-line-strong); border-radius: 999px; background: var(--ui-panel-2); color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .profile-map-avatar { width: 44px; height: 44px; overflow: hidden; border-radius: 50%; background: var(--ui-panel); }
+  .profile-map-empty,
+  .profile-map-loading { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+
+  /* ---- 検索 ---- */
+  .profile-search-box { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; }
+  .profile-search-box svg { flex: none; width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 1.8; stroke-linecap: round; }
+  .profile-search-box input { border: 0; background: transparent; min-height: 40px; padding: 0; }
+  .profile-search-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .profile-search-field { padding: 0; }
+  .profile-search-field-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .profile-search-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .profile-search-tag { min-height: var(--ui-button-h); padding: 0 16px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; cursor: pointer; }
+  .profile-search-tag.active { background: var(--ui-active-bg); color: var(--ui-active-text); border-color: var(--ui-active-bg); }
+  .profile-search-results { display: grid; gap: 8px; }
+  .profile-search-result-list { display: grid; gap: 8px; }
+  .profile-search-member { display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 12px; padding: 10px 14px; cursor: pointer; }
+  .profile-search-avatar { width: 52px; height: 52px; overflow: hidden; border-radius: 50%; background: var(--ui-panel-2); }
+  .profile-search-member-copy { display: grid; gap: 2px; }
+  .profile-search-member-copy b { color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 900; letter-spacing: -.01em; text-transform: uppercase; }
+  .profile-search-member-copy small { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+  .profile-search-member > svg { display: none; }
+  .profile-search-empty { padding: 24px 16px; text-align: center; color: var(--ui-text-sub); }
+  .profile-search-loading { display: grid; gap: 8px; }
+
+  /* ---- 相性 ---- */
+  .profile-chemistry-slots { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; gap: 8px; }
+  .profile-chemistry-cross { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-body); font-weight: 800; text-align: center; }
+  .profile-chemistry-slot { position: relative; display: grid; align-content: center; justify-items: center; gap: 8px; min-height: 180px; padding: 16px 12px; text-align: center; cursor: pointer; }
+  .profile-chemistry-slot.active,
+  .profile-chemistry-slot.selected { border-color: #fff; }
+  .profile-chemistry-slot-number { position: absolute; top: 12px; left: 14px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); }
+  .profile-chemistry-slot-empty { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .profile-chemistry-slot-plus { color: #fff; font-size: 24px; line-height: 1; }
+  .profile-chemistry-slot-avatar { width: 72px; height: 72px; overflow: hidden; border-radius: 50%; background: var(--ui-panel-2); }
+  .profile-chemistry-slot-avatar img,
+  .profile-chemistry-member img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .profile-chemistry-slot-name { color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 900; text-transform: uppercase; }
+  .profile-chemistry-slot-remove { min-height: 36px; padding: 0 12px; }
+  .profile-chemistry-picker { padding: 16px; display: grid; gap: 14px; }
+  .profile-chemistry-section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .profile-chemistry-section-head h3 { margin: 0; color: #fff; font-family: var(--ui-font); font-size: var(--ui-fs-heading); font-weight: 700; }
+  .profile-chemistry-section-head span { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+  .profile-chemistry-member-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .profile-chemistry-member { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel-2); color: #fff; text-align: left; cursor: pointer; }
+  .profile-chemistry-member.selected { border-color: #fff; }
+  .profile-chemistry-member > img,
+  .profile-chemistry-member > i { width: 100%; aspect-ratio: 1; border-radius: var(--ui-radius); object-fit: cover; display: block; }
+  .profile-chemistry-member > span { font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .profile-chemistry-member > b { color: var(--ui-text-sub); font-size: var(--ui-fs-label); font-weight: 700; }
+  .profile-chemistry-result { display: grid; gap: 12px; padding: 16px; }
+  .profile-chemistry-score { display: flex; align-items: baseline; gap: 8px; }
+  .profile-chemistry-score strong { color: #fff; font-family: var(--ui-font-num); font-size: var(--ui-fs-title); font-weight: 800; }
+  .profile-chemistry-score span { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+  .profile-chemistry-result-copy h3 { margin: 0; color: #fff; font-size: var(--ui-fs-heading); font-weight: 700; }
+  .profile-chemistry-result-copy p,
+  .profile-chemistry-result-copy small { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); margin: 0; }
+  .profile-chemistry-compare { padding: 6px 16px; }
+  .profile-chemistry-compare-head,
+  .profile-chemistry-compare-row { display: grid; grid-template-columns: 96px 1fr 1fr; gap: 10px; padding: 10px 0; border-top: 1px solid var(--ui-line); }
+  .profile-chemistry-compare-head { border-top: 0; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+  .profile-chemistry-compare-head strong { color: #fff; }
+  .profile-chemistry-compare-row dt { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+  .profile-chemistry-compare-row dd { margin: 0; color: #fff; font-size: var(--ui-fs-body); }
+  .profile-chemistry-compare-row.match dd { color: #fff; text-decoration: underline; text-underline-offset: 4px; }
+  .profile-chemistry-detail-loading,
+  .profile-chemistry-loading,
+  .profile-chemistry-empty { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+  .profile-chemistry-detail-error p { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+
+  /* ---- 発見 ---- */
+  .profile-discover-ranking { display: grid; gap: 8px; }
+  .profile-discover-ranking-head { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .profile-discover-rank-card { display: grid; grid-template-columns: 36px 52px 1fr auto; align-items: center; gap: 12px; padding: 10px 14px; cursor: pointer; }
+  .profile-discover-rank { color: #fff; font-family: var(--ui-font-num); font-size: var(--ui-fs-title); font-weight: 800; text-align: center; }
+  .profile-discover-avatar { width: 52px; height: 52px; overflow: hidden; border-radius: 50%; background: var(--ui-panel-2); }
+  .profile-discover-member { display: grid; gap: 2px; padding: 0; border: 0; background: transparent; }
+  .profile-discover-member strong { color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 900; text-transform: uppercase; }
+  .profile-discover-member small,
+  .profile-discover-match small,
+  .profile-discover-count small { color: var(--ui-text-sub); font-size: var(--ui-fs-label); font-family: var(--ui-font-display); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .profile-discover-match,
+  .profile-discover-count { display: grid; justify-items: end; gap: 2px; }
+  .profile-discover-match strong,
+  .profile-discover-count strong { color: #fff; font-family: var(--ui-font-num); font-size: var(--ui-fs-heading); font-weight: 800; }
+  /* 共通の戻るボタン＋見出し（分析と同じ） */
+  .profile-header { display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--ui-line); }
+  .profile-heading { flex: 1; min-width: 0; text-align: left; }
+  .profile-service-back {
+    display: inline-flex; align-items: center; gap: 8px; flex: none; width: auto;
+    height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 16px 0 12px;
+    border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius);
+    background: transparent; color: #fff;
+    font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap;
+  }
+  .profile-service-back span { font-size: 18px; font-weight: 500; letter-spacing: 0; }
+  .profile-title { margin: 0; color: #fff; font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900; letter-spacing: -.035em; line-height: .95; text-transform: uppercase; }
+  .profile-detail-back { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-button-h); height: var(--ui-button-h); padding: 0; }
+  .profile-detail-back svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+</style>
+
