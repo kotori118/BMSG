@@ -4016,7 +4016,10 @@
   .lyx-label { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
 
   /* カラオケルーム */
-  .lyx-room { display: grid; gap: 12px; padding: 18px; margin-bottom: 24px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); }
+  .lyx-room { display: grid; gap: 12px; margin-bottom: 28px; padding: 0 0 22px; border: 0; border-bottom: 1px solid var(--ui-line); background: none; }
+  .lyx-roomhead { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+  .lyx-textbtn { min-height: 36px; padding: 0 2px; border: 0; background: none; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 700; letter-spacing: var(--ui-ls-label); cursor: pointer; }
+  .lyx-textbtn.is-link { justify-self: start; color: var(--ui-text); text-decoration: underline; text-underline-offset: 4px; }
   .lyx-room .ui-btn-wide { width: 100%; }
   .lyx-join { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
   .lyx-join.is-two { grid-template-columns: 1fr 1fr; }
@@ -8418,7 +8421,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if (!lyricsState.karaokeRoom) {
       return `<section class="lyx-room"><p class="lyx-label">カラオケルーム</p><div class="lyx-join is-two"><button class="ui-btn ui-btn-solid" type="button" onclick="createLyricsKaraokeRoom()">ルームを作る</button><button class="ui-btn" type="button" aria-expanded="false" aria-controls="lyricsRoomJoin" onclick="toggleLyricsRoomJoin(this)">ルームに参加</button></div><div id="lyricsRoomJoin" class="lyx-join" hidden><input id="lyricsRoomInput" class="ui-input" inputmode="numeric" maxlength="4" placeholder="4桁のルームID" aria-label="4桁のルームID"><button class="ui-btn ui-btn-solid" type="button" onclick="joinLyricsKaraokeRoom()">参加</button></div></section>`;
     }
-    return `<section class="lyx-room is-active"><div class="lyx-roomid"><span class="lyx-label">ROOM ID</span><strong>${escapeLyrics(lyricsState.karaokeRoom.roomId)}</strong></div><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="openLatestLyricsKaraoke()">最新結果を見る</button><div class="lyx-join"><button class="ui-btn" type="button" onclick="navigateTo('karaoke')">履歴</button><button class="ui-btn" type="button" onclick="leaveLyricsKaraokeRoom()">退出</button></div></section>`;
+    return `<section class="lyx-room is-active"><div class="lyx-roomhead"><div class="lyx-roomid"><span class="lyx-label">ROOM ID</span><strong>${escapeLyrics(lyricsState.karaokeRoom.roomId)}</strong></div><button class="lyx-textbtn" type="button" onclick="leaveLyricsKaraokeRoom()">退出</button></div><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="openLatestLyricsKaraoke()">最新結果を見る</button><button class="lyx-textbtn is-link" type="button" onclick="navigateTo('karaoke')">履歴を見る</button></section>`;
   }
 
   // グループの曲一覧
