@@ -17,7 +17,6 @@
     if(universeCrossLinksState.route==='profile')syncUniverseProfileCrossLinks_();
     else if(universeCrossLinksState.route==='lyrics')syncUniverseLyricsCrossLinks_();
     else if(universeCrossLinksState.route==='analysis')syncUniverseAnalysisCrossLinks_();
-    else if(universeCrossLinksState.route==='cards')syncUniverseCardCrossLinks_();
   }
 
   function applyUniverseCrossLinkRouteTarget_(){
@@ -116,11 +115,6 @@
     }
   }
 
-  function syncUniverseCardCrossLinks_(){
-    if(typeof cardState==='undefined'||!cardState.ready||typeof getCardGroupCards!=='function')return;const sections=[].slice.call(document.querySelectorAll('#cardCollectionBody .card-collection-member'));if(!sections.length)return;
-    const byMember={};getCardGroupCards(cardState.currentGroup||'ALL').forEach(function(card){const id=String(card.memberId||'');if(id&&!byMember[id])byMember[id]=[];if(id)byMember[id].push(card);});
-    Object.keys(byMember).forEach(function(memberId,index){const section=sections[index];if(!section)return;const titleRow=section.querySelector('.card-collection-member-title-row');if(!titleRow||titleRow.querySelector('.universe-card-profile-link'))return;const button=createUniverseCrossLinkButton_('PROFILE',function(){if(typeof closeCardCollection==='function')closeCardCollection();navigateToWithParams('profile',{member:memberId});},'universe-card-profile-link');titleRow.appendChild(button);});
-  }
 </script>
 
 <style>
@@ -132,6 +126,6 @@
   .universe-credit-list{display:grid;gap:8px}.universe-credit-song{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:13px 14px;text-align:left}.universe-credit-tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px}.universe-credit-tags i{padding:4px 7px}.universe-crosslink-status{margin:0}
   .lyrics-song-actions .universe-lyrics-analysis-link{flex:1 1 120px;min-height:46px;margin:0}
   .lyrics-song-actions.is-bottom .universe-lyrics-analysis-link{grid-column:1;grid-row:2;width:100%;min-width:0;min-height:44px;padding:0 10px;justify-self:start}
-  .universe-analysis-profile-link{margin:16px 0 0}.universe-analysis-lyrics-link{margin-top:16px}.universe-card-profile-link{min-height:36px;margin-left:auto;padding:0 11px}
+  .universe-analysis-profile-link{margin:16px 0 0}.universe-analysis-lyrics-link{margin-top:16px}
   @media(max-width:520px){.universe-profile-crosslinks .universe-crosslink-button{flex:1 1 100%}.universe-credit-song{grid-template-columns:1fr}.universe-credit-tags{justify-content:flex-start}.lyrics-song-actions .universe-lyrics-analysis-link{padding-inline:12px}.lyrics-song-actions.is-bottom .universe-lyrics-analysis-link{padding-inline:8px}}
 </style>
