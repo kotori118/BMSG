@@ -3197,6 +3197,17 @@
   .app-menu-panel button[aria-current="page"] { background: #f2f2f2; color: #111; }
   .app-menu-panel button[aria-current="page"]::after { border-color: #111; }
 
+  /* 白い画面（ui-light）のメニュー。色は同じ部品のまま、トークンで白に切り替える。 */
+  body.ui-light .app-menu-panel { background: var(--ui-bg); color: var(--ui-text); border-right-color: var(--ui-line); }
+  body.ui-light .app-menu-close { color: var(--ui-text); }
+  body.ui-light .app-menu-group { color: var(--ui-text-sub); }
+  body.ui-light .app-menu-panel button:not(.app-menu-close) { border-top-color: var(--ui-line); }
+  body.ui-light .app-menu-panel button:not(.app-menu-close)::after { border-color: var(--ui-text-sub); }
+  body.ui-light .app-menu-panel button:not(.app-menu-close):hover,
+  body.ui-light .app-menu-panel button:not(.app-menu-close):focus-visible { background: var(--ui-panel-2); }
+  body.ui-light .app-menu-panel button[aria-current="page"] { background: var(--ui-active-bg); color: var(--ui-active-text); }
+  body.ui-light .app-menu-panel button[aria-current="page"]::after { border-color: var(--ui-active-text); }
+
   /* ---- 新デザインの基本 ---- */
   body.ui-v2 {
     --ui-bg: #0e0e0e;
@@ -4081,7 +4092,7 @@
   .lyx-parts { display: grid; gap: 0; }
   .lyx-part { display: grid; gap: 6px; padding: 16px 18px; border-top: 1px solid var(--ui-line); }
   .lyx-part:first-child { border-top: 0; }
-  .lyx-singer { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .lyx-singer { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 800; letter-spacing: var(--ui-ls-heading); line-height: 1.3; text-transform: uppercase; }
   .lyx-text { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 500; letter-spacing: var(--ui-ls-body); line-height: 1.8; white-space: pre-wrap; }
 
   .lyx-save { margin-top: 16px; }
@@ -8379,7 +8390,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     'MAZZEL': '1_B6mMgMqOzUhB0wrsTO2yIGxKmJKtbpX',
     'STARGLOW': '19IH9HqS0lMV9S-B11yFhTqMM4Zxq8OMX',
     'HANA': '1Epbsc6-nOt1mfqDgNcmvdSo1__WLh9yu',
-    'BMSG ALLSTARS': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
+    'BMSG ALLSTARS': '1Mg_mIzUzb62SpvPqrYrmffuRRldHBroO'
   };
 
   function lyricsGroupPhotoUrl(group) {

@@ -85,6 +85,17 @@
   .app-menu-panel button[aria-current="page"] { background: #f2f2f2; color: #111; }
   .app-menu-panel button[aria-current="page"]::after { border-color: #111; }
 
+  /* 白い画面（ui-light）のメニュー。色は同じ部品のまま、トークンで白に切り替える。 */
+  body.ui-light .app-menu-panel { background: var(--ui-bg); color: var(--ui-text); border-right-color: var(--ui-line); }
+  body.ui-light .app-menu-close { color: var(--ui-text); }
+  body.ui-light .app-menu-group { color: var(--ui-text-sub); }
+  body.ui-light .app-menu-panel button:not(.app-menu-close) { border-top-color: var(--ui-line); }
+  body.ui-light .app-menu-panel button:not(.app-menu-close)::after { border-color: var(--ui-text-sub); }
+  body.ui-light .app-menu-panel button:not(.app-menu-close):hover,
+  body.ui-light .app-menu-panel button:not(.app-menu-close):focus-visible { background: var(--ui-panel-2); }
+  body.ui-light .app-menu-panel button[aria-current="page"] { background: var(--ui-active-bg); color: var(--ui-active-text); }
+  body.ui-light .app-menu-panel button[aria-current="page"]::after { border-color: var(--ui-active-text); }
+
   /* ---- 新デザインの基本 ---- */
   body.ui-v2 {
     --ui-bg: #0e0e0e;
