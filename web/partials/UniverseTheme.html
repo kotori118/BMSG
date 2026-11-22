@@ -1,131 +1,122 @@
 <style>
   /* =========================================================
-     BMSG UNIVERSE 共通部品（全画面で同じものを使う）
-     - 色・書体・大きさは UniverseTokens.html のトークンだけ。
-     - 画面ごとのCSSは並べ方（grid・gap・幅）だけを書き、見た目はここの部品を使う。
-     - 画面のCSSで上書きしない。足りない見た目はここに部品として足す。
+     BMSG UNIVERSE 部品（見た目の正本）
+     - 見た目はこのファイルにだけ書く。値は UniverseTokens.html のトークン。
+     - 画面のCSSは並べ方だけ（tests/css-structure.test.mjs が検査する）。
+     - 画面では class="ui-… 画面の名前" のように部品の名前をつけて使う。
+     - 足りない見た目は、画面ではなくここに部品として足す。
+     一覧：docs/design/universe-design-system.md
      ========================================================= */
 
-  /* ---- 素の要素：ボタン・入力欄の土台 ---- */
-  button {
-    -webkit-appearance: none;
-    appearance: none;
-    font: inherit;
-    color: inherit;
-    touch-action: manipulation;
-    cursor: pointer;
-    transition: border-color var(--ui-fast) var(--ui-ease), background var(--ui-fast) var(--ui-ease), color var(--ui-fast) var(--ui-ease), transform var(--ui-fast) var(--ui-ease), opacity var(--ui-fast) var(--ui-ease);
-  }
+  /* ============ 0. 素の要素 ============ */
+  button { -webkit-appearance: none; appearance: none; font: inherit; color: inherit; touch-action: manipulation; cursor: pointer; transition: border-color var(--ui-fast) var(--ui-ease), background var(--ui-fast) var(--ui-ease), color var(--ui-fast) var(--ui-ease), transform var(--ui-fast) var(--ui-ease), opacity var(--ui-fast) var(--ui-ease); }
   button:not(:disabled):active { transform: scale(.985); }
   button:disabled { cursor: default; opacity: .45; }
   :focus-visible { outline: 2px solid var(--ui-text); outline-offset: 2px; }
-
-  /* 画面の中のボタンは、何も指定がなければ共通の枠線ボタンになる（:where で優先度0） */
-  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(button):not(:where(.ui-back, .utility-btn, .nav-btn)) {
-    min-height: 40px;
-    padding: 0 16px;
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-    background: transparent;
-    color: var(--ui-text);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body-sm);
-    font-weight: 700;
-    letter-spacing: var(--ui-ls-body);
-  }
-  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(button):where([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, .is-current) {
-    border-color: var(--ui-active-bg);
-    background: var(--ui-active-bg);
-    color: var(--ui-active-text);
-  }
-
-  /* 入力欄：.ui-input と、画面の中の素の入力欄は同じ見た目（:where で優先度0） */
-  .ui-input,
-  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"]), select, textarea) {
-    display: block;
-    width: 100%;
-    min-height: var(--ui-button-h);
-    padding: 0 16px;
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-    background: var(--ui-field-bg);
-    color: var(--ui-text);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body);
-    letter-spacing: var(--ui-ls-body);
-    outline: none;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(textarea) { min-height: 120px; padding: 12px 16px; line-height: 1.7; resize: vertical; }
-  .ui-input::placeholder, :where(input, textarea)::placeholder { color: var(--ui-text-sub); }
-  .ui-input:focus, :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(input, select, textarea):focus { border-color: var(--ui-text); background: var(--ui-field-focus); outline: none; }
-  select.ui-input, :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(select) {
-    padding-right: 40px;
-    background-image: linear-gradient(45deg, transparent 50%, var(--ui-text) 50%), linear-gradient(135deg, var(--ui-text) 50%, transparent 50%);
-    background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
-    background-size: 6px 6px, 6px 6px;
-    background-repeat: no-repeat;
-  }
+  img { max-width: 100%; }
   input[type="checkbox"], input[type="radio"], input[type="range"] { accent-color: var(--ui-text); }
+  input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
 
-  /* ---- ボタン ---- */
-  .ui-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: var(--ui-button-h);
-    padding: 0 20px;
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-    background: transparent;
-    color: var(--ui-text);
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: var(--ui-ls-label);
-    text-transform: uppercase;
-    text-decoration: none;
+  /* 画面の中で部品の名前がないボタン・入力欄も、共通の見た目になる（:where で優先度0） */
+  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"], [class*="-modal"]) :where(button):not(:where(.ui-back, .utility-btn, .nav-btn, [class*="ui-"])) {
+    min-height: 40px; padding: 0 16px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text);
+    font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 700; letter-spacing: var(--ui-ls-body);
   }
+  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"], [class*="-modal"]) :where(button):not(:where([class*="ui-"])):where([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, .is-current) {
+    border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text);
+  }
+
+  /* ============ 1. 文字 ============ */
+  .ui-display { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-display); font-weight: 900; letter-spacing: var(--ui-ls-display); line-height: .88; text-transform: uppercase; }
+  .ui-title { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900; letter-spacing: -.035em; line-height: .95; text-transform: uppercase; overflow-wrap: anywhere; }
+  .ui-title.ui-title-sm { font-size: clamp(28px, 8vw, 40px); }
+  .ui-heading { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); line-height: 1.35; }
+  .ui-heading-lg { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: clamp(22px, 6vw, 30px); font-weight: 700; letter-spacing: var(--ui-ls-heading); line-height: 1.25; overflow-wrap: anywhere; }
+  .ui-name { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 900; letter-spacing: -.01em; line-height: 1.25; text-transform: uppercase; }
+  .ui-name.ui-name-lg { font-size: var(--ui-fs-title); }
+  .ui-label { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1.3; text-transform: uppercase; }
+  .ui-text { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 500; letter-spacing: var(--ui-ls-body); line-height: 1.8; }
+  .ui-muted { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 500; line-height: 1.6; }
+  .ui-num { margin: 0; color: var(--ui-text); font-family: var(--ui-font-num); font-size: var(--ui-fs-title); font-weight: 800; letter-spacing: .02em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .ui-num.ui-num-xl { font-size: clamp(44px, 13vw, 64px); letter-spacing: -.02em; }
+  .ui-num-hollow { color: transparent; font-family: var(--ui-font-display); font-size: clamp(40px, 11vw, 56px); font-weight: 900; letter-spacing: -.04em; line-height: 1; -webkit-text-stroke: 1px var(--ui-line-strong); }
+  .ui-strong { color: var(--ui-text); font-weight: 700; }
+  .ui-link { color: var(--ui-text); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* ============ 2. 面 ============ */
+  .ui-panel { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); }
+  .ui-panel-sunken { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel-2); color: var(--ui-text); }
+  .ui-frame { border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); }
+  .ui-card { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); text-align: left; cursor: pointer; }
+  @media (hover: hover) { .ui-card:hover { border-color: var(--ui-line-strong); background: var(--ui-panel-2); } }
+  :is(.ui-panel, .ui-panel-sunken, .ui-frame, .ui-card):is(.is-selected, .selected, .active, [aria-pressed="true"]) { border-color: var(--ui-text); }
+  .ui-surface { background: var(--ui-bg); color: var(--ui-text); }
+  .ui-divider { border-bottom: 1px solid var(--ui-line); }
+  .ui-divider-top { border-top: 1px solid var(--ui-line); }
+  .ui-empty { padding: 22px 16px; border: 1px dashed var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); text-align: center; }
+
+  /* 写真の入れ物：丸（人）と角（物）。写真は枠いっぱい */
+  .ui-avatar { border-radius: 50%; background: var(--ui-panel-2); overflow: hidden; }
+  .ui-thumb { border-radius: var(--ui-radius); background: var(--ui-panel-2); overflow: hidden; }
+  :is(.ui-avatar, .ui-thumb) > img { width: 100%; height: 100%; object-fit: cover; }
+  /* 写真のタイル：写真の上に暗い帯、文字は白（--ui-photo に url() を入れる） */
+  .ui-photo-tile { position: relative; overflow: hidden; border: 0; border-radius: var(--ui-radius); background: var(--ui-panel) var(--ui-photo) center / cover no-repeat; color: var(--ui-on-photo); text-align: left; cursor: pointer; }
+  .ui-photo-tile::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, var(--ui-photo-shade-top), var(--ui-photo-shade-bottom)); }
+  .ui-photo-tile > * { position: relative; }
+  .ui-photo-tile :is(.ui-label, .ui-muted) { color: var(--ui-on-photo-sub); }
+  .ui-photo-banner { border-radius: var(--ui-radius); background: var(--ui-panel) var(--ui-photo) center / cover no-repeat; }
+
+  /* 写真や絵の入る面（角なし。枠の上側など）。中の写真は枠いっぱい */
+  .ui-media { overflow: hidden; background: var(--ui-panel-2); }
+  .ui-media > img { width: 100%; height: 100%; object-fit: cover; }
+  /* 見た目を持たないボタン（行やカードの中身を押せるようにするだけ） */
+  .ui-plain { min-height: 0; padding: 0; border: 0; border-radius: 0; background: transparent; color: inherit; font: inherit; letter-spacing: inherit; text-align: inherit; }
+
+  /* メンバーカラーなどの色（--accent に色を入れる） */
+  .ui-accent-left { border-left: 3px solid var(--accent, var(--ui-text)); }
+  .ui-accent-bottom { border-bottom: 3px solid var(--accent, var(--ui-text)); }
+  .ui-accent-text { color: var(--accent, var(--ui-text)); }
+  .ui-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--accent, var(--ui-text)); }
+  .ui-accent-bar { display: block; width: 3px; border-radius: 2px; background: var(--accent, var(--ui-text)); }
+
+  /* 項目と値の表（dt/dd） */
+  .ui-dl { margin: 0; }
+  .ui-dl > div { display: grid; grid-template-columns: minmax(84px, 34%) 1fr; gap: 12px; padding: 12px 0; border-top: 1px solid var(--ui-line); }
+  .ui-dl > div:first-child { border-top: 0; }
+  .ui-dl dt { margin: 0; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+  .ui-dl dd { margin: 0; color: var(--ui-text); font-size: var(--ui-fs-body); overflow-wrap: anywhere; }
+
+  /* 表（ランキングなど）：行は線で区切る。数字の列は .num で右寄せ */
+  .ui-table { width: 100%; border-collapse: collapse; color: var(--ui-text); font-family: var(--ui-font); }
+  .ui-table th, .ui-table td { padding: 12px 14px; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-body); font-weight: 500; text-align: left; vertical-align: top; }
+  .ui-table th { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; }
+  .ui-table :is(td, th).num { text-align: right; font-variant-numeric: tabular-nums; }
+  .ui-table tr:last-child td { border-bottom: 0; }
+
+  /* 数字の帯（割合） */
+  .ui-progress { display: block; height: 6px; overflow: hidden; border-radius: 3px; background: var(--ui-panel-2); }
+  .ui-progress-fill { display: block; height: 100%; border-radius: inherit; background: var(--accent, var(--ui-text)); }
+
+  /* ============ 3. 操作 ============ */
+  /* ボタン：枠線。主な操作は塗り。押した状態（ON・選択中）も塗り */
+  .ui-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--ui-button-h); padding: 0 20px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; text-decoration: none; }
   @media (hover: hover) { .ui-btn:not(:disabled):hover { border-color: var(--ui-text); background: var(--ui-panel); } }
   .ui-btn:not(:disabled):active { background: var(--ui-panel-2); }
   .ui-btn:disabled { opacity: .4; cursor: not-allowed; }
   .ui-btn svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-  /* 主な操作は塗りつぶし。押した状態（ON・選択中）も同じ塗り */
-  .ui-btn.ui-btn-solid,
-  .ui-btn[aria-pressed="true"],
-  .ui-btn.is-active,
-  .ui-btn.is-selected { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
-  @media (hover: hover) { .ui-btn.ui-btn-solid:not(:disabled):hover, .ui-btn[aria-pressed="true"]:hover { border-color: var(--ui-active-bg); background: var(--ui-active-bg); opacity: .88; } }
+  .ui-btn:is(.ui-btn-solid, [aria-pressed="true"], .is-active, .is-selected, .is-on, .is-open, .active) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
+  @media (hover: hover) { .ui-btn:is(.ui-btn-solid, [aria-pressed="true"], .is-active, .is-selected, .is-on, .active):not(:disabled):hover { border-color: var(--ui-active-bg); background: var(--ui-active-bg); opacity: .88; } }
   .ui-btn.ui-btn-wide { width: 100%; }
   .ui-btn.ui-btn-compact { min-height: 40px; padding: 0 16px; }
-  .ui-btn.ui-btn-icon { width: var(--ui-button-h); padding: 0; letter-spacing: 0; }
+  .ui-btn.ui-btn-icon { width: var(--ui-button-h); padding: 0; font-family: var(--ui-font); font-size: 22px; font-weight: 400; letter-spacing: 0; }
   .ui-btn.ui-btn-text { min-height: 36px; padding: 0 2px; border: 0; background: none; text-decoration: underline; text-underline-offset: 4px; }
+  .ui-btn.ui-btn-text.ui-btn-quiet { color: var(--ui-text-sub); text-decoration: none; }
+  .ui-btn.ui-btn-plain { font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 700; letter-spacing: var(--ui-ls-body); text-transform: none; }
   .ui-btn.ui-btn-danger { border-color: var(--ui-danger); color: var(--ui-danger); }
+  .ui-btn.ui-btn-ghost { border-color: transparent; }
 
-  /* ---- 戻るボタン：枠なし。矢印（線）と BACK、下に細い線 ---- */
-  .ui-back {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    flex: none;
-    height: var(--ui-button-h);
-    min-height: var(--ui-button-h);
-    padding: 0 4px;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    color: var(--ui-text);
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: var(--ui-ls-label);
-    line-height: 1;
-    white-space: nowrap;
-    cursor: pointer;
-  }
+  /* 戻る：枠なし。矢印（線）と BACK、下に細い線。アイコンだけの版もある */
+  .ui-back { position: relative; display: inline-flex; align-items: center; gap: 8px; flex: none; height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 4px; border: 0; border-radius: 0; background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap; cursor: pointer; }
   .ui-back::after { content: ""; position: absolute; left: 4px; right: 4px; bottom: 10px; height: 1px; background: var(--ui-line-strong); transition: background .2s ease; }
   .ui-back svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .ui-back .ui-back-label { letter-spacing: .18em; }
@@ -133,88 +124,126 @@
   .ui-back.ui-back-icon::after, .ui-back.ui-back-icon > span { display: none; }
   @media (hover: hover) { .ui-back:hover::after { background: var(--ui-text); } }
 
-  /* ---- 見出し・ラベル ---- */
-  .ui-title { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900; letter-spacing: -.035em; line-height: .95; text-transform: uppercase; }
-  .ui-heading { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-title); font-weight: 800; letter-spacing: var(--ui-ls-heading); line-height: 1.3; }
-  .ui-label { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
-  .ui-muted { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
-
-  /* ---- 面（カード）・一覧の行・空の表示 ---- */
-  .ui-panel { padding: var(--ui-pad); border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); }
-  .ui-list { display: grid; border-top: 1px solid var(--ui-line); }
-  .ui-row {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    width: 100%;
-    min-height: var(--ui-row-h);
-    padding: 12px 32px 12px 4px;
-    border: 0;
-    border-bottom: 1px solid var(--ui-line);
-    border-radius: 0;
-    background: transparent;
-    color: var(--ui-text);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body);
-    font-weight: 700;
-    text-align: left;
+  /* 入力欄：.ui-input と、画面の中の素の入力欄は同じ見た目 */
+  .ui-input,
+  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"], [class*="-modal"]) :where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"], [type="hidden"]), select, textarea) {
+    display: block; width: 100%; min-height: var(--ui-button-h); padding: 0 16px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-field-bg); color: var(--ui-text);
+    font-family: var(--ui-font); font-size: var(--ui-fs-body); letter-spacing: var(--ui-ls-body); outline: none; -webkit-appearance: none; appearance: none;
   }
-  .ui-row::after { content: ""; position: absolute; right: 10px; top: 50%; width: 8px; height: 8px; border-top: 1.5px solid var(--ui-text-sub); border-right: 1.5px solid var(--ui-text-sub); transform: translateY(-50%) rotate(45deg); }
-  @media (hover: hover) { .ui-row:hover { background: var(--ui-panel); } }
-  .ui-empty { padding: 22px 16px; border: 1px dashed var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); text-align: center; }
+  textarea.ui-input, :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"], [class*="-modal"]) :where(textarea) { min-height: 120px; padding: 12px 16px; line-height: 1.7; resize: vertical; }
+  .ui-input::placeholder, :where(input, textarea)::placeholder { color: var(--ui-text-sub); }
+  .ui-input:focus, :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"], [class*="-modal"]) :where(input, select, textarea):focus { border-color: var(--ui-text); background: var(--ui-field-focus); outline: none; }
+  select.ui-input, :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"], [class*="-modal"]) :where(select) {
+    padding-right: 40px; background-image: linear-gradient(45deg, transparent 50%, var(--ui-text) 50%), linear-gradient(135deg, var(--ui-text) 50%, transparent 50%);
+    background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%; background-size: 6px 6px, 6px 6px; background-repeat: no-repeat;
+  }
+  /* 枠の中に虫めがねと入力欄（検索） */
+  .ui-search { display: flex; align-items: center; gap: 12px; min-height: var(--ui-button-h); padding: 0 16px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-field-bg); color: var(--ui-text); }
+  .ui-search:focus-within { border-color: var(--ui-text); background: var(--ui-field-focus); }
+  .ui-search svg { width: 20px; height: 20px; flex: none; fill: none; stroke: var(--ui-text-sub); stroke-width: 1.7; stroke-linecap: round; }
+  .ui-search input { flex: 1; min-width: 0; min-height: 0; padding: 0; border: 0; background: transparent; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); outline: none; }
+  .ui-search input:focus { border: 0; background: transparent; }
 
-  /* ---- タブ（つながった枠。選択中は塗る） ---- */
+  /* ラベルと入力欄の組：最初の span がラベル */
+  .ui-field { display: grid; gap: 8px; min-width: 0; }
+  .ui-field > span:first-child { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  /* 等幅の記録（変更前後の中身など） */
+  .ui-code { margin: 0; padding: 12px 14px; overflow: auto; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel-2); color: var(--ui-text); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: var(--ui-fs-body-sm); line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
+
+  /* 丸い切り替え（絞り込み・選択）：ONは塗り */
+  .ui-chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid var(--ui-line-strong); border-radius: 999px; background: transparent; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 700; cursor: pointer; }
+  .ui-chip:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked)) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
+  .ui-chip > input[type="checkbox"], .ui-chip > input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+  /* ON/OFF の小さな表示 */
+  .ui-switch { display: inline-grid; place-items: center; flex: none; min-width: 52px; height: 28px; padding: 0 10px; border: 1px solid var(--ui-line-strong); border-radius: 999px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; }
+  .ui-switch:is(.active, .is-on) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
+  /* 小さな札（状態・種類） */
+  .ui-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0 8px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
+  .ui-badge:is(.ui-badge-solid, .is-active) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
+
+  /* タブ：つながった枠。選択中は塗る */
   .ui-tabs { display: flex; overflow-x: auto; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); }
-  .ui-tab {
-    flex: 1 1 0;
-    min-width: 0;
-    min-height: var(--ui-tab-h);
-    padding: 0 6px;
-    border: 0;
-    border-right: 1px solid var(--ui-line);
-    border-radius: 0;
-    background: transparent;
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body-sm);
-    font-weight: 700;
-    white-space: nowrap;
-  }
+  .ui-tab { flex: 1 1 0; min-width: 0; min-height: var(--ui-tab-h); padding: 0 6px; border: 0; border-right: 1px solid var(--ui-line); border-radius: 0; background: transparent; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 700; white-space: nowrap; }
   .ui-tab:last-child { border-right: 0; }
-  .ui-tab.active, .ui-tab.is-active, .ui-tab[aria-selected="true"] { background: var(--ui-active-bg); color: var(--ui-active-text); }
+  .ui-tab:is(.active, .is-active, [aria-selected="true"], [aria-pressed="true"]) { background: var(--ui-active-bg); color: var(--ui-active-text); }
+  .ui-tab svg { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
-  /* ---- 読み込み中（スケルトン） ---- */
-  @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
-  .ui-skeleton {
-    display: block;
-    height: 88px;
-    border: 1px solid var(--ui-line);
-    border-radius: var(--ui-radius);
-    background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100%;
-    animation: uiShimmer 1.4s linear infinite;
-  }
-  .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
-  .ui-skeleton-row {
-    display: block;
-    height: 104px;
-    margin: 0 4px;
-    border-bottom: 1px solid var(--ui-line);
-    background: linear-gradient(100deg, var(--ui-bg) 30%, var(--ui-panel) 50%, var(--ui-bg) 70%) 0 0 / 220% 100%;
-    animation: uiShimmer 1.4s linear infinite;
-  }
-  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-skeleton-row { animation: none; } }
+  /* 一覧：行（右に矢印）。.ui-list-box は枠の中に行を並べる */
+  .ui-list { display: grid; border-top: 1px solid var(--ui-line); }
+  .ui-list-box { display: grid; overflow: hidden; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); }
+  .ui-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: var(--ui-row-h); padding: 12px 32px 12px 4px; border: 0; border-bottom: 1px solid var(--ui-line); border-radius: 0; background: transparent; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 500; letter-spacing: var(--ui-ls-body); text-align: left; }
+  .ui-list-box > .ui-row { padding-left: 18px; }
+  .ui-list-box > .ui-row:last-child { border-bottom: 0; }
+  .ui-row::after { content: ""; position: absolute; right: 12px; top: 50%; width: 8px; height: 8px; border-top: 1.5px solid var(--ui-text-sub); border-right: 1.5px solid var(--ui-text-sub); transform: translateY(-50%) rotate(45deg); }
+  .ui-row.ui-row-plain { padding-right: 4px; }
+  .ui-row.ui-row-plain::after { display: none; }
+  @media (hover: hover) { button.ui-row:hover { background: var(--ui-panel-2); } }
+  /* 番号つきの大きな行（分析のトップ） */
+  .ui-index-row { display: grid; grid-template-columns: minmax(56px, auto) 1fr 16px; align-items: center; gap: 14px; width: 100%; min-height: 104px; padding: 18px 4px; border: 0; border-bottom: 1px solid var(--ui-line); border-radius: 0; background: transparent; color: var(--ui-text); text-align: left; cursor: pointer; transition: background 180ms ease; }
+  @media (hover: hover) { .ui-index-row:hover { background: var(--ui-panel); } }
+  .ui-index-row:active { background: var(--ui-panel-2); }
+  .ui-index-arrow { justify-self: end; width: 8px; height: 8px; border-top: 1.5px solid var(--ui-text); border-right: 1.5px solid var(--ui-text); transform: rotate(45deg); }
 
-  /* ---- 上に出る窓（画面の中から開くもの共通） ---- */
-  .ui-modal { position: fixed; inset: 0; z-index: 1300; display: flex; align-items: center; justify-content: center; padding: 16px; background: var(--ui-scrim); }
+  /* 入口のタイル（DATA・LAB）：方眼の上にひし形の枠とアイコン、番号つき */
+  .ui-menu-tiles { counter-reset: ui-tile; }
+  .ui-menu-tile { counter-increment: ui-tile; position: relative; display: block; width: 100%; padding: 0; overflow: hidden; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); text-align: left; cursor: pointer; transition: border-color 180ms ease, transform 180ms ease; }
+  .ui-menu-tile-symbol { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1.45; border-bottom: 1px solid var(--ui-line); color: var(--ui-text); background: linear-gradient(var(--ui-line) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(90deg, var(--ui-line) 1px, transparent 1px) 0 0 / 22px 22px, var(--ui-panel-2); }
+  .ui-menu-tile-symbol::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent 30%, var(--ui-panel) 92%); pointer-events: none; }
+  .ui-menu-tile-symbol::before { content: ""; position: absolute; top: 50%; left: 50%; z-index: 1; width: 36%; aspect-ratio: 1; border: 1px solid var(--ui-line-strong); background: var(--ui-bg); transform: translate(-50%, -50%) rotate(45deg); transition: border-color 180ms ease; }
+  .ui-menu-tile-symbol svg { position: relative; z-index: 2; width: 27%; height: auto; aspect-ratio: 1; fill: none; stroke: currentColor; stroke-width: 1.45; stroke-linecap: round; stroke-linejoin: round; }
+  .ui-menu-tile-symbol svg .s { fill: currentColor; fill-opacity: .16; stroke: none; }
+  .ui-menu-tile-symbol svg .f { fill: currentColor; stroke: none; }
+  .ui-menu-tile-symbol svg .b { fill: none; stroke: currentColor; stroke-width: .9; opacity: .55; }
+  .ui-menu-tile-meta::before { content: counter(ui-tile, decimal-leading-zero); color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .24em; }
+  .ui-menu-tile-name { color: var(--ui-text); font-size: var(--ui-fs-body); font-weight: 700; letter-spacing: .04em; line-height: 1.4; word-break: keep-all; }
+  @media (hover: hover) { .ui-menu-tile:hover { border-color: var(--ui-line-strong); } .ui-menu-tile:hover .ui-menu-tile-symbol::before { border-color: var(--ui-text); } }
+
+  /* 正解・不正解・残りわずか（クイズなど）。正解は塗り、不正解は赤 */
+  .ui-btn.is-correct { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
+  .ui-btn.is-wrong { border-color: var(--ui-danger); color: var(--ui-danger); }
+  :is(.ui-panel, .ui-card, .ui-frame):is(.is-wrong, .is-timeout) { border-color: var(--ui-danger); }
+  .ui-progress-fill.is-danger, .is-danger .ui-progress-fill { background: var(--ui-danger); }
+  .ui-text-danger { color: var(--ui-danger); }
+  /* 文の中の強調（歌詞の一部など） */
+  .ui-mark { background: transparent; color: inherit; font-weight: 700; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+
+  /* ============ 4. 重ねて出すもの ============ */
+  .ui-modal { position: fixed; inset: 0; z-index: 1300; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); background: var(--ui-scrim); }
   .ui-modal[hidden] { display: none; }
-  .ui-modal-card { width: min(100%, 560px); max-height: 86dvh; overflow: auto; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-bg); color: var(--ui-text); }
+  .ui-modal-card { display: flex; flex-direction: column; width: min(100%, 560px); max-height: 86dvh; overflow: hidden; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-bg); color: var(--ui-text); }
   .ui-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 14px 20px; border-bottom: 1px solid var(--ui-line); }
-  .ui-modal-head h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
-  .ui-modal-body { padding: 16px 20px 20px; }
+  .ui-modal-head h2, .ui-modal-head h3 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
+  .ui-modal-body { padding: 16px 20px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  /* 画面いっぱいに重ねる面（抽選の演出など） */
+  .ui-stage { position: fixed; inset: 0; z-index: 2400; background: var(--ui-bg); color: var(--ui-text); }
+  .ui-scrim { background: var(--ui-scrim); }
 
-  /* ---- 画面を開いたときの動き ---- */
+  /* ============ 5. 状態（読み込み中・通知・エラー） ============ */
+  @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
   @keyframes uiRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   @keyframes uiRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes universeSpinner { to { transform: rotate(360deg); } }
+  @keyframes universeSkeletonSweep { to { transform: translateX(115%); } }
+  /* スケルトン：枠は本物のまま、中身だけ流れる面 */
+  .ui-skeleton { display: block; min-height: 16px; border-radius: var(--ui-radius); background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
+  .ui-skeleton.ui-skeleton-card { min-height: 88px; border: 1px solid var(--ui-line); }
+  .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
+  .ui-skeleton-row { display: block; height: 104px; margin: 0 4px; border-bottom: 1px solid var(--ui-line); background: linear-gradient(100deg, var(--ui-bg) 30%, var(--ui-panel) 50%, var(--ui-bg) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
+  .skeleton-block { position: relative; overflow: hidden; background: var(--ui-panel-2); }
+  .skeleton-block::after { content: ""; position: absolute; inset: 0; transform: translateX(-110%); background: linear-gradient(90deg, transparent, var(--ui-line), transparent); animation: universeSkeletonSweep 1.35s ease-in-out infinite; }
+  /* くるくる（本当に待つときだけ） */
+  .ui-loading, .universe-loading { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-label); font-weight: 700; letter-spacing: .12em; }
+  .ui-loading:not(.universe-loading):not(.is-shared)::before, .universe-spinner { content: ""; box-sizing: border-box; width: 18px; height: 18px; flex: none; border: 2px solid var(--ui-line); border-top-color: var(--ui-text); border-right-color: var(--ui-text); border-radius: 50%; animation: universeSpinner .8s linear infinite; }
+  /* 通知（トースト）：塗りの帯 */
+  .universe-toast { min-height: 52px; padding: 0 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--ui-radius); background: var(--ui-active-bg); color: var(--ui-active-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 700; letter-spacing: .06em; opacity: 0; transform: translateY(10px); animation: toast-in 190ms var(--ui-ease) forwards; }
+  .universe-toast.toast-out { animation: toast-out 170ms var(--ui-ease) forwards; }
+  @keyframes toast-in { to { opacity: 1; transform: none; } }
+  @keyframes toast-out { to { opacity: 0; transform: translateY(8px); } }
+  /* 読み込みに失敗したとき */
+  .universe-recovery-state { min-height: 220px; display: grid; place-items: center; padding: 28px 22px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); text-align: center; }
+  .universe-recovery-state-inner { max-width: 520px; display: grid; justify-items: center; gap: 12px; }
+  .universe-recovery-state h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 800; letter-spacing: .12em; }
+  .universe-recovery-state p { margin: 0; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.8; }
+  .universe-recovery-retry { min-height: var(--ui-button-h); margin-top: 6px; padding: 0 20px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); cursor: pointer; }
+  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-skeleton-row, .skeleton-block::after, .ui-loading::before, .universe-spinner { animation: none; } }
 </style>

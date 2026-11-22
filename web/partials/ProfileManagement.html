@@ -6,13 +6,13 @@
 
     <div id="profileManagementBody" hidden>
       <div class="profile-management-selectors">
-        <label class="management-field profile-management-field">
+        <label class="ui-field management-field profile-management-field">
           <span>グループ</span>
           <select id="profileManagementGroup" onchange="changeProfileManagementGroup()">
             <option value="">選択してください</option>
           </select>
         </label>
-        <label class="management-field profile-management-field">
+        <label class="ui-field management-field profile-management-field">
           <span>メンバー</span>
           <select id="profileManagementMember" onchange="changeProfileManagementMember()" disabled>
             <option value="">先にグループを選択してください</option>
@@ -23,7 +23,7 @@
       <div id="profileManagementMemberLoading" class="management-loading profile-management-loading" hidden>LOADING...</div>
       <form id="profileManagementForm" class="profile-management-form" onsubmit="return submitProfileManagement(event)" hidden>
         <div id="profileManagementSections"></div>
-        <p id="profileManagementError" class="management-error profile-management-error" role="alert" hidden></p>
+        <p id="profileManagementError" class="ui-text-danger management-error profile-management-error" role="alert" hidden></p>
         <button id="profileManagementSubmit" class="profile-management-primary" type="submit" disabled>プロフィールを保存する</button>
       </form>
     </div>
@@ -31,24 +31,16 @@
 </div>
 
 <style>
-
-
-
-    .profile-management-selectors{display:grid;gap:14px;margin-top:12px;padding-bottom:20px;border-bottom:1px solid var(--ui-line)}
+    .profile-management-selectors{display:grid;gap:14px;margin-top:12px;padding-bottom:20px}
   .profile-management-form{display:grid;gap:18px;margin-top:20px}
-
-
-
-
   .profile-management-section{display:grid;gap:15px;padding-top:2px}
-  .profile-management-section+.profile-management-section{padding-top:22px;border-top:1px solid var(--ui-line)}
-  .profile-management-section-title{margin:0;color:var(--ui-text);font:700 12px var(--font-body),var(--font-body),sans-serif;letter-spacing:.08em}
+  .profile-management-section+.profile-management-section{padding-top:22px}
+  .profile-management-section-title{margin:0}
   .profile-management-control{display:grid;gap:7px}
   .profile-management-number-wrap{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:9px}
-  .profile-management-unit{color:var(--ui-text-sub);font:700 12px var(--font-body),sans-serif}
   .profile-management-tags{display:flex;flex-wrap:wrap;gap:7px;min-height:0}
-  .profile-management-tag{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 10px;border:1px solid var(--ui-line);border-radius:999px;background:var(--ui-panel);color:var(--ui-text);font:600 12px var(--font-body),sans-serif}
-  .profile-management-tag button{width:22px;height:22px;padding:0;border:0;background:transparent;color:var(--ui-text-sub);font-size:17px;line-height:1;cursor:pointer}
+  .profile-management-tag{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 10px}
+  .profile-management-tag button{width:22px;height:22px;padding:0;line-height:1;cursor:pointer}
   .profile-management-tag-add{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
   .profile-management-add-button{min-width:76px}
   @media(max-width:520px){.profile-management-tag-add{grid-template-columns:minmax(0,1fr) 78px}}
@@ -184,7 +176,7 @@
     });
     const target=document.getElementById('profileManagementSections');
     target.innerHTML=groups.map(function(group){
-      return '<section class="profile-management-section"><h3 class="profile-management-section-title">'+escapeProfileManagementHtml(group.name)+'</h3>'+group.fields.map(renderProfileManagementField_).join('')+'</section>';
+      return '<section class="profile-management-section"><h3 class="ui-heading profile-management-section-title">'+escapeProfileManagementHtml(group.name)+'</h3>'+group.fields.map(renderProfileManagementField_).join('')+'</section>';
     }).join('');
     const form=document.getElementById('profileManagementForm');
     form.hidden=false;
@@ -197,16 +189,16 @@
     const value=profileManagementState.values[field.profileId];
     if(field.isMultiValue){
       const tags=Array.isArray(value)?value:[];
-      return '<div class="profile-management-control" data-profile-id="'+escapeProfileManagementHtml(field.profileId)+'"><span class="management-label profile-management-label">'+escapeProfileManagementHtml(field.label)+'</span><div class="profile-management-tags" id="'+id+'_tags">'+tags.map(function(tag,index){return renderProfileManagementTag_(field.profileId,tag,index);}).join('')+'</div><div class="profile-management-tag-add"><input class="management-input profile-management-input" id="'+id+'_input" type="text" autocomplete="off"><button class="profile-management-add-button" type="button" onclick="addProfileManagementTag(\''+escapeProfileManagementJs_(field.profileId)+'\')">＋追加</button></div></div>';
+      return '<div class="profile-management-control" data-profile-id="'+escapeProfileManagementHtml(field.profileId)+'"><span class="ui-label management-label profile-management-label">'+escapeProfileManagementHtml(field.label)+'</span><div class="profile-management-tags" id="'+id+'_tags">'+tags.map(function(tag,index){return renderProfileManagementTag_(field.profileId,tag,index);}).join('')+'</div><div class="profile-management-tag-add"><input class="management-input profile-management-input" id="'+id+'_input" type="text" autocomplete="off"><button class="profile-management-add-button" type="button" onclick="addProfileManagementTag(\''+escapeProfileManagementJs_(field.profileId)+'\')">＋追加</button></div></div>';
     }
     const type=field.dataType==='DATE'?'date':field.dataType==='NUMBER'?'number':'text';
     const step=field.dataType==='NUMBER'?' step="any"':'';
     const input='<input class="management-input profile-management-input" id="'+id+'" data-profile-input="'+escapeProfileManagementHtml(field.profileId)+'" type="'+type+'"'+step+' value="'+escapeProfileManagementHtml(value==null?'':value)+'" autocomplete="off">';
-    return '<label class="profile-management-control"><span class="management-label profile-management-label">'+escapeProfileManagementHtml(field.label)+'</span>'+(field.unit?'<span class="profile-management-number-wrap">'+input+'<b class="profile-management-unit">'+escapeProfileManagementHtml(field.unit)+'</b></span>':input)+'</label>';
+    return '<label class="profile-management-control"><span class="ui-label management-label profile-management-label">'+escapeProfileManagementHtml(field.label)+'</span>'+(field.unit?'<span class="profile-management-number-wrap">'+input+'<b class="ui-panel profile-management-unit">'+escapeProfileManagementHtml(field.unit)+'</b></span>':input)+'</label>';
   }
 
   function renderProfileManagementTag_(profileId,tag,index){
-    return '<span class="profile-management-tag">'+escapeProfileManagementHtml(tag)+'<button type="button" aria-label="削除" onclick="removeProfileManagementTag(\''+escapeProfileManagementJs_(profileId)+'\','+index+')">×</button></span>';
+    return '<span class="ui-chip profile-management-tag">'+escapeProfileManagementHtml(tag)+'<button class="ui-plain" type="button" aria-label="削除" onclick="removeProfileManagementTag(\''+escapeProfileManagementJs_(profileId)+'\','+index+')">×</button></span>';
   }
 
   function bindProfileManagementInputs_(){

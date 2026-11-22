@@ -67,8 +67,8 @@
     const detail=document.querySelector('.profile-member-detail');if(!detail)return;
     if(!universeCrossLinksState.creditsOpen[id]){const old=detail.querySelector('.universe-profile-credits');if(old)old.remove();return;}
     if(universeCrossLinksState.credits[id]){renderUniverseProfileCredits_(detail,id);return;}
-    let host=detail.querySelector('.universe-profile-credits');if(!host){host=document.createElement('section');host.className='universe-profile-credits';const actions=detail.querySelector('.universe-profile-crosslinks');if(actions)actions.insertAdjacentElement('afterend',host);}
-    host.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','#9cecff'):'<p class="universe-crosslink-status">LOADING...</p>';
+    let host=detail.querySelector('.universe-profile-credits');if(!host){host=document.createElement('section');host.className='ui-panel universe-profile-credits';const actions=detail.querySelector('.universe-profile-crosslinks');if(actions)actions.insertAdjacentElement('afterend',host);}
+    host.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...'):'<p class="ui-muted universe-crosslink-status">LOADING...</p>';
     google.script.run.withSuccessHandler(function(response){
       if(!response||!response.ok){universeCrossLinksState.credits[id]={error:response&&response.error?response.error.message:'クレジット参加曲の読み込みに失敗しました。',songs:[]};}
       else universeCrossLinksState.credits[id]=response.data||{songs:[]};
@@ -78,12 +78,12 @@
 
   function renderUniverseProfileCredits_(detail,memberId){
     if(!detail)return;const id=String(memberId||''),data=universeCrossLinksState.credits[id];
-    let host=detail.querySelector('.universe-profile-credits');if(!host){host=document.createElement('section');host.className='universe-profile-credits';const actions=detail.querySelector('.universe-profile-crosslinks');if(actions)actions.insertAdjacentElement('afterend',host);}
-    if(!data){host.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','#9cecff'):'<p class="universe-crosslink-status">LOADING...</p>';return;}
-    host.innerHTML='';const heading=document.createElement('h3');heading.textContent='CREATIVE CREDITS';host.appendChild(heading);
-    if(data.error){const p=document.createElement('p');p.className='universe-crosslink-status';p.textContent=data.error;host.appendChild(p);return;}
-    const songs=Array.isArray(data.songs)?data.songs:[];if(!songs.length){const p=document.createElement('p');p.className='universe-crosslink-status';p.textContent='該当するクレジット参加曲はありません。';host.appendChild(p);return;}
-    const list=document.createElement('div');list.className='universe-credit-list';songs.forEach(function(song){const row=document.createElement('button');row.type='button';row.className='universe-credit-song';row.addEventListener('click',function(){navigateToWithParams('lyrics',{song:song.songId});});const title=document.createElement('strong');title.textContent=song.title||song.songId;row.appendChild(title);const tags=document.createElement('span');tags.className='universe-credit-tags';(song.roles||[]).forEach(function(role){const tag=document.createElement('i');tag.textContent=role;tags.appendChild(tag);});row.appendChild(tags);list.appendChild(row);});host.appendChild(list);
+    let host=detail.querySelector('.universe-profile-credits');if(!host){host=document.createElement('section');host.className='ui-panel universe-profile-credits';const actions=detail.querySelector('.universe-profile-crosslinks');if(actions)actions.insertAdjacentElement('afterend',host);}
+    if(!data){host.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...'):'<p class="ui-muted universe-crosslink-status">LOADING...</p>';return;}
+    host.innerHTML='';const heading=document.createElement('h3');heading.className='ui-heading';heading.textContent='CREATIVE CREDITS';host.appendChild(heading);
+    if(data.error){const p=document.createElement('p');p.className='ui-muted universe-crosslink-status';p.textContent=data.error;host.appendChild(p);return;}
+    const songs=Array.isArray(data.songs)?data.songs:[];if(!songs.length){const p=document.createElement('p');p.className='ui-muted universe-crosslink-status';p.textContent='該当するクレジット参加曲はありません。';host.appendChild(p);return;}
+    const list=document.createElement('div');list.className='ui-list universe-credit-list';songs.forEach(function(song){const row=document.createElement('button');row.type='button';row.className='ui-row ui-row-plain universe-credit-song';row.addEventListener('click',function(){navigateToWithParams('lyrics',{song:song.songId});});const title=document.createElement('strong');title.className='ui-strong';title.textContent=song.title||song.songId;row.appendChild(title);const tags=document.createElement('span');tags.className='universe-credit-tags';(song.roles||[]).forEach(function(role){const tag=document.createElement('i');tag.className='ui-badge';tag.textContent=role;tags.appendChild(tag);});row.appendChild(tags);list.appendChild(row);});host.appendChild(list);
   }
 
   function syncUniverseLyricsCrossLinks_(){
@@ -126,13 +126,12 @@
 <style>
   .universe-crosslink-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
     .profile-member-detail>.universe-profile-crosslinks{margin:14px 0}
-  .universe-profile-credits{margin:0 0 14px;padding:18px;border:1px solid var(--ui-line);border-radius:var(--ui-radius);background:var(--ui-panel)}
-  .universe-profile-credits h3{margin:0 0 12px;color:var(--ui-text);font:600 12px var(--font-display),var(--font-body),sans-serif;letter-spacing:.14em}
+  .universe-profile-credits{margin:0 0 14px;padding:18px}
+  .universe-profile-credits h3{margin:0 0 12px}
   .universe-profile-credits .universe-loading{min-height:60px}
-  .universe-credit-list{display:grid;gap:8px}.universe-credit-song{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:13px 14px;border:1px solid var(--ui-line);border-radius:var(--ui-radius);color:var(--ui-text);background:var(--ui-panel);text-align:left}.universe-credit-song strong{font:600 14px var(--font-body),sans-serif}.universe-credit-tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px}.universe-credit-tags i{padding:4px 7px;border-radius:999px;color:var(--ui-text);background:var(--ui-panel);font:600 10px var(--font-body),sans-serif;font-style:normal}.universe-crosslink-status{margin:0;color:var(--ui-text-sub);font-size:12px}
-  .universe-crosslink-button.is-light{border-color:var(--ui-active-bg);color:var(--ui-active-text);background:var(--ui-active-bg)}
+  .universe-credit-list{display:grid;gap:8px}.universe-credit-song{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:13px 14px;text-align:left}.universe-credit-tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px}.universe-credit-tags i{padding:4px 7px}.universe-crosslink-status{margin:0}
   .lyrics-song-actions .universe-lyrics-analysis-link{flex:1 1 120px;min-height:46px;margin:0}
-  .lyrics-song-actions.is-bottom .universe-lyrics-analysis-link{grid-column:1;grid-row:2;width:100%;min-width:0;min-height:44px;padding:0 10px;font-size:9px;justify-self:start}
-  .universe-analysis-profile-link{margin:16px 0 0}.universe-analysis-lyrics-link{margin-top:16px}.universe-card-profile-link{min-height:36px;margin-left:auto;padding:0 11px;font-size:9px}
+  .lyrics-song-actions.is-bottom .universe-lyrics-analysis-link{grid-column:1;grid-row:2;width:100%;min-width:0;min-height:44px;padding:0 10px;justify-self:start}
+  .universe-analysis-profile-link{margin:16px 0 0}.universe-analysis-lyrics-link{margin-top:16px}.universe-card-profile-link{min-height:36px;margin-left:auto;padding:0 11px}
   @media(max-width:520px){.universe-profile-crosslinks .universe-crosslink-button{flex:1 1 100%}.universe-credit-song{grid-template-columns:1fr}.universe-credit-tags{justify-content:flex-start}.lyrics-song-actions .universe-lyrics-analysis-link{padding-inline:12px}.lyrics-song-actions.is-bottom .universe-lyrics-analysis-link{padding-inline:8px}}
 </style>

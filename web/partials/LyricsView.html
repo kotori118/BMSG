@@ -1,6 +1,6 @@
 <script>
   // 歌詞の画面（新デザイン・白背景）。描画はこのファイルだけが担当する。
-  // 見た目は LyricsUniverse.html の .lyx-* と、共通の部品（.ui-back / .ui-btn / .ui-input / .ui-title）。
+  // 見た目はすべて部品（UniverseTheme.html の .ui-*）。LyricsUniverse.html は並べ方だけ。
   const LYX_CHEVRON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg>';
 
   function lyxBack(handler, disabled) {
@@ -8,11 +8,11 @@
   }
 
   function lyxRow(label, onclick) {
-    return `<button class="lyx-row" type="button" onclick="${onclick}"><span>${escapeLyrics(label)}</span><i aria-hidden="true"></i></button>`;
+    return `<button class="ui-row lyx-row" type="button" onclick="${onclick}"><span>${escapeLyrics(label)}</span></button>`;
   }
 
   function lyricsGroupHeader_(title, backLabel, backHandler) {
-    return `<header class="lyx-head">${lyxBack(backHandler)}<h2 class="ui-title lyx-title">${escapeLyrics(title)}</h2></header>`;
+    return `<header class="ui-divider lyx-head">${lyxBack(backHandler)}<h2 class="ui-title ui-title-sm lyx-title">${escapeLyrics(title)}</h2></header>`;
   }
 
   // グループ写真（Driveの画像ID）。共有は「リンクを知っている全員」。
@@ -43,12 +43,12 @@
       `<div id="lyricsKaraokeRoom">${renderLyricsKaraokeRoom()}</div>` +
       `<section class="lyx-groups">${LYRICS_GROUPS.map(function (group) {
         const photo = lyricsGroupPhotoUrl(group);
-        const style = photo
-          ? `--lyx-photo:url('${photo}')`
-          : `--lyx-accent:${escapeLyrics(lyricsGroupColor(group))}`;
-        return `<button class="lyx-group${photo ? ' has-photo' : ''}" type="button" style="${style}" onclick="showLyricsGroup('${lyricArg(group)}')"><span class="lyx-group-bar" aria-hidden="true"></span><strong>${escapeLyrics(group)}</strong><small>${groupSongs(group).length} SONGS</small></button>`;
+        const look = photo
+          ? `class="ui-photo-tile lyx-group" style="--ui-photo:url('${photo}')"`
+          : `class="ui-card ui-accent-left lyx-group" style="--accent:${escapeLyrics(lyricsGroupColor(group))}"`;
+        return `<button ${look} type="button" onclick="showLyricsGroup('${lyricArg(group)}')"><strong class="ui-heading">${escapeLyrics(group)}</strong><small class="ui-label">${groupSongs(group).length} SONGS</small></button>`;
       }).join('')}</section>` +
-      `<button class="lyx-gacha" type="button" onclick="openSongGacha()"><strong>SONG GACHA</strong><small>曲を引く</small></button>`;
+      `<button class="ui-frame lyx-gacha" type="button" onclick="openSongGacha()"><strong class="ui-title ui-title-sm">SONG GACHA</strong><small class="ui-muted">曲を引く</small></button>`;
     scrollLyricsTop();
   }
 
@@ -65,11 +65,11 @@
   }
 
   function renderLyricsKaraokeRoom() {
-    if (!lyricsState.karaokeRoomReady) return '<section class="lyx-room is-loading" aria-busy="true"><div class="lyx-skel"></div></section>';
+    if (!lyricsState.karaokeRoomReady) return '<section class="ui-divider lyx-room is-loading" aria-busy="true"><div class="ui-skeleton lyx-skel"></div></section>';
     if (!lyricsState.karaokeRoom) {
-      return `<section class="lyx-room"><p class="lyx-label">カラオケルーム</p><div class="lyx-join is-two"><button class="ui-btn ui-btn-solid" type="button" onclick="createLyricsKaraokeRoom()">ルームを作る</button><button class="ui-btn" type="button" aria-expanded="false" aria-controls="lyricsRoomJoin" onclick="toggleLyricsRoomJoin(this)">ルームに参加</button></div><div id="lyricsRoomJoin" class="lyx-join" hidden><input id="lyricsRoomInput" class="ui-input" inputmode="numeric" maxlength="4" placeholder="4桁のルームID" aria-label="4桁のルームID"><button class="ui-btn ui-btn-solid" type="button" onclick="joinLyricsKaraokeRoom()">参加</button></div></section>`;
+      return `<section class="ui-divider lyx-room"><p class="ui-label">カラオケルーム</p><div class="lyx-join is-two"><button class="ui-btn ui-btn-solid" type="button" onclick="createLyricsKaraokeRoom()">ルームを作る</button><button class="ui-btn" type="button" aria-expanded="false" aria-controls="lyricsRoomJoin" onclick="toggleLyricsRoomJoin(this)">ルームに参加</button></div><div id="lyricsRoomJoin" class="lyx-join" hidden><input id="lyricsRoomInput" class="ui-input" inputmode="numeric" maxlength="4" placeholder="4桁のルームID" aria-label="4桁のルームID"><button class="ui-btn ui-btn-solid" type="button" onclick="joinLyricsKaraokeRoom()">参加</button></div></section>`;
     }
-    return `<section class="lyx-room is-active"><div class="lyx-roomhead"><div class="lyx-roomid"><span class="lyx-label">ROOM ID</span><strong>${escapeLyrics(lyricsState.karaokeRoom.roomId)}</strong></div><button class="lyx-textbtn" type="button" onclick="leaveLyricsKaraokeRoom()">退出</button></div><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="openLatestLyricsKaraoke()">最新結果を見る</button><button class="lyx-textbtn is-link" type="button" onclick="navigateTo('karaoke')">履歴を見る</button></section>`;
+    return `<section class="ui-divider lyx-room is-active"><div class="lyx-roomhead"><div class="lyx-roomid"><span class="ui-label">ROOM ID</span><strong class="ui-num">${escapeLyrics(lyricsState.karaokeRoom.roomId)}</strong></div><button class="ui-btn ui-btn-text ui-btn-quiet" type="button" onclick="leaveLyricsKaraokeRoom()">退出</button></div><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="openLatestLyricsKaraoke()">最新結果を見る</button><button class="ui-btn ui-btn-text lyx-history" type="button" onclick="navigateTo('karaoke')">履歴を見る</button></section>`;
   }
 
   // グループの曲一覧
@@ -79,8 +79,8 @@
     document.getElementById('lyricsView').innerHTML =
       lyricsGroupHeader_(activeTitle(), backLabel, 'backFromSongs()') +
       `<input id="lyricsSearch" class="ui-input lyx-search" type="search" placeholder="曲名を検索" value="${escapeLyrics(lyricsState.query)}">` +
-      `<p class="lyx-count">${songs.length} SONGS</p>` +
-      `<section class="lyx-list">${songs.length ? songs.map(function (song) { return lyxRow(song.title, `openLyricsSong('${lyricArg(song.songId)}')`); }).join('') : '<p class="lyx-empty">該当する曲がありません</p>'}</section>`;
+      `<p class="ui-label lyx-count">${songs.length} SONGS</p>` +
+      `<section class="ui-list lyx-list">${songs.length ? songs.map(function (song) { return lyxRow(song.title, `openLyricsSong('${lyricArg(song.songId)}')`); }).join('') : '<p class="ui-empty lyx-empty">該当する曲がありません</p>'}</section>`;
     if (typeof syncKaraokeLatestShortcut_ === 'function') syncKaraokeLatestShortcut_();
     document.getElementById('lyricsSearch').addEventListener('input', function (e) {
       lyricsState.query = e.target.value.trim().toLowerCase();
@@ -99,8 +99,8 @@
       lyricsGroupHeader_('BMSG ALLSTARS', 'グループ選択に戻る', 'showLyricsGroups()') +
       `<section class="lyx-units">${units.map(function (unit) {
         const songs = unitSongs(unit).slice().sort(function (a, b) { return songTime(b) - songTime(a) || (Number(b.songId) || 0) - (Number(a.songId) || 0); });
-        const unitPhoto = LYRICS_UNIT_PHOTO_IDS[unit] ? `<div class="lyx-unit-photo" style="--lyx-photo:url('https://lh3.googleusercontent.com/d/${LYRICS_UNIT_PHOTO_IDS[unit]}')" aria-hidden="true"></div>` : '';
-        return `<section class="lyx-unit">${unitPhoto}<h3>${escapeLyrics(unit)}</h3><div class="lyx-list">${songs.map(function (song) { return lyxRow(song.title, `openLyricsAllStarsSong('${lyricArg(unit)}','${lyricArg(song.songId)}')`); }).join('')}</div></section>`;
+        const unitPhoto = LYRICS_UNIT_PHOTO_IDS[unit] ? `<div class="ui-photo-banner lyx-unit-photo" style="--ui-photo:url('https://lh3.googleusercontent.com/d/${LYRICS_UNIT_PHOTO_IDS[unit]}')" aria-hidden="true"></div>` : '';
+        return `<section class="lyx-unit">${unitPhoto}<h3 class="ui-heading">${escapeLyrics(unit)}</h3><div class="ui-list lyx-list">${songs.map(function (song) { return lyxRow(song.title, `openLyricsAllStarsSong('${lyricArg(unit)}','${lyricArg(song.songId)}')`); }).join('')}</div></section>`;
       }).join('')}</section>`;
     if (typeof syncKaraokeLatestShortcut_ === 'function') syncKaraokeLatestShortcut_();
     scrollLyricsTop();
@@ -127,13 +127,13 @@
       parts.forEach(function (part, index) { partsHtml += lyricsEditPartHtml_(part, index) + lyricsInsertButton_(index + 1); });
       const saveHtml = `<div class="lyx-save"><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="saveLyricsSongChanges()"${lyricsState.editSaving ? ' disabled' : ''}>変更を保存</button></div>`;
       document.getElementById('lyricsView').innerHTML =
-        `<header class="lyx-song-head">${lyricsSongActions('top')}<h2 class="lyx-song-title">${escapeLyrics(song.title)}</h2></header><section class="lyrics-parts is-editing">${partsHtml}</section>${saveHtml}${lyricsSongActions('bottom')}`;
+        `<header class="ui-divider lyx-song-head">${lyricsSongActions('top')}<h2 class="ui-heading-lg">${escapeLyrics(song.title)}</h2></header><section class="lyrics-parts is-editing">${partsHtml}</section>${saveHtml}${lyricsSongActions('bottom')}`;
     } else {
       const partsHtml = parts.map(function (part) {
-        return `<article class="lyx-part"><p class="lyx-singer">${renderLyricsSinger(part)}</p><p class="lyx-text">${escapeLyrics(part.lyrics)}</p></article>`;
+        return `<article class="ui-divider lyx-part"><p class="ui-name">${renderLyricsSinger(part)}</p><p class="ui-text lyx-text">${escapeLyrics(part.lyrics)}</p></article>`;
       }).join('');
       document.getElementById('lyricsView').innerHTML =
-        `<header class="lyx-song-head">${lyricsSongActions('top')}<h2 class="lyx-song-title">${escapeLyrics(song.title)}</h2></header><section class="lyx-parts">${partsHtml}</section>${lyricsSongActions('bottom')}`;
+        `<header class="ui-divider lyx-song-head">${lyricsSongActions('top')}<h2 class="ui-heading-lg">${escapeLyrics(song.title)}</h2></header><section class="lyx-parts">${partsHtml}</section>${lyricsSongActions('bottom')}`;
     }
     if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
   }

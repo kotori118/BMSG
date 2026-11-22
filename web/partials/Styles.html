@@ -85,7 +85,6 @@
     white-space: nowrap;
     pointer-events: none;
   }
-  .utility-home, .utility-settings { display: none; }
   .utility-btn {
     width: 44px;
     height: 44px;
@@ -100,6 +99,8 @@
   }
   .utility-btn svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
   @media (hover: hover) { .utility-btn:hover { background: var(--ui-panel-2); } }
+  /* ホームと設定は左のメニューにあるので、上のバーには出さない */
+  .utility-actions :is(.utility-home, .utility-settings) { display: none; }
 
   /* ---- 下のメニュー（HOME・DATA・LAB）：選択中は塗る ---- */
   .bottom-nav {
@@ -207,6 +208,7 @@
   .app-menu-panel button:not(.app-menu-close):focus-visible { background: var(--ui-panel-2); outline: none; }
   .app-menu-panel button[aria-current="page"] { background: var(--ui-active-bg); color: var(--ui-active-text); }
   .app-menu-panel button[aria-current="page"]::after { border-color: var(--ui-active-text); }
+  .app-menu-panel button[aria-current="page"]:disabled { opacity: 1; }
 
   /* ---- 全画面の重ね表示（検索） ---- */
   .screen-overlay {

@@ -1,74 +1,42 @@
 <style>
-  /* HOME・DATA・LAB（入口の3画面）。並べ方だけをここに書き、色や書体はトークン。 */
+  /* HOME・DATA・LAB（入口の3画面）の並べ方。見た目は部品 .ui-* */
 
   /* ---- HOME ---- */
   .home { display: flex; flex-direction: column; padding: var(--ui-top-pad) 0 20px; }
-  .home-title-wrap { width: 100%; margin: 0; }
-  .home-title { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-display); font-weight: 900; letter-spacing: var(--ui-ls-display); line-height: .88; text-transform: uppercase; }
   .home-title .line { display: block; }
   .home-divider { display: none; }
   .home-intro .home-title .line { opacity: 0; animation: uiRise 260ms var(--ui-ease) forwards; }
   .home-intro .home-title .line:nth-child(1) { animation-delay: 180ms; }
   .home-intro .home-title .line:nth-child(2) { animation-delay: 270ms; }
-
   .home-dynamic { display: grid; gap: 24px; margin-top: 22px; padding-bottom: 36px; }
   .home-today-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
-  .home-feature-card { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-width: 0; padding: 20px 20px 22px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); text-align: left; overflow: hidden; }
-  button.home-feature-card { cursor: pointer; }
-  @media (hover: hover) { .home-song-card:hover, .home-member-card:not(.home-birthday-card):hover { border-color: var(--ui-line-strong); background: var(--ui-panel-2); } }
-  .home-feature-label { order: -1; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .24em; text-transform: uppercase; }
-  .home-feature-card strong { min-width: 0; max-width: 100%; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-title); font-weight: 700; letter-spacing: .02em; line-height: 1.3; overflow-wrap: anywhere; }
-  .home-song-title { font-family: var(--ui-font-display); font-weight: 900; letter-spacing: -.02em; line-height: 1.05; text-transform: uppercase; }
-  .home-feature-card small { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 500; overflow-wrap: anywhere; }
-  .home-feature-card b { align-self: flex-start; margin-top: 4px; padding: 9px 16px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .2em; }
+  .home-feature-card { display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-width: 0; padding: 20px 20px 22px; overflow: hidden; }
+  .home-feature-card > b { align-self: flex-start; margin-top: 4px; }
+  .home-feature-card strong { overflow-wrap: anywhere; }
   .home-birthday-card { gap: 12px; }
   .home-birthday-copy { display: grid; gap: 7px; width: 100%; }
-  .home-birthday-copy strong { font-size: var(--ui-fs-heading); }
-  .home-birthday-copy small { margin: 0; }
   .home-birthday-members { display: grid; gap: 8px; width: 100%; }
-  .home-birthday-member { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; padding: 10px 14px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); text-align: left; cursor: pointer; }
-  .home-birthday-member span { font-weight: 700; }
-  .home-birthday-member b { margin: 0; padding: 0; border: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); letter-spacing: .16em; }
-  .home-birthday-sparkle { display: none; }
-  .home-state { min-height: 230px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border: 1px dashed var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); text-align: center; }
-  .home-state strong { font-size: var(--ui-fs-heading); }
-  .home-state p { margin: 0; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+  .home-birthday-member { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 52px; padding: 10px 14px; text-align: left; }
+  .home-state { min-height: 230px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
   .home-skeleton-card { pointer-events: none; }
-  .home-skeleton-line { display: block; border-radius: var(--ui-radius); background: linear-gradient(100deg, var(--ui-panel-2) 30%, var(--ui-line) 50%, var(--ui-panel-2) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
   .home-skeleton-title { width: 72%; height: 26px; }
   .home-skeleton-title.short { width: 46%; }
   .home-skeleton-meta { width: 36%; height: 12px; margin-top: 12px; }
   .home-skeleton-action { width: 18%; height: 10px; margin-top: 24px; }
 
-  /* ---- DATA・LAB：見出し ---- */
+  /* ---- DATA・LAB ---- */
   .category-page { min-height: calc(100dvh - var(--ui-nav-h) - 64px); padding: var(--ui-top-pad) 0 20px; }
-  .category-header { position: relative; display: grid; gap: 12px; margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--ui-line); }
-  .category-title { display: grid; gap: 10px; margin: 0; color: var(--ui-text); line-height: 1; }
-  .category-title-en { font-family: var(--ui-font-display); font-size: var(--ui-fs-display); font-weight: 900; letter-spacing: var(--ui-ls-display); line-height: .88; }
-  .category-title-ja { display: none; }
-
-  /* ---- DATA・LAB：タイル（方眼の上にひし形の枠とアイコン、番号つき） ---- */
-  .category-cards { counter-reset: ui-tile; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .category-header { position: relative; display: grid; gap: 12px; margin-bottom: 22px; padding-bottom: 22px; }
+  .category-title { display: grid; margin: 0; }
+  .category-title-ja, .category-card-desc { display: none; }
+  .category-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   @media (min-width: 720px) { .category-cards.data-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  .category-card { counter-increment: ui-tile; position: relative; display: block; width: 100%; min-height: 0; padding: 0; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); overflow: hidden; background: var(--ui-panel); color: var(--ui-text); text-align: left; cursor: pointer; transition: border-color 180ms ease, transform 180ms ease; }
   .category-card-inner { display: flex; flex-direction: column; align-items: stretch; width: 100%; height: 100%; }
-  .category-card-symbol { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1.45; border-bottom: 1px solid var(--ui-line); color: var(--ui-text); background: linear-gradient(var(--ui-line) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(90deg, var(--ui-line) 1px, transparent 1px) 0 0 / 22px 22px, var(--ui-panel-2); }
-  .category-card-symbol::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 50%, transparent 30%, var(--ui-panel) 92%); pointer-events: none; }
-  .category-card-symbol::before { content: ""; position: absolute; top: 50%; left: 50%; z-index: 1; width: 36%; aspect-ratio: 1; border: 1px solid var(--ui-line-strong); background: var(--ui-bg); transform: translate(-50%, -50%) rotate(45deg); transition: border-color 180ms ease; }
-  .category-card-symbol svg { position: relative; z-index: 2; width: 27%; height: auto; aspect-ratio: 1; fill: none; stroke: currentColor; stroke-width: 1.45; stroke-linecap: round; stroke-linejoin: round; }
-  .category-card-symbol svg .s { fill: currentColor; fill-opacity: .16; stroke: none; }
-  .category-card-symbol svg .f { fill: currentColor; stroke: none; }
-  .category-card-symbol svg .b { fill: none; stroke: currentColor; stroke-width: .9; opacity: .55; }
-  .category-card-meta { display: grid; gap: 6px; padding: 14px 16px 20px; text-align: left; }
-  .category-card-meta::before { content: counter(ui-tile, decimal-leading-zero); color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .24em; }
-  .category-card-name { color: var(--ui-text); font-size: var(--ui-fs-body); font-weight: 700; letter-spacing: .04em; line-height: 1.4; word-break: keep-all; }
-  .category-card-desc { display: none; }
-  @media (hover: hover) { .category-card:hover { border-color: var(--ui-line-strong); } .category-card:hover .category-card-symbol::before { border-color: var(--ui-text); } }
+  .category-card-symbol { order: -1; }
+  .category-card-meta { display: grid; gap: 6px; padding: 14px 16px 20px; }
   .category-card:active { transform: scale(.985); }
-
   /* 開いたときの動き：見出しが浮き上がり、線が伸び、タイルが順に出る */
   .category-intro .category-title-en { opacity: 0; animation: uiRise 260ms var(--ui-ease) 180ms forwards; }
-  .category-intro .category-header::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--ui-line-strong); transform-origin: left center; transform: scaleX(0); animation: uiRule 420ms var(--ui-ease) 340ms forwards; }
   .category-intro .category-card { opacity: 0; animation: uiRise 300ms var(--ui-ease) forwards; }
   .category-intro .category-card:nth-child(1) { animation-delay: 420ms; }
   .category-intro .category-card:nth-child(2) { animation-delay: 500ms; }

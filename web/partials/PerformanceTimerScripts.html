@@ -74,13 +74,13 @@
   window.initPerformanceTimerPage=function(){
     document.body.classList.add('performance-timer-active');
     const host=document.getElementById('performanceTimerApp');if(!host)return;
-    host.innerHTML='<div class="pt-panel pt-loading">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','#9cecff'):'LOADING...')+'</div>';
+    host.innerHTML='<div class="ui-panel pt-panel pt-loading">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','#9cecff'):'LOADING...')+'</div>';
     google.script.run.withSuccessHandler(function(data){state.bootstrap=data||{songs:[],members:[]};renderTimerBody();}).withFailureHandler(renderLoadError).getPerformanceTimerBootstrap();
   };
   window.cleanupPerformanceTimerPage=function(){if(state.running)settleAt(now());clearAll();document.body.classList.remove('performance-timer-active');closePtDialog();};
   window.performanceTimerOpenSettings_=function(){if(typeof openSettings==='function')openSettings();};
 
-  function renderLoadError(){const host=document.getElementById('performanceTimerApp');if(!host)return;host.innerHTML='<div class="pt-error">読み込みに失敗しました</div><button class="ui-btn" onclick="initPerformanceTimerPage()">再読み込み</button>';}
+  function renderLoadError(){const host=document.getElementById('performanceTimerApp');if(!host)return;host.innerHTML='<div class="ui-text-danger pt-error">読み込みに失敗しました</div><button class="ui-btn" onclick="initPerformanceTimerPage()">再読み込み</button>';}
 
   function renderTimerBody(){
     const host=document.getElementById('performanceTimerApp');if(!host||!state.bootstrap)return;
@@ -94,14 +94,14 @@
     else if(state.running)status='メンバー未選択';
     const statusColor=statusMember?(statusMember.color||'#9cecff'):'';
     const song=selectedSong();
-    const setup=locked?`<section class="pt-context"><strong>${esc(state.songTitle)}</strong><span>${esc(TYPE_LABELS[state.type]||'')}</span></section>`:`
-      <section class="pt-panel pt-setup-panel">
+    const setup=locked?`<section class="ui-panel pt-context"><strong class="ui-heading">${esc(state.songTitle)}</strong><span class="ui-label">${esc(TYPE_LABELS[state.type]||'')}</span></section>`:`
+      <section class="ui-panel pt-panel pt-setup-panel">
         <div class="pt-search-wrap">
           <div class="pt-search-line">
-            <input id="ptSongSearch" class="pt-search-input" type="search" autocomplete="off" aria-label="曲を選択" placeholder="曲名を検索" value="${esc(song?state.songTitle:'')}" onfocus="performanceTimerSearchSongs_(this.value,true)" oninput="performanceTimerSearchSongs_(this.value,false)">
-            <button type="button" class="ui-btn pt-clear" aria-label="曲選択をクリア" onclick="performanceTimerClearSong_()">×</button>
+            <input id="ptSongSearch" class="ui-input pt-search-input" type="search" autocomplete="off" aria-label="曲を選択" placeholder="曲名を検索" value="${esc(song?state.songTitle:'')}" onfocus="performanceTimerSearchSongs_(this.value,true)" oninput="performanceTimerSearchSongs_(this.value,false)">
+            <button type="button" class="ui-btn ui-btn-icon pt-clear" aria-label="曲選択をクリア" onclick="performanceTimerClearSong_()">×</button>
           </div>
-          <div id="ptSongResults" class="pt-song-results" hidden></div>
+          <div id="ptSongResults" class="ui-list-box pt-song-results" hidden></div>
         </div>
         <div class="pt-type-grid">
           <button type="button" class="ui-btn pt-type ${state.type==='SING'?'is-selected':''}" onclick="performanceTimerSelectType_('SING')">歌唱</button>
@@ -109,13 +109,13 @@
         </div>
       </section>`;
     host.innerHTML=`${setup}
-      <section class="pt-timer-panel ${statusClass}">
-        <div class="pt-status-main"><span class="pt-status-dot"></span><span class="pt-status-label ${statusMember?'is-member':''}"${statusColor?' style="--pt-status-member-color:'+esc(statusColor)+'"':''}>${esc(status)}</span></div>
-        <div id="ptTotalTime" class="pt-total">${fmt(totalElapsed())}</div>
+      <section class="ui-panel pt-timer-panel ${statusClass}">
+        <div class="pt-status-main"><span class="ui-dot pt-status-dot"></span><span class="ui-label pt-status-label ${statusMember?'is-member':''}"${statusColor?' style="--pt-status-member-color:'+esc(statusColor)+'"':''}>${esc(status)}</span></div>
+        <div id="ptTotalTime" class="ui-num ui-num-xl pt-total">${fmt(totalElapsed())}</div>
       </section>
-      <section class="pt-panel pt-actions-panel">
+      <section class="ui-panel pt-panel pt-actions-panel">
         <div class="pt-main-actions">
-          <button type="button" class="ui-btn pt-action-primary" ${(!state.songId||!state.type)?'disabled':''} onclick="performanceTimerToggleRun_()">${state.running?'一時停止':(state.started?'再開':'開始')}</button>
+          <button type="button" class="ui-btn ui-btn-solid pt-action-primary" ${(!state.songId||!state.type)?'disabled':''} onclick="performanceTimerToggleRun_()">${state.running?'一時停止':(state.started?'再開':'開始')}</button>
           <button type="button" class="ui-btn" ${!state.started?'disabled':''} onclick="performanceTimerOpenSummary_()">保存</button>
         </div>
         <div class="pt-secondary-actions">
@@ -123,7 +123,7 @@
           <button type="button" class="ui-btn" ${!state.started?'disabled':''} onclick="performanceTimerReset_()">リセット</button>
         </div>
       </section>
-      <section class="pt-panel pt-member-panel">
+      <section class="ui-panel pt-panel pt-member-panel">
         <div class="pt-members">${renderMembers()}</div>
         ${renderEventLog()}
       </section>`;
@@ -131,11 +131,11 @@
     setTimeout(function(){updateTimes();scrollLogToBottom_();},0);
   }
 
-  function renderMembers(){return (state.bootstrap.members||[]).map(function(member){const id=String(member.memberId);const active=state.activeMemberId===id;const pending=!state.running&&state.pendingMemberId===id;return `<button type="button" class="ui-btn pt-member ${active?'is-active':''} ${pending?'is-pending':''}" style="--member-accent:${esc(member.color||'#9cecff')}" onclick="performanceTimerSelectMember_('${esc(id)}')"><span class="pt-member-name">${esc(member.name)}</span><span class="pt-member-time" data-pt-time="${esc(id)}">${fmt(currentElapsed(id))}</span><span class="pt-member-saved">保存 ${esc(savedValue(id))}</span></button>`;}).join('');}
-  function renderEventLog(){if(!state.started||!state.eventLog.length)return '';const rows=state.eventLog.map(x=>'<div class="pt-log-row"><time>'+esc(fmt(x.elapsedMs))+'</time><span>'+esc(x.label)+'</span></div>').join('');return '<div class="pt-event-log-wrap"><div class="pt-event-log-title">ログ</div><div id="ptEventLog" class="pt-event-log" aria-label="操作履歴">'+rows+'</div></div>';}
+  function renderMembers(){return (state.bootstrap.members||[]).map(function(member){const id=String(member.memberId);const active=state.activeMemberId===id;const pending=!state.running&&state.pendingMemberId===id;return `<button type="button" class="ui-btn ui-btn-plain ui-accent-left pt-member ${active?'is-active':''} ${pending?'is-pending':''}" style="--member-accent:${esc(member.color||'#9cecff')}" onclick="performanceTimerSelectMember_('${esc(id)}')"><span class="ui-name pt-member-name">${esc(member.name)}</span><span class="ui-num pt-member-time" data-pt-time="${esc(id)}">${fmt(currentElapsed(id))}</span><span class="ui-muted pt-member-saved">保存 ${esc(savedValue(id))}</span></button>`;}).join('');}
+  function renderEventLog(){if(!state.started||!state.eventLog.length)return '';const rows=state.eventLog.map(x=>'<div class="ui-divider pt-log-row"><time class="ui-muted">'+esc(fmt(x.elapsedMs))+'</time><span>'+esc(x.label)+'</span></div>').join('');return '<div class="pt-event-log-wrap"><div class="ui-label pt-event-log-title">ログ</div><div id="ptEventLog" class="pt-event-log" aria-label="操作履歴">'+rows+'</div></div>';}
   function scrollLogToBottom_(){const log=document.getElementById('ptEventLog');if(log)log.scrollTop=log.scrollHeight;}
 
-  window.performanceTimerSearchSongs_=function(query,showAll){if(state.started)return;const host=document.getElementById('ptSongResults');if(!host)return;const q=String(query||'').trim().toLowerCase();const songs=(state.bootstrap.songs||[]).filter(s=>(showAll&&!q)||String(s.title||'').toLowerCase().startsWith(q)).slice(0,12);host.hidden=false;host.innerHTML=songs.length?songs.map(s=>`<button type="button" class="pt-song-option" onclick="performanceTimerChooseSong_('${esc(s.songId)}')"><strong>${esc(s.title)}</strong></button>`).join(''):'<div class="pt-song-empty">該当なし</div>';};
+  window.performanceTimerSearchSongs_=function(query,showAll){if(state.started)return;const host=document.getElementById('ptSongResults');if(!host)return;const q=String(query||'').trim().toLowerCase();const songs=(state.bootstrap.songs||[]).filter(s=>(showAll&&!q)||String(s.title||'').toLowerCase().startsWith(q)).slice(0,12);host.hidden=false;host.innerHTML=songs.length?songs.map(s=>`<button type="button" class="ui-row ui-row-plain pt-song-option" onclick="performanceTimerChooseSong_('${esc(s.songId)}')"><strong class="ui-strong">${esc(s.title)}</strong></button>`).join(''):'<div class="ui-muted pt-song-empty">該当なし</div>';};
   window.performanceTimerChooseSong_=function(songId){if(state.started)return;const song=(state.bootstrap.songs||[]).find(s=>String(s.songId)===String(songId));if(!song)return;state.songId=String(song.songId);state.songTitle=song.title;state.saved={sing:{},dance:{}};renderTimerBody();loadSnapshot();};
   window.performanceTimerClearSong_=function(){if(state.started)return;state.songId='';state.songTitle='';state.saved={sing:{},dance:{}};renderTimerBody();};
   window.performanceTimerSelectType_=function(type){if(state.started||!TYPE_LABELS[type])return;state.type=type;renderTimerBody();};
@@ -205,7 +205,7 @@
       renderTimerBody();
     }
     const items=(state.bootstrap.members||[]).map(m=>({name:m.name,value:Number(state.elapsed[String(m.memberId)]||0)/1000}));
-    const html='<div class="pt-summary-head"><strong>'+esc(state.songTitle)+'</strong><span>'+esc(TYPE_LABELS[state.type])+'</span></div><ul class="pt-dialog-list">'+items.map(x=>'<li><span>'+esc(x.name)+'</span><strong>'+Number(x.value).toFixed(2)+'s</strong></li>').join('')+'</ul>';
+    const html='<div class="ui-divider pt-summary-head"><strong class="ui-heading">'+esc(state.songTitle)+'</strong><span class="ui-label">'+esc(TYPE_LABELS[state.type])+'</span></div><ul class="ui-list pt-dialog-list">'+items.map(x=>'<li class="ui-divider"><span class="ui-muted">'+esc(x.name)+'</span><strong class="ui-num">'+Number(x.value).toFixed(2)+'s</strong></li>').join('')+'</ul>';
     openPtDialog('保存',html,[{label:'閉じる',action:'closePtDialog()'},{label:'保存',primary:true,action:'performanceTimerSave_(false)'}],true);
   };
 
@@ -219,7 +219,7 @@
       state.loading=false;
       if(result&&result.requiresConfirmation){
         const old=(result.existing||[]).map(item=>{const m=memberInfo(String(item.memberId));return '<li><span>'+esc(m?m.name:item.memberId)+'</span><strong>'+(item.value===null?'—':Number(item.value).toFixed(2)+'s')+'</strong></li>';}).join('');
-        openPtDialog('上書きしますか？','<ul class="pt-dialog-list">'+old+'</ul>',[{label:'キャンセル',action:'closePtDialog()'},{label:'上書き',primary:true,action:'performanceTimerSave_(true)'}],true);return;
+        openPtDialog('上書きしますか？','<ul class="ui-list pt-dialog-list">'+old+'</ul>',[{label:'キャンセル',action:'closePtDialog()'},{label:'上書き',primary:true,action:'performanceTimerSave_(true)'}],true);return;
       }
       if(result&&result.ok){closePtDialog();notify('保存しました');clearMeasurement();loadSnapshot();renderTimerBody();}
       else notify('保存できませんでした');
@@ -228,8 +228,8 @@
 
   function openPtDialog(title,body,actions,bodyIsHtml){
     closePtDialog();
-    const overlay=document.createElement('div');overlay.id='ptDialogBackdrop';overlay.className='pt-dialog-backdrop';
-    overlay.innerHTML='<section class="pt-dialog" role="dialog" aria-modal="true"><h2>'+esc(title)+'</h2><div class="pt-dialog-copy">'+(bodyIsHtml?body:esc(body))+'</div><div class="pt-dialog-actions">'+actions.map(function(a){return '<button '+(a.primary?'id="ptDialogPrimary" ':'')+'type="button" class="ui-btn '+(a.primary?'pt-action-primary':'')+'" onclick="'+a.action+'">'+esc(a.label)+'</button>';}).join('')+'</div></section>';
+    const overlay=document.createElement('div');overlay.id='ptDialogBackdrop';overlay.className='ui-modal pt-dialog-backdrop';
+    overlay.innerHTML='<section class="ui-modal-card pt-dialog" role="dialog" aria-modal="true"><h2 class="ui-heading">'+esc(title)+'</h2><div class="ui-muted pt-dialog-copy">'+(bodyIsHtml?body:esc(body))+'</div><div class="pt-dialog-actions">'+actions.map(function(a){return '<button '+(a.primary?'id="ptDialogPrimary" ':'')+'type="button" class="ui-btn '+(a.primary?'ui-btn-solid pt-action-primary':'')+'" onclick="'+a.action+'">'+esc(a.label)+'</button>';}).join('')+'</div></section>';
     overlay.addEventListener('click',function(event){if(event.target===overlay)closePtDialog();});document.body.appendChild(overlay);
   }
   window.closePtDialog=closePtDialog;

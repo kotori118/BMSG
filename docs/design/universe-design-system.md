@@ -3,6 +3,23 @@
 このファイルが統一の指標。画面を作る・直すときは、ここにある値と部品だけを使う。
 数値の正本は `web/partials/UniverseTokens.html` の `:root` 変数（ここと一致させる）。
 
+## 0. CSSの持ち方（いちばん大事な決まり）
+見た目は部品ファイルにだけ書く。画面ごとのCSSは並べ方だけ。`npm test`（`tests/css-structure.test.mjs`）が毎回検査する。
+
+| ファイル | 書くもの | 書かないもの |
+| :- | :- | :- |
+| `UniverseTokens.html` | 値（色・書体・文字の大きさ・角丸・高さ）。白い画面の値（`body.ui-light`）もここ | 部品 |
+| `Styles.html` | 画面の枠：上のバー・下のメニュー・左のメニュー・検索・設定・通知の置き場所 | 画面ごとのもの |
+| `UniverseTheme.html` | 部品：ボタン・戻る・入力欄・見出し・面・一覧・タブ・切り替え・写真・窓・読み込み中など（16章） | 画面の名前のついたクラス |
+| 画面ごとのファイル（`KaraokeStyles.html` など） | 並べ方：display・grid・flex・gap・幅・高さ・余白・位置・重なり・動き | 色・背景・枠線・角丸・文字（書体・大きさ・太さ・字間）・影 |
+| `<style data-content>` | 中身の見た目（トレカ・ポーカーのカードの絵柄、レア度の色、メンバーカラーの帯）。`CardStyles` `PokerStyles` `CoverStyles` だけ | ボタン・入力欄・戻る |
+
+- 画面のHTMLには部品の名前をつける：`class="ui-btn ui-btn-solid karaoke-start"`。`karaoke-start` は並べ方（位置・幅）だけに使う。
+- 見た目が足りないときは、画面のCSSではなく `UniverseTheme.html` に部品として足し、16章に書く。
+- 色は直接書かない（`#fff` や `rgba()` は不可）。メンバーカラーのように色を渡すときは `--accent` に入れて、部品（`ui-accent-left` など）に使わせる。
+- 色の種類は2つだけ：黒基調（`v2`）と白基調（`v2-light`：歌詞・カラオケ）。部品は同じで、トークンの値だけが変わる。
+- 検査を手元で見る：`node scripts/css-rules.mjs`（ファイルごとの件数）／`node scripts/css-rules.mjs KaraokeStyles.html`（中身）。
+
 ## 1. 色
 | 名前 | 値 | 使い道 |
 | :- | :- | :- |
@@ -14,9 +31,10 @@
 | 文字（本文・見出し） | `#ffffff` | 見出し・名前・ボタン |
 | 文字（補足） | `rgba(255,255,255,.56)` | 説明・日付・ラベル |
 | 選択中（白い塗り） | 背景 `#f2f2f2` / 文字 `#111` | 下のメニュー・メニューの選択中 |
-| 推しカラー | Universeの設定値（初期 `#9cecff`） | 使うのは限定的（選択中の強調など） |
+| 危険（削除・不正解） | `#e5484d` | 削除ボタン・不正解・残りわずか |
+| メンバーカラー | メンバーごとの色 | `--accent` で渡し、線・点・帯だけに使う |
 
-色はこの表以外使わない。白・灰・黒だけ。
+色はこの表以外使わない。白・灰・黒だけ。白い画面（歌詞・カラオケ）は同じ名前のトークンが白基調の値に変わる。
 
 ## 2. 文字（フォント）
 | 役割 | フォント | 例 |
@@ -49,7 +67,7 @@
 | :- | :- | :- |
 | 枠（主） | 白い1pxの枠、文字白、透明 | 再生・保存・次へ |
 | 白（強い） | 白い塗り、文字 `#111` | 下のメニューの選択中・決定のボタン |
-| 削除 | 赤の枠（`#c2410c`）、文字赤 | 削除だけ |
+| 削除 | 赤の枠（`--ui-danger`）、文字赤 | 削除だけ（`ui-btn-danger`） |
 
 - 高さ 48px、左右の余白 24px、字間 .16em、文字 15px 太字。
 - 押したとき：背景を `#1f1f1f` にする。アニメーションは 150ms まで。
@@ -65,7 +83,7 @@
 - 高さ 60px 以上、面 `#181818`、区切りの線、右に「›」。
 
 ## 8. タブ・切り替え
-- 外枠は細い線、選択中は白い下線（2px）と白い文字。
+- 外枠は細い線でつながった枠、選択中は塗る（`ui-tabs` + `ui-tab`）。
 - 高さ 46px。
 
 ## 9. 上のバー・下のメニュー
@@ -90,7 +108,7 @@
 - [ ] 英語の表示は大見出しと小ラベルだけ
 
 ## 13. 戻る・タブ・読み込み・ポップアップ（分析で確定）
-- 戻る：枠線のボタン（高さ48px）に、行き先の名前を大文字の英字で添える（例：`‹ DATA`）。
+- 戻る：15章の `.ui-back`（枠なし・矢印と BACK・下に細い線）。
 - タブ：ラベルは短く（トップ／メンバー／楽曲／時系列／その他）。幅は均等（flex 1 1 0）。
 - 読み込み中：ホームと同じ面（`#181818` → `#1f1f1f`）の帯が流れる表示（スケルトン）。文字だけの「読み込み中」は使わない。
 - ポップアップ：黒の半透明の背景、`#111` の面、1pxの線、見出しは日本語の見出しサイズ、閉じるは枠のボタン。
@@ -108,9 +126,59 @@
 - 分析へのリンク（プロフィール）：BE:FIRST のメンバーだけに出す。
 
 ## 15. 戻るボタン・変更ボタン（全画面で共通）
-- 戻る（文字つき）`.ui-back`：高さ48px、枠線、英字の大文字。「‹ DATA」のように行き先を書く。
+- 戻る（文字つき）`.ui-back`：高さ48px、枠なし、矢印（線）と「BACK」、下に細い線。
 - 戻る（アイコンだけ）`.ui-back.ui-back-icon`：48pxの正方形。詳細や相性の画面で使う。
 - 変更など小さなボタン `.ui-btn.ui-btn-compact`：高さ40px。
 - 写真は枠いっぱいに表示する。写真がないときは何も出さない（頭文字は出さない）。
 - メンバーの名前とグループの間は 2px。
 
+
+## 16. 部品の一覧（`UniverseTheme.html`）
+画面ではこの名前だけで見た目を決める。
+
+| 種類 | クラス | 中身 |
+| :- | :- | :- |
+| 文字 | `ui-display` | HOME・DATA・LAB の大見出し |
+| | `ui-title`（`ui-title-sm`） | 画面名（英字・大文字） |
+| | `ui-heading` / `ui-heading-lg` | 日本語の見出し（17px）／曲名など大きめ |
+| | `ui-name`（`ui-name-lg`） | メンバー名・歌唱者（英字・大文字） |
+| | `ui-label` | 小さなラベル（英字・大文字・字間） |
+| | `ui-text` / `ui-muted` / `ui-strong` | 本文／補足／太字 |
+| | `ui-num`（`ui-num-xl`）/ `ui-num-hollow` | 数字／大きな数字／線だけの数字 |
+| | `ui-link` / `ui-mark` / `ui-text-danger` | 下線／文中の強調／赤字 |
+| 面 | `ui-panel` / `ui-panel-sunken` / `ui-frame` | 面（線つき）／一段沈んだ面／強い線の枠 |
+| | `ui-card` | 押せる面（ホバーで明るくなる）。`is-selected` で白い枠 |
+| | `ui-divider` / `ui-divider-top` | 下の線／上の線 |
+| | `ui-empty` | 何もないときの点線の枠 |
+| | `ui-surface` / `ui-stage` / `ui-scrim` | 画面と同じ地／画面いっぱいの面／暗い幕 |
+| 写真 | `ui-avatar` / `ui-thumb` / `ui-media` | 丸／角丸／角なし（写真は枠いっぱい） |
+| | `ui-photo-tile` / `ui-photo-banner` | 写真の上に名前（`--ui-photo` に `url()`）／写真の帯 |
+| 色の受け渡し | `ui-accent-left` / `ui-accent-bottom` / `ui-dot` / `ui-accent-bar` / `ui-accent-text` | `--accent` の色で線・点・帯・文字 |
+| 表 | `ui-dl` | 項目と値（dt / dd） |
+| | `ui-table` | 表（数字の列は `.num`） |
+| | `ui-progress` + `ui-progress-fill` | 割合の帯（`is-danger` で赤） |
+| ボタン | `ui-btn` | 枠線のボタン（48px） |
+| | `ui-btn-solid` | 主な操作（塗り）。`aria-pressed="true"`・`is-active`・`is-selected`・`is-on`・`is-open`・`active` も塗り |
+| | `ui-btn-wide` / `ui-btn-compact` / `ui-btn-icon` | 横いっぱい／40px／正方形（×・☆） |
+| | `ui-btn-text`（`ui-btn-quiet`）/ `ui-btn-plain` / `ui-btn-ghost` / `ui-btn-danger` | 文字だけ（下線）／日本語の太字／枠なし／赤 |
+| | `is-correct` / `is-wrong` | 正解（塗り）／不正解（赤） |
+| | `ui-back`（`ui-back-icon`） | 戻る |
+| | `ui-plain` | 見た目のないボタン（中身だけ押せる） |
+| 入力 | `ui-input` | 入力欄・選択欄・複数行。画面の中の素の input / select / textarea も同じ見た目 |
+| | `ui-search` | 虫めがねつきの入力欄 |
+| | `ui-field` | ラベル（最初の span）と入力欄の組 |
+| | `ui-code` | 等幅の記録 |
+| 選ぶ | `ui-chip` | 丸い切り替え（ON は塗り。中に checkbox を入れてもよい） |
+| | `ui-switch` | ON / OFF の小さな表示 |
+| | `ui-badge`（`ui-badge-solid`） | 小さな札 |
+| | `ui-tabs` + `ui-tab` | つながった枠のタブ（選択中は塗り） |
+| 一覧 | `ui-list` + `ui-row`（`ui-row-plain`） | 行（右に矢印）／矢印なし |
+| | `ui-list-box` | 枠の中に行を並べる |
+| | `ui-index-row` + `ui-index-arrow` | 番号つきの大きな行（分析のトップ） |
+| | `ui-menu-tiles` + `ui-menu-tile`（`-symbol` `-meta` `-name`） | DATA・LAB の入口のタイル |
+| 窓 | `ui-modal` + `ui-modal-card`（`-head` `-body`） | 画面の中から開く窓 |
+| 状態 | `ui-skeleton`（`ui-skeleton-card`）/ `ui-skeleton-list` + `ui-skeleton-row` / `skeleton-block` | 読み込み中の帯 |
+| | `ui-loading` / `universe-loading` | くるくる（本当に待つときだけ） |
+| | `universe-toast` / `universe-recovery-state` | 通知／読み込みに失敗したとき |
+
+素のボタン（部品の名前がない `button`）も、画面の中では枠線のボタンになる。押した状態（`is-active` など）は塗り。

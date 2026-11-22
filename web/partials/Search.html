@@ -22,7 +22,7 @@
   }
 
   function renderUniverseSearchLoading() {
-    const row = '<button type="button" class="search-result universe-search-result" disabled aria-hidden="true"><span class="universe-search-type skeleton-block" style="display:block;width:52px;height:8px;border-radius:5px"></span><span class="search-result-name skeleton-block" style="display:block;width:58%;height:13px;border-radius:6px"></span><span class="universe-search-subtitle skeleton-block" style="display:block;width:42%;height:9px;border-radius:5px"></span><span class="universe-search-arrow" aria-hidden="true">›</span></button>';
+    const row = '<button type="button" class="search-result universe-search-result" disabled aria-hidden="true"><span class="ui-label universe-search-type skeleton-block" style="display:block;width:52px;height:8px;border-radius:5px"></span><span class="search-result-name skeleton-block" style="display:block;width:58%;height:13px;border-radius:6px"></span><span class="ui-muted universe-search-subtitle skeleton-block" style="display:block;width:42%;height:9px;border-radius:5px"></span><span class="universe-search-arrow" aria-hidden="true">›</span></button>';
     return '<div class="universe-search-loading">'+row+row+row+'</div>';
   }
 
@@ -68,15 +68,15 @@
     if (!results) return;
     if (!universeSearchResults.length) {
       if (status) status.textContent = '';
-      results.innerHTML = '<p class="universe-search-empty">該当するデータがありません。</p>';
+      results.innerHTML = '<p class="ui-muted universe-search-empty">該当するデータがありません。</p>';
       return;
     }
     if (status) status.textContent = '検索結果 ' + universeSearchResults.length + '件';
     results.innerHTML = universeSearchResults.map(function(item, index){
       return '<button type="button" class="search-result universe-search-result" data-search-index="'+index+'" onclick="openUniverseSearchResult(this)">'
-        + '<span class="universe-search-type">'+escapeHtml(item.type || '')+'</span>'
+        + '<span class="ui-label universe-search-type">'+escapeHtml(item.type || '')+'</span>'
         + '<span class="search-result-name">'+escapeHtml(item.title || '')+'</span>'
-        + '<span class="universe-search-subtitle">'+escapeHtml(item.subtitle || '')+'</span>'
+        + '<span class="ui-muted universe-search-subtitle">'+escapeHtml(item.subtitle || '')+'</span>'
         + '<span class="universe-search-arrow" aria-hidden="true">›</span>'
         + '</button>';
     }).join('');
@@ -86,7 +86,7 @@
     const status = document.getElementById('searchStatus');
     const results = document.getElementById('searchResults');
     if (status) status.textContent = '';
-    if (results) results.innerHTML = '<p class="universe-search-empty">'+escapeHtml(message || '検索に失敗しました。')+'</p>';
+    if (results) results.innerHTML = '<p class="ui-muted universe-search-empty">'+escapeHtml(message || '検索に失敗しました。')+'</p>';
   }
 
   function openUniverseSearchResult(button) {
@@ -113,15 +113,12 @@
 </script>
 
 <style>
-  .universe-search-form{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
-  .universe-search-form .search-field{margin:0}
-  .universe-search-submit{min-width:86px;padding:0 16px;border:1px solid var(--ui-line);border-radius:var(--ui-radius);background:var(--ui-panel);color:var(--ui-text);font:700 11px var(--font-body),var(--font-body),var(--font-body),sans-serif;letter-spacing:.12em;cursor:pointer}
-  .universe-search-loading{display:grid;gap:10px;margin-top:14px}
-  .universe-search-result{position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"type arrow" "name arrow" "sub arrow";align-items:center;gap:4px 16px;padding:17px 18px;text-align:left}
-  .universe-search-type{grid-area:type;color:var(--ui-text);font:700 9px var(--font-body),var(--font-body),var(--font-body),sans-serif;letter-spacing:.15em}
-  .universe-search-result .search-result-name{grid-area:name;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .universe-search-subtitle{grid-area:sub;color:var(--ui-text-sub);font:500 11px var(--font-body),var(--font-body),sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .universe-search-arrow{grid-area:arrow;color:var(--ui-text);font-size:26px;line-height:1}
-  .universe-search-empty{margin:38px 0 0;color:var(--ui-text-sub);font:500 14px/1.8 var(--font-body),var(--font-body),sans-serif;text-align:center}
-  @media(max-width:520px){.universe-search-form{grid-template-columns:1fr}.universe-search-submit{min-height:48px}.universe-search-result{padding:15px 16px}}
+  /* 検索の並べ方（見た目は Styles.html の検索と部品） */
+  .universe-search-loading { display: grid; margin-top: 14px; }
+  .universe-search-result { display: grid; gap: 4px; }
+  .universe-search-result .search-result-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .universe-search-subtitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .universe-search-arrow { display: none; }
+  .universe-search-empty { margin: 38px 0 0; text-align: center; }
+  @media (max-width: 520px) { .universe-search-form { grid-template-columns: 1fr; } }
 </style>

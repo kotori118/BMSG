@@ -1,49 +1,26 @@
 <style>
-  /* 分析。並べ方だけをここに書き、色や書体はトークン。ボタン・入力欄・タブは共通部品。 */
+  /* 分析の並べ方（見た目は部品 .ui-*） */
   .analysis-page { padding: var(--ui-top-pad) 0 40px; min-width: 0; }
-  .analysis-header { display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--ui-line); }
-  .analysis-title { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900; letter-spacing: -.035em; line-height: .95; text-align: left; text-transform: uppercase; }
-  .analysis-copy { margin: 8px 0 0; color: var(--ui-text-sub); }
-
-  /* タブ：つながった枠。選択中は塗る */
-  .analysis-local-nav { display: flex; overflow-x: auto; margin: 0 0 22px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); }
-  .analysis-tab { flex: 1 1 0; min-width: 0; min-height: var(--ui-tab-h); padding: 0 4px; border: 0; border-right: 1px solid var(--ui-line); border-radius: 0; background: transparent; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; letter-spacing: 0; white-space: nowrap; }
-  .analysis-tab:last-child { border-right: 0; }
-  .analysis-tab.active { border-color: var(--ui-line); background: var(--ui-active-bg); color: var(--ui-active-text); }
-
+  .analysis-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; }
+  .analysis-local-nav { margin: 0 0 22px; }
   .analysis-panel, .analysis-section, .analysis-card, .analysis-rank-grid, .analysis-pies, .analysis-controls, #analysisCreatorBody, #analysisReleaseBody { min-width: 0; max-width: 100%; }
   .analysis-panel { min-height: 240px; }
-  .analysis-section { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
-  #analysisCreatorBody, #analysisReleaseBody { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
-
-  /* 面（カード・数字・表・歌詞） */
-  .analysis-card, .analysis-menu-card, .analysis-stat, .analysis-table-wrap, .analysis-lyrics { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); }
+  .analysis-section, #analysisCreatorBody, #analysisReleaseBody { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .analysis-card { padding: 16px; overflow: hidden; }
-  .analysis-card h2, .analysis-card h3 { margin: 0 0 12px; }
-  .analysis-card h2 { font-size: var(--ui-fs-heading); }
-  .analysis-card h3 { font-size: var(--ui-fs-body-sm); }
-  .analysis-muted { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.65; }
+  .analysis-card :is(h2, h3) { margin-bottom: 12px; }
 
-  /* トップ（分析のハブ）：番号つきの大きな行 */
-  .analysis-hub { display: grid; border-top: 1px solid var(--ui-line); }
-  .analysis-hub-row { display: grid; grid-template-columns: minmax(56px, auto) 1fr 16px; align-items: center; gap: 14px; min-height: 104px; padding: 18px 4px; border: 0; border-bottom: 1px solid var(--ui-line); border-radius: 0; background: transparent; color: var(--ui-text); text-align: left; transition: background 180ms ease; }
-  @media (hover: hover) { .analysis-hub-row:hover { background: var(--ui-panel); } }
-  .analysis-hub-row:active { background: var(--ui-panel-2); }
-  .analysis-hub-no { font-family: var(--ui-font-display); font-size: clamp(40px, 11vw, 56px); font-weight: 900; letter-spacing: -.04em; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--ui-line-strong); }
-  .analysis-hub-copy strong { display: block; font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); line-height: 1.35; }
-  .analysis-hub-copy small { display: block; margin-top: 6px; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.5; }
-  .analysis-hub-arrow { justify-self: end; width: 8px; height: 8px; border-top: 1.5px solid var(--ui-text); border-right: 1.5px solid var(--ui-text); transform: rotate(45deg); }
+  /* トップ：番号つきの大きな行 */
+  .analysis-hub { display: grid; }
+  .analysis-hub-copy small { display: block; margin-top: 6px; }
 
-  /* メニュー（その他） */
+  /* その他のメニュー */
   .analysis-menu, .analysis-other-menu { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  .analysis-menu-card { min-height: var(--ui-row-h); padding: 16px 18px; text-align: left; }
-  @media (hover: hover) { .analysis-menu-card:hover { border-color: var(--ui-line-strong); background: var(--ui-panel-2); } }
-  .analysis-menu-card strong { display: block; font-size: var(--ui-fs-body); }
-  .analysis-menu-card span { display: block; margin-top: 7px; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.55; }
+  .analysis-menu-card { min-height: var(--ui-row-h); padding: 16px 18px; }
+  .analysis-menu-card :is(strong, span) { display: block; }
 
   /* 絞り込み */
   .analysis-controls { display: flex; flex-wrap: wrap; gap: 10px; }
-  .analysis-controls select, .analysis-controls input { flex: 1 1 180px; min-width: 0; }
+  .analysis-controls :is(select, input) { flex: 1 1 180px; min-width: 0; }
   .analysis-search-wrap { display: flex; flex: 1; gap: 8px; }
   .analysis-creator-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; margin-bottom: 10px; }
   .analysis-creator-tab { width: 100%; min-width: 0; white-space: nowrap; }
@@ -55,53 +32,32 @@
   .analysis-pies { display: grid; grid-template-columns: 1fr; gap: 14px; }
   .analysis-pie { position: relative; height: 280px; }
   .analysis-legend { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 12px; }
-  .analysis-legend-item { display: flex; align-items: center; gap: 6px; font-size: var(--ui-fs-label); }
-  .analysis-legend-dot { width: 9px; height: 9px; border-radius: 50%; }
+  .analysis-legend-item { display: flex; align-items: center; gap: 6px; }
 
-  /* 数字カード：ラベルの上に数字 */
+  /* 数字：ラベルの上に数字 */
   .analysis-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .analysis-stat { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 10px; min-height: 96px; padding: 16px 18px; text-align: left; }
-  .analysis-stat-label { display: block; margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1.2; text-transform: uppercase; }
-  .analysis-stat-value { display: block; margin: 0; color: var(--ui-text); font-family: var(--ui-font-num); font-size: var(--ui-fs-title); font-weight: 800; letter-spacing: -.01em; line-height: 1.1; font-variant-numeric: tabular-nums; }
 
   /* ランキングの表 */
   .analysis-rank-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  .analysis-table-wrap { display: block; width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
-  .analysis-table { width: max-content; min-width: 100%; border-collapse: collapse; }
-  .analysis-table th, .analysis-table td { padding: 12px 14px; border-bottom: 1px solid var(--ui-line); color: var(--ui-text); font-size: var(--ui-fs-body); font-weight: 500; text-align: left; vertical-align: top; white-space: nowrap; }
-  .analysis-table th { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; }
-  .analysis-table td.num, .analysis-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  .analysis-table td:first-child { width: 40px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-weight: 800; }
-  .analysis-diff-plus, .analysis-diff-minus, .analysis-diff-zero { color: var(--ui-text); }
-  .analysis-diff-zero { color: var(--ui-text-sub); }
+  .analysis-table-wrap { display: block; width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+  .analysis-table { width: max-content; min-width: 100%; }
+  .analysis-table :is(th, td) { white-space: nowrap; }
+  .analysis-table td:first-child { width: 40px; }
 
-  /* 曲名の一覧（ポップアップ） */
-  .analysis-song-list { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); overflow: hidden; }
-  .analysis-song-list > * { display: block; width: 100%; padding: 14px 18px; border: 0; border-bottom: 1px solid var(--ui-line); border-radius: 0; background: transparent; color: var(--ui-text); font-size: var(--ui-fs-body); text-align: left; }
-  .analysis-song-list > *:last-child { border-bottom: 0; }
-  @media (hover: hover) { .analysis-song-list > *:hover { background: var(--ui-panel-2); } }
+  /* 曲名の一覧・歌詞 */
+  .analysis-song-list { padding: 14px 18px; overflow: hidden; }
+  .analysis-lyrics { display: grid; padding: 0 16px; }
+  .analysis-lyric { padding: 12px 0; }
+  .analysis-lyric-member { margin-bottom: 5px; }
+  .analysis-lyric-text { white-space: pre-wrap; }
 
-  /* 歌詞 */
-  .analysis-lyrics { display: grid; gap: 9px; padding: 0 16px; }
-  .analysis-lyric { padding: 12px 0; border-bottom: 1px solid var(--ui-line); }
-  .analysis-lyric-member { margin-bottom: 5px; font-size: var(--ui-fs-label); font-weight: 700; }
-  .analysis-lyric-text { font-size: var(--ui-fs-body); line-height: 1.8; white-space: pre-wrap; }
-
-  /* 見出し（戻る＋題） */
-  .analysis-subhead { display: flex; align-items: center; gap: 12px; min-width: 0; color: var(--ui-text); }
-  .analysis-subhead h2 { min-width: 0; margin: 0; font-size: var(--ui-fs-title); line-height: 1.2; overflow-wrap: anywhere; }
+  /* 見出し（戻る＋題）・もっと見る */
+  .analysis-subhead { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .analysis-subhead h2 { min-width: 0; overflow-wrap: anywhere; }
   .analysis-more-btn { width: 100%; margin-top: 12px; }
-
-  /* ポップアップ */
-  .analysis-modal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); background: var(--ui-scrim); }
-  .analysis-modal[hidden] { display: none; }
-  .analysis-modal-card { display: flex; flex-direction: column; width: min(100%, 560px); max-height: 86dvh; overflow: hidden; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-bg); color: var(--ui-text); }
-  .analysis-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 14px 20px; border-bottom: 1px solid var(--ui-line); }
-  .analysis-modal-head h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
-  .analysis-modal-close { flex: none; }
-  .analysis-modal-body { padding: 16px 20px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  .analysis-modal { z-index: 70; }
 
   /* 読み込み中：一覧と同じ行の形 */
-  .analysis-loading { display: grid; grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--ui-line); }
   .analysis-loading > .universe-loading { display: none; }
 </style>

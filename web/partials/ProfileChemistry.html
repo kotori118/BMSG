@@ -44,9 +44,9 @@
   function renderProfileChemistryLoading() {
     const panel = document.getElementById('profilePanel');
     if (!panel || profileCurrentView !== 'chemistry') return;
-    const slot = (number, active) => `<button class="profile-chemistry-slot${active ? ' active' : ''}" type="button" disabled aria-hidden="true"><span class="profile-chemistry-slot-number">${number}</span><span class="profile-chemistry-slot-empty">SELECT</span><span class="profile-chemistry-slot-plus">+</span></button>`;
-    const member = () => `<button class="profile-chemistry-member" type="button" disabled aria-hidden="true"><i class="skeleton-block"></i><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px"></span></button>`;
-    panel.innerHTML = `<div class="profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="profile-chemistry-title">CHEMISTRY</h2></div><div class="profile-chemistry-slots">${slot('01',true)}<span class="profile-chemistry-cross" aria-hidden="true">×</span>${slot('02',false)}</div><section class="profile-chemistry-picker"><div class="profile-chemistry-section-head"><h3>MEMBERS</h3><span>—</span></div><div class="profile-chemistry-member-grid">${member()}${member()}${member()}${member()}${member()}${member()}</div></section>`;
+    const slot = (number, active) => `<button class="ui-card profile-chemistry-slot${active ? ' active' : ''}" type="button" disabled aria-hidden="true"><span class="ui-label profile-chemistry-slot-number">${number}</span><span class="ui-label profile-chemistry-slot-empty">SELECT</span><span class="ui-heading profile-chemistry-slot-plus">+</span></button>`;
+    const member = () => `<button class="ui-panel-sunken profile-chemistry-member" type="button" disabled aria-hidden="true"><i class="skeleton-block"></i><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px"></span></button>`;
+    panel.innerHTML = `<div class="ui-divider profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="ui-title ui-title-sm profile-chemistry-title">CHEMISTRY</h2></div><div class="profile-chemistry-slots">${slot('01',true)}<span class="ui-label profile-chemistry-cross" aria-hidden="true">×</span>${slot('02',false)}</div><section class="ui-panel profile-chemistry-picker"><div class="profile-chemistry-section-head"><h3 class="ui-heading">MEMBERS</h3><span class="ui-muted">—</span></div><div class="profile-chemistry-member-grid">${member()}${member()}${member()}${member()}${member()}${member()}</div></section>`;
   }
 
   function selectProfileChemistrySlot(slot) {
@@ -210,7 +210,7 @@
     if (!panel || profileCurrentView !== 'chemistry') return;
     if (profileChemistryState.status === 'idle' || profileChemistryState.status === 'loading') return renderProfileChemistryLoading();
     if (profileChemistryState.status === 'error') {
-      panel.innerHTML = `<article class="profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileChemistryState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileChemistry(true)">再試行</button></article>`;
+      panel.innerHTML = `<article class="ui-panel profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="ui-heading profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileChemistryState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileChemistry(true)">再試行</button></article>`;
       return;
     }
 
@@ -219,39 +219,39 @@
     const members = getVisibleProfileMembers();
     const isResultMode = Boolean(memberA && memberB);
 
-    panel.innerHTML = `<div class="profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="profile-chemistry-title">CHEMISTRY</h2>${isResultMode ? '<button class="ui-back ui-back-icon profile-chemistry-back" type="button" aria-label="戻る" onclick="resetProfileChemistrySelection()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>' : ''}</div>
+    panel.innerHTML = `<div class="ui-divider profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="ui-title ui-title-sm profile-chemistry-title">CHEMISTRY</h2>${isResultMode ? '<button class="ui-back ui-back-icon profile-chemistry-back" type="button" aria-label="戻る" onclick="resetProfileChemistrySelection()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>' : ''}</div>
       <div class="profile-chemistry-slots${isResultMode ? ' result' : ''}">
         ${renderProfileChemistrySlot('a', memberA, '01')}
-        <span class="profile-chemistry-cross" aria-hidden="true">×</span>
+        <span class="ui-label profile-chemistry-cross" aria-hidden="true">×</span>
         ${renderProfileChemistrySlot('b', memberB, '02')}
       </div>
       ${isResultMode
         ? renderProfileChemistryResult(memberA, memberB)
-        : `<section class="profile-chemistry-picker"><div class="profile-chemistry-section-head"><h3>MEMBERS</h3><span>${members.length}</span></div><div class="profile-chemistry-member-grid">${members.map(renderProfileChemistryMemberButton).join('')}</div></section>`}`;
+        : `<section class="ui-panel profile-chemistry-picker"><div class="profile-chemistry-section-head"><h3 class="ui-heading">MEMBERS</h3><span class="ui-muted">${members.length}</span></div><div class="profile-chemistry-member-grid">${members.map(renderProfileChemistryMemberButton).join('')}</div></section>`}`;
   }
 
   function renderProfileChemistrySlot(slot, member, number) {
     const active = profileChemistryState.activeSlot === slot;
     if (!member) {
-      return `<button class="profile-chemistry-slot${active ? ' active' : ''}" type="button" onclick="selectProfileChemistrySlot('${slot}')"><span class="profile-chemistry-slot-number">${number}</span><span class="profile-chemistry-slot-empty">SELECT</span><span class="profile-chemistry-slot-plus">+</span></button>`;
+      return `<button class="ui-card profile-chemistry-slot${active ? ' active' : ''}" type="button" onclick="selectProfileChemistrySlot('${slot}')"><span class="ui-label profile-chemistry-slot-number">${number}</span><span class="ui-label profile-chemistry-slot-empty">SELECT</span><span class="ui-heading profile-chemistry-slot-plus">+</span></button>`;
     }
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const image = renderProfileChemistryImage(member);
-    return `<button class="profile-chemistry-slot selected${active ? ' active' : ''}" style="--member-accent:${escapeHtml(accent)}" type="button" onclick="selectProfileChemistrySlot('${slot}')"><span class="profile-chemistry-slot-number">${number}</span><span class="profile-chemistry-slot-avatar">${image}</span><span class="profile-chemistry-slot-name">${escapeHtml(member.displayName)}</span><span class="profile-chemistry-slot-remove" role="button" aria-label="Remove" onclick="clearProfileChemistryMember('${slot}', event)">×</span></button>`;
+    return `<button class="ui-card profile-chemistry-slot selected${active ? ' active' : ''}" style="--member-accent:${escapeHtml(accent)}" type="button" onclick="selectProfileChemistrySlot('${slot}')"><span class="ui-label profile-chemistry-slot-number">${number}</span><span class="ui-avatar profile-chemistry-slot-avatar">${image}</span><span class="ui-name profile-chemistry-slot-name">${escapeHtml(member.displayName)}</span><span class="ui-btn ui-btn-compact profile-chemistry-slot-remove" role="button" aria-label="Remove" onclick="clearProfileChemistryMember('${slot}', event)">×</span></button>`;
   }
 
   function renderProfileChemistryMemberButton(member) {
     const selectedA = profileChemistryState.memberA === member.memberId;
     const selectedB = profileChemistryState.memberB === member.memberId;
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
-    return `<button class="profile-chemistry-member${selectedA || selectedB ? ' selected' : ''}" style="--member-accent:${escapeHtml(accent)}" type="button" data-member-id="${escapeHtml(member.memberId)}" onclick="selectProfileChemistryMember(this)">${renderProfileChemistryImage(member)}<span>${escapeHtml(member.displayName)}</span>${selectedA || selectedB ? `<b>${selectedA ? '01' : '02'}</b>` : ''}</button>`;
+    return `<button class="ui-panel-sunken profile-chemistry-member${selectedA || selectedB ? ' selected' : ''}" style="--member-accent:${escapeHtml(accent)}" type="button" data-member-id="${escapeHtml(member.memberId)}" onclick="selectProfileChemistryMember(this)">${renderProfileChemistryImage(member)}<span class="ui-label">${escapeHtml(member.displayName)}</span>${selectedA || selectedB ? `<b class="ui-muted">${selectedA ? '01' : '02'}</b>` : ''}</button>`;
   }
 
   function renderProfileChemistryImage(member) {
     // 頭文字は出さない。写真がなければ空の面だけ置く。
     return member.imageUrl
-      ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">`
-      : '<span class="profile-chemistry-photo-empty" aria-hidden="true"></span>';
+      ? `<img class="ui-thumb" src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">`
+      : '<span class="ui-thumb profile-chemistry-photo-empty" aria-hidden="true"></span>';
   }
 
   function renderProfileChemistryResult(memberA, memberB) {
@@ -269,17 +269,17 @@
     if (errorA || errorB) {
       comparisonBody = `<div class="profile-chemistry-detail-error"><p>${escapeHtml(errorA || errorB)}</p><button type="button" onclick="loadProfileChemistryDetail('${escapeHtml(errorA ? memberA.memberId : memberB.memberId)}', true)">再試行</button></div>`;
     } else if (loading) {
-      const row = `<div class="profile-chemistry-compare-row" aria-hidden="true"><dd><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></dd><dt><span class="skeleton-block" style="display:block;width:82%;height:10px;border-radius:5px;margin:auto"></span></dt><dd><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></dd></div>`;
-      comparisonBody = `<div class="profile-chemistry-compare-head" aria-hidden="true"><strong><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></strong><span>PROFILE</span><strong><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></strong></div><div class="profile-chemistry-compare-rows">${row}${row}${row}${row}</div>`;
+      const row = `<div class="ui-divider-top profile-chemistry-compare-row" aria-hidden="true"><dd><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></dd><dt><span class="skeleton-block" style="display:block;width:82%;height:10px;border-radius:5px;margin:auto"></span></dt><dd><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></dd></div>`;
+      comparisonBody = `<div class="ui-muted profile-chemistry-compare-head" aria-hidden="true"><strong><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></strong><span>PROFILE</span><strong><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></strong></div><div class="profile-chemistry-compare-rows">${row}${row}${row}${row}</div>`;
     } else {
       const rows = getProfileChemistryDetailRows(memberA, memberB);
-      comparisonBody = `<div class="profile-chemistry-compare-head"><strong>${escapeHtml(memberA.displayName)}</strong><span>PROFILE</span><strong>${escapeHtml(memberB.displayName)}</strong></div><div class="profile-chemistry-compare-rows">${rows.map(row => {
+      comparisonBody = `<div class="ui-muted profile-chemistry-compare-head"><strong class="ui-strong">${escapeHtml(memberA.displayName)}</strong><span>PROFILE</span><strong class="ui-strong">${escapeHtml(memberB.displayName)}</strong></div><div class="profile-chemistry-compare-rows">${rows.map(row => {
         const same = isProfileChemistryDetailRowMatch(row);
-        return `<div class="profile-chemistry-compare-row${same ? ' match' : ''}"><dd>${escapeHtml(row.valueA)}</dd><dt>${escapeHtml(row.label)}</dt><dd>${escapeHtml(row.valueB)}</dd></div>`;
+        return `<div class="ui-divider-top profile-chemistry-compare-row${same ? ' match' : ''}"><dd class="ui-text${same ? ' ui-link' : ''}">${escapeHtml(row.valueA)}</dd><dt class="ui-muted">${escapeHtml(row.label)}</dt><dd class="ui-text${same ? ' ui-link' : ''}">${escapeHtml(row.valueB)}</dd></div>`;
       }).join('')}</div>`;
     }
 
-    return `<section id="profileChemistryResult" class="profile-chemistry-result"><div class="profile-chemistry-match-center"><p>MATCH</p><div class="profile-chemistry-score" style="--score:${result.score}"><div><strong>${result.score}</strong><span>%</span></div></div><small>${result.matched.length} / ${result.comparedCount}</small></div><div class="profile-chemistry-compare">${comparisonBody}</div></section>`;
+    return `<section id="profileChemistryResult" class="ui-panel profile-chemistry-result"><div class="profile-chemistry-match-center"><p class="ui-label">MATCH</p><div class="profile-chemistry-score" style="--score:${result.score}"><div><strong class="ui-num ui-num-xl">${result.score}</strong><span class="ui-muted">%</span></div></div><small class="ui-muted">${result.matched.length} / ${result.comparedCount}</small></div><div class="ui-panel profile-chemistry-compare">${comparisonBody}</div></section>`;
   }
 </script>
 

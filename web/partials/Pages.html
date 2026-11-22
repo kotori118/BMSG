@@ -26,38 +26,38 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     function renderData() {
       return `
         <section class="view category-page ${universeIntroClass('data')}">
-          <header class="category-header">
-            <h1 class="category-title"><span class="category-title-en">DATA</span></h1>
+          <header class="ui-divider category-header">
+            <h1 class="category-title"><span class="ui-display category-title-en">DATA</span></h1>
           </header>
 
-          <div class="category-cards data-grid">
-            <button class="category-card" onclick="navigateTo('profile')">
+          <div class="ui-menu-tiles category-cards data-grid">
+            <button class="ui-menu-tile category-card" onclick="navigateTo('profile')">
               <span class="category-card-inner">
-                <span class="category-card-meta">
-                  <span class="category-card-name">プロフィール</span>
+                <span class="ui-menu-tile-meta category-card-meta">
+                  <span class="ui-menu-tile-name category-card-name">プロフィール</span>
                   <span class="category-card-desc">メンバーの情報・相性・マップ</span>
                 </span>
-                <span class="category-card-symbol">${categoryIconSvg('profile')}</span>
+                <span class="ui-menu-tile-symbol category-card-symbol">${categoryIconSvg('profile')}</span>
               </span>
             </button>
 
-            <button class="category-card" onclick="navigateTo('lyrics')">
+            <button class="ui-menu-tile category-card" onclick="navigateTo('lyrics')">
               <span class="category-card-inner">
-                <span class="category-card-meta">
-                  <span class="category-card-name">歌詞</span>
+                <span class="ui-menu-tile-meta category-card-meta">
+                  <span class="ui-menu-tile-name category-card-name">歌詞</span>
                   <span class="category-card-desc">歌詞・歌割り・カラオケ</span>
                 </span>
-                <span class="category-card-symbol">${categoryIconSvg('lyrics')}</span>
+                <span class="ui-menu-tile-symbol category-card-symbol">${categoryIconSvg('lyrics')}</span>
               </span>
             </button>
 
-            <button class="category-card" onclick="navigateTo('analysis')">
+            <button class="ui-menu-tile category-card" onclick="navigateTo('analysis')">
               <span class="category-card-inner">
-                <span class="category-card-meta">
-                  <span class="category-card-name">分析</span>
+                <span class="ui-menu-tile-meta category-card-meta">
+                  <span class="ui-menu-tile-name category-card-name">分析</span>
                   <span class="category-card-desc">BE:FIRSTの歌唱とセンターの秒数</span>
                 </span>
-                <span class="category-card-symbol">${categoryIconSvg('analysis')}</span>
+                <span class="ui-menu-tile-symbol category-card-symbol">${categoryIconSvg('analysis')}</span>
               </span>
             </button>
           </div>
@@ -68,48 +68,48 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     function renderLab() {
       return `
         <section class="view category-page ${universeIntroClass('lab')}">
-          <header class="category-header">
-            <h1 class="category-title"><span class="category-title-en">LAB</span></h1>
+          <header class="ui-divider category-header">
+            <h1 class="category-title"><span class="ui-display category-title-en">LAB</span></h1>
           </header>
 
-          <div class="category-cards lab-grid">
-            <button class="category-card" onclick="navigateTo('quiz')">
+          <div class="ui-menu-tiles category-cards lab-grid">
+            <button class="ui-menu-tile category-card" onclick="navigateTo('quiz')">
               <span class="category-card-inner">
-                <span class="category-card-meta">
-                  <span class="category-card-name">クイズ</span>
+                <span class="ui-menu-tile-meta category-card-meta">
+                  <span class="ui-menu-tile-name category-card-name">クイズ</span>
                   <span class="category-card-desc">歌詞から曲とメンバーを当てる</span>
                 </span>
-                <span class="category-card-symbol">${categoryIconSvg('quiz')}</span>
+                <span class="ui-menu-tile-symbol category-card-symbol">${categoryIconSvg('quiz')}</span>
               </span>
             </button>
 
-            <button class="category-card" onclick="navigateTo('cards')">
+            <button class="ui-menu-tile category-card" onclick="navigateTo('cards')">
               <span class="category-card-inner">
-                <span class="category-card-meta">
-                  <span class="category-card-name">トレーディング<wbr>カード</span>
+                <span class="ui-menu-tile-meta category-card-meta">
+                  <span class="ui-menu-tile-name category-card-name">トレーディング<wbr>カード</span>
                   <span class="category-card-desc">メンバーのカードを集める</span>
                 </span>
-                <span class="category-card-symbol">${categoryIconSvg('cards')}</span>
+                <span class="ui-menu-tile-symbol category-card-symbol">${categoryIconSvg('cards')}</span>
               </span>
             </button>
 
-            <button class="category-card" onclick="navigateTo('poker')">
+            <button class="ui-menu-tile category-card" onclick="navigateTo('poker')">
               <span class="category-card-inner">
-                <span class="category-card-meta">
-                  <span class="category-card-name">ポーカー</span>
+                <span class="ui-menu-tile-meta category-card-meta">
+                  <span class="ui-menu-tile-name category-card-name">ポーカー</span>
                   <span class="category-card-desc">カードで役を作って投票する</span>
                 </span>
-                <span class="category-card-symbol">${categoryIconSvg('poker')}</span>
+                <span class="ui-menu-tile-symbol category-card-symbol">${categoryIconSvg('poker')}</span>
               </span>
             </button>
 
-            <button class="category-card" onclick="navigateTo('cover')">
+            <button class="ui-menu-tile category-card" onclick="navigateTo('cover')">
               <span class="category-card-inner">
-                <span class="category-card-meta">
-                  <span class="category-card-name">カバーメーカー</span>
+                <span class="ui-menu-tile-meta category-card-meta">
+                  <span class="ui-menu-tile-name category-card-name">カバーメーカー</span>
                   <span class="category-card-desc">歌割りを組み替えて保存する</span>
                 </span>
-                <span class="category-card-symbol">${categoryIconSvg('cover')}</span>
+                <span class="ui-menu-tile-symbol category-card-symbol">${categoryIconSvg('cover')}</span>
               </span>
             </button>
           </div>

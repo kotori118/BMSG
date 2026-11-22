@@ -1,20 +1,20 @@
 <template id="lyricsPageTemplate">
   <section class="lyrics-page lyx-page">
-    <header class="lyx-page-head">
+    <header class="ui-divider lyx-page-head">
       <h1 class="ui-title">LYRICS</h1>
     </header>
     <main id="lyricsView" class="lyrics-view">
-      <section class="lyx-room is-loading" aria-hidden="true"><div class="lyx-skel"></div></section>
-      <section class="lyx-groups" aria-hidden="true"><div class="lyx-group lyx-skel"></div><div class="lyx-group lyx-skel"></div><div class="lyx-group lyx-skel"></div><div class="lyx-group lyx-skel"></div><div class="lyx-group lyx-skel"></div></section>
+      <section class="ui-divider lyx-room is-loading" aria-hidden="true"><div class="ui-skeleton lyx-skel"></div></section>
+      <section class="lyx-groups" aria-hidden="true"><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div></section>
     </main>
   </section>
-  <div id="lyricsEditor" class="lyrics-editor" hidden>
-    <section class="lyrics-editor-card" role="dialog" aria-modal="true">
-      <button class="lyrics-editor-close" type="button" onclick="closeLyricsEditor()">×</button>
-      <p class="lyrics-label">パート編集</p><h2>歌詞を編集</h2>
-      <label>歌唱者<div id="lyricsSingerEditor"></div></label>
-      <label>歌詞<textarea id="lyricsTextInput" rows="6"></textarea></label>
-      <div class="lyrics-editor-actions"><button id="lyricsSaveButton" type="button" onclick="saveLyricsEdit()">反映</button></div>
+  <div id="lyricsEditor" class="ui-modal lyrics-editor" hidden>
+    <section class="ui-modal-card lyrics-editor-card" role="dialog" aria-modal="true">
+      <button class="ui-btn ui-btn-icon lyrics-editor-close" type="button" onclick="closeLyricsEditor()" aria-label="閉じる">×</button>
+      <p class="ui-label">パート編集</p><h2 class="ui-heading">歌詞を編集</h2>
+      <label class="lyrics-editor-field"><span class="ui-label">歌唱者</span><div id="lyricsSingerEditor"></div></label>
+      <label class="lyrics-editor-field"><span class="ui-label">歌詞</span><textarea id="lyricsTextInput" class="ui-input" rows="6"></textarea></label>
+      <div class="lyrics-editor-actions"><button id="lyricsSaveButton" class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="saveLyricsEdit()">反映</button></div>
     </section>
   </div>
 </template>

@@ -19,9 +19,9 @@
       const time=Number(row.answerTimeMs||row.totalAnswerTimeMs||0);
       const rank=Number(row.rank||index+1);
       const name=row.displayName||quizUserName_(row.userId)||row.userId||'';
-      return '<div class="quiz-ranking-row"><strong class="quiz-ranking-rank">'+rank+'位</strong><span class="quiz-ranking-name">'+quizEscape_(name)+'</span><b class="quiz-ranking-points">'+Number(row.score||0)+'pt</b>'+(!scoreOnly?'<small class="quiz-v3-score-time quiz-ranking-time">'+formatQuizResultTime_(time)+'</small>':'')+'</div>';
+      return '<div class="ui-divider quiz-ranking-row"><strong class="ui-num quiz-ranking-rank">'+rank+'位</strong><span class="ui-strong quiz-ranking-name">'+quizEscape_(name)+'</span><b class="ui-num quiz-ranking-points">'+Number(row.score||0)+'pt</b>'+(!scoreOnly?'<small class="ui-muted quiz-v3-score-time quiz-ranking-time">'+formatQuizResultTime_(time)+'</small>':'')+'</div>';
     }).join('');
-    return rows||'<p class="quiz-muted">まだ結果がありません。</p>';
+    return rows||'<p class="ui-muted quiz-muted">まだ結果がありません。</p>';
   }
   function stopQuizRankingAutoRefresh_(){
     if(quizState.v3RankingTimer){clearInterval(quizState.v3RankingTimer);quizState.v3RankingTimer=0;}
@@ -49,7 +49,7 @@
     const host=quizHost_(),game=quizState.game;if(!host)return;scoreboard=Array.isArray(scoreboard)?scoreboard:[];
     const scoreOnly=!!(game&&game.mode==='OFFLINE');
     quizState.v3RankingSignature=quizRankingSignature_(scoreboard);
-    host.innerHTML=(game&&game.roomId?renderQuizRoomBanner_(game.roomId):'')+'<section class="quiz-panel"><h2 class="quiz-panel-title">ランキング</h2><div id="quizRankingV3" class="quiz-ranking">'+renderQuizRankingRows_(scoreboard,scoreOnly)+'</div><div class="quiz-actions"><button class="quiz-action is-primary" onclick="returnQuizTop_()">トップに戻る</button><button class="quiz-action" onclick="navigateTo(\'home\')">HOMEへ</button></div></section>';
+    host.innerHTML=(game&&game.roomId?renderQuizRoomBanner_(game.roomId):'')+'<section class="ui-panel quiz-panel"><h2 class="ui-heading quiz-panel-title">ランキング</h2><div id="quizRankingV3" class="quiz-ranking">'+renderQuizRankingRows_(scoreboard,scoreOnly)+'</div><div class="quiz-actions"><button class="ui-btn ui-btn-plain quiz-action ui-btn-solid is-primary" onclick="returnQuizTop_()">トップに戻る</button><button class="ui-btn ui-btn-plain quiz-action" onclick="navigateTo(\'home\')">HOMEへ</button></div></section>';
     startQuizRankingAutoRefresh_();
   };
 })();

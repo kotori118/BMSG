@@ -55,8 +55,8 @@
   function renderProfileDiscoverLoading() {
     const panel = document.getElementById('profilePanel');
     if (!panel || profileCurrentView !== 'discover') return;
-    const cards = Array.from({ length: 6 }, () => `<article class="profile-member-card profile-member-card-loading" aria-hidden="true"><div class="profile-member-visual"><span class="profile-member-skeleton profile-member-skeleton-image"></span></div><div class="profile-member-body"><span class="profile-member-skeleton profile-member-skeleton-copy"></span><span class="profile-member-skeleton profile-member-skeleton-name"></span></div></article>`).join('');
-    panel.innerHTML = `<div class="profile-discover-head"><p class="profile-panel-eyebrow">FIND SIMILAR</p><h2 class="profile-members-title">DISCOVER</h2><p class="profile-discover-sub">SELECT A MEMBER</p></div><div class="profile-member-grid">${cards}</div>`;
+    const cards = Array.from({ length: 6 }, () => `<article class="ui-card profile-member-card profile-member-card-loading" aria-hidden="true"><div class="ui-media profile-member-visual"><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-image"></span></div><div class="profile-member-body"><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-copy"></span><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-name"></span></div></article>`).join('');
+    panel.innerHTML = `<div class="ui-divider profile-discover-head"><p class="profile-panel-eyebrow">FIND SIMILAR</p><h2 class="ui-title ui-title-sm profile-members-title">DISCOVER</h2><p class="profile-discover-sub">SELECT A MEMBER</p></div><div class="profile-member-grid">${cards}</div>`;
   }
 
   function renderProfileDiscover() {
@@ -67,7 +67,7 @@
       return;
     }
     if (profileChemistryState.status === 'error') {
-      panel.innerHTML = `<article class="profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileChemistryState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileChemistryForDiscover()">再試行</button></article>`;
+      panel.innerHTML = `<article class="ui-panel profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="ui-heading profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileChemistryState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileChemistryForDiscover()">再試行</button></article>`;
       return;
     }
 
@@ -81,7 +81,7 @@
 
   function renderProfileDiscoverPicker(panel) {
     const members = getVisibleProfileMembers();
-    panel.innerHTML = `<div class="profile-discover-head"><p class="profile-panel-eyebrow">FIND SIMILAR</p><h2 class="profile-members-title">DISCOVER</h2><p class="profile-discover-sub">SELECT A MEMBER</p></div><div class="profile-member-grid">${members.map(renderProfileDiscoverMemberCard).join('')}</div>`;
+    panel.innerHTML = `<div class="ui-divider profile-discover-head"><p class="profile-panel-eyebrow">FIND SIMILAR</p><h2 class="ui-title ui-title-sm profile-members-title">DISCOVER</h2><p class="profile-discover-sub">SELECT A MEMBER</p></div><div class="profile-member-grid">${members.map(renderProfileDiscoverMemberCard).join('')}</div>`;
   }
 
   function renderProfileDiscoverRanking(panel, baseMember) {
@@ -98,14 +98,14 @@
       return { item, rank: currentRank };
     });
 
-    panel.innerHTML = `<div class="profile-discover-head profile-discover-ranking-head"><div><p class="profile-panel-eyebrow">FIND SIMILAR</p><h2 class="profile-members-title">${escapeHtml(baseMember.displayName)}</h2><p class="profile-discover-sub">MATCH RANKING</p></div><button class="ui-btn ui-btn-compact" type="button" onclick="changeProfileDiscoverMember()">変更</button></div><div class="profile-discover-ranking">${rankedItems.map(({ item, rank }) => renderProfileDiscoverRankingCard(item, rank, baseMember)).join('')}</div>`;
+    panel.innerHTML = `<div class="ui-divider profile-discover-head ui-label profile-discover-ranking-head"><div><p class="profile-panel-eyebrow">FIND SIMILAR</p><h2 class="ui-title ui-title-sm profile-members-title">${escapeHtml(baseMember.displayName)}</h2><p class="profile-discover-sub">MATCH RANKING</p></div><button class="ui-btn ui-btn-compact" type="button" onclick="changeProfileDiscoverMember()">変更</button></div><div class="profile-discover-ranking">${rankedItems.map(({ item, rank }) => renderProfileDiscoverRankingCard(item, rank, baseMember)).join('')}</div>`;
   }
 
   function renderProfileDiscoverMemberCard(member) {
     const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
-    return `<article class="profile-member-card" style="--member-accent:${escapeHtml(accent)}" role="button" tabindex="0" data-member-id="${escapeHtml(member.memberId)}" aria-label="Select ${escapeHtml(member.displayName)}" onclick="selectProfileDiscoverMember(this.dataset.memberId)" onkeydown="handleProfileDiscoverCardKey(event, this.dataset.memberId)"><div class="profile-member-visual">${image}<span class="profile-member-accent" aria-hidden="true"></span></div><div class="profile-member-body"><p class="profile-member-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h3 class="profile-member-name">${escapeHtml(member.displayName)}</h3></div></article>`;
+    return `<article class="ui-card profile-member-card" style="--member-accent:${escapeHtml(accent)}" role="button" tabindex="0" data-member-id="${escapeHtml(member.memberId)}" aria-label="Select ${escapeHtml(member.displayName)}" onclick="selectProfileDiscoverMember(this.dataset.memberId)" onkeydown="handleProfileDiscoverCardKey(event, this.dataset.memberId)"><div class="ui-media profile-member-visual">${image}<span class="profile-member-accent" aria-hidden="true"></span></div><div class="profile-member-body"><p class="ui-label profile-member-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h3 class="ui-name profile-member-name">${escapeHtml(member.displayName)}</h3></div></article>`;
   }
 
   function renderProfileDiscoverRankingCard(item, rank, baseMember) {
@@ -114,7 +114,7 @@
     const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
-    return `<button class="profile-discover-rank-card" style="--member-accent:${escapeHtml(accent)}" type="button" data-member-id="${escapeHtml(member.memberId)}" onclick="openProfileDiscoverChemistry('${escapeHtml(baseMember.memberId)}', this.dataset.memberId)"><span class="profile-discover-rank">${rank}</span><span class="profile-discover-avatar">${image}</span><span class="profile-discover-member"><strong>${escapeHtml(member.displayName)}</strong><small>${escapeHtml(member.primaryGroupName || 'SOLO')}</small></span><span class="profile-discover-match"><strong>${result.score}%</strong><small>MATCH</small></span><span class="profile-discover-count"><strong>${result.matched.length}</strong><small>COMMON</small></span></button>`;
+    return `<button class="ui-panel profile-discover-rank-card" style="--member-accent:${escapeHtml(accent)}" type="button" data-member-id="${escapeHtml(member.memberId)}" onclick="openProfileDiscoverChemistry('${escapeHtml(baseMember.memberId)}', this.dataset.memberId)"><span class="ui-num profile-discover-rank">${rank}</span><span class="ui-avatar profile-discover-avatar">${image}</span><span class="profile-discover-member"><strong class="ui-name">${escapeHtml(member.displayName)}</strong><small class="ui-label">${escapeHtml(member.primaryGroupName || 'SOLO')}</small></span><span class="profile-discover-match"><strong class="ui-num">${result.score}%</strong><small class="ui-label">MATCH</small></span><span class="profile-discover-count"><strong class="ui-num">${result.matched.length}</strong><small class="ui-label">COMMON</small></span></button>`;
   }
 
   function selectProfileDiscoverMember(memberId) {

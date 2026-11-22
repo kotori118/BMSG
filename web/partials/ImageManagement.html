@@ -5,21 +5,21 @@
     <div id="imageManagementLoading" class="management-loading image-management-loading">LOADING...</div>
 
     <form id="imageManagementForm" class="image-management-form" onsubmit="return submitImageManagement(event)" hidden>
-      <label class="management-field image-management-field">
+      <label class="ui-field management-field image-management-field">
         <span>グループ</span>
         <select id="imageManagementGroup" onchange="changeImageManagementGroup()">
           <option value="">選択してください</option>
         </select>
       </label>
 
-      <label class="management-field image-management-field">
+      <label class="ui-field management-field image-management-field">
         <span>メンバー</span>
         <select id="imageManagementMember" onchange="refreshImageManagementExisting()" disabled>
           <option value="">先にグループを選択してください</option>
         </select>
       </label>
 
-      <label class="management-field image-management-field">
+      <label class="ui-field management-field image-management-field">
         <span>レア度</span>
         <select id="imageManagementRarity" onchange="refreshImageManagementExisting()">
           <option value="">選択してください</option>
@@ -30,7 +30,7 @@
         </select>
       </label>
 
-      <label class="management-field image-management-field image-management-file-field">
+      <label class="ui-field management-field image-management-field ui-frame image-management-file-field">
         <span>画像</span>
         <input id="imageManagementFile" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png" onchange="previewImageManagementFile()">
         <b id="imageManagementFileName">JPEGまたはPNGを選択</b>
@@ -38,17 +38,17 @@
 
       <section id="imageManagementPreviewSection" class="image-management-preview-section" hidden>
         <p>登録する画像</p>
-        <div class="image-management-preview-card"><img id="imageManagementPreview" alt="登録する画像のプレビュー"></div>
+        <div class="ui-panel image-management-preview-card"><img id="imageManagementPreview" alt="登録する画像のプレビュー"></div>
       </section>
 
-      <p id="imageManagementError" class="management-error image-management-error" role="alert" hidden></p>
+      <p id="imageManagementError" class="ui-text-danger management-error image-management-error" role="alert" hidden></p>
       <button id="imageManagementSubmit" class="image-management-primary" type="submit">画像を登録する</button>
     </form>
 
-    <section class="image-management-repair">
+    <section class="ui-divider-top image-management-repair">
       <div>
-        <strong>画像データを修復</strong>
-        <small>Driveに保存されている画像を確認し、画像データとの紐付けを修復します。</small>
+        <strong class="ui-strong">画像データを修復</strong>
+        <small class="ui-muted">Driveに保存されている画像を確認し、画像データとの紐付けを修復します。</small>
       </div>
       <button id="imageManagementRepairButton" type="button" onclick="confirmImageManagementRepair()">画像データを修復する</button>
     </section>
@@ -61,11 +61,11 @@
       <div><h2 id="imageReplaceTitle" class="modal-title">画像を差し替えますか？</h2></div>
       <button class="overlay-close" type="button" onclick="closeImageReplaceConfirm()" aria-label="画像差し替え確認を閉じる">×</button>
     </header>
-    <p id="imageReplaceCopy" class="image-replace-copy"></p>
+    <p id="imageReplaceCopy" class="ui-muted image-replace-copy"></p>
     <div class="image-replace-compare">
-      <div><span>現在の画像</span><div class="image-management-preview-card"><img id="imageReplaceCurrent" alt="現在の画像"></div></div>
-      <b aria-hidden="true">→</b>
-      <div><span>新しい画像</span><div class="image-management-preview-card"><img id="imageReplaceNew" alt="新しい画像"></div></div>
+      <div><span class="ui-label">現在の画像</span><div class="ui-panel image-management-preview-card"><img id="imageReplaceCurrent" alt="現在の画像"></div></div>
+      <b class="ui-muted" aria-hidden="true">→</b>
+      <div><span class="ui-label">新しい画像</span><div class="ui-panel image-management-preview-card"><img id="imageReplaceNew" alt="新しい画像"></div></div>
     </div>
     <div class="image-replace-actions">
       <button type="button" class="image-management-secondary" onclick="closeImageReplaceConfirm()">キャンセル</button>
@@ -75,34 +75,24 @@
 </div>
 
 <style>
-
   .image-replace-overlay{z-index:1300}
-
-
     .image-management-form{display:grid;gap:16px;margin-top:12px}
-
-
-
-
-  .image-management-file-field{position:relative;min-height:88px;padding:15px;border:1px dashed var(--ui-line);border-radius:var(--ui-radius);background:var(--ui-panel);cursor:pointer}
+  .image-management-file-field{position:relative;min-height:88px;padding:15px;cursor:pointer}
   .image-management-file-field input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
-  .image-management-file-field b{color:var(--ui-text);font:600 14px var(--font-body),var(--font-body),sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .image-management-file-field b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .image-management-preview-section{display:grid;gap:8px}
-  .image-management-preview-card{aspect-ratio:3/4;overflow:hidden;border:1px solid var(--ui-line);border-radius:var(--ui-radius);background:var(--ui-bg)}
+  .image-management-preview-card{aspect-ratio:3/4;overflow:hidden}
   .image-management-preview-card img{width:100%;height:100%;display:block;object-fit:cover}
-
-  .image-management-repair{margin-top:24px;padding-top:20px;border-top:1px solid var(--ui-line);display:grid;gap:12px}
+  .image-management-repair{margin-top:24px;padding-top:20px;display:grid;gap:12px}
   .image-management-repair>div{display:grid;gap:4px}
-  .image-management-repair strong{font:700 15px var(--font-body),var(--font-body),sans-serif}
-  .image-management-repair small{color:var(--ui-text-sub);font:500 11px/1.7 var(--font-body),var(--font-body),sans-serif}
     .image-replace-panel{max-width:620px}
-  .image-replace-copy{margin:4px 0 18px;color:var(--ui-text-sub);font:500 13px/1.7 var(--font-body),var(--font-body),sans-serif}
+  .image-replace-copy{margin:4px 0 18px}
   .image-replace-compare{display:grid;grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr);align-items:center;gap:10px}
   .image-replace-compare>div{display:grid;gap:7px}
-  .image-replace-compare span{color:var(--ui-text-sub);font:700 10px var(--font-body),var(--font-body),sans-serif;text-align:center}
-  .image-replace-compare>b{color:var(--ui-text);text-align:center;font-size:22px}
+  .image-replace-compare span{text-align:center}
+  .image-replace-compare>b{text-align:center}
   .image-replace-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
-  @media(max-width:520px){.image-replace-compare{gap:6px}.image-replace-actions{grid-template-columns:1fr}.image-management-preview-card{border-radius:var(--ui-radius)}}
+  @media(max-width:520px){.image-replace-compare{gap:6px}.image-replace-actions{grid-template-columns:1fr}}
 </style>
 
 <script>

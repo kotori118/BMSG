@@ -101,22 +101,22 @@
       panel.innerHTML = renderProfileMemberSkeletons(); return;
     }
     if (profileMembersState.status === 'error') {
-      panel.innerHTML = `<article class="profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileMembersState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileMembers(true)">再試行</button></article>`;
+      panel.innerHTML = `<article class="ui-panel profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="ui-heading profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileMembersState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileMembers(true)">再試行</button></article>`;
       return;
     }
     const members = getVisibleProfileMembers();
     if (!members.length) {
-      panel.innerHTML = `<article class="profile-members-state"><p class="profile-panel-eyebrow">PROFILE HOME</p><h2 class="profile-members-state-title">NO DATA</h2><p class="profile-panel-copy">表示できるメンバーがいません。</p></article>`;
+      panel.innerHTML = `<article class="ui-panel profile-members-state"><p class="profile-panel-eyebrow">PROFILE HOME</p><h2 class="ui-heading profile-members-state-title">NO DATA</h2><p class="profile-panel-copy">表示できるメンバーがいません。</p></article>`;
       return;
     }
-    panel.innerHTML = `<div class="profile-members-head"><div><p class="profile-panel-eyebrow">PROFILE HOME</p><h2 class="profile-members-title">MEMBERS</h2></div><span class="profile-members-count">${members.length}</span></div><div class="profile-member-grid">${members.map(renderProfileMemberCard).join('')}</div>`;
+    panel.innerHTML = `<div class="ui-divider profile-members-head"><div><p class="profile-panel-eyebrow">PROFILE HOME</p><h2 class="ui-title ui-title-sm profile-members-title">MEMBERS</h2></div><span class="ui-muted profile-members-count">${members.length}</span></div><div class="profile-member-grid">${members.map(renderProfileMemberCard).join('')}</div>`;
   }
 
   function renderProfileMemberCard(member) {
     const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
-    return `<article class="profile-member-card" style="--member-accent:${escapeHtml(accent)}" role="button" tabindex="0" data-member-id="${escapeHtml(member.memberId)}" aria-label="${escapeHtml(member.displayName)}のプロフィールを開く" onclick="openProfileMemberDetail(this.dataset.memberId)" onkeydown="handleProfileMemberCardKey(event, this.dataset.memberId)"><div class="profile-member-visual">${image}<span class="profile-member-accent" aria-hidden="true"></span></div><div class="profile-member-body"><p class="profile-member-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h3 class="profile-member-name">${escapeHtml(member.displayName)}</h3></div></article>`;
+    return `<article class="ui-card profile-member-card" style="--member-accent:${escapeHtml(accent)}" role="button" tabindex="0" data-member-id="${escapeHtml(member.memberId)}" aria-label="${escapeHtml(member.displayName)}のプロフィールを開く" onclick="openProfileMemberDetail(this.dataset.memberId)" onkeydown="handleProfileMemberCardKey(event, this.dataset.memberId)"><div class="ui-media profile-member-visual">${image}<span class="profile-member-accent" aria-hidden="true"></span></div><div class="profile-member-body"><p class="ui-label profile-member-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h3 class="ui-name profile-member-name">${escapeHtml(member.displayName)}</h3></div></article>`;
   }
 
   function handleProfileMemberCardKey(event, memberId) {
@@ -180,19 +180,19 @@
     const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="${escapeHtml(member.displayName)}" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
-    panel.innerHTML = `<article class="profile-member-detail" style="--member-accent:${escapeHtml(accent)}"><button class="ui-back ui-back-icon" type="button" aria-label="メンバー一覧へ戻る" onclick="closeProfileMemberDetail()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><div class="profile-detail-hero"><div class="profile-detail-visual">${image}<span class="profile-detail-line" aria-hidden="true"></span></div><div class="profile-detail-identity"><p class="profile-detail-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h2 class="profile-detail-name">${escapeHtml(member.displayName)}</h2></div></div>${renderProfileDetailContent()}</article>`;
+    panel.innerHTML = `<article class="profile-member-detail" style="--member-accent:${escapeHtml(accent)}"><button class="ui-back ui-back-icon" type="button" aria-label="メンバー一覧へ戻る" onclick="closeProfileMemberDetail()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><div class="ui-panel profile-detail-hero"><div class="ui-media profile-detail-visual">${image}<span class="profile-detail-line" aria-hidden="true"></span></div><div class="profile-detail-identity"><p class="ui-label profile-detail-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h2 class="ui-name ui-name-lg profile-detail-name">${escapeHtml(member.displayName)}</h2></div></div>${renderProfileDetailContent()}</article>`;
     if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
   }
 
   function renderProfileDetailContent() {
     if (profileMembersState.detailStatus === 'loading') {
       const row = () => `<div class="profile-detail-row" aria-hidden="true"><dt><span class="skeleton-block" style="display:block;width:72%;height:11px;border-radius:6px"></span></dt><dd><span class="skeleton-block" style="display:block;width:86%;height:13px;border-radius:6px"></span></dd></div>`;
-      const section = (rows) => `<section class="profile-detail-section" aria-hidden="true"><h3 class="profile-detail-section-title"><span class="skeleton-block" style="display:block;width:74px;height:10px;border-radius:5px"></span></h3><dl class="profile-detail-list">${Array.from({length:rows},row).join('')}</dl></section>`;
+      const section = (rows) => `<section class="ui-panel profile-detail-section" aria-hidden="true"><h3 class="ui-heading profile-detail-section-title"><span class="skeleton-block" style="display:block;width:74px;height:10px;border-radius:5px"></span></h3><dl class="ui-dl profile-detail-list">${Array.from({length:rows},row).join('')}</dl></section>`;
       return `<div class="profile-detail-sections">${section(3)}${section(2)}</div>`;
     }
-    if (profileMembersState.detailStatus === 'error') return `<div class="profile-detail-message"><p>${escapeHtml(profileMembersState.detailError)}</p><button class="profile-retry-button" type="button" onclick="openProfileMemberDetail(profileSelectedMemberId)">再試行</button></div>`;
+    if (profileMembersState.detailStatus === 'error') return `<div class="ui-muted profile-detail-message"><p>${escapeHtml(profileMembersState.detailError)}</p><button class="profile-retry-button" type="button" onclick="openProfileMemberDetail(profileSelectedMemberId)">再試行</button></div>`;
     const fields = profileMembersState.detailFields || [];
-    if (!fields.length) return `<div class="profile-detail-message"><p>表示できるプロフィール項目がありません。</p></div>`;
+    if (!fields.length) return `<div class="ui-muted profile-detail-message"><p>表示できるプロフィール項目がありません。</p></div>`;
     const groups = [];
     fields.forEach(field => {
       const name = String(field.displayGroup || 'PROFILE');
@@ -200,7 +200,7 @@
       if (!group) { group = { name, fields: [] }; groups.push(group); }
       group.fields.push(field);
     });
-    return `<div class="profile-detail-sections">${groups.map(group => `<section class="profile-detail-section"><h3 class="profile-detail-section-title">${escapeHtml(group.name)}</h3><dl class="profile-detail-list">${group.fields.map(field => `<div class="profile-detail-row"><dt>${escapeHtml(field.label || field.profileId)}</dt><dd>${escapeHtml(field.value || '—')}</dd></div>`).join('')}</dl></section>`).join('')}</div>`;
+    return `<div class="profile-detail-sections">${groups.map(group => `<section class="ui-panel profile-detail-section"><h3 class="ui-heading profile-detail-section-title">${escapeHtml(group.name)}</h3><dl class="ui-dl profile-detail-list">${group.fields.map(field => `<div class="profile-detail-row"><dt>${escapeHtml(field.label || field.profileId)}</dt><dd>${escapeHtml(field.value || '—')}</dd></div>`).join('')}</dl></section>`).join('')}</div>`;
   }
 
   function handleProfileImageError(image) {
@@ -212,7 +212,7 @@
   }
 
   function renderProfileMemberSkeletons() {
-    return `<div class="profile-members-head profile-members-head-loading"><div><span class="profile-member-skeleton profile-member-skeleton-label"></span><span class="profile-member-skeleton profile-member-skeleton-heading"></span></div></div><div class="profile-member-grid">${Array.from({ length: 6 }, () => `<div class="profile-member-card profile-member-card-loading"><div class="profile-member-skeleton profile-member-skeleton-image"></div><div class="profile-member-body"><span class="profile-member-skeleton profile-member-skeleton-copy"></span><span class="profile-member-skeleton profile-member-skeleton-name"></span></div></div>`).join('')}</div>`;
+    return `<div class="ui-divider profile-members-head profile-members-head-loading"><div><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-label"></span><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-heading"></span></div></div><div class="profile-member-grid">${Array.from({ length: 6 }, () => `<div class="ui-card profile-member-card profile-member-card-loading"><div class="ui-skeleton profile-member-skeleton profile-member-skeleton-image"></div><div class="profile-member-body"><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-copy"></span><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-name"></span></div></div>`).join('')}</div>`;
   }
   function syncProfileGroupChoices_(){
     const host=document.querySelector('.profile-group-scroll');if(!host)return;

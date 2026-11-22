@@ -82,9 +82,9 @@
   function renderProfileMapLoading() {
     const panel = document.getElementById('profilePanel');
     if (!panel || profileCurrentView !== 'map') return;
-    const memberChip = () => `<button class="profile-map-member" type="button" disabled aria-hidden="true"><span class="profile-map-avatar skeleton-block"></span><span class="profile-map-member-name skeleton-block" style="display:block;width:72px;height:12px;border-radius:6px"></span></button>`;
-    const group = () => `<section class="profile-map-group" aria-hidden="true"><h3><span class="skeleton-block" style="display:block;width:90px;height:16px;border-radius:6px"></span><b class="skeleton-block" style="display:block;width:22px;height:10px;border-radius:5px"></b></h3><div class="profile-map-member-list">${memberChip()}${memberChip()}${memberChip()}</div></section>`;
-    panel.innerHTML = `<div class="profile-map-head"><div><p class="profile-panel-eyebrow">RELATION MAP</p><h2 class="profile-map-title">MAP</h2></div><label class="profile-map-select-label"><span>CATEGORY</span><select disabled aria-label="読み込み中"><option>—</option></select></label></div><div class="profile-map-groups">${group()}${group()}</div>`;
+    const memberChip = () => `<button class="ui-chip profile-map-member" type="button" disabled aria-hidden="true"><span class="ui-avatar profile-map-avatar skeleton-block"></span><span class="profile-map-member-name skeleton-block" style="display:block;width:72px;height:12px;border-radius:6px"></span></button>`;
+    const group = () => `<section class="ui-panel profile-map-group" aria-hidden="true"><h3 class="ui-heading ui-divider"><span class="skeleton-block" style="display:block;width:90px;height:16px;border-radius:6px"></span><b class="skeleton-block" style="display:block;width:22px;height:10px;border-radius:5px"></b></h3><div class="profile-map-member-list">${memberChip()}${memberChip()}${memberChip()}</div></section>`;
+    panel.innerHTML = `<div class="ui-divider profile-map-head"><div><p class="profile-panel-eyebrow">RELATION MAP</p><h2 class="ui-title ui-title-sm profile-map-title">MAP</h2></div><label class="ui-label profile-map-select-label"><span>CATEGORY</span><select disabled aria-label="読み込み中"><option>—</option></select></label></div><div class="profile-map-groups">${group()}${group()}</div>`;
   }
 
   function renderProfileMap() {
@@ -96,7 +96,7 @@
       return;
     }
     if (profileMapState.status === 'error') {
-      panel.innerHTML = `<article class="profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileMapState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileMap(true)">再試行</button></article>`;
+      panel.innerHTML = `<article class="ui-panel profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="ui-heading profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileMapState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileMap(true)">再試行</button></article>`;
       return;
     }
 
@@ -106,20 +106,20 @@
     const visibleMembers = getProfileMapVisibleMembers();
     const labels = sortProfileMapLabels(category.key, visibleMembers.flatMap(member => getProfileMapValues(member, category.key)));
 
-    panel.innerHTML = `<div class="profile-map-head"><div><p class="profile-panel-eyebrow">RELATION MAP</p><h2 class="profile-map-title">MAP</h2></div><label class="profile-map-select-label"><span>CATEGORY</span><select onchange="selectProfileMapCategory(this.value)">${profileMapState.categories.map(item => `<option value="${escapeHtml(item.key)}"${item.key === category.key ? ' selected' : ''}>${escapeHtml(item.label)}</option>`).join('')}</select></label></div><div class="profile-map-groups">${labels.map(label => renderProfileMapGroup(label, category.key, visibleMembers)).join('') || `<div class="profile-map-empty">表示できるデータがありません。</div>`}</div>`;
+    panel.innerHTML = `<div class="ui-divider profile-map-head"><div><p class="profile-panel-eyebrow">RELATION MAP</p><h2 class="ui-title ui-title-sm profile-map-title">MAP</h2></div><label class="ui-label profile-map-select-label"><span>CATEGORY</span><select onchange="selectProfileMapCategory(this.value)">${profileMapState.categories.map(item => `<option value="${escapeHtml(item.key)}"${item.key === category.key ? ' selected' : ''}>${escapeHtml(item.label)}</option>`).join('')}</select></label></div><div class="profile-map-groups">${labels.map(label => renderProfileMapGroup(label, category.key, visibleMembers)).join('') || `<div class="ui-muted profile-map-empty">表示できるデータがありません。</div>`}</div>`;
   }
 
   function renderProfileMapGroup(label, key, mapMembers) {
     const memberIds = new Set(mapMembers.filter(member => getProfileMapValues(member, key).includes(label)).map(member => member.memberId));
     const members = getVisibleProfileMembers().filter(member => memberIds.has(member.memberId));
-    return `<section class="profile-map-group"><h3><span>${escapeHtml(label)}</span><b>${members.length}</b></h3><div class="profile-map-member-list">${members.map(renderProfileMapMember).join('')}</div></section>`;
+    return `<section class="ui-panel profile-map-group"><h3 class="ui-heading ui-divider"><span>${escapeHtml(label)}</span><b class="ui-muted">${members.length}</b></h3><div class="profile-map-member-list">${members.map(renderProfileMapMember).join('')}</div></section>`;
   }
 
   function renderProfileMapMember(member) {
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
     const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : `<span>${escapeHtml(initial)}</span>`;
-    return `<button class="profile-map-member" style="--member-accent:${escapeHtml(accent)}" type="button" onclick="openProfileMemberDetail('${escapeHtml(member.memberId)}')"><span class="profile-map-avatar">${image}</span><span class="profile-map-member-name">${escapeHtml(member.displayName)}</span></button>`;
+    return `<button class="ui-chip profile-map-member" style="--member-accent:${escapeHtml(accent)}" type="button" onclick="openProfileMemberDetail('${escapeHtml(member.memberId)}')"><span class="ui-avatar profile-map-avatar">${image}</span><span class="profile-map-member-name">${escapeHtml(member.displayName)}</span></button>`;
   }
 </script>
 

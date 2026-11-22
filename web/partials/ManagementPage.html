@@ -16,7 +16,7 @@
     ['slmGuestConfirm','imageReplaceOverlay'].forEach(function(id){const el=document.getElementById(id);if(el)el.classList.remove('open');});document.body.style.overflow='';
     managementState.epoch++;
   }
-  function renderManagementPage(){return '<section class="view management-page"><header class="category-header"><h1 class="category-title">MANAGEMENT</h1><p class="management-lead">管理ページ</p></header><div id="managementNavigation"></div><div id="managementContent" aria-live="polite"></div></section>';}
+  function renderManagementPage(){return '<section class="view management-page"><header class="category-header"><h1 class="ui-title">MANAGEMENT</h1><p class="ui-muted management-lead">管理ページ</p></header><div id="managementNavigation"></div><div id="managementContent" aria-live="polite"></div></section>';}
   function openManagementPage(){closeSettings();navigateTo('manage');}
   function managementGo_(section,action){navigateToWithParams('manage',Object.assign({},section?{section:section}:{},action?{action:action}:{}));}
   function managementAllowed_(section,action){
@@ -24,7 +24,7 @@
     if(!access||!access.registered)return false;
     return !!MANAGEMENT_SECTIONS[section]&&(!action||!!MANAGEMENT_SECTIONS[section].actions[action]);
   }
-  function managementCard_(title,description,handler){return '<button class="ui-btn management-choice" type="button" onclick="'+handler+'"><span><strong>'+cmEscape_(title)+'</strong>'+(description?'<small>'+cmEscape_(description)+'</small>':'')+'</span><b aria-hidden="true">›</b></button>';}
+  function managementCard_(title,description,handler){return '<button class="ui-btn ui-card management-choice" type="button" onclick="'+handler+'"><span><strong class="ui-heading">'+cmEscape_(title)+'</strong>'+(description?'<small class="ui-muted">'+cmEscape_(description)+'</small>':'')+'</span><b class="ui-muted" aria-hidden="true">›</b></button>';}
   function initManagementPage(params){
     managementState.params={page:'manage'};
     if(params.section)managementState.params.section=params.section;
@@ -39,26 +39,26 @@
 
     managementRunner_().withSuccessHandler(function(access){
       if(!access||!access.initialSetupRequired)return;
-      status.innerHTML='<aside class="management-access-note management-card" role="status"><strong>初回のデータ準備が必要です</strong><p class="management-lead">バックアップを作成して、登録・編集に必要なデータを準備します。</p><button class="ui-btn" onclick="managementGo_(\'maintenance\',\'prepare\')">初期整備を開く</button></aside>';
+      status.innerHTML='<aside class="ui-panel management-access-note management-card" role="status"><strong class="ui-strong">初回のデータ準備が必要です</strong><p class="ui-muted management-lead">バックアップを作成して、登録・編集に必要なデータを準備します。</p><button class="ui-btn" onclick="managementGo_(\'maintenance\',\'prepare\')">初期整備を開く</button></aside>';
     }).withFailureHandler(function(error){
-      status.innerHTML='<p class="management-error">'+cmEscape_(error.message||error)+'</p><button class="ui-btn" onclick="initManagementPage(managementState.params)">再読み込み</button>';
+      status.innerHTML='<p class="ui-text-danger management-error">'+cmEscape_(error.message||error)+'</p><button class="ui-btn" onclick="initManagementPage(managementState.params)">再読み込み</button>';
     }).getManagementPageAccess(uid);
   }
   function renderManagementNavigation_(){
     const p=managementState.params,section=MANAGEMENT_SECTIONS[p.section],action=section&&section.actions[p.action];
     const nav=document.getElementById('managementNavigation'),root=document.getElementById('managementContent');
-    if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="management-error">この操作は利用できません。</p>';nav.innerHTML='<button class="ui-btn" onclick="managementGo_()">管理トップに戻る</button>';return;}
+    if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="ui-text-danger management-error">この操作は利用できません。</p>';nav.innerHTML='<button class="ui-btn" onclick="managementGo_()">管理トップに戻る</button>';return;}
     const back=p.action?"managementGo_('"+p.section+"')":p.section?'managementGo_()':"navigateTo('home')";
-    const crumbs=section?'<nav class="management-breadcrumb" aria-label="管理ページの階層"><button class="ui-btn" onclick="managementGo_()">管理ページ</button><span aria-hidden="true">›</span>'+(action?'<button class="ui-btn" onclick="managementGo_(\''+p.section+'\')">'+section.title+'</button>':'<span aria-current="page">'+section.title+'</span>')+'</nav>':'';
+    const crumbs=section?'<nav class="ui-label management-breadcrumb" aria-label="管理ページの階層"><button class="ui-btn ui-btn-text" onclick="managementGo_()">管理ページ</button><span aria-hidden="true">›</span>'+(action?'<button class="ui-btn" onclick="managementGo_(\''+p.section+'\')">'+section.title+'</button>':'<span aria-current="page">'+section.title+'</span>')+'</nav>':'';
     nav.innerHTML='<div class="management-local-navigation"><button class="ui-back" type="button" onclick="'+back+'"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>'+crumbs+'</div>';
 
-    if(!managementState.access.registered){root.innerHTML='<p class="management-lead">利用ユーザーを選択してください。</p>';return;}
-    if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="management-error">この操作は利用できません。</p>';return;}
+    if(!managementState.access.registered){root.innerHTML='<p class="ui-muted management-lead">利用ユーザーを選択してください。</p>';return;}
+    if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="ui-text-danger management-error">この操作は利用できません。</p>';return;}
     if(!p.section){
       root.innerHTML='<div id="managementSetupStatus"></div>' +'<div class="management-grid">'+Object.keys(MANAGEMENT_SECTIONS).filter(function(key){return key!=='maintenance'&&managementAllowed_(key);}).map(function(key){const s=MANAGEMENT_SECTIONS[key];return managementCard_(s.title,s.description,"managementGo_('"+key+"')");}).join('')+'</div>'+(managementAllowed_('maintenance')?'<section class="management-maintenance">'+managementCard_(MANAGEMENT_SECTIONS.maintenance.title,MANAGEMENT_SECTIONS.maintenance.description,"managementGo_('maintenance')")+'</section>':'');return;
     }
-    if(!p.action){root.innerHTML='<h2 class="management-section-title">'+section.title+'</h2><p class="management-lead">'+section.description+'</p><div class="management-operation-list">'+Object.keys(section.actions).filter(function(key){return managementAllowed_(p.section,key);}).map(function(key){return managementCard_(section.actions[key][0],'',"managementGo_('"+p.section+"','"+key+"')");}).join('')+'</div>';return;}
-    root.innerHTML='<h2 class="management-section-title">'+action[0]+'</h2><div id="managementEditorHost"></div>';
+    if(!p.action){root.innerHTML='<h2 class="ui-heading management-section-title">'+section.title+'</h2><p class="ui-muted management-lead">'+section.description+'</p><div class="management-operation-list">'+Object.keys(section.actions).filter(function(key){return managementAllowed_(p.section,key);}).map(function(key){return managementCard_(section.actions[key][0],'',"managementGo_('"+p.section+"','"+key+"')");}).join('')+'</div>';return;}
+    root.innerHTML='<h2 class="ui-heading management-section-title">'+action[0]+'</h2><div id="managementEditorHost"></div>';
     const type=action[1];
     if(type==='operations'){document.getElementById('managementEditorHost').innerHTML='<div id="managementOperationsHost"></div>';moInit_();return;}
     const id={slm:'songLyricsManagementOverlay',catalog:'catalogManagementOverlay',profile:'profileManagementOverlay',image:'imageManagementOverlay'}[type];

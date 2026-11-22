@@ -32,10 +32,10 @@
   function renderProfileSearchLoading() {
     const panel = document.getElementById('profilePanel');
     if (!panel) return;
-    panel.innerHTML = `<div class="profile-search-head"><h2 class="profile-search-title">SEARCH</h2><span class="profile-search-result-count">—</span></div>
-      <div class="profile-search-bar"><div class="profile-search-box skeleton-block" style="min-height:var(--ui-button-h)"></div><div class="profile-search-filter-toggle skeleton-block" style="min-width:96px"></div></div>
-      <div class="profile-search-results-head"><h3>RESULTS</h3><span>—</span></div>
-      <div class="profile-search-result-list" role="status" aria-busy="true" aria-label="読み込み中">${Array.from({ length: 5 }, () => '<div class="profile-search-member profile-search-member-loading"><span class="profile-search-avatar skeleton-block"></span><span class="profile-search-member-copy"><span class="skeleton-block" style="height:12px;width:55%"></span><span class="skeleton-block" style="height:10px;width:30%"></span></span></div>').join('')}</div>`;
+    panel.innerHTML = `<div class="ui-divider profile-search-head"><h2 class="ui-title ui-title-sm profile-search-title">SEARCH</h2><span class="ui-muted profile-search-result-count">—</span></div>
+      <div class="profile-search-bar"><div class="ui-search profile-search-box skeleton-block" style="min-height:var(--ui-button-h)"></div><div class="ui-btn ui-btn-compact profile-search-filter-toggle skeleton-block" style="min-width:96px"></div></div>
+      <div class="profile-search-results-head"><h3 class="ui-label">RESULTS</h3><span class="ui-muted">—</span></div>
+      <div class="profile-search-result-list" role="status" aria-busy="true" aria-label="読み込み中">${Array.from({ length: 5 }, () => '<div class="ui-card profile-search-member profile-search-member-loading"><span class="ui-avatar profile-search-avatar skeleton-block"></span><span class="profile-search-member-copy"><span class="skeleton-block" style="height:12px;width:55%"></span><span class="skeleton-block" style="height:10px;width:30%"></span></span></div>').join('')}</div>`;
   }
 
   function normalizeProfileSearchText(value) {
@@ -120,15 +120,15 @@
     if (!panel || profileCurrentView !== 'search') return;
     if (profileSearchState.status === 'loading' || profileSearchState.status === 'idle') return renderProfileSearchLoading();
     if (profileSearchState.status === 'error') {
-      panel.innerHTML = `<article class="profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileSearchState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileSearch(true)">再試行</button></article>`;
+      panel.innerHTML = `<article class="ui-panel profile-members-state"><p class="profile-panel-eyebrow">CONNECTION ERROR</p><h2 class="ui-heading profile-members-state-title">ERROR</h2><p class="profile-panel-copy">${escapeHtml(profileSearchState.error)}</p><button class="profile-retry-button" type="button" onclick="loadProfileSearch(true)">再試行</button></article>`;
       return;
     }
 
-    panel.innerHTML = `<div class="profile-search-head"><h2 class="profile-search-title">SEARCH</h2><span id="profileSearchResultCount" class="profile-search-result-count">0</span></div>
-      <div class="profile-search-bar"><label class="profile-search-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"></circle><path d="M15.4 15.4L20 20"></path></svg><input id="profileSearchInput" type="search" value="${escapeHtml(profileSearchState.query)}" placeholder="タグ・メンバーを検索" autocomplete="off" autocapitalize="none" spellcheck="false" oncompositionstart="handleProfileSearchCompositionStart()" oncompositionend="handleProfileSearchCompositionEnd(this)" oninput="handleProfileSearchInput(this)"></label><button id="profileSearchFilterToggle" class="profile-search-filter-toggle" type="button" aria-expanded="false" onclick="toggleProfileSearchFilters()">絞り込み</button></div>
+    panel.innerHTML = `<div class="ui-divider profile-search-head"><h2 class="ui-title ui-title-sm profile-search-title">SEARCH</h2><span id="profileSearchResultCount" class="ui-muted profile-search-result-count">0</span></div>
+      <div class="profile-search-bar"><label class="ui-search profile-search-box"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.2"></circle><path d="M15.4 15.4L20 20"></path></svg><input id="profileSearchInput" type="search" value="${escapeHtml(profileSearchState.query)}" placeholder="タグ・メンバーを検索" autocomplete="off" autocapitalize="none" spellcheck="false" oncompositionstart="handleProfileSearchCompositionStart()" oncompositionend="handleProfileSearchCompositionEnd(this)" oninput="handleProfileSearchInput(this)"></label><button id="profileSearchFilterToggle" class="ui-btn ui-btn-compact profile-search-filter-toggle" type="button" aria-expanded="false" onclick="toggleProfileSearchFilters()">絞り込み</button></div>
       <div id="profileSearchSelectedHost"></div>
       <div id="profileSearchFieldsHost" class="profile-search-fields" hidden></div>
-      <section class="profile-search-results"><div class="profile-search-results-head"><h3>RESULTS</h3><span id="profileSearchResultsCount">0</span></div><div id="profileSearchResultsHost" class="profile-search-result-list"></div></section>`;
+      <section class="profile-search-results"><div class="profile-search-results-head"><h3 class="ui-label">RESULTS</h3><span class="ui-muted" id="profileSearchResultsCount">0</span></div><div id="profileSearchResultsHost" class="profile-search-result-list"></div></section>`;
     updateProfileSearchDynamic();
   }
 
@@ -149,13 +149,13 @@
       if (!options.length) return '';
       const isOpen = profileSearchState.expandedFieldId === field.profileId;
       const selectedCount = profileSearchState.selected.filter(item => item.profileId === field.profileId).length;
-      return `<section class="profile-search-field${isOpen ? ' open' : ''}"><button class="profile-search-field-toggle" type="button" data-profile-id="${escapeHtml(field.profileId)}" aria-expanded="${isOpen}" onclick="toggleProfileSearchField(this.dataset.profileId)"><span>${escapeHtml(field.label || field.profileId)}</span><span class="profile-search-field-meta">${selectedCount ? `<b>${selectedCount}</b>` : ''}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9l5.5 5.5L17.5 9"></path></svg></span></button><div class="profile-search-field-options" ${isOpen ? '' : 'hidden'}><div class="profile-search-tags">${options.map(value => `<button class="profile-search-tag${isProfileSearchTagSelected(field.profileId, value) ? ' active' : ''}" type="button" data-profile-id="${escapeHtml(field.profileId)}" data-value="${escapeHtml(value)}" aria-pressed="${isProfileSearchTagSelected(field.profileId, value)}" onclick="toggleProfileSearchTag(this)">${escapeHtml(value)}</button>`).join('')}</div></div></section>`;
+      return `<section class="ui-panel profile-search-field${isOpen ? ' open' : ''}"><button class="ui-btn ui-btn-compact profile-search-field-toggle" type="button" data-profile-id="${escapeHtml(field.profileId)}" aria-expanded="${isOpen}" onclick="toggleProfileSearchField(this.dataset.profileId)"><span>${escapeHtml(field.label || field.profileId)}</span><span class="profile-search-field-meta">${selectedCount ? `<b>${selectedCount}</b>` : ''}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 9l5.5 5.5L17.5 9"></path></svg></span></button><div class="profile-search-field-options" ${isOpen ? '' : 'hidden'}><div class="profile-search-tags">${options.map(value => `<button class="ui-chip profile-search-tag${isProfileSearchTagSelected(field.profileId, value) ? ' active' : ''}" type="button" data-profile-id="${escapeHtml(field.profileId)}" data-value="${escapeHtml(value)}" aria-pressed="${isProfileSearchTagSelected(field.profileId, value)}" onclick="toggleProfileSearchTag(this)">${escapeHtml(value)}</button>`).join('')}</div></div></section>`;
     }).join('');
 
     const selected = profileSearchState.selected;
-    selectedHost.innerHTML = selected.length ? `<div class="profile-search-selected"><div class="profile-search-selected-head"><span>SELECTED</span><button type="button" onclick="clearProfileSearchTags()">CLEAR</button></div><div class="profile-search-tags">${selected.map(tag => `<button class="profile-search-tag active" type="button" data-profile-id="${escapeHtml(tag.profileId)}" data-value="${escapeHtml(tag.value)}" onclick="toggleProfileSearchTag(this)">${escapeHtml(tag.value)}<span aria-hidden="true">×</span></button>`).join('')}</div></div>` : '';
-    fieldsHost.innerHTML = fields || '<div class="profile-search-empty">NO TAGS</div>';
-    resultsHost.innerHTML = data.results.map(renderProfileSearchMember).join('') || '<div class="profile-search-empty">該当なし</div>';
+    selectedHost.innerHTML = selected.length ? `<div class="profile-search-selected"><div class="profile-search-selected-head"><span>SELECTED</span><button type="button" onclick="clearProfileSearchTags()">CLEAR</button></div><div class="profile-search-tags">${selected.map(tag => `<button class="ui-chip profile-search-tag active" type="button" data-profile-id="${escapeHtml(tag.profileId)}" data-value="${escapeHtml(tag.value)}" onclick="toggleProfileSearchTag(this)">${escapeHtml(tag.value)}<span aria-hidden="true">×</span></button>`).join('')}</div></div>` : '';
+    fieldsHost.innerHTML = fields || '<div class="ui-empty profile-search-empty">NO TAGS</div>';
+    resultsHost.innerHTML = data.results.map(renderProfileSearchMember).join('') || '<div class="ui-empty profile-search-empty">該当なし</div>';
     if (topCount) topCount.textContent = String(data.results.length);
     if (resultsCount) resultsCount.textContent = String(data.results.length);
   }
@@ -164,7 +164,7 @@
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
     const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
-    return `<button class="profile-search-member" style="--member-accent:${escapeHtml(accent)}" type="button" onclick="openProfileMemberDetail('${escapeHtml(member.memberId)}')"><span class="profile-search-avatar">${image}</span><span class="profile-search-member-copy"><b>${escapeHtml(member.displayName)}</b><small>${escapeHtml(member.primaryGroupName || 'SOLO')}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"></path></svg></button>`;
+    return `<button class="ui-card profile-search-member" style="--member-accent:${escapeHtml(accent)}" type="button" onclick="openProfileMemberDetail('${escapeHtml(member.memberId)}')"><span class="ui-avatar profile-search-avatar">${image}</span><span class="profile-search-member-copy"><b class="ui-name">${escapeHtml(member.displayName)}</b><small class="ui-muted">${escapeHtml(member.primaryGroupName || 'SOLO')}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"></path></svg></button>`;
   }
 </script>
 

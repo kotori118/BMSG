@@ -6,18 +6,16 @@
 </div>
 <style>
   .cm-forms{display:grid;gap:12px}
-  .cm-note{font-size:12px;line-height:1.65;opacity:.72}
-  .cm-section{margin:0 0 8px;font-size:14px}
+  .cm-note{line-height:1.65;opacity:.72}
+  .cm-section{margin:0 0 8px}
   .cm-busy{opacity:.65;pointer-events:none}
   .cm-forms .management-card{margin:0}
-  .cm-message{margin:10px 0;padding:10px 12px;border:1px solid var(--ui-line);border-radius:var(--ui-radius);font-size:12px}
-  .cm-danger{border-color:var(--ui-line)}
+  .cm-message{margin:10px 0;padding:10px 12px}
   .cm-actions{display:flex;gap:8px;flex-wrap:wrap}
   .cm-actions .ui-btn{min-height:44px}
   .cm-field input[type=color]{min-height:48px;padding:4px 8px}
-  .cm-unit-list{margin:8px 0;padding-left:25px;font-size:13px;line-height:1.9}
+  .cm-unit-list{margin:8px 0;padding-left:25px;line-height:1.9}
   .cm-unit-list li{padding:2px 0}
-  @media(max-width:390px){.cm-tabs .ui-btn{font-size:10px}}
 </style>
 <script>
   const cmState={bootstrap:null,tab:'groups',busy:false,message:'',audit:null,profileFields:null,activeUnitId:''};
@@ -32,7 +30,7 @@
     return '<option value="">選択してください</option>'+rows.map(function(r){return cmOption_(r[idKey],r[labelKey],selected);}).join('');
   }
   function cmField_(id,label,control){
-    return '<label class="management-field cm-field" for="'+id+'"><span>'+cmEscape_(label)+'</span>'+control+'</label>';
+    return '<label class="ui-field management-field cm-field" for="'+id+'"><span>'+cmEscape_(label)+'</span>'+control+'</label>';
   }
   function cmInput_(id,type,value,placeholder){
     return '<input class="management-input" type="'+type+'" id="'+id+'" value="'+cmEscape_(value||'')+'" placeholder="'+cmEscape_(placeholder||'')+'">';
@@ -117,12 +115,12 @@
   function cmRender_(){
     const root=document.getElementById('catalogManagementBody');if(!root)return;
     const d=cmState.bootstrap,p=managementState.params;
-    if(!d){root.innerHTML=cmState.busy?renderUniverseLoading(cmState.message):'<p class="management-error">'+cmEscape_(cmState.message)+'</p><button class="ui-btn" onclick="cmReload_()">再読み込み</button>';return;}
-    let html=cmState.message?'<p class="cm-message" role="status">'+cmEscape_(cmState.message)+'</p>':'';
+    if(!d){root.innerHTML=cmState.busy?renderUniverseLoading(cmState.message):'<p class="ui-text-danger management-error">'+cmEscape_(cmState.message)+'</p><button class="ui-btn" onclick="cmReload_()">再読み込み</button>';return;}
+    let html=cmState.message?'<p class="ui-muted cm-message" role="status">'+cmEscape_(cmState.message)+'</p>':'';
     if(cmState.tab==='audit'){
       html+='<button class="ui-btn" type="button" onclick="cmAuditDatabase_()">データを点検（読み取りのみ）</button>';
-      if(cmState.audit){const a=cmState.audit;html+='<section class="management-card"><h3>点検結果</h3><p>注意 '+(a.warnings||[]).length+'件'+(a.warningsTruncated?'（一部表示）':'')+'</p><ul>'+(a.warnings||[]).map(function(w){return '<li>'+cmEscape_(w.code+'：'+w.detail)+'</li>';}).join('')+'</ul></section>';}
-    }else if(d.schema&&!d.schema.ready){html+='<p class="management-error">管理データ構造の準備が必要です。移行は別作業で実施してください。</p>';}
+      if(cmState.audit){const a=cmState.audit;html+='<section class="ui-panel management-card"><h3>点検結果</h3><p>注意 '+(a.warnings||[]).length+'件'+(a.warningsTruncated?'（一部表示）':'')+'</p><ul>'+(a.warnings||[]).map(function(w){return '<li>'+cmEscape_(w.code+'：'+w.detail)+'</li>';}).join('')+'</ul></section>';}
+    }else if(d.schema&&!d.schema.ready){html+='<p class="ui-text-danger management-error">管理データ構造の準備が必要です。移行は別作業で実施してください。</p>';}
     else if(cmState.tab==='groups')html+=cmCardsHtml_(cmGroupsHtml_(d),p.action==='add'?[0]:[1]);
     else if(cmState.tab==='members')html+=cmCardsHtml_(cmMembersHtml_(d),p.action==='add'?[0]:[1,2,3]);
     else if(cmState.tab==='units')html+=cmUnitsHtml_(d);
@@ -149,8 +147,8 @@
   function cmMemberActive_(m){return String(m.RecordStatus||'ACTIVE').toUpperCase()!=='ARCHIVED';}
   function cmProfileFieldsHtml_(){
     if(!cmState.profileFields){
-      return '<section class="management-card"><h3 class="cm-section">プロフィール項目</h3>'+
-        '<p class="cm-note">プロフィールの項目定義を読み込んでください。値の編集は既存の「プロフィール管理」で行います。</p>'+
+      return '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">プロフィール項目</h3>'+
+        '<p class="ui-muted cm-note">プロフィールの項目定義を読み込んでください。値の編集は既存の「プロフィール管理」で行います。</p>'+
         '<button class="ui-btn" type="button" onclick="cmLoadProfileFields_()">項目を再読み込み</button></section>';
     }
     const fields=cmState.profileFields;
@@ -160,25 +158,25 @@
     const opts='<option value="">項目を選択してください</option>'+
       options.map(function(o){return cmOption_(o.value,o.caption);}).join('');
     const active=fields.filter(function(f){return f.isActive;}).length;
-    return '<div class="cm-forms"><section class="management-card">'+
-      '<h3 class="cm-section">新しいプロフィール項目を追加</h3>'+
+    return '<div class="cm-forms"><section class="ui-panel management-card">'+
+      '<h3 class="ui-panel cm-section">新しいプロフィール項目を追加</h3>'+
       cmField_('cmProfileFieldName','項目名',cmInput_('cmProfileFieldName','text','','例：好きな映画'))+
       cmField_('cmProfileFieldType','値の形式',cmSelect_('cmProfileFieldType',
         cmOption_('TEXT','文字列')+cmOption_('NUMBER','数値')+cmOption_('DATE','日付')))+
       cmField_('cmProfileFieldGroup','表示分類',cmInput_('cmProfileFieldGroup','text','基本','例：基本・好み・活動'))+
-      '<label class="management-field cm-field"><span>複数入力</span><span>'+
+      '<label class="ui-field management-field cm-field"><span>複数入力</span><span>'+
         '<input id="cmProfileFieldMulti" type="checkbox"> 文字列を複数登録できるようにする</span></label>'+
-      '<p class="cm-note">ProfileIDは自動採番。既存メンバーの新項目は空欄のまま作成し、プロフィール編集画面から入力できます。</p>'+
+      '<p class="ui-muted cm-note">ProfileIDは自動採番。既存メンバーの新項目は空欄のまま作成し、プロフィール編集画面から入力できます。</p>'+
       '<div class="cm-actions"><button class="ui-btn" type="button" onclick="cmCreateProfileField_()">項目を追加</button></div>'+
-      '</section><section class="management-card">'+
-      '<h3 class="cm-section">既存項目の非表示・再表示</h3>'+
-      '<p class="cm-note">項目'+fields.length+'件（表示中 '+active+'件）。非表示にしてもプロフィール値、列、ProfileIDは消えません。</p>'+
+      '</section><section class="ui-panel management-card">'+
+      '<h3 class="ui-panel cm-section">既存項目の非表示・再表示</h3>'+
+      '<p class="ui-muted cm-note">項目'+fields.length+'件（表示中 '+active+'件）。非表示にしてもプロフィール値、列、ProfileIDは消えません。</p>'+
       cmField_('cmProfileFieldTarget','項目','<select id="cmProfileFieldTarget" onchange="cmShowProfileField_()">'+opts+'</select>')+
-      '<p id="cmProfileFieldInfo" class="cm-note" role="status">項目を選択すると現在の設定を確認できます。</p>'+
+      '<p id="cmProfileFieldInfo" class="ui-muted cm-note" role="status">項目を選択すると現在の設定を確認できます。</p>'+
       '<div class="cm-actions">'+
         '<button class="ui-btn" type="button" onclick="cmSetProfileFieldActive_(false)">非表示にする</button>'+
         '<button class="ui-btn" type="button" onclick="cmSetProfileFieldActive_(true)">再表示する</button>'+
-      '</div><p class="cm-note">「呼ばれ順（P000）」は基礎項目のため非表示にできません。</p>'+
+      '</div><p class="ui-muted cm-note">「呼ばれ順（P000）」は基礎項目のため非表示にできません。</p>'+
       '</section></div>';
   }
   function cmSelectedProfileField_(){
@@ -220,16 +218,16 @@
 
   function cmGroupsHtml_(d){
     const g=d.groups.filter(cmGroupActive_);
-    return '<div class="cm-forms"><section class="management-card"><h3 class="cm-section">グループ・ユニットを追加</h3>'+
+    return '<div class="cm-forms"><section class="ui-panel management-card"><h3 class="ui-panel cm-section">グループ・ユニットを追加</h3>'+
       cmField_('cmGroupName','名称',cmInput_('cmGroupName','text','','グループ名'))+
       cmField_('cmGroupKind','種類',cmSelect_('cmGroupKind',cmOption_('GROUP','グループ')+cmOption_('UNIT','ユニット')))+
       cmField_('cmGroupColor','カラー',cmInput_('cmGroupColor','color','#777777'))+
       '<div class="cm-actions"><button class="ui-btn" type="button" onclick="cmCreateGroup_()">登録</button></div></section>'+
-      '<section class="management-card"><h3 class="cm-section">既存グループの編集</h3>'+
+      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">既存グループの編集</h3>'+
       cmField_('cmEditGroup','対象',cmSelect_('cmEditGroup',cmOptions_(g,'GroupID','GroupName')))+
       cmField_('cmEditGroupName','名称',cmInput_('cmEditGroupName','text',''))+
       cmField_('cmEditGroupColor','カラー',cmInput_('cmEditGroupColor','color','#777777'))+
-      '<div class="cm-actions"><button class="ui-btn" onclick="cmFillGroup_()" type="button">読込</button><button class="ui-btn" onclick="cmSaveGroup_()" type="button">保存</button></div><p class="cm-note">曲などで使用中のグループ名は変更できません。カラーは更新可能です。同じカラーコードを持つ別のグループ・メンバーがいる場合は登録できません。</p></section></div>';
+      '<div class="cm-actions"><button class="ui-btn" onclick="cmFillGroup_()" type="button">読込</button><button class="ui-btn" onclick="cmSaveGroup_()" type="button">保存</button></div><p class="ui-muted cm-note">曲などで使用中のグループ名は変更できません。カラーは更新可能です。同じカラーコードを持つ別のグループ・メンバーがいる場合は登録できません。</p></section></div>';
   }
   /** Fast feedback only. BMSG-DB performs authoritative validation under lock. */
   function cmColorAvailable_(hex,kind,id){
@@ -268,28 +266,28 @@
   function cmMembersHtml_(d){
     const main=d.groups.filter(x=>cmGroupActive_(x)&&cmGroupKind_(x)==='GROUP');
     const members=d.members.filter(cmMemberActive_);
-    return '<div class="cm-forms"><section class="management-card"><h3 class="cm-section">メンバー追加</h3>'+
+    return '<div class="cm-forms"><section class="ui-panel management-card"><h3 class="ui-panel cm-section">メンバー追加</h3>'+
       cmField_('cmMemberName','表示名',cmInput_('cmMemberName','text','','名前'))+
       cmField_('cmMemberMain','主所属グループ',cmSelect_('cmMemberMain',cmOptions_(main,'GroupID','GroupName')))+
       cmField_('cmMemberColor','カラー',cmInput_('cmMemberColor','color','#777777'))+
-      '<p class="cm-note">カラーコードは既存グループ・ユニット・メンバーと重複できません。</p>'+
-      '<p class="cm-note">表示順は末尾に追加します。登録後に初期プロフィールを入力できます。並び順はメンバー情報の編集から変更できます。</p><div class="cm-actions"><button class="ui-btn" onclick="cmCreateMember_()" type="button">登録してプロフィールへ</button></div></section>'+
-      '<section class="management-card"><h3 class="cm-section">既存メンバーを編集</h3>'+
+      '<p class="ui-muted cm-note">カラーコードは既存グループ・ユニット・メンバーと重複できません。</p>'+
+      '<p class="ui-muted cm-note">表示順は末尾に追加します。登録後に初期プロフィールを入力できます。並び順はメンバー情報の編集から変更できます。</p><div class="cm-actions"><button class="ui-btn" onclick="cmCreateMember_()" type="button">登録してプロフィールへ</button></div></section>'+
+      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">既存メンバーを編集</h3>'+
       cmField_('cmEditMember','対象',cmSelect_('cmEditMember',cmOptions_(members,'MemberID','DisplayName')))+
       cmField_('cmEditMemberName','名前',cmInput_('cmEditMemberName','text',''))+
       cmField_('cmEditMemberColor','カラー',cmInput_('cmEditMemberColor','color','#777777'))+
       '<div class="cm-actions"><button class="ui-btn" onclick="cmFillMember_()" type="button">読込</button><button class="ui-btn" onclick="cmSaveMember_()" type="button">保存</button></div></section>'+
-      '<section class="management-card"><h3 class="cm-section">主所属・表示順の変更</h3>'+
+      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">主所属・表示順の変更</h3>'+
       cmField_('cmMaintenanceMember','メンバー',cmSelect_('cmMaintenanceMember',cmOptions_(members,'MemberID','DisplayName')))+
       cmField_('cmMaintenanceGroup','新しい主所属',cmSelect_('cmMaintenanceGroup',cmOptions_(main,'GroupID','GroupName')))+
-      '<p class="cm-note">MemberIDは変更しません。主所属の変更時は04_GroupMembersも同時に整合させます。表示順は同じ主所属グループ内の上下入替です。</p>'+
+      '<p class="ui-muted cm-note">MemberIDは変更しません。主所属の変更時は04_GroupMembersも同時に整合させます。表示順は同じ主所属グループ内の上下入替です。</p>'+
       '<div class="cm-actions"><button class="ui-btn" type="button" onclick="cmChangePrimaryGroup_()">主所属を変更</button>'+
       '<button class="ui-btn" type="button" onclick="cmMoveMember_(\'UP\')">上へ移動</button>'+
       '<button class="ui-btn" type="button" onclick="cmMoveMember_(\'DOWN\')">下へ移動</button></div></section>'+
-      '<section class="management-card"><h3 class="cm-section">メンバーを削除</h3>'+
-      '<p class="cm-note">プロフィールや歌詞、ゲーム等に参照が残る場合は削除を拒否。参照のないメンバーだけ、バックアップ確認後に完全削除できます。MemberIDは再利用しません。</p>'+
+      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">メンバーを削除</h3>'+
+      '<p class="ui-muted cm-note">プロフィールや歌詞、ゲーム等に参照が残る場合は削除を拒否。参照のないメンバーだけ、バックアップ確認後に完全削除できます。MemberIDは再利用しません。</p>'+
       cmField_('cmDeleteMember','削除対象',cmSelect_('cmDeleteMember',cmOptions_(members,'MemberID','DisplayName')))+
-      '<div class="cm-actions"><button class="ui-btn cm-danger" type="button" onclick="cmDeleteMember_()">参照を確認して削除</button></div></section></div>';
+      '<div class="cm-actions"><button class="ui-btn ui-btn-danger cm-danger" type="button" onclick="cmDeleteMember_()">参照を確認して削除</button></div></section></div>';
   }
   function cmCreateMember_(){const color=cmValue_('cmMemberColor');if(!cmColorAvailable_(color,'MEMBER',''))return;
     cmCall_('catalogManagementCreateMember',{name:cmValue_('cmMemberName'),primaryGroupId:cmValue_('cmMemberMain'),color:color});}
@@ -340,19 +338,19 @@
   function cmUnitsHtml_(d){
     const units=d.groups.filter(x=>cmGroupActive_(x)&&cmGroupKind_(x)==='UNIT');
     const members=d.members.filter(cmMemberActive_);
-    if(!units.length)return '<section class="management-card"><p class="cm-note">登録済みユニットがありません。先にグループ管理からユニットを作成してください。</p></section>';
+    if(!units.length)return '<section class="ui-panel management-card"><p class="ui-muted cm-note">登録済みユニットがありません。先にグループ管理からユニットを作成してください。</p></section>';
     if(!units.some(function(g){return String(g.GroupID)===String(cmState.activeUnitId);}))
       cmState.activeUnitId=String(units[0].GroupID);
-    return '<div class="cm-forms"><section class="management-card">'+
-      '<h3 class="cm-section">ユニットの所属を管理</h3>'+
+    return '<div class="cm-forms"><section class="ui-panel management-card">'+
+      '<h3 class="ui-panel cm-section">ユニットの所属を管理</h3>'+
       cmField_('cmUnitTarget','対象ユニット',
         '<select id="cmUnitTarget" onchange="cmRenderUnitRoster_()">'+
         cmOptions_(units,'GroupID','GroupName',cmState.activeUnitId)+'</select>')+
       '<div id="cmUnitRoster" aria-live="polite"></div></section>'+
-      '<section class="management-card"><h3 class="cm-section">メンバーを追加</h3>'+
+      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">メンバーを追加</h3>'+
       cmField_('cmUnitMember','追加するメンバー',
         cmSelect_('cmUnitMember',cmOptions_(members,'MemberID','DisplayName')))+
-      '<p class="cm-note">追加・除外・並べ替えは、選択中ユニットの所属情報だけを変更します。メンバーの主所属・他ユニットの所属は変わりません。</p>'+
+      '<p class="ui-muted cm-note">追加・除外・並べ替えは、選択中ユニットの所属情報だけを変更します。メンバーの主所属・他ユニットの所属は変わりません。</p>'+
       '<div class="cm-actions"><button class="ui-btn" onclick="cmAddUnitMember_()" type="button">所属を追加</button></div></section></div>';
   }
   function cmUnitRows_(){
@@ -370,28 +368,28 @@
     cmState.activeUnitId=groupId;
     const d=cmState.bootstrap||{},rows=cmUnitRows_();
     if(!rows.length){
-      container.innerHTML='<p class="cm-note">現在、このユニットの所属メンバーはいません。</p>';
+      container.innerHTML='<p class="ui-muted cm-note">現在、このユニットの所属メンバーはいません。</p>';
       return;
     }
     const byId={};
     (d.members||[]).forEach(function(m){byId[String(m.MemberID)]=m;});
-    const list='<ol class="cm-unit-list">'+rows.map(function(r){
+    const list='<ol class="ui-list cm-unit-list">'+rows.map(function(r){
       const m=byId[String(r.MemberID)],name=m?m.DisplayName:'不明なメンバー ('+r.MemberID+')';
-      return '<li>'+cmEscape_(name)+' <span class="cm-note">#'+cmEscape_(r.MemberID)+'</span></li>';
+      return '<li>'+cmEscape_(name)+' <span class="ui-muted cm-note">#'+cmEscape_(r.MemberID)+'</span></li>';
     }).join('')+'</ol>';
     const selected=rows.map(function(r){
       const m=byId[String(r.MemberID)];
       return cmOption_(r.MemberID,(m?m.DisplayName:'不明')+'（'+r.DisplayOrder+'番）');
     }).join('');
-    container.innerHTML='<p class="cm-note">現在の所属順（'+rows.length+'人）</p>'+list+
+    container.innerHTML='<p class="ui-muted cm-note">現在の所属順（'+rows.length+'人）</p>'+list+
       cmField_('cmUnitManageMember','並べ替え・除外するメンバー',
         cmSelect_('cmUnitManageMember',selected))+
       '<div class="cm-actions">'+
         '<button class="ui-btn" type="button" onclick="cmMoveUnitMember_(\'UP\')">上へ</button>'+
         '<button class="ui-btn" type="button" onclick="cmMoveUnitMember_(\'DOWN\')">下へ</button>'+
-        '<button class="ui-btn cm-danger" type="button" onclick="cmRemoveUnitMember_()">所属を除外</button>'+
+        '<button class="ui-btn ui-btn-danger cm-danger" type="button" onclick="cmRemoveUnitMember_()">所属を除外</button>'+
       '</div>'+
-      '<p class="cm-note">「所属を除外」はユニットから外す操作です。メンバー自体やプロフィール・歌詞データは削除されません。</p>';
+      '<p class="ui-muted cm-note">「所属を除外」はユニットから外す操作です。メンバー自体やプロフィール・歌詞データは削除されません。</p>';
   }
   function cmSelectedUnitMembership_(){
     const memberId=cmValue_('cmUnitManageMember');
