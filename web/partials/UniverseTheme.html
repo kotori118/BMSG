@@ -592,30 +592,6 @@
   body.ui-v2 .analysis-stat-value { color: #fff; font-family: var(--ui-font-num); font-weight: 800; letter-spacing: -.01em; }
   body.ui-v2 .analysis-stat-label { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
 
-  /* 分析：プルダウン・入力欄 */
-  body.ui-v2 .analysis-page select,
-  body.ui-v2 .analysis-page input[type="text"],
-  body.ui-v2 .analysis-page input[type="search"] {
-    width: 100%;
-    min-height: var(--ui-button-h);
-    padding: 0 14px;
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-    background: var(--ui-panel-2);
-    color: #fff;
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body);
-    letter-spacing: var(--ui-ls-body);
-    appearance: none;
-    -webkit-appearance: none;
-  }
-  body.ui-v2 .analysis-page select {
-    background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
-    background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
-    background-size: 6px 6px, 6px 6px;
-    background-repeat: no-repeat;
-  }
-  body.ui-v2 .analysis-page select option { background: #111; color: #fff; }
 
 
   /* ---- 分析：見出し・戻る・タブ（統一ルール） ---- */
@@ -821,4 +797,72 @@
   body.ui-v2 .analysis-table td.num,
   body.ui-v2 .analysis-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
   body.ui-v2 .analysis-table td:first-child { width: 40px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-weight: 800; }
+
+  /* ============ 共通部品（分析・ホーム・以後すべての画面で使う） ============ */
+  /* 入力欄 */
+  body.ui-v2 .ui-input,
+  body.ui-v2 input.ui-input {
+    display: block;
+    width: 100%;
+    min-height: var(--ui-button-h);
+    padding: 0 16px;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: var(--ui-radius);
+    background: var(--ui-panel-2);
+    color: #fff;
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-body);
+    letter-spacing: var(--ui-ls-body);
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  body.ui-v2 .ui-input::placeholder { color: var(--ui-text-sub); }
+  body.ui-v2 .ui-input:focus { border-color: #fff; background: #222; }
+  body.ui-v2 select.ui-input {
+    background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
+    background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+  }
+  /* ボタン：枠の白いボタン（高さ48px・英字の大文字） */
+  body.ui-v2 .ui-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: var(--ui-button-h);
+    padding: 0 20px;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: var(--ui-radius);
+    background: transparent;
+    color: #fff;
+    font-family: var(--ui-font-display);
+    font-size: var(--ui-fs-label);
+    font-weight: 800;
+    letter-spacing: var(--ui-ls-label);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 160ms ease, border-color 160ms ease;
+  }
+  @media (hover: hover) { body.ui-v2 .ui-btn:hover { border-color: #fff; background: var(--ui-panel); } }
+  body.ui-v2 .ui-btn:active { background: var(--ui-panel-2); }
+  body.ui-v2 .ui-btn:disabled { opacity: .4; cursor: not-allowed; }
+  body.ui-v2 .ui-btn-icon { width: var(--ui-button-h); padding: 0; font-size: 14px; letter-spacing: 0; }
+  body.ui-v2 .ui-btn.ui-btn-wide,
+  body.ui-v2 .analysis-more-btn.ui-btn { width: 100%; margin-top: 12px; }
+  body.ui-v2 .analysis-more-btn.ui-btn { font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 700; letter-spacing: var(--ui-ls-body); text-transform: none; }
+  /* 読み込み中：一覧と同じ行の形（4行） */
+  body.ui-v2 .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
+  body.ui-v2 .ui-skeleton-row {
+    display: block;
+    height: var(--ui-row-h);
+    border-bottom: 1px solid var(--ui-line);
+    background: linear-gradient(100deg, var(--ui-bg) 30%, var(--ui-panel) 50%, var(--ui-bg) 70%) 0 0 / 220% 100%;
+    animation: uiShimmer 1.4s linear infinite;
+  }
+  body.ui-v2 .analysis-loading.ui-skeleton-list { display: grid !important; grid-template-columns: 1fr !important; gap: 0 !important; min-height: 0 !important; padding: 0 !important; border-top: 1px solid var(--ui-line) !important; background: none !important; }
+  body.ui-v2 .analysis-loading.ui-skeleton-list::before,
+  body.ui-v2 .analysis-loading.ui-skeleton-list::after { display: none !important; }
+  @media (prefers-reduced-motion: reduce) { body.ui-v2 .ui-skeleton-row { animation: none; } }
 </style>

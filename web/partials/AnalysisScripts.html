@@ -5,7 +5,7 @@
   function retryAnalysis(){analysisData=null;initAnalysisPage();}
   function selectAnalysisView(view){analysisView=view;analysisOtherView='';document.querySelectorAll('.analysis-tab').forEach(b=>b.classList.toggle('active',b.dataset.analysisView===view));renderAnalysisView();}
   function renderAnalysisView(){destroyAnalysisCharts();document.querySelectorAll('.analysis-tab').forEach(b=>b.classList.toggle('active',b.dataset.analysisView===analysisView));const p=document.getElementById('analysisPanel');if(!p||!analysisData)return;if(analysisView==='member')renderAnalysisMember();else if(analysisView==='song')renderAnalysisSong();else if(analysisView==='timeline')renderAnalysisTimeline();else if(analysisView==='other')renderAnalysisOther();else renderAnalysisTop();if(typeof syncUniverseCrossLinks==='function')syncUniverseCrossLinks();}
-  function analysisSkeletonMarkup(){return '<div class="analysis-loading ui-skeleton-grid" role="status" aria-busy="true" aria-label="読み込み中"><span class="ui-skeleton"></span><span class="ui-skeleton"></span><span class="ui-skeleton"></span></div>';}
+  function analysisSkeletonMarkup(){return '<div class="analysis-loading ui-skeleton-list" role="status" aria-busy="true" aria-label="読み込み中"><span class="ui-skeleton-row"></span><span class="ui-skeleton-row"></span><span class="ui-skeleton-row"></span><span class="ui-skeleton-row"></span></div>';}
   // トップ：番号つきの大きな行（タブの中身とは別の見せ方）
   function renderAnalysisTop(){
     const items=[
@@ -20,7 +20,7 @@
   }
   function memberOptions(){return analysisData.members.map(m=>'<option value="'+escapeHtml(m.name)+'"'+(analysisMember===m.name?' selected':'')+'>'+escapeHtml(m.name)+'</option>').join('');}
   function simpleRank(rows,key){return '<div class="analysis-table-wrap"><table class="analysis-table">'+rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHtml(r.songName)+'</td><td class="num">'+Number(r[key]).toFixed(1)+'%</td></tr>').join('')+'</table></div>';}
-  function renderAnalysisSong(){const p=document.getElementById('analysisPanel');p.innerHTML='<div class="analysis-section"><div class="analysis-card"><h2>楽曲別 構成・歌詞分析</h2><div class="analysis-controls"><div class="analysis-search-wrap"><input id="analysisSongInput" list="analysisSongList" placeholder="楽曲名を入力または選択" oninput="filterAnalysisSongPrefix()" onchange="selectAnalysisSongByTitle()" value="'+escapeHtml((analysisData.songList.find(s=>s.id===analysisSongId)||{}).name||'')+'"><button class="u-btn" onclick="clearAnalysisSong()">✕</button></div><datalist id="analysisSongList"></datalist></div></div><div id="analysisSongBody"></div></div>';refreshAnalysisSongDatalist(analysisData.songList);if(analysisSongId)renderAnalysisSongBody(analysisData.songDetails[analysisSongId]);}
+  function renderAnalysisSong(){const p=document.getElementById('analysisPanel');p.innerHTML='<div class="analysis-section"><div class="analysis-card"><h2>楽曲別 構成・歌詞分析</h2><div class="analysis-controls"><div class="analysis-search-wrap"><input id="analysisSongInput" class="ui-input" list="analysisSongList" placeholder="楽曲名を入力または選択" oninput="filterAnalysisSongPrefix()" onchange="selectAnalysisSongByTitle()" value="'+escapeHtml((analysisData.songList.find(s=>s.id===analysisSongId)||{}).name||'')+'"><button class="ui-btn ui-btn-icon" type="button" aria-label="入力をクリア" onclick="clearAnalysisSong()">✕</button></div><datalist id="analysisSongList"></datalist></div></div><div id="analysisSongBody"></div></div>';refreshAnalysisSongDatalist(analysisData.songList);if(analysisSongId)renderAnalysisSongBody(analysisData.songDetails[analysisSongId]);}
   function refreshAnalysisSongDatalist(list){const d=document.getElementById('analysisSongList');if(d)d.innerHTML=list.map(s=>'<option value="'+escapeHtml(s.name)+'"></option>').join('');}
   function filterAnalysisSongPrefix(){const v=(document.getElementById('analysisSongInput').value||'').toLowerCase();refreshAnalysisSongDatalist(v?analysisData.songList.filter(s=>s.name.toLowerCase().startsWith(v)):analysisData.songList);}
   function selectAnalysisSongByTitle(){const v=document.getElementById('analysisSongInput').value,s=analysisData.songList.find(x=>x.name===v);if(!s)return;analysisSongId=s.id;renderAnalysisSongBody(analysisData.songDetails[s.id]);}
@@ -74,7 +74,7 @@
 
   function rankBlock(title,rows,key,bucket){
     const top=rows.slice(0,3),worst=rows.slice(-3).reverse();
-    return '<div class="analysis-card"><h3>'+title+'</h3><div class="analysis-rank-grid"><div><p class="analysis-muted">TOP 3</p>'+simpleRank(top,key)+'</div><div><p class="analysis-muted">WORST 3</p>'+simpleRank(worst,key)+'</div></div><button class="analysis-more-btn u-btn" onclick="showAnalysisMemberRanking(\''+bucket+'\')">さらに表示</button></div>';
+    return '<div class="analysis-card"><h3>'+title+'</h3><div class="analysis-rank-grid"><div><p class="analysis-muted">TOP 3</p>'+simpleRank(top,key)+'</div><div><p class="analysis-muted">WORST 3</p>'+simpleRank(worst,key)+'</div></div><button class="analysis-more-btn ui-btn" onclick="showAnalysisMemberRanking(\''+bucket+'\')">さらに表示</button></div>';
   }
 
   function showAnalysisMemberSongList(type){
