@@ -1024,11 +1024,6 @@
   /* 読み込み中：光なしの面を流す */
   body.ui-v2 .skeleton-block,
   body.ui-v2 .profile-member-skeleton,
-  body.ui-v2 [class*="skeleton"] {
-    background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100% !important;
-    box-shadow: none !important;
-    animation: uiShimmer 1.4s linear infinite;
-  }
   body.ui-v2 .skeleton-block::after,
   body.ui-v2 .profile-member-skeleton::after { background: none !important; }
   /* 件数・記号などの小さな表示は白 */
@@ -1052,4 +1047,48 @@
   body.ui-v2 [class*="profile-chemistry"] span:not([class*="name"]) { color: var(--ui-text-sub) !important; }
   body.ui-v2 [class*="profile-chemistry"] [class*="rule"],
   body.ui-v2 [class*="profile-chemistry"] [class*="dash"] { background: #fff !important; color: #fff !important; }
+  /* 読み込みの帯：面より少し明るい色で流す（見える色にする） */
+  body.ui-v2 .skeleton-block,
+  body.ui-v2 .profile-member-skeleton {
+    background: linear-gradient(100deg, #1c1c1c 30%, #2b2b2b 50%, #1c1c1c 70%) 0 0 / 220% 100% !important;
+    box-shadow: none !important;
+    animation: uiShimmer 1.4s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) { body.ui-v2 .skeleton-block, body.ui-v2 .profile-member-skeleton { animation: none; } }
+
+  /* 見出しの上の小さな説明と、見出しの下の説明文は表示しない（全プロフィール表示共通） */
+  body.ui-v2 .profile-page .profile-panel-eyebrow,
+  body.ui-v2 .profile-page .profile-panel-copy,
+  body.ui-v2 .profile-page .profile-discover-sub { display: none !important; }
+
+  /* マップ：青い数字・青い枠を白系へ */
+  body.ui-v2 .profile-map-group h3 b,
+  body.ui-v2 .profile-map-group h3 span { color: var(--ui-text-sub) !important; font-family: var(--ui-font-num) !important; }
+  body.ui-v2 .profile-map-group h3 { color: #fff !important; }
+  body.ui-v2 .profile-map-group { border: 1px solid var(--ui-line) !important; border-radius: var(--ui-radius) !important; background: var(--ui-panel) !important; }
+  body.ui-v2 .profile-map-member { border: 1px solid var(--ui-line) !important; background: var(--ui-panel-2) !important; color: #fff !important; }
+  body.ui-v2 .profile-map-select-label { color: var(--ui-text-sub) !important; }
+  body.ui-v2 .profile-map-empty { color: var(--ui-text-sub) !important; }
+
+  /* 相性：スロット・候補・比較の枠を共通の面に */
+  body.ui-v2 .profile-chemistry-slot,
+  body.ui-v2 .profile-chemistry-member,
+  body.ui-v2 .profile-chemistry-picker,
+  body.ui-v2 .profile-chemistry-result,
+  body.ui-v2 .profile-chemistry-compare,
+  body.ui-v2 .profile-chemistry-compare-row {
+    border: 1px solid var(--ui-line) !important;
+    border-radius: var(--ui-radius) !important;
+    background: var(--ui-panel) !important;
+    box-shadow: none !important;
+    color: #fff !important;
+  }
+  body.ui-v2 .profile-chemistry-slot.active,
+  body.ui-v2 .profile-chemistry-slot.selected,
+  body.ui-v2 .profile-chemistry-member.selected { border-color: #fff !important; background: var(--ui-panel-2) !important; }
+  body.ui-v2 .profile-chemistry-slot-number,
+  body.ui-v2 .profile-chemistry-cross,
+  body.ui-v2 .profile-chemistry-score span { color: var(--ui-text-sub) !important; font-family: var(--ui-font-display) !important; letter-spacing: var(--ui-ls-label) !important; }
+  body.ui-v2 .profile-chemistry-score,
+  body.ui-v2 .profile-chemistry-match-center { color: #fff !important; font-family: var(--ui-font-num) !important; }
 </style>
