@@ -1,52 +1,34 @@
 <style>
-  .lyrics-gacha-card:not(:disabled){opacity:1!important;border-color:rgba(80,205,238,.5)!important;background:linear-gradient(145deg,#fff 0%,rgba(156,236,255,.18) 100%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.96),0 7px 20px rgba(62,190,224,.08)!important;}
-  .lyrics-gacha-card:not(:disabled) span{color:rgba(21,24,32,.58)!important;}
-  .song-gacha-screen{padding:0 0 32px;color:var(--ink);}
-  .song-gacha-head{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
-  .song-gacha-back{width:46px!important;height:46px!important;min-width:46px!important;flex:0 0 46px!important;padding:0!important;margin:0!important;border-radius:14px!important;font-family:var(--font-body),sans-serif!important;font-size:34px!important;font-weight:400!important;line-height:1!important;display:grid!important;place-items:center!important;}
-  body.theme-light .song-gacha-back,
-  .song-gacha-back{
-    background:#fff!important;
-    border-color:rgba(21,24,32,.14)!important;
-    color:var(--ink)!important;
-    box-shadow:0 5px 16px rgba(21,24,32,.035),inset 0 1px 0 rgba(255,255,255,.98)!important;
-  }
-  .song-gacha-head h2{margin:0;font-family:var(--font-display),var(--font-body),sans-serif;font-size:clamp(22px,6vw,32px);letter-spacing:.08em;}
-  .song-gacha-groups{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
-  .song-gacha-group{min-height:58px;padding:10px 12px!important;border-radius:15px!important;display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;}
-  .song-gacha-group strong{font-family:var(--font-body),var(--font-body),sans-serif;font-size:13px;letter-spacing:.02em;}
-  .song-gacha-group span{font-family:var(--font-body),var(--font-body),sans-serif;font-size:10px;letter-spacing:.12em;opacity:.66;}
-  .song-gacha-group.is-on{border-color:rgba(80,205,238,.72)!important;background:linear-gradient(145deg,#fff 0%,rgba(156,236,255,.22) 100%)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.94),0 5px 16px rgba(62,190,224,.09)!important;}
-  .song-gacha-group.is-off{opacity:.46;filter:saturate(.45);}
-  .song-gacha-count{margin:0 0 13px;font-family:var(--font-body),var(--font-body),sans-serif;font-size:11px;letter-spacing:.14em;color:color-mix(in srgb,var(--ink) 58%,transparent);text-align:center;}
-  .song-gacha-draw{width:100%;min-height:56px;border-radius:16px!important;font-family:var(--font-display),var(--font-body),sans-serif!important;font-weight:700!important;letter-spacing:.12em!important;}
-  .song-gacha-overlay{position:fixed;inset:0;z-index:2400;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle at 50% 48%,rgba(44,178,219,.14),transparent 30%),linear-gradient(180deg,#03080f 0%,#06101b 54%,#02060b 100%);color:#fff;opacity:0;animation:songGachaFadeIn .28s ease forwards;}
-  .song-gacha-overlay.is-static{opacity:1;animation:none;}
-  .song-gacha-overlay.is-leaving{animation:songGachaFadeOut .28s ease forwards;}
-  .song-gacha-orbit{position:absolute;width:min(74vw,310px);aspect-ratio:1;border:1px solid rgba(156,236,255,.24);border-radius:50%;box-shadow:0 0 40px rgba(98,218,246,.08),inset 0 0 40px rgba(98,218,246,.05);animation:songGachaOrbit 2.2s linear infinite;}
-  .song-gacha-orbit::before,.song-gacha-orbit::after{content:'';position:absolute;inset:16%;border:1px solid rgba(183,153,255,.13);border-radius:50%;transform:rotate(58deg) scaleY(.52);}
-  .song-gacha-orbit::after{inset:30%;border-color:rgba(156,236,255,.2);transform:rotate(-38deg) scaleY(.64);}
-  .song-gacha-star{position:absolute;width:2px;height:2px;border-radius:50%;background:#dff9ff;box-shadow:0 0 8px rgba(156,236,255,.8);animation:songGachaStar 1.25s ease-in-out infinite alternate;}
-  .song-gacha-stage{position:relative;z-index:2;width:min(84vw,390px);padding:30px 18px;text-align:center;}
-  .song-gacha-stage-label{margin:0 0 13px;font-family:var(--font-display),var(--font-body),sans-serif;font-size:10px;letter-spacing:.32em;color:#9cecff;}
-  .song-gacha-ticker{min-height:82px;display:flex;align-items:center;justify-content:center;font-family:var(--font-body),sans-serif;font-size:clamp(22px,7vw,34px);font-weight:700;line-height:1.45;text-shadow:0 0 24px rgba(156,236,255,.22);}
-  .song-gacha-stage.is-final .song-gacha-ticker{animation:songGachaFinal .52s cubic-bezier(.2,.85,.25,1) both;}
-  .song-gacha-final-group{display:block;min-height:16px;margin:7px 0 0;font-family:var(--font-body),var(--font-body),sans-serif;font-size:11px;letter-spacing:.15em;color:rgba(223,249,255,.62);visibility:hidden;opacity:0;}
-  .song-gacha-overlay-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;min-height:50px;margin-top:26px;visibility:hidden;opacity:0;pointer-events:none;}
-  .song-gacha-stage.is-ready .song-gacha-final-group{visibility:visible;opacity:1;}
-  .song-gacha-stage.is-ready .song-gacha-overlay-actions{visibility:visible;opacity:1;pointer-events:auto;animation:songGachaActionsIn .35s ease both;}
-  .song-gacha-overlay-actions button{min-height:50px;border:1px solid rgba(156,236,255,.34)!important;border-radius:15px!important;color:#fff!important;background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(156,236,255,.12))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;font-family:var(--font-body),var(--font-body),sans-serif!important;font-weight:700!important;letter-spacing:.08em!important;}
-  .song-gacha-overlay-actions .song-gacha-again{border-color:rgba(156,236,255,.68)!important;background:linear-gradient(145deg,rgba(156,236,255,.12),rgba(156,236,255,.22))!important;}
-  .song-gacha-overlay-actions .song-gacha-selection-back{grid-column:1/-1;}
-  @keyframes songGachaFadeIn{to{opacity:1}}
-  @keyframes songGachaFadeOut{to{opacity:0;transform:scale(1.015)}}
-  @keyframes songGachaOrbit{to{transform:rotate(360deg)}}
-  @keyframes songGachaStar{from{opacity:.22;transform:scale(.7)}to{opacity:.95;transform:scale(1.55)}}
-  @keyframes songGachaFinal{0%{opacity:.25;transform:scale(.86);filter:blur(5px)}70%{opacity:1;transform:scale(1.035);filter:blur(0)}100%{transform:scale(1)}}
-  @keyframes songGachaActionsIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
-  @media(max-width:390px){.song-gacha-groups{grid-template-columns:1fr}.song-gacha-overlay-actions{grid-template-columns:1fr 1fr}}
-  @media(prefers-reduced-motion:reduce){.song-gacha-overlay,.song-gacha-overlay.is-leaving,.song-gacha-orbit,.song-gacha-star,.song-gacha-stage.is-final .song-gacha-ticker,.song-gacha-overlay-actions{animation:none!important;}.song-gacha-overlay{opacity:1}}
-  .song-gacha-stage-label{display:none!important}
+  /* SONG GACHA：共通部品（.ui-back / .ui-btn / .ui-title）と白背景のトークンだけで作る。 */
+  .song-gacha-screen { padding: 0 0 32px; color: var(--ui-text); }
+  .song-gacha-head { display: grid; gap: 14px; margin-bottom: 24px; }
+  .song-gacha-head .ui-title { margin: 0; }
+  .song-gacha-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .song-gacha-group { min-height: 60px; justify-content: space-between; text-align: left; }
+  .song-gacha-group.is-on { background: var(--ui-active-bg); color: var(--ui-active-text); border-color: var(--ui-active-bg); }
+  .song-gacha-group.is-off { color: var(--ui-text-sub); border-color: var(--ui-line); background: transparent; }
+  .song-gacha-group span { font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); }
+  .song-gacha-count { margin: 0 0 14px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-align: center; }
+  @media (max-width: 390px) { .song-gacha-groups { grid-template-columns: 1fr; } }
+
+  /* 抽選の表示（白背景の全画面） */
+  .song-gacha-overlay { position: fixed; inset: 0; z-index: 2400; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--ui-bg); color: var(--ui-text); opacity: 0; animation: songGachaFadeIn .25s ease forwards; }
+  .song-gacha-overlay.is-static { opacity: 1; animation: none; }
+  .song-gacha-overlay.is-leaving { animation: songGachaFadeOut .25s ease forwards; }
+  .song-gacha-stage { width: min(100%, 420px); display: grid; gap: 12px; justify-items: center; text-align: center; }
+  .song-gacha-ticker { min-height: 96px; display: flex; align-items: center; justify-content: center; margin: 0; font-family: var(--ui-font); font-size: var(--ui-fs-title); font-weight: 800; letter-spacing: var(--ui-ls-heading); line-height: 1.35; overflow-wrap: anywhere; }
+  .song-gacha-stage.is-final .song-gacha-ticker { animation: songGachaFinal .45s cubic-bezier(.2, .85, .25, 1) both; }
+  .song-gacha-final-group { min-height: 18px; margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); visibility: hidden; opacity: 0; }
+  .song-gacha-stage.is-ready .song-gacha-final-group { visibility: visible; opacity: 1; }
+  .song-gacha-overlay-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 22px; visibility: hidden; opacity: 0; pointer-events: none; }
+  .song-gacha-overlay-actions .song-gacha-selection-back { grid-column: 1 / -1; justify-self: center; }
+  .song-gacha-stage.is-ready .song-gacha-overlay-actions { visibility: visible; opacity: 1; pointer-events: auto; animation: songGachaActionsIn .3s ease both; }
+  .song-gacha-overlay-actions .ui-btn { width: 100%; }
+  @keyframes songGachaFadeIn { to { opacity: 1; } }
+  @keyframes songGachaFadeOut { to { opacity: 0; } }
+  @keyframes songGachaFinal { 0% { opacity: .25; transform: scale(.94); } 70% { opacity: 1; transform: scale(1.02); } 100% { transform: scale(1); } }
+  @keyframes songGachaActionsIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .song-gacha-overlay, .song-gacha-overlay.is-leaving, .song-gacha-stage.is-final .song-gacha-ticker, .song-gacha-overlay-actions { animation: none !important; } .song-gacha-overlay { opacity: 1; } }
 </style>
 <script>
   const songGachaState={enabled:{},result:null,drawing:false};
@@ -82,13 +64,13 @@
     if(!view)return;
     const pool=songGachaPool();
     view.innerHTML='<section class="song-gacha-screen">'
-      +'<div class="song-gacha-head"><button class="ui-back ui-back-icon" type="button" aria-label="戻る" onclick="showLyricsGroups()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><h2>SONG GACHA</h2></div>'
+      +'<header class="song-gacha-head">'+lyxBack('showLyricsGroups()')+'<h2 class="ui-title">SONG GACHA</h2></header>'
       +'<div class="song-gacha-groups">'+LYRICS_GROUPS.map(function(group){
         const on=!!songGachaState.enabled[group];
-        return '<button class="u-btn song-gacha-group '+(on?'is-on':'is-off')+'" type="button" aria-pressed="'+on+'" onclick="toggleSongGachaGroup(\''+lyricArg(group)+'\')"><strong>'+escapeLyrics(group)+'</strong><span>'+(on?'ON':'OFF')+'</span></button>';
+        return '<button class="ui-btn song-gacha-group '+(on?'is-on':'is-off')+'" type="button" aria-pressed="'+on+'" onclick="toggleSongGachaGroup(\''+lyricArg(group)+'\')"><strong>'+escapeLyrics(group)+'</strong><span>'+(on?'ON':'OFF')+'</span></button>';
       }).join('')+'</div>'
       +'<p class="song-gacha-count">対象曲 '+pool.length+'曲</p>'
-      +'<button class="u-btn song-gacha-draw" type="button" onclick="drawSongGacha()"'+(!pool.length||songGachaState.drawing?' disabled':'')+'>引く</button>'
+      +'<button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="drawSongGacha()"'+(!pool.length||songGachaState.drawing?' disabled':'')+'>引く</button>'
       +'</section>';
   }
 
@@ -102,7 +84,7 @@
   function drawSongGacha(){
     if(songGachaState.drawing)return;
     const pool=songGachaPool();
-    if(!pool.length){showLyricsError('SELECT AT LEAST ONE GROUP.');return;}
+    if(!pool.length){showLyricsError('グループを1つ以上選んでください。');return;}
     closeSongGachaOverlay(true);
     songGachaState.drawing=true;
     const result=pool[Math.floor(Math.random()*pool.length)];
@@ -111,10 +93,7 @@
   }
 
   function songGachaOverlayMarkup(){
-    return '<div class="song-gacha-orbit"></div>'+Array.from({length:18},function(_,i){
-      const left=(11+(i*37)%82),top=(7+(i*53)%86),delay=((i%7)*.12).toFixed(2);
-      return '<i class="song-gacha-star" style="left:'+left+'%;top:'+top+'%;animation-delay:'+delay+'s"></i>';
-    }).join('')+'<div class="song-gacha-stage"><div class="song-gacha-ticker">...</div><p class="song-gacha-final-group"></p><div class="song-gacha-overlay-actions"><button class="u-btn song-gacha-again" type="button" onclick="drawSongGachaAgain()">もう一度引く</button><button class="u-btn" type="button" onclick="openSongGachaKaraoke()">歌う</button><button class="ui-back" type="button" onclick="backFromSongGachaReveal()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button></div></div>';
+    return '<div class="song-gacha-stage"><p class="song-gacha-ticker">...</p><p class="song-gacha-final-group"></p><div class="song-gacha-overlay-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="drawSongGachaAgain()">もう一度引く</button><button class="ui-btn" type="button" onclick="openSongGachaKaraoke()">歌う</button><div class="song-gacha-selection-back">'+lyxBack('backFromSongGachaReveal()')+'</div></div></div>';
   }
 
   function runSongGachaSequence(overlay,pool,result,reduced){
@@ -144,7 +123,7 @@
         setTimeout(function(){
           stage.classList.add('is-ready');
           songGachaState.drawing=false;
-        },520);
+        },450);
       }
     },105);
   }
@@ -162,7 +141,7 @@
     if(!overlay)return;
     if(immediate){overlay.remove();return;}
     overlay.classList.add('is-leaving');
-    setTimeout(function(){overlay.remove();},280);
+    setTimeout(function(){overlay.remove();},260);
   }
 
   function backFromSongGachaReveal(){

@@ -25,6 +25,11 @@
     'BMSG ALLSTARS': '1Mg_mIzUzb62SpvPqrYrmffuRRldHBroO'
   };
 
+  // ユニット写真（BMSG ALLSTARSの中のユニット）
+  const LYRICS_UNIT_PHOTO_IDS = {
+    'ShowMinorSavage': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
+  };
+
   function lyricsGroupPhotoUrl(group) {
     const id = LYRICS_GROUP_PHOTO_IDS[group];
     return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
@@ -94,7 +99,8 @@
       lyricsGroupHeader_('BMSG ALLSTARS', 'グループ選択に戻る', 'showLyricsGroups()') +
       `<section class="lyx-units">${units.map(function (unit) {
         const songs = unitSongs(unit).slice().sort(function (a, b) { return songTime(b) - songTime(a) || (Number(b.songId) || 0) - (Number(a.songId) || 0); });
-        return `<section class="lyx-unit"><h3>${escapeLyrics(unit)}</h3><div class="lyx-list">${songs.map(function (song) { return lyxRow(song.title, `openLyricsAllStarsSong('${lyricArg(unit)}','${lyricArg(song.songId)}')`); }).join('')}</div></section>`;
+        const unitPhoto = LYRICS_UNIT_PHOTO_IDS[unit] ? `<div class="lyx-unit-photo" style="--lyx-photo:url('https://lh3.googleusercontent.com/d/${LYRICS_UNIT_PHOTO_IDS[unit]}')" aria-hidden="true"></div>` : '';
+        return `<section class="lyx-unit">${unitPhoto}<h3>${escapeLyrics(unit)}</h3><div class="lyx-list">${songs.map(function (song) { return lyxRow(song.title, `openLyricsAllStarsSong('${lyricArg(unit)}','${lyricArg(song.songId)}')`); }).join('')}</div></section>`;
       }).join('')}</section>`;
     if (typeof syncKaraokeLatestShortcut_ === 'function') syncKaraokeLatestShortcut_();
     scrollLyricsTop();
