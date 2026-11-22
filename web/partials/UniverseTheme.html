@@ -859,21 +859,26 @@
   @media (prefers-reduced-motion: reduce) { }
 
   /* ============ 共通の戻るボタン（全画面で同じ部品）============ */
-  /* 矢印は線で描く（塗りつぶしにしない）。文字つきも、アイコンだけも同じ矢印 */
+  /* 枠なし。矢印（線）と BACK の文字、下に細い線。アイコンだけの版は矢印のみ */
   body.ui-v2 .ui-back {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none;
-    height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 16px 0 12px;
-    border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius);
-    background: transparent; color: #fff; cursor: pointer;
+    position: relative;
+    display: inline-flex; align-items: center; gap: 8px; flex: none;
+    height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 4px;
+    border: 0; border-radius: 0; background: transparent; color: #fff; cursor: pointer;
     font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap;
+  }
+  body.ui-v2 .ui-back::after {
+    content: ""; position: absolute; left: 4px; right: 4px; bottom: 10px; height: 1px; background: rgba(255, 255, 255, .45);
+    transition: background .2s ease;
   }
   body.ui-v2 .ui-back .ui-back-chevron,
   body.ui-v2 .ui-back svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  body.ui-v2 .ui-back .ui-back-label { letter-spacing: var(--ui-ls-label); }
-  /* アイコンだけ：正方形。中の文字は出さない */
-  body.ui-v2 .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; }
+  body.ui-v2 .ui-back .ui-back-label { letter-spacing: .18em; }
+  /* アイコンだけ：枠なし、下線なし */
+  body.ui-v2 .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; justify-content: center; }
+  body.ui-v2 .ui-back.ui-back-icon::after { display: none; }
   body.ui-v2 .ui-back.ui-back-icon > span { display: none; }
-  @media (hover: hover) { body.ui-v2 .ui-back:hover { border-color: #fff; background: var(--ui-panel); } }
+  @media (hover: hover) { body.ui-v2 .ui-back:hover::after { background: #fff; } }
 
   /* 共通の小さいボタン（変更・もう一度など） */
   body.ui-v2 .ui-btn-compact { min-height: 40px; padding: 0 16px; font-size: var(--ui-fs-label); }
