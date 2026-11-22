@@ -1,100 +1,30 @@
 <style>
-  /* =========================================================
-     BMSG Universe Management UI System
-     SETTINGS > 管理 配下の管理画面共通基盤。
-     PROFILE / IMAGE / SONG+LYRICS は、機能固有の配置だけを各ファイルに持ち、
-     パネル・見出し・入力・カード・エラー・アクションの見た目はここを正本とする。
-     ========================================================= */
-  :root{
-    --mgmt-panel-width:620px;
-    --mgmt-field-height:52px;
-    --mgmt-field-radius:15px;
-    --mgmt-card-radius:18px;
-    --mgmt-gap:16px;
-  }
-  .management-panel{
-    width:min(var(--mgmt-panel-width),calc(100vw - 24px));
-    max-width:var(--mgmt-panel-width);
-    max-height:min(92vh,900px);
-    overflow:auto;
-    padding-bottom:calc(24px + env(safe-area-inset-bottom));
-  }
-  .management-lead{
-    margin:4px 0 0;
-  }
-  .management-loading[hidden]{display:none!important}
-  .management-field{display:grid;gap:7px;min-width:0}
-  .management-field input:not([type="checkbox"]):not([type="file"]),
-  .management-field select,
-  .management-field textarea,
-  .management-input{
-    width:100%;max-width:100%;min-width:0;box-sizing:border-box;
-    min-height:var(--mgmt-field-height);
-    padding:0 14px;
-  }
-  .management-field input[type="date"]{
-    width:100%;
-    max-width:100%;
-    min-width:0;
-    inline-size:100%;
-    max-inline-size:100%;
-    min-inline-size:0;
-    box-sizing:border-box;
-  }
-  .management-field textarea{padding:12px 14px;line-height:1.7;resize:vertical}
-  .management-field input:disabled,.management-field select:disabled{opacity:.55}
-  .management-card{
-    display:grid;gap:var(--mgmt-gap);padding:16px;
-  }
-  .management-section-title{
-    margin:0;
-  }
-  .management-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
-  .management-error{
-    margin:0;padding:11px 13px;
-  }
-  @media(max-width:520px){
-    .management-panel{width:calc(100vw - 24px);padding:18px}
-    .management-actions{display:grid;grid-template-columns:1fr 1fr}
-    .management-actions>*{width:100%}
-  }
-</style>
-<style>
-  /* Routed management layout. Surfaces and states remain in the shared owners. */
-  .management-page{max-width:1000px;min-width:0;margin:0 auto;padding-top:76px;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
-  .management-page .category-header{gap:8px;margin-bottom:24px}
-  .management-page .category-title{line-height:1.2;overflow-wrap:anywhere}
-  .management-local-navigation{display:grid;gap:8px;margin-bottom:24px;min-width:0}
-  .management-back{justify-self:start;min-height:44px;padding:8px 14px}
-  .management-access-note{margin-bottom:20px}
-  .management-access-note strong{line-height:1.6}
-  .management-access-note .management-lead{line-height:1.7}
-  .management-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--mgmt-gap)}
-  .management-choice{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:20px;text-align:left;min-height:72px}
-  .management-choice>span{display:grid;gap:8px;min-width:0}
-  .management-choice strong{line-height:1.5}
-  .management-choice small{line-height:1.7;opacity:.65;white-space:normal}
-  .management-maintenance{margin-top:32px}
-  .management-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:0;min-width:0;line-height:1.7}
-  .management-breadcrumb .ui-btn{min-height:44px;max-width:100%;padding:6px 10px;white-space:normal;overflow-wrap:anywhere;text-align:left}
-  .management-operation-list{display:grid;gap:12px;margin-top:20px}
-  .management-editor[hidden],#managementSettingsGroup[hidden]{display:none!important}
-  .management-page .management-editor-panel{box-sizing:border-box;min-width:0;width:100%;max-width:none;max-height:none;overflow:visible;padding:0;margin-top:20px}
-  .management-page .slm-icon-btn{min-width:44px;min-height:44px}
-  .management-page .management-actions{flex-wrap:wrap}
-  .management-page .slm-panel{padding:0}
-  .management-page .slm-card,.management-page .slm-edit-section{padding:16px 0}
-  .management-page .slm-grid{gap:18px}
-  .management-page #managementEditorHost,.management-page #slmBody{min-width:0;max-width:100%}
-  .management-page .management-section-title{line-height:1.6}
-  .management-page .management-field>span,.management-page .management-label{line-height:1.6}
-  .management-page .cm-busy{pointer-events:none}
-  @media(max-width:600px){.management-grid{grid-template-columns:1fr}.management-choice{padding:16px}.management-breadcrumb{gap:4px}.management-breadcrumb .ui-btn{padding:8px}.management-actions{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}}
-</style>
-<style>
-</style>
-<style>
-  .management-json{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;line-height:1.7}
-  #managementOperationsHost{display:grid;gap:var(--mgmt-gap);margin-top:20px}
-  #moHistory{display:grid;gap:var(--mgmt-gap);margin-top:20px}
+  /* 管理画面の並べ方（見た目は部品 .ui-*） */
+  .management-page { min-width: 0; padding: var(--ui-top-pad) 0 calc(24px + env(safe-area-inset-bottom)); }
+  .management-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding-bottom: 20px; }
+  .management-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; margin: 0 0 18px; }
+  .management-breadcrumb .ui-btn { min-height: 32px; }
+  .management-lead { margin: 6px 0 0; }
+  .management-section-title { margin: 0; }
+  .management-access-note { display: grid; gap: 10px; padding: 16px; margin-bottom: 20px; }
+  .management-hub, .management-operation-list { margin-top: 16px; }
+  .management-loading[hidden], .management-editor[hidden], #managementSettingsGroup[hidden] { display: none !important; }
+
+  /* 編集画面：面の中に余白、項目は縦に並べ、下のボタンは2列で横いっぱい */
+  .management-panel { width: min(620px, calc(100vw - 24px)); max-height: min(92vh, 900px); overflow: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+  .management-editor-panel { width: 100%; min-width: 0; max-width: none; max-height: none; overflow: visible; padding: 0; margin-top: 16px; }
+  #managementEditorHost, #slmBody { min-width: 0; max-width: 100%; }
+  .management-card { display: grid; gap: 16px; padding: 16px; }
+  .management-card + .management-card, .management-card + .management-actions + .management-card { margin-top: 12px; }
+  .management-field { display: grid; gap: 8px; min-width: 0; }
+  .management-field input, .management-field select { min-width: 0; max-width: 100%; }
+  .management-field textarea { line-height: 1.7; resize: vertical; }
+  .management-field input:disabled, .management-field select:disabled { opacity: .55; }
+  .management-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 16px; }
+  .management-actions > * { width: 100%; }
+  .management-error { margin: 0; padding: 11px 0; }
+  .management-page .slm-icon-btn { min-width: 44px; min-height: 44px; }
+  .management-page .cm-busy { pointer-events: none; }
+  #managementOperationsHost, #moHistory { display: grid; gap: 16px; margin-top: 16px; }
+  .management-json { max-width: 100%; }
 </style>

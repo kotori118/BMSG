@@ -2004,104 +2004,34 @@
 
 <!-- ManagementSystem.html -->
 <style>
-  /* =========================================================
-     BMSG Universe Management UI System
-     SETTINGS > 管理 配下の管理画面共通基盤。
-     PROFILE / IMAGE / SONG+LYRICS は、機能固有の配置だけを各ファイルに持ち、
-     パネル・見出し・入力・カード・エラー・アクションの見た目はここを正本とする。
-     ========================================================= */
-  :root{
-    --mgmt-panel-width:620px;
-    --mgmt-field-height:52px;
-    --mgmt-field-radius:15px;
-    --mgmt-card-radius:18px;
-    --mgmt-gap:16px;
-  }
-  .management-panel{
-    width:min(var(--mgmt-panel-width),calc(100vw - 24px));
-    max-width:var(--mgmt-panel-width);
-    max-height:min(92vh,900px);
-    overflow:auto;
-    padding-bottom:calc(24px + env(safe-area-inset-bottom));
-  }
-  .management-lead{
-    margin:4px 0 0;
-  }
-  .management-loading[hidden]{display:none!important}
-  .management-field{display:grid;gap:7px;min-width:0}
-  .management-field input:not([type="checkbox"]):not([type="file"]),
-  .management-field select,
-  .management-field textarea,
-  .management-input{
-    width:100%;max-width:100%;min-width:0;box-sizing:border-box;
-    min-height:var(--mgmt-field-height);
-    padding:0 14px;
-  }
-  .management-field input[type="date"]{
-    width:100%;
-    max-width:100%;
-    min-width:0;
-    inline-size:100%;
-    max-inline-size:100%;
-    min-inline-size:0;
-    box-sizing:border-box;
-  }
-  .management-field textarea{padding:12px 14px;line-height:1.7;resize:vertical}
-  .management-field input:disabled,.management-field select:disabled{opacity:.55}
-  .management-card{
-    display:grid;gap:var(--mgmt-gap);padding:16px;
-  }
-  .management-section-title{
-    margin:0;
-  }
-  .management-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
-  .management-error{
-    margin:0;padding:11px 13px;
-  }
-  @media(max-width:520px){
-    .management-panel{width:calc(100vw - 24px);padding:18px}
-    .management-actions{display:grid;grid-template-columns:1fr 1fr}
-    .management-actions>*{width:100%}
-  }
-</style>
-<style>
-  /* Routed management layout. Surfaces and states remain in the shared owners. */
-  .management-page{max-width:1000px;min-width:0;margin:0 auto;padding-top:76px;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
-  .management-page .category-header{gap:8px;margin-bottom:24px}
-  .management-page .category-title{line-height:1.2;overflow-wrap:anywhere}
-  .management-local-navigation{display:grid;gap:8px;margin-bottom:24px;min-width:0}
-  .management-back{justify-self:start;min-height:44px;padding:8px 14px}
-  .management-access-note{margin-bottom:20px}
-  .management-access-note strong{line-height:1.6}
-  .management-access-note .management-lead{line-height:1.7}
-  .management-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--mgmt-gap)}
-  .management-choice{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:20px;text-align:left;min-height:72px}
-  .management-choice>span{display:grid;gap:8px;min-width:0}
-  .management-choice strong{line-height:1.5}
-  .management-choice small{line-height:1.7;opacity:.65;white-space:normal}
-  .management-maintenance{margin-top:32px}
-  .management-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:0;min-width:0;line-height:1.7}
-  .management-breadcrumb .ui-btn{min-height:44px;max-width:100%;padding:6px 10px;white-space:normal;overflow-wrap:anywhere;text-align:left}
-  .management-operation-list{display:grid;gap:12px;margin-top:20px}
-  .management-editor[hidden],#managementSettingsGroup[hidden]{display:none!important}
-  .management-page .management-editor-panel{box-sizing:border-box;min-width:0;width:100%;max-width:none;max-height:none;overflow:visible;padding:0;margin-top:20px}
-  .management-page .slm-icon-btn{min-width:44px;min-height:44px}
-  .management-page .management-actions{flex-wrap:wrap}
-  .management-page .slm-panel{padding:0}
-  .management-page .slm-card,.management-page .slm-edit-section{padding:16px 0}
-  .management-page .slm-grid{gap:18px}
-  .management-page #managementEditorHost,.management-page #slmBody{min-width:0;max-width:100%}
-  .management-page .management-section-title{line-height:1.6}
-  .management-page .management-field>span,.management-page .management-label{line-height:1.6}
-  .management-page .cm-busy{pointer-events:none}
-  @media(max-width:600px){.management-grid{grid-template-columns:1fr}.management-choice{padding:16px}.management-breadcrumb{gap:4px}.management-breadcrumb .ui-btn{padding:8px}.management-actions{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}}
-</style>
-<style>
-</style>
-<style>
-  .management-json{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;line-height:1.7}
-  #managementOperationsHost{display:grid;gap:var(--mgmt-gap);margin-top:20px}
-  #moHistory{display:grid;gap:var(--mgmt-gap);margin-top:20px}
+  /* 管理画面の並べ方（見た目は部品 .ui-*） */
+  .management-page { min-width: 0; padding: var(--ui-top-pad) 0 calc(24px + env(safe-area-inset-bottom)); }
+  .management-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; padding-bottom: 20px; }
+  .management-breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; margin: 0 0 18px; }
+  .management-breadcrumb .ui-btn { min-height: 32px; }
+  .management-lead { margin: 6px 0 0; }
+  .management-section-title { margin: 0; }
+  .management-access-note { display: grid; gap: 10px; padding: 16px; margin-bottom: 20px; }
+  .management-hub, .management-operation-list { margin-top: 16px; }
+  .management-loading[hidden], .management-editor[hidden], #managementSettingsGroup[hidden] { display: none !important; }
+
+  /* 編集画面：面の中に余白、項目は縦に並べ、下のボタンは2列で横いっぱい */
+  .management-panel { width: min(620px, calc(100vw - 24px)); max-height: min(92vh, 900px); overflow: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+  .management-editor-panel { width: 100%; min-width: 0; max-width: none; max-height: none; overflow: visible; padding: 0; margin-top: 16px; }
+  #managementEditorHost, #slmBody { min-width: 0; max-width: 100%; }
+  .management-card { display: grid; gap: 16px; padding: 16px; }
+  .management-card + .management-card, .management-card + .management-actions + .management-card { margin-top: 12px; }
+  .management-field { display: grid; gap: 8px; min-width: 0; }
+  .management-field input, .management-field select { min-width: 0; max-width: 100%; }
+  .management-field textarea { line-height: 1.7; resize: vertical; }
+  .management-field input:disabled, .management-field select:disabled { opacity: .55; }
+  .management-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 16px; }
+  .management-actions > * { width: 100%; }
+  .management-error { margin: 0; padding: 11px 0; }
+  .management-page .slm-icon-btn { min-width: 44px; min-height: 44px; }
+  .management-page .cm-busy { pointer-events: none; }
+  #managementOperationsHost, #moHistory { display: grid; gap: 16px; margin-top: 16px; }
+  .management-json { max-width: 100%; }
 </style>
 
 </head>
@@ -2422,7 +2352,7 @@
       </section>
 
       <p id="imageManagementError" class="ui-text-danger management-error image-management-error" role="alert" hidden></p>
-      <button id="imageManagementSubmit" class="image-management-primary" type="submit">画像を登録する</button>
+      <button id="imageManagementSubmit" class="ui-btn ui-btn-solid ui-btn-wide image-management-primary" type="submit">画像を登録する</button>
     </form>
 
     <section class="ui-divider-top image-management-repair">
@@ -2448,8 +2378,8 @@
       <div><span class="ui-label">新しい画像</span><div class="ui-panel image-management-preview-card"><img id="imageReplaceNew" alt="新しい画像"></div></div>
     </div>
     <div class="image-replace-actions">
-      <button type="button" class="image-management-secondary" onclick="closeImageReplaceConfirm()">キャンセル</button>
-      <button id="imageReplaceConfirmButton" type="button" class="image-management-primary" onclick="confirmImageReplacement()">画像を差し替える</button>
+      <button type="button" class="ui-btn image-management-secondary" onclick="closeImageReplaceConfirm()">キャンセル</button>
+      <button id="imageReplaceConfirmButton" type="button" class="ui-btn ui-btn-solid ui-btn-wide image-management-primary" onclick="confirmImageReplacement()">画像を差し替える</button>
     </div>
   </section>
 </div>
@@ -2659,7 +2589,7 @@
       <form id="profileManagementForm" class="profile-management-form" onsubmit="return submitProfileManagement(event)" hidden>
         <div id="profileManagementSections"></div>
         <p id="profileManagementError" class="ui-text-danger management-error profile-management-error" role="alert" hidden></p>
-        <button id="profileManagementSubmit" class="profile-management-primary" type="submit" disabled>プロフィールを保存する</button>
+        <button id="profileManagementSubmit" class="ui-btn ui-btn-solid ui-btn-wide profile-management-primary" type="submit" disabled>プロフィールを保存する</button>
       </form>
     </div>
   </section>
@@ -2944,11 +2874,11 @@
   </section>
 </div>
 <div id="slmGuestConfirm" class="modal-overlay slm-confirm" onclick="closeSlmGuestConfirmOnBackdrop(event)">
-  <section class="settings-panel management-panel slm-confirm-panel" role="dialog" aria-modal="true"><h3 class="ui-heading">未登録のSingerが見つかりました</h3><strong id="slmGuestName" class="ui-strong"></strong><p class="ui-muted">Guestとして登録しますか？</p><div class="slm-confirm-actions"><button class="ui-btn" type="button" onclick="markSlmGuestNotGuest()">ゲストではない</button><button class="ui-btn" type="button" onclick="confirmSlmGuestRegistration()">Guestとして登録</button></div></section>
+  <section class="settings-panel management-panel slm-confirm-panel" role="dialog" aria-modal="true"><h3 class="ui-heading">未登録のSingerが見つかりました</h3><strong id="slmGuestName" class="ui-strong"></strong><p class="ui-muted">Guestとして登録しますか？</p><div class="slm-confirm-actions"><button class="ui-btn" type="button" onclick="markSlmGuestNotGuest()">ゲストではない</button><button class="ui-btn ui-btn-solid" type="button" onclick="confirmSlmGuestRegistration()">Guestとして登録</button></div></section>
 </div>
 <style>
-  .slm-lead{margin-top:8px}.slm-stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:0 0 18px}.slm-step{padding:9px 6px;text-align:center}.slm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.slm-field.is-wide{grid-column:1/-1}.slm-field textarea{min-height:220px;resize:vertical;line-height:1.7}.slm-toggle{display:flex;align-items:center;gap:10px;min-height:48px}.slm-toggle input[type="checkbox"]{width:24px;max-width:24px;min-width:24px;min-height:24px;height:24px;padding:0;margin:0;flex:0 0 24px}.slm-note{margin:0}.slm-preview-list,.slm-parts{display:grid;gap:10px}.slm-preview-part,.slm-part-card{padding:13px}.slm-preview-part>div,.slm-part-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.slm-preview-part p,.slm-part-card textarea{white-space:pre-wrap}.slm-preview-part p{margin:9px 0 0}.slm-part-card{display:grid;gap:10px}.slm-part-head-actions{display:flex;gap:6px}.slm-icon-btn{width:38px;height:38px}.slm-part-insert{width:100%;min-height:42px;margin:2px 0}.slm-part-card textarea{width:100%;box-sizing:border-box;min-height:116px;padding:10px 12px}.slm-edit-section{display:grid;gap:12px;margin-top:16px}.slm-save-section{justify-self:end}.slm-confirm{z-index:1400}.slm-confirm-panel{max-width:440px}.slm-confirm-panel h3{margin:0 0 16px}.slm-confirm-panel>strong{display:block}.slm-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.slm-success{padding:18px;text-align:center}
-  @media(max-width:560px){.slm-panel{padding:17px}.slm-grid{grid-template-columns:1fr}.slm-field.is-wide{grid-column:auto}.slm-actions .ui-btn{width:100%}.slm-confirm-actions{grid-template-columns:1fr}}
+  .slm-lead{margin-top:8px}.slm-stepper{margin:0 0 18px}.slm-step{display:flex;align-items:center;justify-content:center;text-align:center}.slm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.slm-field.is-wide{grid-column:1/-1}.slm-field textarea{min-height:220px;resize:vertical;line-height:1.7}.slm-toggle{display:flex;align-items:center;gap:10px;min-height:48px}.slm-toggle input[type="checkbox"]{width:24px;max-width:24px;min-width:24px;min-height:24px;height:24px;padding:0;margin:0;flex:0 0 24px}.slm-note{margin:0}.slm-preview-list,.slm-parts{display:grid;gap:10px}.slm-preview-part,.slm-part-card{padding:13px}.slm-preview-part>div,.slm-part-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.slm-preview-part p,.slm-part-card textarea{white-space:pre-wrap}.slm-preview-part p{margin:9px 0 0}.slm-part-card{display:grid;gap:10px}.slm-part-head-actions{display:flex;gap:6px}.slm-icon-btn{width:38px;height:38px}.slm-part-insert{width:100%;min-height:42px;margin:2px 0}.slm-part-card textarea{width:100%;box-sizing:border-box;min-height:116px;padding:10px 12px}.slm-edit-section{display:grid;gap:12px;margin-top:16px}.slm-save-section{justify-self:end}.slm-confirm{z-index:1400}.slm-confirm-panel{max-width:440px}.slm-confirm-panel h3{margin:0 0 16px}.slm-confirm-panel>strong{display:block}.slm-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.slm-success{padding:18px;text-align:center}
+  @media(max-width:560px){.slm-panel{padding:0}.slm-grid{grid-template-columns:1fr}.slm-field.is-wide{grid-column:auto}.slm-actions .ui-btn{width:100%}.slm-confirm-actions{grid-template-columns:1fr}}
 </style>
 <script>
   const songLyricsManagementState={bootstrap:null,view:'home',newStep:1,newSong:{artist:'',title:'',releaseDate:'',form:'',cdTitle:'',isTitleTrack:false},newCredits:{lyricists:'',composers:'',choreographers:''},rawLyrics:'',preview:null,unknownQueue:[],ignoredGuestCandidates:[],ignoredGuestSource:'',existingArtist:'',existingSongId:'',existing:null,dirty:{info:false,credits:false,lyrics:false},busy:false};
@@ -2967,16 +2897,16 @@
   function slmIsPersonal_(id){return /^M\d+$/.test(String(id||''));}
   function slmIsBeFirst_(id){return id==='G1'||id==='BE:FIRST';}
   function slmArtistLabel_(id){const artist=(songLyricsManagementState.bootstrap.artists||[]).find(function(entry){return entry.value===id;});return artist?artist.label:id;}
-  function slmStepper_(){const isBeFirst=slmIsBeFirst_(songLyricsManagementState.newSong.artist),steps=isBeFirst?[{step:1,label:'楽曲情報'},{step:2,label:'クレジット'},{step:3,label:'歌詞'}]:[{step:1,label:'楽曲情報'},{step:3,label:'歌詞'}];return '<div class="slm-stepper">'+steps.map(function(item){return '<div class="ui-badge slm-step '+(songLyricsManagementState.newStep===item.step?'is-active':'')+'">'+item.label+'</div>';}).join('')+'</div>';}
+  function slmStepper_(){const isBeFirst=slmIsBeFirst_(songLyricsManagementState.newSong.artist),steps=isBeFirst?[{step:1,label:'楽曲情報'},{step:2,label:'クレジット'},{step:3,label:'歌詞'}]:[{step:1,label:'楽曲情報'},{step:3,label:'歌詞'}];return '<div class="ui-tabs slm-stepper">'+steps.map(function(item){return '<div class="ui-tab slm-step '+(songLyricsManagementState.newStep===item.step?'is-active':'')+'">'+item.label+'</div>';}).join('')+'</div>';}
   function renderSlmNew(body){
     let html=''+slmStepper_();
     if(songLyricsManagementState.newStep===1)html+=slmNewSongHtml_();else if(songLyricsManagementState.newStep===2)html+=slmCreditsHtml_(songLyricsManagementState.newCredits,false);else if(songLyricsManagementState.preview)html+=slmPreviewHtml_();else html+=slmLyricsInputHtml_();
     body.innerHTML=html;bindSlmNewFields_();
   }
-  function slmNewSongHtml_(){const s=songLyricsManagementState.newSong;return '<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">楽曲情報</h3><div class="slm-grid">'+slmSelectField_('slmNewArtist','アーティスト',songLyricsManagementState.bootstrap.artists,s.artist,'選択してください')+slmTextField_('slmNewTitle','曲名',s.title,true)+slmDateField_('slmNewRelease','リリース日',s.releaseDate)+slmSelectField_('slmNewForm','形態',songLyricsManagementState.bootstrap.forms,s.form,'未設定')+slmTextField_('slmNewCd','CDタイトル',s.cdTitle,false)+slmSongOptionsHtml_()+'<label class="ui-field management-field slm-field"><span>表題曲</span><span class="slm-toggle"><input id="slmNewTitleTrack" type="checkbox" '+(s.isTitleTrack?'checked':'')+'> 表題曲</span></label></div></section><div class="management-actions slm-actions"><button class="ui-btn" type="button" onclick="slmBackHome()">戻る</button><button class="ui-btn" type="button" onclick="nextSlmNewSong()">次へ</button></div>';}
-  function slmCreditsHtml_(credits,isEdit){return '<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">クレジット</h3><div class="slm-grid">'+slmTextField_((isEdit?'slmEdit':'slmNew')+'Lyricists','作詞',credits.lyricists,false)+slmTextField_((isEdit?'slmEdit':'slmNew')+'Composers','作曲',credits.composers,false)+slmTextField_((isEdit?'slmEdit':'slmNew')+'Choreographers','振付',credits.choreographers,false)+'</div></section>'+(isEdit?'':'<div class="management-actions slm-actions"><button class="ui-btn" type="button" onclick="slmPrevNewStep()">戻る</button><button class="ui-btn" type="button" onclick="nextSlmNewCredits()">次へ</button></div>');}
-  function slmLyricsInputHtml_(){if(songLyricsManagementState.includeLyrics===false)return '<div class="management-actions"><button class="ui-btn" onclick="slmPrevNewStep()">入力を訂正する</button></div><section class="ui-panel management-card"><p class="ui-muted slm-note">歌詞は後から追加できます。</p><button class="ui-btn" type="button" onclick="saveSlmNewSong()">楽曲を登録</button></section>';return '<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">歌詞入力</h3><p class="ui-muted slm-note">Singer名の行と歌詞本文を、そのまま貼り付けてください。解析したSingerはメインとして保存されます。</p><label class="ui-field management-field slm-field"><span>歌詞</span><textarea id="slmRawLyrics" placeholder="SOTA\n歌詞...">'+escapeSlm(songLyricsManagementState.rawLyrics)+'</textarea></label></section><div class="management-actions slm-actions"><button class="ui-btn" type="button" onclick="slmPrevNewStep()">戻る</button><button class="ui-btn" type="button" onclick="parseSlmNewLyrics()">解析する</button></div>';}
-  function slmPreviewHtml_(){const p=songLyricsManagementState.preview;return '<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">解析結果確認</h3><p class="ui-muted slm-note">'+escapeSlm(slmArtistLabel_(songLyricsManagementState.newSong.artist))+' / '+escapeSlm(songLyricsManagementState.newSong.title)+' / '+p.parts.length+' PARTS</p><div class="slm-preview-list">'+p.parts.map(function(part,index){return '<article class="ui-panel slm-preview-part"><div><strong class="ui-label">PART '+(index+1)+'</strong><span class="ui-name">'+escapeSlm(part.singers.map(function(s){return s.name;}).join(' / '))+'</span></div><p class="ui-text">'+escapeSlm(part.lyrics)+'</p></article>';}).join('')+'</div></section><div class="management-actions slm-actions"><button class="ui-btn" type="button" onclick="editSlmRawAgain()">入力へ戻る</button><button class="ui-btn" type="button" onclick="saveSlmNewSong()">登録する</button></div>';}
+  function slmNewSongHtml_(){const s=songLyricsManagementState.newSong;return '<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">楽曲情報</h3><div class="slm-grid">'+slmSelectField_('slmNewArtist','アーティスト',songLyricsManagementState.bootstrap.artists,s.artist,'選択してください')+slmTextField_('slmNewTitle','曲名',s.title,true)+slmDateField_('slmNewRelease','リリース日',s.releaseDate)+slmSelectField_('slmNewForm','形態',songLyricsManagementState.bootstrap.forms,s.form,'未設定')+slmTextField_('slmNewCd','CDタイトル',s.cdTitle,false)+slmSongOptionsHtml_()+'<label class="ui-field management-field slm-field"><span>表題曲</span><span class="slm-toggle"><input id="slmNewTitleTrack" type="checkbox" '+(s.isTitleTrack?'checked':'')+'> 表題曲</span></label></div></section><div class="management-actions slm-actions"><button class="ui-btn" type="button" onclick="slmBackHome()">戻る</button><button class="ui-btn ui-btn-solid" type="button" onclick="nextSlmNewSong()">次へ</button></div>';}
+  function slmCreditsHtml_(credits,isEdit){return '<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">クレジット</h3><div class="slm-grid">'+slmTextField_((isEdit?'slmEdit':'slmNew')+'Lyricists','作詞',credits.lyricists,false)+slmTextField_((isEdit?'slmEdit':'slmNew')+'Composers','作曲',credits.composers,false)+slmTextField_((isEdit?'slmEdit':'slmNew')+'Choreographers','振付',credits.choreographers,false)+'</div></section>'+(isEdit?'':'<div class="management-actions slm-actions"><button class="ui-btn" type="button" onclick="slmPrevNewStep()">戻る</button><button class="ui-btn ui-btn-solid" type="button" onclick="nextSlmNewCredits()">次へ</button></div>');}
+  function slmLyricsInputHtml_(){if(songLyricsManagementState.includeLyrics===false)return '<div class="management-actions"><button class="ui-btn" onclick="slmPrevNewStep()">入力を訂正する</button></div><section class="ui-panel management-card"><p class="ui-muted slm-note">歌詞は後から追加できます。</p><button class="ui-btn ui-btn-solid" type="button" onclick="saveSlmNewSong()">楽曲を登録</button></section>';return '<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">歌詞入力</h3><p class="ui-muted slm-note">Singer名の行と歌詞本文を、そのまま貼り付けてください。解析したSingerはメインとして保存されます。</p><label class="ui-field management-field slm-field"><span>歌詞</span><textarea id="slmRawLyrics" placeholder="SOTA\n歌詞...">'+escapeSlm(songLyricsManagementState.rawLyrics)+'</textarea></label></section><div class="management-actions slm-actions"><button class="ui-btn" type="button" onclick="slmPrevNewStep()">戻る</button><button class="ui-btn ui-btn-solid" type="button" onclick="parseSlmNewLyrics()">解析する</button></div>';}
+  function slmPreviewHtml_(){const p=songLyricsManagementState.preview;return '<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">解析結果確認</h3><p class="ui-muted slm-note">'+escapeSlm(slmArtistLabel_(songLyricsManagementState.newSong.artist))+' / '+escapeSlm(songLyricsManagementState.newSong.title)+' / '+p.parts.length+' PARTS</p><div class="slm-preview-list">'+p.parts.map(function(part,index){return '<article class="ui-panel slm-preview-part"><div><strong class="ui-label">PART '+(index+1)+'</strong><span class="ui-name">'+escapeSlm(part.singers.map(function(s){return s.name;}).join(' / '))+'</span></div><p class="ui-text">'+escapeSlm(part.lyrics)+'</p></article>';}).join('')+'</div></section><div class="management-actions slm-actions"><button class="ui-btn" type="button" onclick="editSlmRawAgain()">入力へ戻る</button><button class="ui-btn ui-btn-solid" type="button" onclick="saveSlmNewSong()">登録する</button></div>';}
   function bindSlmNewFields_(){['slmNewArtist','slmNewTitle','slmNewRelease','slmNewForm','slmNewCd','slmNewTitleTrack','slmNewLyricists','slmNewComposers','slmNewChoreographers','slmRawLyrics','slmIncludeLyrics'].forEach(function(id){const el=document.getElementById(id);if(!el)return;el.addEventListener('input',captureSlmNewFields_);el.addEventListener('change',captureSlmNewFields_);});}
   function captureSlmNewFields_(){const s=songLyricsManagementState.newSong,c=songLyricsManagementState.newCredits;const value=function(id){const e=document.getElementById(id);return e?e.value:'';};if(document.getElementById('slmNewArtist')){s.artist=value('slmNewArtist');s.title=value('slmNewTitle');s.releaseDate=value('slmNewRelease');s.form=value('slmNewForm');s.cdTitle=value('slmNewCd');s.isTitleTrack=!!document.getElementById('slmNewTitleTrack').checked;}if(document.getElementById('slmNewLyricists')){c.lyricists=value('slmNewLyricists');c.composers=value('slmNewComposers');c.choreographers=value('slmNewChoreographers');}if(document.getElementById('slmIncludeLyrics'))songLyricsManagementState.includeLyrics=document.getElementById('slmIncludeLyrics').checked;if(document.getElementById('slmRawLyrics'))songLyricsManagementState.rawLyrics=value('slmRawLyrics');}
   function nextSlmNewSong(){captureSlmNewFields_();if(!songLyricsManagementState.newSong.artist||!songLyricsManagementState.newSong.title){renderSlmInlineError_('ARTISTとTITLEは必須です。');return;}if(slmIsPersonal_(songLyricsManagementState.newSong.artist))songLyricsManagementState.includeLyrics=false;if(!slmIsBeFirst_(songLyricsManagementState.newSong.artist))songLyricsManagementState.newCredits={lyricists:'',composers:'',choreographers:''};songLyricsManagementState.newStep=slmIsBeFirst_(songLyricsManagementState.newSong.artist)?2:3;renderSlm();}
@@ -2991,10 +2921,10 @@
   function confirmSlmGuestRegistration(){if(songLyricsManagementState.busy)return;const name=songLyricsManagementState.unknownQueue[0];if(!name)return;setSlmBusy_(true);managementRunner_().withSuccessHandler(function(){setSlmBusy_(false);document.getElementById('slmGuestConfirm').classList.remove('open');songLyricsManagementState.unknownQueue.shift();if(songLyricsManagementState.unknownQueue.length)openNextSlmGuestConfirm_();else refreshSlmBootstrap_(function(){parseSlmNewLyrics();});}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).registerSongLyricsGuest({userId:getUniverseUserId(),name:name});}
   function saveSlmNewSong(){if(songLyricsManagementState.busy)return;if(songLyricsManagementState.includeLyrics!==false&&!songLyricsManagementState.preview)return;setSlmBusy_(true);managementRunner_().withSuccessHandler(function(result){setSlmBusy_(false);if(result&&result.duplicate){if(window.confirm('同じTITLE＋ARTISTの曲が登録済みです。\n既存曲の編集画面を開きますか？'))openSlmExistingSong_(result.songId);return;}if(!result||!result.ok){renderSlmInlineError_('登録できませんでした。');return;}const savedSongId=result.songId;managementMutationDone_();managementState.dirty=false;resetSlmNewState_();refreshSlmBootstrap_(function(){openSlmExistingSong_(savedSongId);if(typeof showToast==='function')showToast('楽曲を登録しました。');});}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));})[songLyricsManagementState.includeLyrics===false?'catalogManagementCreateSongDraft':'saveNewSongLyricsManagement']({includeLyrics:songLyricsManagementState.includeLyrics!==false,userId:getUniverseUserId(),song:songLyricsManagementState.newSong,credits:songLyricsManagementState.newCredits,rawLyrics:songLyricsManagementState.rawLyrics,ignoredGuestCandidates:songLyricsManagementState.ignoredGuestCandidates.slice()});}
 
-  function renderSlmExistingSelect(body){const artists=songLyricsManagementState.bootstrap.existingArtists||[];const songs=(songLyricsManagementState.bootstrap.songs||[]).filter(function(song){return !songLyricsManagementState.existingArtist||song.artist===songLyricsManagementState.existingArtist;});body.innerHTML='<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">既存曲を編集</h3><div class="slm-grid">'+slmSelectField_('slmExistingArtist','アーティスト',artists,songLyricsManagementState.existingArtist,'選択してください')+slmTextField_('slmSongSearch','曲名を検索','',false)+slmSongSelectField_('slmExistingSong','曲',songs,songLyricsManagementState.existingSongId)+'</div></section><div class="management-actions slm-actions"><span></span><button class="ui-btn" type="button" onclick="loadSlmExistingSong()">編集する</button></div>';const artist=document.getElementById('slmExistingArtist'),song=document.getElementById('slmExistingSong');artist.addEventListener('change',function(){songLyricsManagementState.existingArtist=artist.value;songLyricsManagementState.existingSongId='';renderSlm();});song.addEventListener('change',function(){songLyricsManagementState.existingSongId=song.value;});document.getElementById('slmSongSearch').addEventListener('input',function(event){const q=event.target.value.toLowerCase();song.innerHTML='<option value="">選択なし</option>'+songs.filter(function(x){return x.title.toLowerCase().includes(q);}).map(function(x){return '<option value="'+escapeSlm(x.songId)+'">'+escapeSlm(x.title+' / '+x.artist)+'</option>';}).join('');});}
+  function renderSlmExistingSelect(body){const artists=songLyricsManagementState.bootstrap.existingArtists||[];const songs=(songLyricsManagementState.bootstrap.songs||[]).filter(function(song){return !songLyricsManagementState.existingArtist||song.artist===songLyricsManagementState.existingArtist;});body.innerHTML='<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">既存曲を編集</h3><div class="slm-grid">'+slmSelectField_('slmExistingArtist','アーティスト',artists,songLyricsManagementState.existingArtist,'選択してください')+slmTextField_('slmSongSearch','曲名を検索','',false)+slmSongSelectField_('slmExistingSong','曲',songs,songLyricsManagementState.existingSongId)+'</div></section><div class="management-actions slm-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="loadSlmExistingSong()">編集する</button></div>';const artist=document.getElementById('slmExistingArtist'),song=document.getElementById('slmExistingSong');artist.addEventListener('change',function(){songLyricsManagementState.existingArtist=artist.value;songLyricsManagementState.existingSongId='';renderSlm();});song.addEventListener('change',function(){songLyricsManagementState.existingSongId=song.value;});document.getElementById('slmSongSearch').addEventListener('input',function(event){const q=event.target.value.toLowerCase();song.innerHTML='<option value="">選択なし</option>'+songs.filter(function(x){return x.title.toLowerCase().includes(q);}).map(function(x){return '<option value="'+escapeSlm(x.songId)+'">'+escapeSlm(x.title+' / '+x.artist)+'</option>';}).join('');});}
   function loadSlmExistingSong(){const id=document.getElementById('slmExistingSong').value;if(!id){renderSlmInlineError_('曲を選択してください。');return;}openSlmExistingSong_(id);}
   function openSlmExistingSong_(songId){songLyricsManagementState.existingSongId=String(songId);songLyricsManagementState.view='existingEdit';songLyricsManagementState.dirty={info:false,credits:false,lyrics:false};setSlmBusy_(true);managementRunner_().withSuccessHandler(function(data){setSlmBusy_(false);songLyricsManagementState.existing=data;renderSlm();}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).getSongLyricsManagementSong(getUniverseUserId(),String(songId));}
-  function renderSlmExistingEdit(body){if(!songLyricsManagementState.existing){body.innerHTML='<div class="ui-loading management-loading slm-loading">読み込み中…</div>';return;}const d=songLyricsManagementState.existing,s=d.song,c=d.credits,creditsSection=!s.personal&&slmIsBeFirst_(s.artistId||s.artist)?'<section class="ui-panel slm-edit-section">'+slmCreditsHtml_(c,true)+'<button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingCredits()">クレジットを保存</button></section>':'';body.innerHTML='<button class="ui-btn" onclick="backSlmExistingSelect()">曲の選択に戻る</button><p class="ui-muted slm-note">SongID '+escapeSlm(s.songId)+' / '+escapeSlm(s.artist)+'</p><section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">楽曲情報</h3><div class="slm-grid">'+slmDisabledField_('アーティスト',s.artist)+slmTextField_('slmEditTitle','曲名',s.title,true)+slmDateField_('slmEditRelease','リリース日',s.releaseDate)+slmSelectField_('slmEditForm','形態',songLyricsManagementState.bootstrap.forms,s.form,'未設定')+slmTextField_('slmEditCd','CDタイトル',s.cdTitle,false)+'<label class="ui-field management-field slm-field"><span>表題曲</span><span class="slm-toggle"><input id="slmEditTitleTrack" type="checkbox" '+(s.isTitleTrack?'checked':'')+'> 表題曲</span></label></div><button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingInfo()">楽曲情報を保存</button></section>'+creditsSection+(s.personal?'':'<section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">歌詞</h3><div id="slmEditParts" class="slm-parts"></div><button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingLyrics()">歌詞を保存</button></section>');body.insertAdjacentHTML('beforeend',slmCatalogSongControls_());renderSlmParts_();bindSlmEdit_();}
+  function renderSlmExistingEdit(body){if(!songLyricsManagementState.existing){body.innerHTML='<div class="ui-loading management-loading slm-loading">読み込み中…</div>';return;}const d=songLyricsManagementState.existing,s=d.song,c=d.credits,creditsSection=!s.personal&&slmIsBeFirst_(s.artistId||s.artist)?'<section class="ui-panel slm-edit-section">'+slmCreditsHtml_(c,true)+'<button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingCredits()">クレジットを保存</button></section>':'';body.innerHTML='<button class="ui-btn" onclick="backSlmExistingSelect()">曲の選択に戻る</button><p class="ui-muted slm-note">SongID '+escapeSlm(s.songId)+' / '+escapeSlm(s.artist)+'</p><section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">楽曲情報</h3><div class="slm-grid">'+slmDisabledField_('アーティスト',s.artist)+slmTextField_('slmEditTitle','曲名',s.title,true)+slmDateField_('slmEditRelease','リリース日',s.releaseDate)+slmSelectField_('slmEditForm','形態',songLyricsManagementState.bootstrap.forms,s.form,'未設定')+slmTextField_('slmEditCd','CDタイトル',s.cdTitle,false)+'<label class="ui-field management-field slm-field"><span>表題曲</span><span class="slm-toggle"><input id="slmEditTitleTrack" type="checkbox" '+(s.isTitleTrack?'checked':'')+'> 表題曲</span></label></div><button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingInfo()">楽曲情報を保存</button></section>'+creditsSection+(s.personal?'':'<section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">歌詞</h3><div id="slmEditParts" class="slm-parts"></div><button class="ui-btn ui-btn-solid slm-save-section" type="button" onclick="saveSlmExistingLyrics()">歌詞を保存</button></section>');body.insertAdjacentHTML('beforeend',slmCatalogSongControls_());renderSlmParts_();bindSlmEdit_();}
   function backSlmExistingSelect(){if(hasSlmDirty_()&&!window.confirm('保存していない変更があります。\n曲選択へ戻りますか？'))return;songLyricsManagementState.view='existingSelect';songLyricsManagementState.existing=null;songLyricsManagementState.dirty={info:false,credits:false,lyrics:false};renderSlm();}
   function bindSlmEdit_(){['slmEditTitle','slmEditRelease','slmEditForm','slmEditCd','slmEditTitleTrack'].forEach(function(id){const e=document.getElementById(id);if(e){e.addEventListener('input',function(){songLyricsManagementState.dirty.info=true;});e.addEventListener('change',function(){songLyricsManagementState.dirty.info=true;});}});['slmEditLyricists','slmEditComposers','slmEditChoreographers'].forEach(function(id){const e=document.getElementById(id);if(e){e.addEventListener('input',function(){songLyricsManagementState.dirty.credits=true;});e.addEventListener('change',function(){songLyricsManagementState.dirty.credits=true;});}});}
   function slmPartInsertButton_(index){return '<button class="ui-btn ui-btn-compact ui-btn-ghost slm-part-insert" type="button" onclick="addSlmPart('+index+')">＋ PART</button>';}
@@ -3071,7 +3001,7 @@
   .cm-busy{opacity:.65;pointer-events:none}
   .cm-forms .management-card{margin:0}
   .cm-message{margin:10px 0;padding:10px 12px}
-  .cm-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .cm-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}.cm-actions>*{width:100%}
   .cm-actions .ui-btn{min-height:44px}
   .cm-field input[type=color]{min-height:48px;padding:4px 8px}
   .cm-unit-list{margin:8px 0;padding-left:25px;line-height:1.9}
@@ -3207,7 +3137,7 @@
   function cmMemberActive_(m){return String(m.RecordStatus||'ACTIVE').toUpperCase()!=='ARCHIVED';}
   function cmProfileFieldsHtml_(){
     if(!cmState.profileFields){
-      return '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">プロフィール項目</h3>'+
+      return '<section class="ui-panel management-card"><h3 class="ui-heading cm-section">プロフィール項目</h3>'+
         '<p class="ui-muted cm-note">プロフィールの項目定義を読み込んでください。値の編集は既存の「プロフィール管理」で行います。</p>'+
         '<button class="ui-btn" type="button" onclick="cmLoadProfileFields_()">項目を再読み込み</button></section>';
     }
@@ -3219,7 +3149,7 @@
       options.map(function(o){return cmOption_(o.value,o.caption);}).join('');
     const active=fields.filter(function(f){return f.isActive;}).length;
     return '<div class="cm-forms"><section class="ui-panel management-card">'+
-      '<h3 class="ui-panel cm-section">新しいプロフィール項目を追加</h3>'+
+      '<h3 class="ui-heading cm-section">新しいプロフィール項目を追加</h3>'+
       cmField_('cmProfileFieldName','項目名',cmInput_('cmProfileFieldName','text','','例：好きな映画'))+
       cmField_('cmProfileFieldType','値の形式',cmSelect_('cmProfileFieldType',
         cmOption_('TEXT','文字列')+cmOption_('NUMBER','数値')+cmOption_('DATE','日付')))+
@@ -3227,9 +3157,9 @@
       '<label class="ui-field management-field cm-field"><span>複数入力</span><span>'+
         '<input id="cmProfileFieldMulti" type="checkbox"> 文字列を複数登録できるようにする</span></label>'+
       '<p class="ui-muted cm-note">ProfileIDは自動採番。既存メンバーの新項目は空欄のまま作成し、プロフィール編集画面から入力できます。</p>'+
-      '<div class="cm-actions"><button class="ui-btn" type="button" onclick="cmCreateProfileField_()">項目を追加</button></div>'+
+      '<div class="cm-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="cmCreateProfileField_()">項目を追加</button></div>'+
       '</section><section class="ui-panel management-card">'+
-      '<h3 class="ui-panel cm-section">既存項目の非表示・再表示</h3>'+
+      '<h3 class="ui-heading cm-section">既存項目の非表示・再表示</h3>'+
       '<p class="ui-muted cm-note">項目'+fields.length+'件（表示中 '+active+'件）。非表示にしてもプロフィール値、列、ProfileIDは消えません。</p>'+
       cmField_('cmProfileFieldTarget','項目','<select id="cmProfileFieldTarget" onchange="cmShowProfileField_()">'+opts+'</select>')+
       '<p id="cmProfileFieldInfo" class="ui-muted cm-note" role="status">項目を選択すると現在の設定を確認できます。</p>'+
@@ -3278,16 +3208,16 @@
 
   function cmGroupsHtml_(d){
     const g=d.groups.filter(cmGroupActive_);
-    return '<div class="cm-forms"><section class="ui-panel management-card"><h3 class="ui-panel cm-section">グループ・ユニットを追加</h3>'+
+    return '<div class="cm-forms"><section class="ui-panel management-card"><h3 class="ui-heading cm-section">グループ・ユニットを追加</h3>'+
       cmField_('cmGroupName','名称',cmInput_('cmGroupName','text','','グループ名'))+
       cmField_('cmGroupKind','種類',cmSelect_('cmGroupKind',cmOption_('GROUP','グループ')+cmOption_('UNIT','ユニット')))+
       cmField_('cmGroupColor','カラー',cmInput_('cmGroupColor','color','#777777'))+
-      '<div class="cm-actions"><button class="ui-btn" type="button" onclick="cmCreateGroup_()">登録</button></div></section>'+
-      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">既存グループの編集</h3>'+
+      '<div class="cm-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="cmCreateGroup_()">登録</button></div></section>'+
+      '<section class="ui-panel management-card"><h3 class="ui-heading cm-section">既存グループの編集</h3>'+
       cmField_('cmEditGroup','対象',cmSelect_('cmEditGroup',cmOptions_(g,'GroupID','GroupName')))+
       cmField_('cmEditGroupName','名称',cmInput_('cmEditGroupName','text',''))+
       cmField_('cmEditGroupColor','カラー',cmInput_('cmEditGroupColor','color','#777777'))+
-      '<div class="cm-actions"><button class="ui-btn" onclick="cmFillGroup_()" type="button">読込</button><button class="ui-btn" onclick="cmSaveGroup_()" type="button">保存</button></div><p class="ui-muted cm-note">曲などで使用中のグループ名は変更できません。カラーは更新可能です。同じカラーコードを持つ別のグループ・メンバーがいる場合は登録できません。</p></section></div>';
+      '<div class="cm-actions"><button class="ui-btn" onclick="cmFillGroup_()" type="button">読込</button><button class="ui-btn ui-btn-solid" onclick="cmSaveGroup_()" type="button">保存</button></div><p class="ui-muted cm-note">曲などで使用中のグループ名は変更できません。カラーは更新可能です。同じカラーコードを持つ別のグループ・メンバーがいる場合は登録できません。</p></section></div>';
   }
   /** Fast feedback only. BMSG-DB performs authoritative validation under lock. */
   function cmColorAvailable_(hex,kind,id){
@@ -3326,25 +3256,25 @@
   function cmMembersHtml_(d){
     const main=d.groups.filter(x=>cmGroupActive_(x)&&cmGroupKind_(x)==='GROUP');
     const members=d.members.filter(cmMemberActive_);
-    return '<div class="cm-forms"><section class="ui-panel management-card"><h3 class="ui-panel cm-section">メンバー追加</h3>'+
+    return '<div class="cm-forms"><section class="ui-panel management-card"><h3 class="ui-heading cm-section">メンバー追加</h3>'+
       cmField_('cmMemberName','表示名',cmInput_('cmMemberName','text','','名前'))+
       cmField_('cmMemberMain','主所属グループ',cmSelect_('cmMemberMain',cmOptions_(main,'GroupID','GroupName')))+
       cmField_('cmMemberColor','カラー',cmInput_('cmMemberColor','color','#777777'))+
       '<p class="ui-muted cm-note">カラーコードは既存グループ・ユニット・メンバーと重複できません。</p>'+
       '<p class="ui-muted cm-note">表示順は末尾に追加します。登録後に初期プロフィールを入力できます。並び順はメンバー情報の編集から変更できます。</p><div class="cm-actions"><button class="ui-btn" onclick="cmCreateMember_()" type="button">登録してプロフィールへ</button></div></section>'+
-      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">既存メンバーを編集</h3>'+
+      '<section class="ui-panel management-card"><h3 class="ui-heading cm-section">既存メンバーを編集</h3>'+
       cmField_('cmEditMember','対象',cmSelect_('cmEditMember',cmOptions_(members,'MemberID','DisplayName')))+
       cmField_('cmEditMemberName','名前',cmInput_('cmEditMemberName','text',''))+
       cmField_('cmEditMemberColor','カラー',cmInput_('cmEditMemberColor','color','#777777'))+
-      '<div class="cm-actions"><button class="ui-btn" onclick="cmFillMember_()" type="button">読込</button><button class="ui-btn" onclick="cmSaveMember_()" type="button">保存</button></div></section>'+
-      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">主所属・表示順の変更</h3>'+
+      '<div class="cm-actions"><button class="ui-btn" onclick="cmFillMember_()" type="button">読込</button><button class="ui-btn ui-btn-solid" onclick="cmSaveMember_()" type="button">保存</button></div></section>'+
+      '<section class="ui-panel management-card"><h3 class="ui-heading cm-section">主所属・表示順の変更</h3>'+
       cmField_('cmMaintenanceMember','メンバー',cmSelect_('cmMaintenanceMember',cmOptions_(members,'MemberID','DisplayName')))+
       cmField_('cmMaintenanceGroup','新しい主所属',cmSelect_('cmMaintenanceGroup',cmOptions_(main,'GroupID','GroupName')))+
       '<p class="ui-muted cm-note">MemberIDは変更しません。主所属の変更時は04_GroupMembersも同時に整合させます。表示順は同じ主所属グループ内の上下入替です。</p>'+
-      '<div class="cm-actions"><button class="ui-btn" type="button" onclick="cmChangePrimaryGroup_()">主所属を変更</button>'+
+      '<div class="cm-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="cmChangePrimaryGroup_()">主所属を変更</button>'+
       '<button class="ui-btn" type="button" onclick="cmMoveMember_(\'UP\')">上へ移動</button>'+
       '<button class="ui-btn" type="button" onclick="cmMoveMember_(\'DOWN\')">下へ移動</button></div></section>'+
-      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">メンバーを削除</h3>'+
+      '<section class="ui-panel management-card"><h3 class="ui-heading cm-section">メンバーを削除</h3>'+
       '<p class="ui-muted cm-note">プロフィールや歌詞、ゲーム等に参照が残る場合は削除を拒否。参照のないメンバーだけ、バックアップ確認後に完全削除できます。MemberIDは再利用しません。</p>'+
       cmField_('cmDeleteMember','削除対象',cmSelect_('cmDeleteMember',cmOptions_(members,'MemberID','DisplayName')))+
       '<div class="cm-actions"><button class="ui-btn ui-btn-danger cm-danger" type="button" onclick="cmDeleteMember_()">参照を確認して削除</button></div></section></div>';
@@ -3402,16 +3332,16 @@
     if(!units.some(function(g){return String(g.GroupID)===String(cmState.activeUnitId);}))
       cmState.activeUnitId=String(units[0].GroupID);
     return '<div class="cm-forms"><section class="ui-panel management-card">'+
-      '<h3 class="ui-panel cm-section">ユニットの所属を管理</h3>'+
+      '<h3 class="ui-heading cm-section">ユニットの所属を管理</h3>'+
       cmField_('cmUnitTarget','対象ユニット',
         '<select id="cmUnitTarget" onchange="cmRenderUnitRoster_()">'+
         cmOptions_(units,'GroupID','GroupName',cmState.activeUnitId)+'</select>')+
       '<div id="cmUnitRoster" aria-live="polite"></div></section>'+
-      '<section class="ui-panel management-card"><h3 class="ui-panel cm-section">メンバーを追加</h3>'+
+      '<section class="ui-panel management-card"><h3 class="ui-heading cm-section">メンバーを追加</h3>'+
       cmField_('cmUnitMember','追加するメンバー',
         cmSelect_('cmUnitMember',cmOptions_(members,'MemberID','DisplayName')))+
       '<p class="ui-muted cm-note">追加・除外・並べ替えは、選択中ユニットの所属情報だけを変更します。メンバーの主所属・他ユニットの所属は変わりません。</p>'+
-      '<div class="cm-actions"><button class="ui-btn" onclick="cmAddUnitMember_()" type="button">所属を追加</button></div></section></div>';
+      '<div class="cm-actions"><button class="ui-btn ui-btn-solid" onclick="cmAddUnitMember_()" type="button">所属を追加</button></div></section></div>';
   }
   function cmUnitRows_(){
     const d=cmState.bootstrap||{},groupId=cmValue_('cmUnitTarget');
@@ -8682,7 +8612,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
       else if(p.action==='prepare'){html='<section class="ui-panel management-card"><h3 class="ui-heading management-section-title">初期整備・移行</h3><p class="ui-muted management-lead">バックアップを作成し、管理用の列と監査ログを準備します。</p><p>'+cmEscape_(d.schema.ready?'管理用データ構造は準備済みです。':(d.schema.missing||[]).join(' / '))+'</p><button class="ui-btn" onclick="moPrepare_()">内容を確認して初期整備する</button></section>';}
       else if(p.action==='repair'){html='<section class="ui-panel management-card"><p class="ui-muted management-lead">不足プロフィール行・主所属行の補完を、変更計画の確認後に実行します。重複IDや参照不明のデータは自動削除しません。</p><button class="ui-btn" onclick="moPreviewRepair_()">修復計画を確認</button><div id="moRepairPlan"></div></section>';}
     }else if(!d.schema.ready){html='<p class="ui-text-danger management-error">管理用データの初期整備が必要です。</p><button class="ui-btn" onclick="managementGo_(\'maintenance\',\'prepare\')">初期整備へ</button>';}
-    else if(p.section==='songs'&&p.action==='guests')html='<section class="ui-panel management-card"><h3 class="ui-heading management-section-title">ゲストを追加</h3>'+cmField_('moNewGuest','ゲスト名',cmInput_('moNewGuest','text',''))+'<button class="ui-btn" onclick="moAddGuest_()">ゲストを登録</button></section>'+moSelectHtml_(d.guests,'GuestID','DisplayName')+'<div id="moEditor"></div>';
+    else if(p.section==='songs'&&p.action==='guests')html='<section class="ui-panel management-card"><h3 class="ui-heading management-section-title">ゲストを追加</h3>'+cmField_('moNewGuest','ゲスト名',cmInput_('moNewGuest','text',''))+'<button class="ui-btn ui-btn-solid" onclick="moAddGuest_()">ゲストを登録</button></section>'+moSelectHtml_(d.guests,'GuestID','DisplayName')+'<div id="moEditor"></div>';
     else if(p.section==='groups')html=moSelectHtml_(d.groups,'GroupID','GroupName')+'<div id="moEditor"></div>';
     else if(p.section==='members'&&p.action==='fields'){
       cmState.profileFields=d.fields;html='<div class="management-field-operations">'+cmProfileFieldsHtml_()+'</div><section class="ui-panel management-card"><h3 class="ui-heading management-section-title">項目名・分類・表示順を編集</h3>'+moSelectHtml_(d.fields,'profileId','label')+'<div id="moEditor"></div></section>';
@@ -8700,13 +8630,13 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     let row,html='';
     if(p.section==='songs'){
       row=d.guests.find(function(r){return String(r.GuestID)===next;});moState.revision=row.revision;
-      html=cmField_('moName','ゲスト名',cmInput_('moName','text',row.DisplayName))+'<button class="ui-btn" onclick="moSaveGuest_()">名前を保存</button>'+cmField_('moMergeGuest','統合先ゲスト',cmSelect_('moMergeGuest',cmOptions_(d.guests.filter(function(g){return String(g.GuestID)!==next;}),'GuestID','DisplayName')))+'<button class="ui-btn" onclick="moMergeGuest_()">歌詞の参照を統合</button>'+moDeleteButton_('guest');
+      html=cmField_('moName','ゲスト名',cmInput_('moName','text',row.DisplayName))+'<button class="ui-btn ui-btn-solid" onclick="moSaveGuest_()">名前を保存</button>'+cmField_('moMergeGuest','統合先ゲスト',cmSelect_('moMergeGuest',cmOptions_(d.guests.filter(function(g){return String(g.GuestID)!==next;}),'GuestID','DisplayName')))+'<button class="ui-btn" onclick="moMergeGuest_()">歌詞の参照を統合</button>'+moDeleteButton_('guest');
     }else if(p.section==='groups'){
       row=d.groups.find(function(r){return String(r.GroupID)===next;});moState.revision=row.revision;
-      html=cmField_('moName','名前',cmInput_('moName','text',row.GroupName))+'<p class="ui-muted management-lead">種別：'+(String(row.GroupID).startsWith('G')?'グループ':'ユニット')+'（登録後は変更できません）</p>'+cmField_('moColor','カラー',cmInput_('moColor','color',row.ColorHex))+cmField_('moOrder','表示順',cmInput_('moOrder','number',row.DisplayOrder))+'<p class="ui-muted management-lead">名前を変更すると、このグループをArtistに持つ曲も同時に更新します。IDは維持します。</p><button class="ui-btn" onclick="moSaveGroup_()">変更を保存</button>'+moDeleteButton_('group');
+      html=cmField_('moName','名前',cmInput_('moName','text',row.GroupName))+'<p class="ui-muted management-lead">種別：'+(String(row.GroupID).startsWith('G')?'グループ':'ユニット')+'（登録後は変更できません）</p>'+cmField_('moColor','カラー',cmInput_('moColor','color',row.ColorHex))+cmField_('moOrder','表示順',cmInput_('moOrder','number',row.DisplayOrder))+'<p class="ui-muted management-lead">名前を変更すると、このグループをArtistに持つ曲も同時に更新します。IDは維持します。</p><button class="ui-btn ui-btn-solid" onclick="moSaveGroup_()">変更を保存</button>'+moDeleteButton_('group');
     }else if(p.section==='members'){
       row=d.fields.find(function(r){return String(r.profileId)===next;});moState.revision=JSON.stringify(row);
-      html=cmField_('moName','項目名',cmInput_('moName','text',row.label))+cmField_('moDisplayGroup','分類',cmInput_('moDisplayGroup','text',row.displayGroup))+cmField_('moOrder','表示順',cmInput_('moOrder','number',row.displayOrder))+'<p class="ui-muted management-lead">既存値と項目ID・型は維持します。</p><button class="ui-btn" onclick="moSaveField_()">項目を保存</button>';
+      html=cmField_('moName','項目名',cmInput_('moName','text',row.label))+cmField_('moDisplayGroup','分類',cmInput_('moDisplayGroup','text',row.displayGroup))+cmField_('moOrder','表示順',cmInput_('moOrder','number',row.displayOrder))+'<p class="ui-muted management-lead">既存値と項目ID・型は維持します。</p><button class="ui-btn ui-btn-solid" onclick="moSaveField_()">項目を保存</button>';
     }else{
       row=d.images.find(function(r){return String(r.ImageID)===next;});moState.revision=row.revision;
       html='<label class="ui-field management-field"><span>プロフィールのメイン画像</span><span><input id="moMain" type="checkbox" '+(row.IsProfileMain===true||String(row.IsProfileMain)==='TRUE'?'checked':'')+'> この画像をメインにする</span></label><button class="ui-btn" onclick="moSaveImage_()">表示設定を保存</button>'+moDeleteButton_('image');
@@ -8759,7 +8689,9 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     ['slmGuestConfirm','imageReplaceOverlay'].forEach(function(id){const el=document.getElementById(id);if(el)el.classList.remove('open');});document.body.style.overflow='';
     managementState.epoch++;
   }
-  function renderManagementPage(){return '<section class="view management-page"><header class="category-header"><h1 class="ui-title">MANAGEMENT</h1><p class="ui-muted management-lead">管理ページ</p></header><div id="managementNavigation"></div><div id="managementContent" aria-live="polite"></div></section>';}
+  function renderManagementPage(){return '<section class="view management-page"><header class="ui-divider management-header"><button class="ui-back" type="button" data-page-back onclick="managementBack_()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><h1 class="ui-title">MANAGEMENT</h1></header><div id="managementNavigation"></div><div id="managementContent" aria-live="polite"></div></section>';}
+  // BACK は1段ずつ：操作 → 区分 → 管理トップ → ホーム
+  function managementBack_(){const p=managementState.params||{};if(p.action)return managementGo_(p.section);if(p.section)return managementGo_();navigateTo('home');}
   function openManagementPage(){closeSettings();navigateTo('manage');}
   function managementGo_(section,action){navigateToWithParams('manage',Object.assign({},section?{section:section}:{},action?{action:action}:{}));}
   function managementAllowed_(section,action){
@@ -8767,7 +8699,6 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(!access||!access.registered)return false;
     return !!MANAGEMENT_SECTIONS[section]&&(!action||!!MANAGEMENT_SECTIONS[section].actions[action]);
   }
-  function managementCard_(title,description,handler){return '<button class="ui-btn ui-card management-choice" type="button" onclick="'+handler+'"><span><strong class="ui-heading">'+cmEscape_(title)+'</strong>'+(description?'<small class="ui-muted">'+cmEscape_(description)+'</small>':'')+'</span><b class="ui-muted" aria-hidden="true">›</b></button>';}
   function initManagementPage(params){
     managementState.params={page:'manage'};
     if(params.section)managementState.params.section=params.section;
@@ -8791,17 +8722,15 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const p=managementState.params,section=MANAGEMENT_SECTIONS[p.section],action=section&&section.actions[p.action];
     const nav=document.getElementById('managementNavigation'),root=document.getElementById('managementContent');
     if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="ui-text-danger management-error">この操作は利用できません。</p>';nav.innerHTML='<button class="ui-btn" onclick="managementGo_()">管理トップに戻る</button>';return;}
-    const back=p.action?"managementGo_('"+p.section+"')":p.section?'managementGo_()':"navigateTo('home')";
-    const crumbs=section?'<nav class="ui-label management-breadcrumb" aria-label="管理ページの階層"><button class="ui-btn ui-btn-text" onclick="managementGo_()">管理ページ</button><span aria-hidden="true">›</span>'+(action?'<button class="ui-btn" onclick="managementGo_(\''+p.section+'\')">'+section.title+'</button>':'<span aria-current="page">'+section.title+'</span>')+'</nav>':'';
-    nav.innerHTML='<div class="management-local-navigation"><button class="ui-back" type="button" onclick="'+back+'"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>'+crumbs+'</div>';
+    nav.innerHTML=section?'<nav class="ui-label management-breadcrumb" aria-label="管理ページの階層"><button class="ui-btn ui-btn-text" onclick="managementGo_()">管理ページ</button><span aria-hidden="true">›</span>'+(action?'<button class="ui-btn ui-btn-text" onclick="managementGo_(\''+p.section+'\')">'+section.title+'</button>':'<span aria-current="page">'+section.title+'</span>')+'</nav>':'';
 
     if(!managementState.access.registered){root.innerHTML='<p class="ui-muted management-lead">利用ユーザーを選択してください。</p>';return;}
     if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="ui-text-danger management-error">この操作は利用できません。</p>';return;}
     if(!p.section){
-      root.innerHTML='<div id="managementSetupStatus"></div>' +'<div class="management-grid">'+Object.keys(MANAGEMENT_SECTIONS).filter(function(key){return key!=='maintenance'&&managementAllowed_(key);}).map(function(key){const s=MANAGEMENT_SECTIONS[key];return managementCard_(s.title,s.description,"managementGo_('"+key+"')");}).join('')+'</div>'+(managementAllowed_('maintenance')?'<section class="management-maintenance">'+managementCard_(MANAGEMENT_SECTIONS.maintenance.title,MANAGEMENT_SECTIONS.maintenance.description,"managementGo_('maintenance')")+'</section>':'');return;
+      root.innerHTML='<div id="managementSetupStatus"></div>'+renderUniverseIndexRows(Object.keys(MANAGEMENT_SECTIONS).filter(function(key){return managementAllowed_(key);}).map(function(key){const sec=MANAGEMENT_SECTIONS[key];return {title:sec.title,desc:sec.description,onclick:"managementGo_('"+key+"')"};}),'management-hub');return;
     }
-    if(!p.action){root.innerHTML='<h2 class="ui-heading management-section-title">'+section.title+'</h2><p class="ui-muted management-lead">'+section.description+'</p><div class="management-operation-list">'+Object.keys(section.actions).filter(function(key){return managementAllowed_(p.section,key);}).map(function(key){return managementCard_(section.actions[key][0],'',"managementGo_('"+p.section+"','"+key+"')");}).join('')+'</div>';return;}
-    root.innerHTML='<h2 class="ui-heading management-section-title">'+action[0]+'</h2><div id="managementEditorHost"></div>';
+    if(!p.action){root.innerHTML='<h2 class="ui-heading-lg management-section-title">'+section.title+'</h2><p class="ui-muted management-lead">'+section.description+'</p><div class="ui-list management-operation-list">'+Object.keys(section.actions).filter(function(key){return managementAllowed_(p.section,key);}).map(function(key){return '<button class="ui-row" type="button" onclick="managementGo_(\''+p.section+'\',\''+key+'\')"><span>'+cmEscape_(section.actions[key][0])+'</span></button>';}).join('')+'</div>';return;}
+    root.innerHTML='<h2 class="ui-heading-lg management-section-title">'+action[0]+'</h2><div id="managementEditorHost"></div>';
     const type=action[1];
     if(type==='operations'){document.getElementById('managementEditorHost').innerHTML='<div id="managementOperationsHost"></div>';moInit_();return;}
     const id={slm:'songLyricsManagementOverlay',catalog:'catalogManagementOverlay',profile:'profileManagementOverlay',image:'imageManagementOverlay'}[type];
