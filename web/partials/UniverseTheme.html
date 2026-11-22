@@ -856,7 +856,8 @@
   body.ui-v2 .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
   body.ui-v2 .ui-skeleton-row {
     display: block;
-    height: var(--ui-row-h);
+    height: 104px;
+    margin: 0 4px;
     border-bottom: 1px solid var(--ui-line);
     background: linear-gradient(100deg, var(--ui-bg) 30%, var(--ui-panel) 50%, var(--ui-bg) 70%) 0 0 / 220% 100%;
     animation: uiShimmer 1.4s linear infinite;
@@ -865,4 +866,28 @@
   body.ui-v2 .analysis-loading.ui-skeleton-list::before,
   body.ui-v2 .analysis-loading.ui-skeleton-list::after { display: none !important; }
   @media (prefers-reduced-motion: reduce) { body.ui-v2 .ui-skeleton-row { animation: none; } }
+
+  /* 曲名の一覧（分析のポップアップ）：行に余白、枠線の内側に収める */
+  body.ui-v2 .analysis-song-list {
+    border: 1px solid var(--ui-line);
+    border-radius: var(--ui-radius);
+    background: var(--ui-panel);
+    overflow: hidden;
+  }
+  body.ui-v2 .analysis-song-list > * {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    border: 0;
+    border-bottom: 1px solid var(--ui-line);
+    border-radius: 0;
+    background: transparent;
+    color: #fff;
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-body);
+    letter-spacing: var(--ui-ls-body);
+    text-align: left;
+  }
+  body.ui-v2 .analysis-song-list > *:last-child { border-bottom: 0; }
+  body.ui-v2 .analysis-song-list > *:hover { background: var(--ui-panel-2); }
 </style>
