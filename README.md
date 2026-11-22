@@ -45,6 +45,10 @@ node tests/browser/screens.mjs <出力先> data lab   # 実データで画面を
 - 新デザイン済み：データ、ラボ、左上のメニュー、通知。
 - `scripts/import-web-sources.mjs` は移行時に一度使ったもの。再実行すると `web/partials/` の変更が上書きされるので使わない。
 
+## デザインの指標
+
+画面の色・文字・ボタン・間隔は、必ず `docs/design/universe-design-system.md` に従う。数値の正本は `web/partials/UniverseTokens.html`（`--ui-*` 変数）。新しい画面を作るときは、トークンの変数だけを使い、直接の数値は書かない。
+
 ## 取り込みスクリプトについて
 
 `scripts/import-gas-sources.mjs` と `scripts/import-web-sources.mjs` は移行時に一度だけ使ったもの。再実行するとこのリポジトリでの変更が上書きされるため、`--force` を付けない限り動かない。
