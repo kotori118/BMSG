@@ -22,14 +22,14 @@
   }
   .management-lead{
     margin:4px 0 0;
-    color:rgba(255,255,255,.48);
+    color:var(--ui-text-sub);
     font:500 11px var(--font-body),var(--font-body),sans-serif;
   }
   .management-loading[hidden]{display:none!important}
 
   .management-field{display:grid;gap:7px;min-width:0}
   .management-field>span,.management-label{
-    color:rgba(255,255,255,.55);
+    color:var(--ui-text-sub);
     font:700 11px var(--font-body),var(--font-body),sans-serif;
   }
   .management-field input:not([type="checkbox"]):not([type="file"]),
@@ -39,54 +39,45 @@
     width:100%;max-width:100%;min-width:0;box-sizing:border-box;
     min-height:var(--mgmt-field-height);
     padding:0 14px;
-    border:1px solid rgba(156,236,255,.18);
+    border:1px solid var(--ui-line);
     border-radius:var(--mgmt-field-radius);
-    background:#0b0f16;color:var(--white);
+    background:var(--ui-bg);color:var(--ui-text);
     font:600 15px var(--font-body),var(--font-body),sans-serif;
     outline:none;
   }
   .management-field input[type="date"]{
-    width:100%!important;
-    max-width:100%!important;
-    min-width:0!important;
-    inline-size:100%!important;
-    max-inline-size:100%!important;
-    min-inline-size:0!important;
-    box-sizing:border-box!important;
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    inline-size:100%;
+    max-inline-size:100%;
+    min-inline-size:0;
+    box-sizing:border-box;
     -webkit-appearance:none;
     appearance:none;
   }
   .management-field textarea{padding:12px 14px;line-height:1.7;resize:vertical}
-  .management-field input:focus,.management-field select:focus,.management-field textarea:focus,.management-input:focus{border-color:rgba(156,236,255,.58)}
+  .management-field input:focus,.management-field select:focus,.management-field textarea:focus,.management-input:focus{border-color:var(--ui-line-strong)}
   .management-field input:disabled,.management-field select:disabled{opacity:.55}
 
   .management-card{
     display:grid;gap:var(--mgmt-gap);padding:16px;
-    border:1px solid rgba(156,236,255,.12);
+    border:1px solid var(--ui-line);
     border-radius:var(--mgmt-card-radius);
-    background:rgba(255,255,255,.018);
+    background:var(--ui-panel);
   }
   .management-section-title{
-    margin:0;color:var(--cyan);
+    margin:0;color:var(--ui-text);
     font:700 12px var(--font-body),var(--font-body),sans-serif;
     letter-spacing:.06em;
   }
   .management-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
   .management-error{
     margin:0;padding:11px 13px;
-    border:1px solid rgba(255,120,120,.28);
-    border-radius:12px;background:rgba(255,80,80,.07);
-    color:#ffb6b6;font:600 12px var(--font-body),var(--font-body),sans-serif;
+    border:1px solid var(--ui-line);
+    border-radius:var(--ui-radius);background:var(--ui-panel);
+    color:var(--ui-text);font:600 12px var(--font-body),var(--font-body),sans-serif;
   }
-
-  body.theme-light .management-lead,
-  body.theme-light .management-field>span,
-  body.theme-light .management-label{color:rgba(21,24,32,.55)}
-  body.theme-light .management-field input:not([type="checkbox"]):not([type="file"]),
-  body.theme-light .management-field select,
-  body.theme-light .management-field textarea,
-  body.theme-light .management-input{background:#fff;color:var(--ink);border-color:rgba(75,165,184,.25)}
-  body.theme-light .management-card{background:#fff;border-color:rgba(75,165,184,.18)}
 
   @media(max-width:520px){
     .management-panel{width:calc(100vw - 24px);padding:18px}
@@ -109,10 +100,10 @@
   .management-choice>span{display:grid;gap:8px;min-width:0}
   .management-choice strong{font-size:17px;line-height:1.5}
   .management-choice small{font-size:12px;line-height:1.7;opacity:.65;white-space:normal}
-  .management-choice b{color:var(--cyan);font-size:26px}
+  .management-choice b{color:var(--ui-text);font-size:26px}
   .management-maintenance{margin-top:32px}
   .management-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:0;font-size:12px;min-width:0;line-height:1.7}
-  .management-breadcrumb .u-btn{min-height:44px;max-width:100%;padding:6px 10px;font-size:12px;white-space:normal;overflow-wrap:anywhere;text-align:left}
+  .management-breadcrumb .ui-btn{min-height:44px;max-width:100%;padding:6px 10px;font-size:12px;white-space:normal;overflow-wrap:anywhere;text-align:left}
   .management-operation-list{display:grid;gap:12px;margin-top:20px}
   .management-editor[hidden],#managementSettingsGroup[hidden]{display:none!important}
   .management-page .management-editor-panel{box-sizing:border-box;min-width:0;width:100%;max-width:none;max-height:none;overflow:visible;padding:0;margin-top:20px}
@@ -126,14 +117,9 @@
   .management-page .management-section-title{font-size:16px;line-height:1.6}
   .management-page .management-field>span,.management-page .management-label{font-size:13px;line-height:1.6}
   .management-page .cm-busy{pointer-events:none}
-  body.theme-light .management-error{color:#9d3030}
-  body.theme-light .management-page .management-section-title,body.theme-light .management-page .management-choice b{color:var(--cyan-ink,#2f7382)}
-  @media(max-width:600px){.management-grid{grid-template-columns:1fr}.management-choice{padding:16px}.management-breadcrumb{gap:4px}.management-breadcrumb .u-btn{padding:8px}.management-actions{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}}
+  @media(max-width:600px){.management-grid{grid-template-columns:1fr}.management-choice{padding:16px}.management-breadcrumb{gap:4px}.management-breadcrumb .ui-btn{padding:8px}.management-actions{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}}
 </style>
 <style>
-  body.theme-light .management-page .slm-note,
-  body.theme-light .management-page .slm-step{color:var(--ink);opacity:.65}
-  body.theme-light .management-page .slm-step.is-active{color:var(--cyan-ink,#2f7382);opacity:1}
 </style>
 <style>
   .management-json{white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%;font-size:12px;line-height:1.7}

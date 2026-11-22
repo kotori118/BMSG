@@ -24,7 +24,7 @@
     if(!access||!access.registered)return false;
     return !!MANAGEMENT_SECTIONS[section]&&(!action||!!MANAGEMENT_SECTIONS[section].actions[action]);
   }
-  function managementCard_(title,description,handler){return '<button class="u-btn management-choice" type="button" onclick="'+handler+'"><span><strong>'+cmEscape_(title)+'</strong>'+(description?'<small>'+cmEscape_(description)+'</small>':'')+'</span><b aria-hidden="true">›</b></button>';}
+  function managementCard_(title,description,handler){return '<button class="ui-btn management-choice" type="button" onclick="'+handler+'"><span><strong>'+cmEscape_(title)+'</strong>'+(description?'<small>'+cmEscape_(description)+'</small>':'')+'</span><b aria-hidden="true">›</b></button>';}
   function initManagementPage(params){
     managementState.params={page:'manage'};
     if(params.section)managementState.params.section=params.section;
@@ -39,17 +39,17 @@
 
     managementRunner_().withSuccessHandler(function(access){
       if(!access||!access.initialSetupRequired)return;
-      status.innerHTML='<aside class="management-access-note management-card" role="status"><strong>初回のデータ準備が必要です</strong><p class="management-lead">バックアップを作成して、登録・編集に必要なデータを準備します。</p><button class="u-btn" onclick="managementGo_(\'maintenance\',\'prepare\')">初期整備を開く</button></aside>';
+      status.innerHTML='<aside class="management-access-note management-card" role="status"><strong>初回のデータ準備が必要です</strong><p class="management-lead">バックアップを作成して、登録・編集に必要なデータを準備します。</p><button class="ui-btn" onclick="managementGo_(\'maintenance\',\'prepare\')">初期整備を開く</button></aside>';
     }).withFailureHandler(function(error){
-      status.innerHTML='<p class="management-error">'+cmEscape_(error.message||error)+'</p><button class="u-btn" onclick="initManagementPage(managementState.params)">再読み込み</button>';
+      status.innerHTML='<p class="management-error">'+cmEscape_(error.message||error)+'</p><button class="ui-btn" onclick="initManagementPage(managementState.params)">再読み込み</button>';
     }).getManagementPageAccess(uid);
   }
   function renderManagementNavigation_(){
     const p=managementState.params,section=MANAGEMENT_SECTIONS[p.section],action=section&&section.actions[p.action];
     const nav=document.getElementById('managementNavigation'),root=document.getElementById('managementContent');
-    if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="management-error">この操作は利用できません。</p>';nav.innerHTML='<button class="u-btn" onclick="managementGo_()">管理トップに戻る</button>';return;}
+    if(p.section&&(!section||!managementAllowed_(p.section,p.action))||p.action&&!action){root.innerHTML='<p class="management-error">この操作は利用できません。</p>';nav.innerHTML='<button class="ui-btn" onclick="managementGo_()">管理トップに戻る</button>';return;}
     const back=p.action?"managementGo_('"+p.section+"')":p.section?'managementGo_()':"navigateTo('home')";
-    const crumbs=section?'<nav class="management-breadcrumb" aria-label="管理ページの階層"><button class="u-btn" onclick="managementGo_()">管理ページ</button><span aria-hidden="true">›</span>'+(action?'<button class="u-btn" onclick="managementGo_(\''+p.section+'\')">'+section.title+'</button>':'<span aria-current="page">'+section.title+'</span>')+'</nav>':'';
+    const crumbs=section?'<nav class="management-breadcrumb" aria-label="管理ページの階層"><button class="ui-btn" onclick="managementGo_()">管理ページ</button><span aria-hidden="true">›</span>'+(action?'<button class="ui-btn" onclick="managementGo_(\''+p.section+'\')">'+section.title+'</button>':'<span aria-current="page">'+section.title+'</span>')+'</nav>':'';
     nav.innerHTML='<div class="management-local-navigation"><button class="ui-back" type="button" onclick="'+back+'"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>'+crumbs+'</div>';
 
     if(!managementState.access.registered){root.innerHTML='<p class="management-lead">利用ユーザーを選択してください。</p>';return;}

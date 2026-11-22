@@ -24,11 +24,9 @@
       window.scrollTo({ top: 0, left: 0, behavior });
     }
 
-    // 'v2' is the new monochrome design (UniverseTheme.html). It builds on the dark base.
-    // 'v2' = monochrome dark (UniverseTheme). 'v2-light' = the same parts on a white background.
+    // 画面の色は2種類だけ：'v2'（黒基調）と 'v2-light'（白基調）。部品は同じで、色はトークンが切り替える。
     function setTheme(theme) {
-      document.body.classList.toggle('theme-light', theme === 'light');
-      document.body.classList.toggle('ui-v2', theme === 'v2' || theme === 'v2-light');
+      document.body.classList.add('ui-v2');
       document.body.classList.toggle('ui-light', theme === 'v2-light');
     }
 

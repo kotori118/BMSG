@@ -1,21 +1,10 @@
 <style>
-  /* Shared recovery authority for async states that would otherwise remain stuck on loading. */
-  .universe-recovery-state{
-    min-height:220px;
-    padding:28px 22px;
-    border:1px solid rgba(156,236,255,.16);
-    border-radius:20px;
-    display:grid;
-    place-items:center;
-    text-align:center;
-    background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(156,236,255,.025));
-  }
-  .universe-recovery-state-inner{max-width:520px;display:grid;justify-items:center;gap:12px}
-  .universe-recovery-state h2{margin:0;color:var(--cyan);font:700 18px var(--font-display),var(--font-body),sans-serif;letter-spacing:.12em}
-  .universe-recovery-state p{margin:0;color:rgba(238,248,252,.62);font:500 13px/1.8 var(--font-body),sans-serif}
-  .universe-recovery-retry{min-height:46px;margin-top:6px;padding:0 18px;border:1px solid rgba(156,236,255,.32);border-radius:14px;color:var(--cyan);background:rgba(156,236,255,.09);font:700 12px var(--font-body),sans-serif;cursor:pointer}
-  body.theme-light .universe-recovery-state{border-color:rgba(75,165,184,.18);background:linear-gradient(145deg,#fff,rgba(156,236,255,.055));box-shadow:inset 0 1px 0 rgba(255,255,255,.92)}
-  body.theme-light .universe-recovery-state p{color:rgba(21,24,32,.56)}
+  /* 読み込みに失敗したときの表示（共通） */
+  .universe-recovery-state { min-height: 220px; display: grid; place-items: center; padding: 28px 22px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); text-align: center; }
+  .universe-recovery-state-inner { max-width: 520px; display: grid; justify-items: center; gap: 12px; }
+  .universe-recovery-state h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 800; letter-spacing: .12em; }
+  .universe-recovery-state p { margin: 0; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.8; }
+  .universe-recovery-retry { min-height: var(--ui-button-h); margin-top: 6px; padding: 0 20px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); cursor: pointer; }
 </style>
 <script>
 (function(){

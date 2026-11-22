@@ -1,783 +1,47 @@
 <style>
   /* =========================================================
-     BMSG Universe 新デザイン（モノトーン）
-     - 画面ごとに ROUTES の theme を 'v2' にすると、その画面だけに当たる（body.ui-v2）。
-     - まだ切り替えていない画面は、これまでの見た目のまま動く。
-     - 色・形・文字はこのファイルの先頭で一か所に決める。
+     BMSG UNIVERSE 共通部品（全画面で同じものを使う）
+     - 色・書体・大きさは UniverseTokens.html のトークンだけ。
+     - 画面ごとのCSSは並べ方（grid・gap・幅）だけを書き、見た目はここの部品を使う。
+     - 画面のCSSで上書きしない。足りない見た目はここに部品として足す。
      ========================================================= */
 
-  /* ---- 全画面共通：左上のメニュー ---- */
-  .utility-actions .utility-menu { margin-right: 0; }
-  body.is-section-root .utility-menu,
-  body.ui-v2 .utility-menu,
-  .utility-menu:has(+ .utility-brand + .utility-home[hidden]) { margin-right: auto; }
-  .utility-brand { display: none; }
-
-  .app-menu { position: fixed; inset: 0; z-index: 150; }
-  .app-menu[hidden] { display: none; }
-  .app-menu-backdrop { position: absolute; inset: 0; background: rgba(0, 0, 0, .6); }
-  .app-menu-panel {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: min(360px, 88vw);
-    overflow-y: auto;
-    padding: max(18px, env(safe-area-inset-top)) 0 max(24px, env(safe-area-inset-bottom));
-    border-right: 1px solid rgba(255, 255, 255, .12);
-    background: #0d0d0d;
-    color: #fff;
-    font-family: "Noto Sans JP", var(--font-body), sans-serif;
-    animation: app-menu-in 220ms cubic-bezier(.22, .8, .28, 1);
-  }
-  @keyframes app-menu-in { from { transform: translateX(-28px); opacity: 0; } to { transform: none; opacity: 1; } }
-  @media (prefers-reduced-motion: reduce) { .app-menu-panel { animation: none; } }
-  .app-menu-panel .app-menu-close {
-    display: grid;
-    place-items: center;
-    width: 48px;
-    min-height: 48px;
-    margin: 0 10px 8px auto;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: #fff;
-    cursor: pointer;
-  }
-  .app-menu-close svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
-  .app-menu-group {
-    margin: 24px 22px 8px;
-    color: rgba(255, 255, 255, .45);
-    font-size: var(--ui-fs-label);
-    font-weight: 700;
-    letter-spacing: .2em;
-  }
-  .app-menu-panel button:not(.app-menu-close) {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    min-height: 54px;
-    padding: 0 44px 0 22px;
-    border: 0;
-    border-top: 1px solid rgba(255, 255, 255, .1);
-    background: none;
-    color: inherit;
+  /* ---- 素の要素：ボタン・入力欄の土台 ---- */
+  button {
+    -webkit-appearance: none;
+    appearance: none;
     font: inherit;
-    font-size: var(--ui-fs-body);
-    font-weight: 700;
-    letter-spacing: var(--ui-ls-body);
-    text-align: left;
+    color: inherit;
+    touch-action: manipulation;
     cursor: pointer;
+    transition: border-color var(--ui-fast) var(--ui-ease), background var(--ui-fast) var(--ui-ease), color var(--ui-fast) var(--ui-ease), transform var(--ui-fast) var(--ui-ease), opacity var(--ui-fast) var(--ui-ease);
   }
-  .app-menu-panel button:not(.app-menu-close)::after {
-    content: "";
-    position: absolute;
-    right: 22px;
-    width: 8px;
-    height: 8px;
-    border-top: 1.5px solid rgba(255, 255, 255, .6);
-    border-right: 1.5px solid rgba(255, 255, 255, .6);
-    transform: rotate(45deg);
-  }
-  .app-menu-panel button:not(.app-menu-close):hover,
-  .app-menu-panel button:not(.app-menu-close):focus-visible { background: #171717; outline: none; }
-  .app-menu-panel button[aria-current="page"] { background: #f2f2f2; color: #111; }
-  .app-menu-panel button[aria-current="page"]::after { border-color: #111; }
+  button:not(:disabled):active { transform: scale(.985); }
+  button:disabled { cursor: default; opacity: .45; }
+  :focus-visible { outline: 2px solid var(--ui-text); outline-offset: 2px; }
 
-  /* 白い画面（ui-light）のメニュー。色は同じ部品のまま、トークンで白に切り替える。 */
-  body.ui-light .app-menu-panel { background: var(--ui-bg); color: var(--ui-text); border-right-color: var(--ui-line); }
-  body.ui-light .app-menu-close { color: var(--ui-text); }
-  body.ui-light .app-menu-group { color: var(--ui-text-sub); }
-  body.ui-light .app-menu-panel button:not(.app-menu-close) { border-top-color: var(--ui-line); }
-  body.ui-light .app-menu-panel button:not(.app-menu-close)::after { border-color: var(--ui-text-sub); }
-  body.ui-light .app-menu-panel button:not(.app-menu-close):hover,
-  body.ui-light .app-menu-panel button:not(.app-menu-close):focus-visible { background: var(--ui-panel-2); }
-  body.ui-light .app-menu-panel button[aria-current="page"] { background: var(--ui-active-bg); color: var(--ui-active-text); }
-  body.ui-light .app-menu-panel button[aria-current="page"]::after { border-color: var(--ui-active-text); }
-
-  /* ---- 新デザインの基本 ---- */
-  body.ui-v2 {
-    --ui-bg: #0e0e0e;
-    --ui-panel: #181818;
-    --ui-panel-2: #1f1f1f;
-    --ui-line: rgba(255, 255, 255, .12);
-    --ui-line-strong: rgba(255, 255, 255, .42);
-    --ui-text: #fff;
-    --ui-text-sub: rgba(255, 255, 255, .56);
-    --ui-active-bg: #f2f2f2;
-    --ui-active-text: #111;
-    --ui-radius: 6px;
-    --ui-font: "Noto Sans JP", var(--font-body), "Hiragino Sans", sans-serif;
-    --ui-font-display: Inter, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;   /* 英字の大きな見出し */
-    color: var(--ui-text);
-    background: var(--ui-bg);
-  }
-  html:has(body.ui-v2) { background: var(--ui-bg); }
-  body.ui-v2 .app-shell {
-    background:
-      radial-gradient(120% 60% at 50% -10%, rgba(255, 255, 255, .06), transparent 60%),
-      var(--ui-bg);
-  }
-  body.ui-v2 .page-wrap { background: transparent; color: var(--ui-text); }
-
-  /* ---- 上のバー（メニュー・サイト名・検索） ---- */
-  body.ui-v2 .utility-actions {
-    align-items: center;
-    border-bottom: 1px solid var(--ui-line);
-    background: var(--ui-bar-bg);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-  }
-  body.ui-v2 .utility-brand {
-    display: block;
-    position: absolute;
-    left: 50%;
-    bottom: 24px;
-    transform: translateX(-50%);
-    color: #fff;
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-body);
-    font-weight: 900;
-    letter-spacing: .02em;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-  body.ui-v2 .utility-home,
-  body.ui-v2 .utility-settings { display: none !important; }
-  body.ui-v2 .app-shell .utility-actions .utility-btn {
-    width: 44px;
-    height: 44px;
-    border: 0;
-    border-radius: var(--ui-radius);
-    color: var(--ui-text);
-    background: transparent;
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  @media (hover: hover) {
-    body.ui-v2 .app-shell .utility-actions .utility-btn:not(:disabled):hover {
-      border: 0;
-      color: #fff;
-      background: #1c1c1c;
-      box-shadow: none;
-    }
-  }
-
-  /* ---- 下のメニュー（HOME・DATA・LAB）：選択中は白く塗る ---- */
-  body.ui-v2 .bottom-nav {
-    gap: 10px;
-    border-top: 1px solid var(--ui-line);
-    background: var(--ui-bar-bg);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-  }
-  body.ui-v2 .nav-btn {
-    border: 0;
-    border-radius: var(--ui-radius);
-    color: rgba(255, 255, 255, .62);
-    background: transparent;
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: .2em;
-  }
-  body.ui-v2 .nav-btn.active { color: var(--ui-active-text); background: var(--ui-active-bg); }
-  body.ui-v2 .nav-btn .nav-icon svg { stroke-width: 1.7; }
-
-  /* ---- データ・ラボ：見出し ---- */
-  body.ui-v2 .category-page { padding-top: 96px; }
-  body.ui-v2 .category-header {
-    margin-bottom: 22px;
-    padding-bottom: 22px;
-    border-bottom: 1px solid var(--ui-line);
-  }
-  body.ui-v2 .category-title {
-    display: grid;
-    gap: 10px;
-    margin: 0;
-    color: #fff;
-    text-transform: none;
-    letter-spacing: 0;
-    line-height: 1;
-  }
-  body.ui-v2 .category-title-en {
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-display);
-    font-weight: 900;
-    letter-spacing: -.045em;
-    line-height: .88;
-  }
-  body.ui-v2 .category-title-ja {
-    display: block;
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body-sm);
-    font-weight: 700;
-    letter-spacing: .22em;
-  }
-  .category-title-ja { display: none; }
-
-  /* ---- データ・ラボ：タイル（方眼の上にひし形の枠とアイコン） ---- */
-  body.ui-v2 .category-cards {
-    counter-reset: ui-tile;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-    border: 0;
-  }
-  body.ui-v2 .category-card {
-    position: relative;
-    min-height: 0;
-    padding: 0;
-    border: 1px solid var(--ui-line);
-    border-radius: var(--ui-radius);
-    overflow: hidden;
-    color: #fff;
-    background: var(--ui-panel);
-    box-shadow: none;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    transform: none;
-    text-align: left;
-    transition: border-color 180ms ease, transform 180ms ease;
-  }
-  body.ui-v2 .category-card::before,
-  body.ui-v2 .category-card::after { display: none; }
-  body.ui-v2 .category-card-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    width: 100%;
-    height: 100%;
-    gap: 0;
-  }
-  body.ui-v2 .category-card-symbol {
-    order: -1;
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1.45;
-    border: 0;
-    border-bottom: 1px solid var(--ui-line);
-    border-radius: 0;
-    color: #fff;
-    background:
-      linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px) 0 0 / 22px 22px,
-      linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px) 0 0 / 22px 22px,
-      var(--ui-panel-2);
-    -webkit-mask-image: none;
-  }
-  /* 方眼を中央に寄せて、周りはなじませる */
-  body.ui-v2 .category-card-symbol::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 50%, transparent 30%, var(--ui-panel) 92%);
-    pointer-events: none;
-  }
-  /* ひし形の枠 */
-  body.ui-v2 .category-card-symbol::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 1;
-    width: 36%;
-    aspect-ratio: 1;
-    border: 1px solid var(--ui-line-strong);
-    background: #121212;
-    transform: translate(-50%, -50%) rotate(45deg);
-    transition: border-color 180ms ease, background 180ms ease;
-  }
-  body.ui-v2 .category-card-symbol svg {
-    position: relative;
-    z-index: 2;
-    width: 27%;
-    height: auto;
-    aspect-ratio: 1;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.45;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, .18));
-  }
-  /* 2トーンのアイコン：薄い塗り（.s）とはっきりした塗り（.f） */
-  body.ui-v2 .category-card-symbol svg .s { fill: currentColor; fill-opacity: .16; stroke: none; }
-  body.ui-v2 .category-card-symbol svg .f { fill: currentColor; stroke: none; }
-  body.ui-v2 .category-card-symbol svg .b { fill: none; stroke: currentColor; stroke-width: .9; opacity: .55; }
-  body.ui-v2 .category-card { counter-increment: ui-tile; }
-  body.ui-v2 .category-card-meta {
-    display: grid;
-    gap: 6px;
-    padding: 14px 16px 20px;
-    text-align: left;
-  }
-  /* タイルの番号（01, 02 …） */
-  body.ui-v2 .category-card-meta::before {
-    content: counter(ui-tile, decimal-leading-zero);
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: .24em;
-  }
-  body.ui-v2 .category-card-name {
-    color: #fff;
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body);
-    font-weight: 700;
-    letter-spacing: .04em;
-    line-height: 1.4;
-    text-transform: none;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-    word-break: keep-all;      /* 改行は <wbr> の位置で */
-    overflow-wrap: normal;
-  }
-  body.ui-v2 .category-card-desc {
-    text-wrap: pretty;
-    display: block;
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body-sm);
-    font-weight: 500;
-    line-height: 1.65;
-  }
-  .category-card-desc { display: none; }
-  @media (hover: hover) {
-    body.ui-v2 .category-card:hover { border-color: var(--ui-line-strong); background: var(--ui-panel); }
-    body.ui-v2 .category-card:hover .category-card-symbol::before { border-color: #fff; background: #161616; }
-  }
-  body.ui-v2 .category-card:active { transform: scale(.985); background: var(--ui-panel); }
-  body.ui-v2 .category-card:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-
-  /* ---- ボタン（白い枠線の四角／白く塗った丸） ---- */
-  body.ui-v2 .ui-btn,
-  body.ui-v2 .universe-recovery-retry {
-    min-height: var(--ui-button-h);
-    padding: 0 24px;
-    border: 1px solid var(--ui-text);
-    border-radius: var(--ui-radius);
-    color: var(--ui-text);
-    background: transparent;
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body);
-    font-weight: 700;
-    letter-spacing: .16em;
-    cursor: pointer;
-  }
-
-  /* ---- 通知・読み込み・エラー ---- */
-  body.ui-v2 .universe-toast {
-    border: 0;
-    border-radius: var(--ui-radius);
-    color: #111;
-    background: #f2f2f2;
-    box-shadow: 0 14px 32px rgba(0, 0, 0, .55);
-    letter-spacing: .06em;
-  }
-  body.ui-v2 .universe-loading { color: var(--ui-text-sub); }
-  body.ui-v2 .universe-recovery-state {
-    border: 1px solid var(--ui-line);
-    border-radius: var(--ui-radius);
-    background: var(--ui-panel);
-  }
-  body.ui-v2 .universe-recovery-state h2 { color: #fff; font-family: var(--ui-font); letter-spacing: .12em; }
-
-  /* ---- ホーム（データ・ラボと同じ質感） ---- */
-  body.ui-v2 .home { padding-top: 96px; }
-  body.ui-v2 .home-title-wrap { width: 100%; margin: 0; }
-  body.ui-v2 .home-title {
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-display);
-    font-weight: 900;
-    letter-spacing: -.045em;
-    line-height: .88;
-    color: #fff;
-    text-shadow: none;
-  }
-  body.ui-v2 .home-title .line { display: block; }
-  body.ui-v2 .home-divider { display: none; }
-
-  body.ui-v2 .home-dynamic { margin-top: 22px; }
-  body.ui-v2 .home-today-grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
-
-  /* 今日の1曲・ラッキーメンバーは、タイルと同じ枠・面 */
-  body.ui-v2 .home-feature-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px 20px 22px;
-    border: 1px solid var(--ui-line);
-    border-radius: var(--ui-radius);
-    background: var(--ui-panel);
-    color: #fff;
-    box-shadow: none;
-    overflow: hidden;
-    text-align: left;
-  }
-  body.ui-v2 .home-feature-card:before,
-  body.ui-v2 .home-member-card:before,
-  body.ui-v2 .home-birthday-card:after { display: none; }
-  body.ui-v2 .home-feature-label {
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: .24em;
-    text-transform: uppercase;
-  }
-  body.ui-v2 .home-feature-card strong {
-    color: #fff;
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-title);
-    font-weight: 700;
-    letter-spacing: .02em;
-    line-height: 1.3;
-  }
-  body.ui-v2 .home-song-title {
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-title);
-    font-weight: 900;
-    letter-spacing: -.02em;
-    line-height: 1.05;
-    text-transform: uppercase;
-  }
-  body.ui-v2 .home-feature-card small {
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body-sm);
-    font-weight: 500;
-  }
-  body.ui-v2 .home-feature-card b {
-    align-self: flex-start;
-    margin-top: 4px;
-    padding: 9px 16px;
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-    color: #fff;
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: .2em;
-  }
-  body.ui-v2 .home-song-card:hover,
-  body.ui-v2 .home-member-card:not(.home-birthday-card):hover { border-color: var(--ui-line-strong); background: var(--ui-panel-2); }
-  body.ui-v2 .home-feature-card:active { transform: scale(.985); }
-  body.ui-v2 .home-birthday-card { gap: 12px; }
-  body.ui-v2 .home-birthday-copy strong { font-size: var(--ui-fs-heading); }
-  body.ui-v2 .home-birthday-member {
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-    background: transparent;
-    color: #fff;
-  }
-  body.ui-v2 .home-birthday-member span { color: #fff; font-family: var(--ui-font); font-weight: 700; }
-  body.ui-v2 .home-birthday-member b { color: var(--ui-text-sub); font-family: var(--ui-font-display); letter-spacing: .16em; }
-  body.ui-v2 .home-birthday-sparkle,
-  body.ui-v2 .sparkle-one { display: none; }
-  body.ui-v2 .home-state { border: 1px dashed var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-panel); }
-  body.ui-v2 .home-state button,
-  body.ui-v2 .universe-recovery-retry { border: 1px solid #fff; border-radius: var(--ui-radius); background: transparent; color: #fff; }
-  body.ui-v2 .home-skeleton-card { background: var(--ui-panel); }
-  /* 古いホームの絶対配置・装飾を打ち消す */
-  body.ui-v2 .home::before,
-  body.ui-v2 .home::after,
-  body.ui-v2 .home-title-wrap::before { display: none !important; content: none !important; }
-  body.ui-v2 .home-feature-card > * { position: static !important; top: auto !important; left: auto !important; right: auto !important; bottom: auto !important; }
-  body.ui-v2 .home-feature-card strong { font-size: var(--ui-fs-title) !important; text-shadow: none; }
-  body.ui-v2 .home-feature-label { order: -1; }
-  body.ui-v2 .home-song-title { font-size: var(--ui-fs-title) !important; }
-  body.ui-v2 .home-feature-card > .home-feature-label { position: static !important; }
-
-  /* ---- 画面を開いたときの動き（ホームと同じ：見出しが浮き上がり、タイルが順に出る） ---- */
-  @keyframes uiRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes uiRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-  body.ui-v2 .category-intro .category-title-en { opacity: 0; animation: uiRise 260ms var(--ease) 180ms forwards; }
-  body.ui-v2 .category-intro .category-header { position: relative; }
-  body.ui-v2 .category-intro .category-header::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
-    background: rgba(255, 255, 255, .55); transform-origin: left center; transform: scaleX(0);
-    animation: uiRule 420ms var(--ease) 340ms forwards;
-  }
-  body.ui-v2 .category-intro .category-card { opacity: 0; animation: uiRise 300ms var(--ease) forwards; }
-  body.ui-v2 .category-intro .category-card:nth-child(1) { animation-delay: 420ms; }
-  body.ui-v2 .category-intro .category-card:nth-child(2) { animation-delay: 500ms; }
-  body.ui-v2 .category-intro .category-card:nth-child(3) { animation-delay: 580ms; }
-  body.ui-v2 .category-intro .category-card:nth-child(4) { animation-delay: 660ms; }
-  body.ui-v2 .category-intro .category-card:nth-child(n+5) { animation-delay: 700ms; }
-  @media (prefers-reduced-motion: reduce) {
-    body.ui-v2 .category-intro .category-title-en,
-    body.ui-v2 .category-intro .category-header::after,
-    body.ui-v2 .category-intro .category-card { animation: none; opacity: 1; transform: none; }
-    body.ui-v2 .category-intro .category-header::after { transform: none; }
-  }
-
-
-  /* ---- 分析（中の画面）：見出し・タブ・カードを共通ルールに合わせる ---- */
-  body.ui-v2 .analysis-page { padding-top: 96px; }
-  body.ui-v2 .analysis-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--ui-line);
-  }
-  body.ui-v2 .analysis-title {
-    margin: 0;
-    color: #fff;
-    font-family: var(--ui-font-display);
-    font-size: clamp(34px, 9vw, 48px);
-    font-weight: 900;
-    letter-spacing: -.035em;
-    line-height: .95;
-    text-transform: uppercase;
-  }
-  body.ui-v2 .analysis-local-nav {
-    display: flex;
-    overflow-x: auto;
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-  }
-  body.ui-v2 .analysis-tab {
-    flex: 1 0 auto;
-    min-height: var(--ui-tab-h);
-    padding: 0 10px;
-    border: 0;
-    border-right: 1px solid var(--ui-line);
-    border-radius: 0;
-    background: transparent;
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body-sm);
-    font-weight: 700;
-    letter-spacing: 0;
-    white-space: nowrap;
-    cursor: pointer;
-  }
-  body.ui-v2 .analysis-tab:last-child { border-right: 0; }
-  body.ui-v2 .analysis-tab.active { color: var(--ui-active-text); background: var(--ui-active-bg); }
-  body.ui-v2 .analysis-card,
-  body.ui-v2 .analysis-menu-card,
-  body.ui-v2 .analysis-stat,
-  body.ui-v2 .analysis-table-wrap,
-  body.ui-v2 .analysis-song-list > *,
-  body.ui-v2 .analysis-lyrics {
-    border: 1px solid var(--ui-line);
-    border-radius: var(--ui-radius);
-    background: var(--ui-panel);
-    box-shadow: none;
-    color: var(--ui-text);
-  }
-  body.ui-v2 .analysis-card:hover,
-  body.ui-v2 .analysis-menu-card:hover { border-color: var(--ui-line-strong); background: var(--ui-panel-2); }
-  body.ui-v2 .analysis-menu-card { min-height: var(--ui-row-h); padding: 16px 18px; text-align: left; }
-  body.ui-v2 .analysis-menu-card,
-  body.ui-v2 .analysis-card { font-family: var(--ui-font); }
-  body.ui-v2 .analysis-muted { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
-  body.ui-v2 .analysis-section,
-  body.ui-v2 .analysis-subhead { color: #fff; font-family: var(--ui-font); letter-spacing: var(--ui-ls-heading); }
-  body.ui-v2 .analysis-stat-value { color: #fff; font-family: var(--ui-font-num); font-weight: 800; letter-spacing: -.01em; }
-  body.ui-v2 .analysis-stat-label { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
-
-
-
-  /* ---- 分析：見出し・戻る・タブ（統一ルール） ---- */
-  body.ui-v2 .analysis-header { justify-content: flex-start; align-items: center; gap: 16px; }
-  body.ui-v2 .analysis-title { text-align: left; }
-  body.ui-v2 .analysis-tab { flex: 1 1 0; min-width: 0; padding: 0 4px; font-size: var(--ui-fs-body-sm); letter-spacing: 0; }
-
-  /* ---- トップ（分析のハブ）：番号つきの大きな行 ---- */
-  body.ui-v2 .analysis-hub { display: grid; border-top: 1px solid var(--ui-line); }
-  body.ui-v2 .analysis-hub-row {
-    display: grid;
-    grid-template-columns: minmax(56px, auto) 1fr 16px;
-    align-items: center;
-    gap: 14px;
-    min-height: 104px;
-    padding: 18px 4px;
-    border: 0;
-    border-bottom: 1px solid var(--ui-line);
-    background: transparent;
-    color: #fff;
-    text-align: left;
-    cursor: pointer;
-    transition: background 180ms ease;
-  }
-  @media (hover: hover) { body.ui-v2 .analysis-hub-row:hover { background: var(--ui-panel); } }
-  body.ui-v2 .analysis-hub-row:active { background: var(--ui-panel-2); }
-  body.ui-v2 .analysis-hub-no {
-    font-family: var(--ui-font-display);
-    font-size: clamp(40px, 11vw, 56px);
-    font-weight: 900;
-    letter-spacing: -.04em;
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(255, 255, 255, .6);
-  }
-  body.ui-v2 .analysis-hub-copy strong {
-    display: block;
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-heading);
-    font-weight: 700;
-    letter-spacing: var(--ui-ls-heading);
-    line-height: 1.35;
-  }
-  body.ui-v2 .analysis-hub-copy small {
-    display: block;
-    margin-top: 6px;
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body-sm);
-    line-height: 1.5;
-  }
-  body.ui-v2 .analysis-hub-arrow {
-    justify-self: end;
-    width: 8px;
-    height: 8px;
-    border-top: 1.5px solid #fff;
-    border-right: 1.5px solid #fff;
-    transform: rotate(45deg);
-  }
-
-  /* ---- 読み込み中（スケルトン）：ホームと同じ面と流れ ---- */
-  @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
-  body.ui-v2 .analysis-loading {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 12px;
-    min-height: 0 !important;
-    padding: 0 !important;
-    background: none !important;
-    color: transparent !important;
-  }
-  body.ui-v2 .analysis-loading::before,
-  body.ui-v2 .analysis-loading::after,
-  body.ui-v2 .analysis-loading > .universe-loading { display: none !important; }
-  body.ui-v2 .ui-skeleton {
-    display: block;
-    height: 88px;
-    border: 1px solid var(--ui-line);
-    border-radius: var(--ui-radius);
-    background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100%;
-    animation: uiShimmer 1.4s linear infinite;
-  }
-  body.ui-v2 .home-skeleton-line { background: var(--ui-panel-2) !important; }
-  body.ui-v2 .home-skeleton-line:after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .06), transparent) !important; }
-  body.ui-v2 .home-skeleton-card,
-  body.ui-v2 .home-skeleton-list { background: var(--ui-panel) !important; }
-  @media (prefers-reduced-motion: reduce) { body.ui-v2 .ui-skeleton { animation: none; } }
-
-  /* ---- 後から開く窓（分析のポップアップ）：ボタンと同じ枠・面 ---- */
-  body.ui-v2 .analysis-modal { background: rgba(0, 0, 0, .72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
-  body.ui-v2 .analysis-modal-card {
-    width: min(100% - 32px, 560px);
-    max-height: 86dvh;
-    overflow: hidden;
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-    background: #111;
-    box-shadow: none;
-    color: #fff;
-  }
-  body.ui-v2 .analysis-modal-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 16px 16px 14px 20px;
-    border-bottom: 1px solid var(--ui-line);
-  }
-  body.ui-v2 .analysis-modal-head h2 {
-    margin: 0;
-    color: #fff;
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-heading);
-    font-weight: 700;
-    letter-spacing: var(--ui-ls-heading);
-  }
-  body.ui-v2 .analysis-modal-close {
-    flex: none;
-    min-height: var(--ui-button-h);
+  /* 画面の中のボタンは、何も指定がなければ共通の枠線ボタンになる（:where で優先度0） */
+  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(button):not(:where(.ui-back, .utility-btn, .nav-btn)) {
+    min-height: 40px;
     padding: 0 16px;
     border: 1px solid var(--ui-line-strong);
     border-radius: var(--ui-radius);
-    color: #fff;
     background: transparent;
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: var(--ui-ls-label);
-  }
-  body.ui-v2 .analysis-modal-body { padding: 16px 20px 20px; overflow-y: auto; max-height: calc(86dvh - 80px); }
-
-
-  /* ---- 分析の数字カード：ラベルの上に数字（ずれない） ---- */
-  body.ui-v2 .analysis-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 10px;
-    min-height: 96px;
-    padding: 16px 18px;
-  }
-  body.ui-v2 .analysis-stat-label {
-    display: block;
-    margin: 0;
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: var(--ui-ls-label);
-    line-height: 1.2;
-    text-transform: uppercase;
-    color: var(--ui-text-sub);
-  }
-  body.ui-v2 .analysis-stat-value {
-    display: block;
-    margin: 0;
-    font-family: var(--ui-font-num);
-    font-size: var(--ui-fs-title);
-    font-weight: 800;
-    letter-spacing: -.01em;
-    line-height: 1.1;
-    font-variant-numeric: tabular-nums;
-    color: #fff;
-  }
-
-  /* ---- ランキングの行：順位・名前・割合を一定の位置に ---- */
-  body.ui-v2 .analysis-rank-grid { grid-template-columns: 1fr; gap: 12px; }
-  body.ui-v2 .analysis-song-list,
-  body.ui-v2 .analysis-table-wrap { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); overflow: hidden; }
-  body.ui-v2 .analysis-table { width: 100%; border-collapse: collapse; font-family: var(--ui-font); }
-  body.ui-v2 .analysis-table th,
-  body.ui-v2 .analysis-table td {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--ui-line);
-    font-size: var(--ui-fs-body);
-    font-weight: 500;
+    color: var(--ui-text);
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-body-sm);
+    font-weight: 700;
     letter-spacing: var(--ui-ls-body);
-    text-align: left;
-    color: #fff;
   }
-  body.ui-v2 .analysis-table th { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; }
-  body.ui-v2 .analysis-table td.num,
-  body.ui-v2 .analysis-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  body.ui-v2 .analysis-table td:first-child { width: 40px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-weight: 800; }
+  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(button):where([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, .is-current) {
+    border-color: var(--ui-active-bg);
+    background: var(--ui-active-bg);
+    color: var(--ui-active-text);
+  }
 
-  /* ============ 共通部品（分析・ホーム・以後すべての画面で使う） ============ */
-  /* 入力欄 */
-  body.ui-v2 .ui-input,
-  body.ui-v2 input.ui-input {
+  /* 入力欄：.ui-input と、画面の中の素の入力欄は同じ見た目（:where で優先度0） */
+  .ui-input,
+  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="file"], [type="color"]), select, textarea) {
     display: block;
     width: 100%;
     min-height: var(--ui-button-h);
@@ -790,19 +54,23 @@
     font-size: var(--ui-fs-body);
     letter-spacing: var(--ui-ls-body);
     outline: none;
-    appearance: none;
     -webkit-appearance: none;
+    appearance: none;
   }
-  body.ui-v2 .ui-input::placeholder { color: var(--ui-text-sub); }
-  body.ui-v2 .ui-input:focus { border-color: var(--ui-text); background: var(--ui-field-focus); outline: none; }
-  body.ui-v2 select.ui-input {
-    background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
+  :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(textarea) { min-height: 120px; padding: 12px 16px; line-height: 1.7; resize: vertical; }
+  .ui-input::placeholder, :where(input, textarea)::placeholder { color: var(--ui-text-sub); }
+  .ui-input:focus, :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(input, select, textarea):focus { border-color: var(--ui-text); background: var(--ui-field-focus); outline: none; }
+  select.ui-input, :where(.page-content, .modal-overlay, .screen-overlay, [class*="-overlay"], [class*="-sheet"], [class*="-dialog"]) :where(select) {
+    padding-right: 40px;
+    background-image: linear-gradient(45deg, transparent 50%, var(--ui-text) 50%), linear-gradient(135deg, var(--ui-text) 50%, transparent 50%);
     background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
     background-size: 6px 6px, 6px 6px;
     background-repeat: no-repeat;
   }
-  /* ボタン：枠の白いボタン（高さ48px・英字の大文字） */
-  body.ui-v2 .ui-btn {
+  input[type="checkbox"], input[type="radio"], input[type="range"] { accent-color: var(--ui-text); }
+
+  /* ---- ボタン ---- */
+  .ui-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -818,19 +86,117 @@
     font-weight: 800;
     letter-spacing: var(--ui-ls-label);
     text-transform: uppercase;
-    cursor: pointer;
-    transition: background 160ms ease, border-color 160ms ease;
+    text-decoration: none;
   }
-  @media (hover: hover) { body.ui-v2 .ui-btn:hover { border-color: var(--ui-text); background: var(--ui-panel); } }
-  body.ui-v2 .ui-btn:active { background: var(--ui-panel-2); }
-  body.ui-v2 .ui-btn:disabled { opacity: .4; cursor: not-allowed; }
-  body.ui-v2 .ui-btn-icon { width: var(--ui-button-h); padding: 0; font-size: 14px; letter-spacing: 0; }
-  body.ui-v2 .ui-btn.ui-btn-wide,
-  body.ui-v2 .analysis-more-btn.ui-btn { width: 100%; margin-top: 12px; }
-  body.ui-v2 .analysis-more-btn.ui-btn { font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 700; letter-spacing: var(--ui-ls-body); text-transform: none; }
-  /* 読み込み中：一覧と同じ行の形（4行） */
-  body.ui-v2 .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
-  body.ui-v2 .ui-skeleton-row {
+  @media (hover: hover) { .ui-btn:not(:disabled):hover { border-color: var(--ui-text); background: var(--ui-panel); } }
+  .ui-btn:not(:disabled):active { background: var(--ui-panel-2); }
+  .ui-btn:disabled { opacity: .4; cursor: not-allowed; }
+  .ui-btn svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  /* 主な操作は塗りつぶし。押した状態（ON・選択中）も同じ塗り */
+  .ui-btn.ui-btn-solid,
+  .ui-btn[aria-pressed="true"],
+  .ui-btn.is-active,
+  .ui-btn.is-selected { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
+  @media (hover: hover) { .ui-btn.ui-btn-solid:not(:disabled):hover, .ui-btn[aria-pressed="true"]:hover { border-color: var(--ui-active-bg); background: var(--ui-active-bg); opacity: .88; } }
+  .ui-btn.ui-btn-wide { width: 100%; }
+  .ui-btn.ui-btn-compact { min-height: 40px; padding: 0 16px; }
+  .ui-btn.ui-btn-icon { width: var(--ui-button-h); padding: 0; letter-spacing: 0; }
+  .ui-btn.ui-btn-text { min-height: 36px; padding: 0 2px; border: 0; background: none; text-decoration: underline; text-underline-offset: 4px; }
+  .ui-btn.ui-btn-danger { border-color: var(--ui-danger); color: var(--ui-danger); }
+
+  /* ---- 戻るボタン：枠なし。矢印（線）と BACK、下に細い線 ---- */
+  .ui-back {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    height: var(--ui-button-h);
+    min-height: var(--ui-button-h);
+    padding: 0 4px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--ui-text);
+    font-family: var(--ui-font-display);
+    font-size: var(--ui-fs-label);
+    font-weight: 800;
+    letter-spacing: var(--ui-ls-label);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .ui-back::after { content: ""; position: absolute; left: 4px; right: 4px; bottom: 10px; height: 1px; background: var(--ui-line-strong); transition: background .2s ease; }
+  .ui-back svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ui-back .ui-back-label { letter-spacing: .18em; }
+  .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; justify-content: center; }
+  .ui-back.ui-back-icon::after, .ui-back.ui-back-icon > span { display: none; }
+  @media (hover: hover) { .ui-back:hover::after { background: var(--ui-text); } }
+
+  /* ---- 見出し・ラベル ---- */
+  .ui-title { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900; letter-spacing: -.035em; line-height: .95; text-transform: uppercase; }
+  .ui-heading { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-title); font-weight: 800; letter-spacing: var(--ui-ls-heading); line-height: 1.3; }
+  .ui-label { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .ui-muted { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+
+  /* ---- 面（カード）・一覧の行・空の表示 ---- */
+  .ui-panel { padding: var(--ui-pad); border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); }
+  .ui-list { display: grid; border-top: 1px solid var(--ui-line); }
+  .ui-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    min-height: var(--ui-row-h);
+    padding: 12px 32px 12px 4px;
+    border: 0;
+    border-bottom: 1px solid var(--ui-line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--ui-text);
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-body);
+    font-weight: 700;
+    text-align: left;
+  }
+  .ui-row::after { content: ""; position: absolute; right: 10px; top: 50%; width: 8px; height: 8px; border-top: 1.5px solid var(--ui-text-sub); border-right: 1.5px solid var(--ui-text-sub); transform: translateY(-50%) rotate(45deg); }
+  @media (hover: hover) { .ui-row:hover { background: var(--ui-panel); } }
+  .ui-empty { padding: 22px 16px; border: 1px dashed var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); text-align: center; }
+
+  /* ---- タブ（つながった枠。選択中は塗る） ---- */
+  .ui-tabs { display: flex; overflow-x: auto; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); }
+  .ui-tab {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: var(--ui-tab-h);
+    padding: 0 6px;
+    border: 0;
+    border-right: 1px solid var(--ui-line);
+    border-radius: 0;
+    background: transparent;
+    color: var(--ui-text-sub);
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-body-sm);
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .ui-tab:last-child { border-right: 0; }
+  .ui-tab.active, .ui-tab.is-active, .ui-tab[aria-selected="true"] { background: var(--ui-active-bg); color: var(--ui-active-text); }
+
+  /* ---- 読み込み中（スケルトン） ---- */
+  @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+  .ui-skeleton {
+    display: block;
+    height: 88px;
+    border: 1px solid var(--ui-line);
+    border-radius: var(--ui-radius);
+    background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100%;
+    animation: uiShimmer 1.4s linear infinite;
+  }
+  .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
+  .ui-skeleton-row {
     display: block;
     height: 104px;
     margin: 0 4px;
@@ -838,66 +204,17 @@
     background: linear-gradient(100deg, var(--ui-bg) 30%, var(--ui-panel) 50%, var(--ui-bg) 70%) 0 0 / 220% 100%;
     animation: uiShimmer 1.4s linear infinite;
   }
-  body.ui-v2 .analysis-loading.ui-skeleton-list { display: grid !important; grid-template-columns: 1fr !important; gap: 0 !important; min-height: 0 !important; padding: 0 !important; border-top: 1px solid var(--ui-line) !important; background: none !important; }
-  body.ui-v2 .analysis-loading.ui-skeleton-list::before,
-  body.ui-v2 .analysis-loading.ui-skeleton-list::after { display: none !important; }
-  @media (prefers-reduced-motion: reduce) { body.ui-v2 .ui-skeleton-row { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-skeleton-row { animation: none; } }
 
-  /* 曲名の一覧（分析のポップアップ）：行に余白、枠線の内側に収める */
-  body.ui-v2 .analysis-song-list {
-    border: 1px solid var(--ui-line);
-    border-radius: var(--ui-radius);
-    background: var(--ui-panel);
-    overflow: hidden;
-  }
-  body.ui-v2 .analysis-song-list > * {
-    display: block;
-    width: 100%;
-    padding: 14px 18px;
-    border: 0;
-    border-bottom: 1px solid var(--ui-line);
-    border-radius: 0;
-    background: transparent;
-    color: #fff;
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body);
-    letter-spacing: var(--ui-ls-body);
-    text-align: left;
-  }
-  body.ui-v2 .analysis-song-list > *:last-child { border-bottom: 0; }
-  body.ui-v2 .analysis-song-list > *:hover { background: var(--ui-panel-2); }
-  @media (prefers-reduced-motion: reduce) { }
+  /* ---- 上に出る窓（画面の中から開くもの共通） ---- */
+  .ui-modal { position: fixed; inset: 0; z-index: 1300; display: flex; align-items: center; justify-content: center; padding: 16px; background: var(--ui-scrim); }
+  .ui-modal[hidden] { display: none; }
+  .ui-modal-card { width: min(100%, 560px); max-height: 86dvh; overflow: auto; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-bg); color: var(--ui-text); }
+  .ui-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 14px 20px; border-bottom: 1px solid var(--ui-line); }
+  .ui-modal-head h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
+  .ui-modal-body { padding: 16px 20px 20px; }
 
-  /* ============ 共通の戻るボタン（全画面で同じ部品）============ */
-  /* 枠なし。矢印（線）と BACK の文字、下に細い線。アイコンだけの版は矢印のみ */
-  .ui-back {
-    position: relative;
-    display: inline-flex; align-items: center; gap: 8px; flex: none;
-    height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 4px;
-    border: 0; border-radius: 0; background: transparent; color: var(--ui-text); cursor: pointer;
-    font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap;
-  }
-  .ui-back::after {
-    content: ""; position: absolute; left: 4px; right: 4px; bottom: 10px; height: 1px; background: var(--ui-line-strong);
-    transition: background .2s ease;
-  }
-  .ui-back .ui-back-chevron,
-  .ui-back svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-  .ui-back .ui-back-label { letter-spacing: .18em; }
-  /* アイコンだけ：枠なし、下線なし */
-  .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; justify-content: center; }
-  .ui-back.ui-back-icon::after { display: none; }
-  .ui-back.ui-back-icon > span { display: none; }
-  @media (hover: hover) { .ui-back:hover::after { background: var(--ui-text); } }
-
-  /* 共通の小さいボタン（変更・もう一度など） */
-  body.ui-v2 .ui-btn-compact { min-height: 40px; padding: 0 16px; font-size: var(--ui-fs-label); }
-
-  /* 共通の見出し（画面名）・ボタンの線アイコン・白背景対応 */
-  .ui-title { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900; letter-spacing: -.035em; line-height: .95; text-transform: uppercase; }
-  .ui-btn svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-  .ui-btn { color: var(--ui-text); border-color: var(--ui-line-strong); }
-  .ui-btn-solid { color: var(--ui-active-text); background: var(--ui-active-bg); border-color: var(--ui-active-bg); }
-  .ui-input { color: var(--ui-text); }
-  .ui-input::placeholder { color: var(--ui-text-sub); }
+  /* ---- 画面を開いたときの動き ---- */
+  @keyframes uiRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes uiRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 </style>

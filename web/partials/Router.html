@@ -4,7 +4,7 @@
     if(typeof resetUniverseCrossLinks==='function')resetUniverseCrossLinks();
     if(currentRoute==='metrics'&&route!=='metrics'&&typeof cleanupPerformanceTimerPage==='function')cleanupPerformanceTimerPage();
     const meta = ROUTES[route]; currentRoute = route; setPageAtmosphere(route);
-    if (!meta) { setTheme('dark'); setActiveNav(null); pageContent.innerHTML=render404(route); document.title='404 | BMSG UNIVERSE'; scrollAppToTop('smooth'); return; }
+    if (!meta) { setTheme('v2'); setActiveNav(null); pageContent.innerHTML=render404(route); document.title='404 | BMSG UNIVERSE'; scrollAppToTop('smooth'); return; }
     setTheme(meta.theme); setActiveNav(meta.parent);
     if (route === 'home') {
       const playIntro=!homeIntroPlayed; pageContent.innerHTML=renderHome(); initHomePage();

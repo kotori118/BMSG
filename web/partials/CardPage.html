@@ -8,7 +8,7 @@
     </header>
     <div id="cardApp" class="card-app" aria-live="polite"></div>
     <div class="card-collection-entry">
-      <button type="button" class="u-btn card-collection-entry-btn" style="font-weight:700" onclick="openCardCollection()">COLLECTION</button>
+      <button type="button" class="ui-btn card-collection-entry-btn" style="font-weight:700" onclick="openCardCollection()">COLLECTION</button>
     </div>
   </section>
 
@@ -20,7 +20,7 @@
     <div class="card-reveal-burst" aria-hidden="true"></div>
     <div class="card-reveal-meteors" aria-hidden="true"></div>
     <div class="card-reveal-sparks" aria-hidden="true"></div>
-    <button type="button" class="u-btn card-reveal-back" onclick="closeCardReveal()" aria-label="戻る">‹</button>
+    <button type="button" class="ui-btn card-reveal-back" onclick="closeCardReveal()" aria-label="戻る">‹</button>
     <div class="card-reveal-stage">
       <div class="card-reveal-kicker" id="cardRevealKicker"></div>
       <div class="card-flip-wrap" id="cardFlipWrap">
@@ -41,7 +41,7 @@
         <div class="card-result-new" id="cardResultNew"></div>
       </div>
       <div class="card-result-actions" id="cardResultActions">
-        <button type="button" class="u-btn" onclick="drawTradingCardFromReveal()">もう一度引く</button>
+        <button type="button" class="ui-btn" onclick="drawTradingCardFromReveal()">もう一度引く</button>
       </div>
     </div>
   </div>
@@ -55,10 +55,10 @@
           <div id="cardCollectionProgress" class="card-collection-progress"></div>
           <div class="card-collection-meter" aria-hidden="true"><span id="cardCollectionMeterFill"></span></div>
         </div>
-        <button type="button" class="u-btn card-collection-close" onclick="closeCardCollection()" aria-label="コレクションを閉じる">×</button>
+        <button type="button" class="ui-btn card-collection-close" onclick="closeCardCollection()" aria-label="コレクションを閉じる">×</button>
       </div>
       <div id="cardCollectionBody" class="card-collection-body"></div>
-      <button id="cardResetCollectionBtn" type="button" class="u-btn card-reset-btn" onclick="resetCardCollection()" hidden>コレクションをリセット</button>
+      <button id="cardResetCollectionBtn" type="button" class="ui-btn card-reset-btn" onclick="resetCardCollection()" hidden>コレクションをリセット</button>
     </div>
   </div>
 </template>

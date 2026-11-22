@@ -2,9 +2,10 @@
   /* =========================================================
      BMSG UNIVERSE デザイントークン（数値の正本）
      仕様は docs/design/universe-design-system.md。値を変えるときは両方を直す。
+     色はここだけで決める。画面のCSSは var(--ui-*) だけを使う。
      ========================================================= */
   :root {
-    /* 色 */
+    /* 色（黒基調） */
     --ui-bg: #0e0e0e;
     --ui-panel: #181818;
     --ui-panel-2: #1f1f1f;
@@ -14,13 +15,16 @@
     --ui-text-sub: rgba(255, 255, 255, .56);
     --ui-active-bg: #f2f2f2;
     --ui-active-text: #111111;
-    --ui-danger: #c2410c;
+    --ui-danger: #e5484d;
+    --ui-scrim: rgba(0, 0, 0, .64);
+    --ui-bar-bg: rgba(14, 14, 14, .92);
+    --ui-field-bg: #1f1f1f;
+    --ui-field-focus: #262626;
 
     /* フォント */
-    --ui-font: Manrope, "Noto Sans JP", "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
-    --font-body: var(--ui-font);
-    --font-display: Inter, "Noto Sans JP", sans-serif;
+    --ui-font: "Noto Sans JP", Manrope, "Zen Kaku Gothic New", "Hiragino Sans", sans-serif;
     --ui-font-display: Inter, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
+    --ui-font-num: Inter, "Helvetica Neue", Arial, sans-serif;
 
     /* 文字の大きさ（6種類だけ） */
     --ui-fs-display: clamp(56px, 16vw, 96px);
@@ -37,19 +41,49 @@
     --ui-ls-label: .2em;
     --ui-ls-button: .16em;
 
-    /* 形・間隔 */
-    --ui-bar-bg: rgba(14, 14, 14, .92);
-    --ui-field-bg: #1f1f1f;
-    --ui-field-focus: #262626;
+    /* 形・間隔・動き */
     --ui-radius: 6px;
     --ui-button-h: 48px;
     --ui-row-h: 60px;
     --ui-tab-h: 46px;
     --ui-gap: 12px;
     --ui-pad: 16px;
+    --ui-page-max: 980px;
+    --ui-nav-h: 72px;
+    --ui-top-pad: 96px;
+    --ui-ease: cubic-bezier(.22, .8, .28, 1);
+    --ui-fast: 170ms;
   }
-  /* 白背景の画面（歌詞など）：同じ部品・同じ書体で、色だけ白基調 */
-  body.ui-v2.ui-light {
+
+  /* 旧名（スクリプトや未移行の記述が参照する名前）。値はすべて上のトークンに揃える。
+     body にも置くのは、白背景（body.ui-light）で色の値が切り替わるようにするため */
+  :root, body {
+    --font-body: var(--ui-font);
+    --font-display: var(--ui-font-display);
+    --ease: var(--ui-ease);
+    --fast: var(--ui-fast);
+    --normal: 260ms;
+    --nav-height: var(--ui-nav-h);
+    --page-max: var(--ui-page-max);
+    --white: var(--ui-text);
+    --ink: var(--ui-text);
+    --gray: var(--ui-text-sub);
+    --cyan: var(--ui-text);
+    --cyan-strong: var(--ui-text);
+    --cyan-ink: var(--ui-text);
+    --cyan-soft: var(--ui-panel);
+    --muted-dark: var(--ui-text-sub);
+    --muted-light: var(--ui-text-sub);
+    --dark-line: var(--ui-line);
+    --dark-line-strong: var(--ui-line-strong);
+    --dark-card: var(--ui-panel);
+    --dark-card-hover: var(--ui-panel-2);
+    --text-main: var(--ui-text);
+    --text-muted: var(--ui-text-sub);
+  }
+
+  /* 白背景の画面（歌詞・カラオケ）：同じ部品・同じ書体で、色だけ白基調 */
+  body.ui-light {
     --ui-bg: #ffffff;
     --ui-panel: #f5f6f8;
     --ui-panel-2: #eceef2;
@@ -59,6 +93,7 @@
     --ui-text-sub: rgba(17, 17, 17, .56);
     --ui-active-bg: #111111;
     --ui-active-text: #ffffff;
+    --ui-scrim: rgba(17, 17, 17, .42);
     --ui-bar-bg: rgba(255, 255, 255, .92);
     --ui-field-bg: #ffffff;
     --ui-field-focus: #ffffff;

@@ -1,148 +1,107 @@
 <style>
-.analysis-page{padding-bottom:40px}.analysis-header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:18px}.analysis-title{margin:0;font-family:var(--font-display),var(--font-body),sans-serif;font-size:clamp(32px,8vw,58px);letter-spacing:.08em}.analysis-copy{margin:8px 0 0;color:var(--text-muted,#9aa2ad);font-family:var(--font-body),var(--font-body),sans-serif}.analysis-local-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0 0 22px}.analysis-tab{min-height:44px;padding:8px 4px;border:1px solid rgba(156,236,255,.22);border-radius:13px;background:rgba(7,12,20,.7);color:var(--text-main,#fff);font-size:11px;font-weight:700;letter-spacing:.02em}.analysis-tab.active{border-color:rgba(156,236,255,.78);background:linear-gradient(180deg,rgba(156,236,255,.16),rgba(156,236,255,.04));box-shadow:inset 0 1px rgba(255,255,255,.08)}.analysis-panel{min-height:240px;min-width:0}.analysis-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.analysis-menu-card{min-height:116px;text-align:left;padding:18px;border-radius:18px}.analysis-menu-card strong{display:block;font-family:var(--font-body),var(--font-body),sans-serif;font-size:17px;letter-spacing:.03em}.analysis-menu-card span{display:block;margin-top:7px;color:var(--text-muted,#a5adb8);font-size:12px;line-height:1.55}.analysis-section{display:grid;gap:16px;min-width:0}.analysis-card{min-width:0;border:1px solid rgba(156,236,255,.18);border-radius:18px;background:linear-gradient(180deg,rgba(18,25,36,.92),rgba(8,13,21,.92));box-shadow:0 14px 36px rgba(0,0,0,.16);padding:16px}.analysis-card h2,.analysis-card h3{margin:0 0 12px;font-family:var(--font-body),sans-serif}.analysis-card h2{font-size:18px}.analysis-card h3{font-size:14px}.analysis-controls{display:flex;flex-wrap:wrap;gap:10px;min-width:0}.analysis-controls select,.analysis-controls input{min-height:44px;min-width:0;flex:1 1 180px;border:1px solid rgba(156,236,255,.28);border-radius:13px;background:rgba(255,255,255,.04);color:inherit;padding:0 12px;font:inherit}.analysis-search-wrap{display:flex;gap:8px;flex:1}.analysis-search-wrap input{width:100%}.analysis-chart{position:relative;width:100%;height:320px}.analysis-chart.tall{height:420px}.analysis-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analysis-stat{padding:14px;border:1px solid rgba(156,236,255,.14);border-radius:15px;background:rgba(255,255,255,.025)}.analysis-stat-label{font-size:11px;color:var(--text-muted,#a5adb8)}.analysis-stat-value{margin-top:5px;font-family:var(--font-body),var(--font-body),sans-serif;font-size:22px;font-weight:700}.analysis-rank-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.analysis-table-wrap{display:block;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}.analysis-table{width:100%;min-width:max-content;border-collapse:collapse;font-size:12px}.analysis-table th,.analysis-table td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}.analysis-table th{text-align:left;color:#c9d2dc;font-weight:700;white-space:nowrap}.analysis-table td.num,.analysis-table th.num{text-align:right}.analysis-muted{color:var(--text-muted,#9aa2ad);font-size:12px;line-height:1.65}.analysis-song-list{font-size:12px;line-height:1.8;color:#c6ced7}.analysis-pies{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.analysis-pie{height:300px;position:relative}.analysis-legend{display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:12px}.analysis-legend-item{display:flex;align-items:center;gap:6px;font-size:11px}.analysis-legend-dot{width:9px;height:9px;border-radius:50%}.analysis-lyrics{display:grid;gap:9px}.analysis-lyric{padding:12px 0;border-bottom:1px solid rgba(255,255,255,.08)}.analysis-lyric-member{font-size:11px;font-weight:700;margin-bottom:5px}.analysis-lyric-text{font-family:var(--font-body),sans-serif;font-size:14px;line-height:1.8;white-space:pre-wrap}.analysis-other-menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analysis-subhead{display:flex;align-items:center;gap:12px;min-width:0}.analysis-subhead h2{min-width:0;margin:0;font-size:clamp(24px,7vw,36px);line-height:1.2}.analysis-back{flex:0 0 46px!important;width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;padding:0!important;border-radius:15px!important;font-size:32px!important;line-height:1!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}.analysis-creator-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%;margin-bottom:10px}.analysis-creator-tabs .analysis-creator-tab{min-width:0;width:100%;padding-inline:8px}.analysis-creator-tab.active{border-color:rgba(156,236,255,.8)!important;background:rgba(156,236,255,.12)!important}.analysis-creator-tabs+.analysis-controls{width:100%}.analysis-creator-tabs+.analysis-controls select{width:100%;flex-basis:100%}.analysis-diff-plus{color:#9cecff}.analysis-diff-minus{color:#ffb6c9}.analysis-diff-zero{color:#9aa2ad}.analysis-modal{position:fixed;inset:0;z-index:70;background:rgba(0,0,0,.68);display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))}.analysis-modal[hidden]{display:none}.analysis-modal-card{width:min(720px,100%);max-height:min(78vh,720px);display:flex;flex-direction:column;background:#0a1019;border:1px solid rgba(156,236,255,.26);border-radius:22px;padding:18px;box-shadow:0 24px 70px rgba(0,0,0,.44)}.analysis-modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;flex:0 0 auto}.analysis-modal-head h2{margin:0;font-size:18px}.analysis-modal-body{overflow:auto;-webkit-overflow-scrolling:touch}.analysis-loading{padding:36px 0;display:flex;justify-content:center}.analysis-more-btn{width:100%;min-height:48px;margin-top:12px;border-radius:15px}.analysis-modal-close{min-width:88px;min-height:44px;padding:0 16px;border-radius:15px;flex:0 0 auto}.analysis-chart canvas{border-radius:14px}
-@media(max-width:680px){.analysis-local-nav{gap:4px}.analysis-tab{font-size:10px;padding-inline:2px}.analysis-menu,.analysis-other-menu,.analysis-rank-grid,.analysis-pies{grid-template-columns:1fr}.analysis-chart{height:280px}.analysis-chart.tall{height:350px}.analysis-pie{height:270px}.analysis-card{padding:14px}.analysis-stats{grid-template-columns:1fr 1fr}.analysis-modal{padding-left:18px;padding-right:18px}.analysis-modal-card{max-height:76vh;padding:16px}.analysis-table-wrap{margin-right:0}.analysis-subhead{gap:10px}.analysis-subhead h2{font-size:clamp(24px,7vw,32px)}}
-@media(prefers-reduced-motion:reduce){.analysis-tab,.analysis-menu-card{transition:none!important}}
+  /* 分析。並べ方だけをここに書き、色や書体はトークン。ボタン・入力欄・タブは共通部品。 */
+  .analysis-page { padding: var(--ui-top-pad) 0 40px; min-width: 0; }
+  .analysis-header { display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--ui-line); }
+  .analysis-title { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900; letter-spacing: -.035em; line-height: .95; text-align: left; text-transform: uppercase; }
+  .analysis-copy { margin: 8px 0 0; color: var(--ui-text-sub); }
 
-/* 2026-09-11: final ANALYSIS responsive authority absorbed from AnalysisResponsiveFixes. */
-.analysis-page,
-.analysis-panel,
-.analysis-section,
-.analysis-card,
-.analysis-rank-grid,
-.analysis-pies,
-.analysis-controls,
-#analysisCreatorBody,
-#analysisReleaseBody{
-  min-width:0;
-  max-width:100%;
-}
+  /* タブ：つながった枠。選択中は塗る */
+  .analysis-local-nav { display: flex; overflow-x: auto; margin: 0 0 22px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); }
+  .analysis-tab { flex: 1 1 0; min-width: 0; min-height: var(--ui-tab-h); padding: 0 4px; border: 0; border-right: 1px solid var(--ui-line); border-radius: 0; background: transparent; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; letter-spacing: 0; white-space: nowrap; }
+  .analysis-tab:last-child { border-right: 0; }
+  .analysis-tab.active { border-color: var(--ui-line); background: var(--ui-active-bg); color: var(--ui-active-text); }
 
-.analysis-section{
-  grid-template-columns:minmax(0,1fr);
-}
+  .analysis-panel, .analysis-section, .analysis-card, .analysis-rank-grid, .analysis-pies, .analysis-controls, #analysisCreatorBody, #analysisReleaseBody { min-width: 0; max-width: 100%; }
+  .analysis-panel { min-height: 240px; }
+  .analysis-section { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  #analysisCreatorBody, #analysisReleaseBody { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 
-.analysis-page{
-  padding-top:74px;
-}
+  /* 面（カード・数字・表・歌詞） */
+  .analysis-card, .analysis-menu-card, .analysis-stat, .analysis-table-wrap, .analysis-lyrics { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); }
+  .analysis-card { padding: 16px; overflow: hidden; }
+  .analysis-card h2, .analysis-card h3 { margin: 0 0 12px; }
+  .analysis-card h2 { font-size: var(--ui-fs-heading); }
+  .analysis-card h3 { font-size: var(--ui-fs-body-sm); }
+  .analysis-muted { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.65; }
 
-.analysis-card{
-  overflow:hidden;
-}
-.analysis-card > .analysis-table-wrap,
-.analysis-card .analysis-table-wrap{
-  display:block;
-  width:100%;
-  max-width:100%;
-  min-width:0;
-  overflow-x:auto;
-  overflow-y:hidden;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior-x:contain;
-}
-.analysis-table{
-  width:max-content;
-  min-width:100%;
-}
+  /* トップ（分析のハブ）：番号つきの大きな行 */
+  .analysis-hub { display: grid; border-top: 1px solid var(--ui-line); }
+  .analysis-hub-row { display: grid; grid-template-columns: minmax(56px, auto) 1fr 16px; align-items: center; gap: 14px; min-height: 104px; padding: 18px 4px; border: 0; border-bottom: 1px solid var(--ui-line); border-radius: 0; background: transparent; color: var(--ui-text); text-align: left; transition: background 180ms ease; }
+  @media (hover: hover) { .analysis-hub-row:hover { background: var(--ui-panel); } }
+  .analysis-hub-row:active { background: var(--ui-panel-2); }
+  .analysis-hub-no { font-family: var(--ui-font-display); font-size: clamp(40px, 11vw, 56px); font-weight: 900; letter-spacing: -.04em; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--ui-line-strong); }
+  .analysis-hub-copy strong { display: block; font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); line-height: 1.35; }
+  .analysis-hub-copy small { display: block; margin-top: 6px; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.5; }
+  .analysis-hub-arrow { justify-self: end; width: 8px; height: 8px; border-top: 1.5px solid var(--ui-text); border-right: 1.5px solid var(--ui-text); transform: rotate(45deg); }
 
-.analysis-creator-tabs{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  width:100%;
-  min-width:0;
-  gap:8px;
-}
-.analysis-creator-tab{
-  width:100%;
-  min-width:0;
-  white-space:nowrap;
-  padding-left:8px!important;
-  padding-right:8px!important;
-}
-.analysis-creator-tabs + .analysis-controls{
-  display:block;
-  width:100%;
-  margin-top:12px;
-}
-.analysis-creator-tabs + .analysis-controls select{
-  width:100%;
-  max-width:100%;
-}
+  /* メニュー（その他） */
+  .analysis-menu, .analysis-other-menu { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .analysis-menu-card { min-height: var(--ui-row-h); padding: 16px 18px; text-align: left; }
+  @media (hover: hover) { .analysis-menu-card:hover { border-color: var(--ui-line-strong); background: var(--ui-panel-2); } }
+  .analysis-menu-card strong { display: block; font-size: var(--ui-fs-body); }
+  .analysis-menu-card span { display: block; margin-top: 7px; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.55; }
 
-#analysisCreatorBody,
-#analysisReleaseBody{
-  display:grid;
-  grid-template-columns:minmax(0,1fr);
-  gap:16px;
-}
+  /* 絞り込み */
+  .analysis-controls { display: flex; flex-wrap: wrap; gap: 10px; }
+  .analysis-controls select, .analysis-controls input { flex: 1 1 180px; min-width: 0; }
+  .analysis-search-wrap { display: flex; flex: 1; gap: 8px; }
+  .analysis-creator-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: 100%; margin-bottom: 10px; }
+  .analysis-creator-tab { width: 100%; min-width: 0; white-space: nowrap; }
+  .analysis-creator-tabs + .analysis-controls { display: block; width: 100%; margin-top: 12px; }
 
-.analysis-subhead{
-  min-width:0;
-}
-.analysis-subhead h2{
-  min-width:0;
-  overflow-wrap:anywhere;
-}
-.analysis-back{
-  width:46px!important;
-  min-width:46px!important;
-  height:46px!important;
-  min-height:46px!important;
-  padding:0!important;
-  border-radius:14px!important;
-  display:inline-grid!important;
-  place-items:center!important;
-  font-size:31px!important;
-  line-height:1!important;
-}
+  /* グラフ */
+  .analysis-chart { position: relative; width: 100%; height: 300px; }
+  .analysis-chart.tall { height: 380px; }
+  .analysis-pies { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .analysis-pie { position: relative; height: 280px; }
+  .analysis-legend { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 12px; }
+  .analysis-legend-item { display: flex; align-items: center; gap: 6px; font-size: var(--ui-fs-label); }
+  .analysis-legend-dot { width: 9px; height: 9px; border-radius: 50%; }
 
-@media(max-width:680px){
-  .analysis-page{padding-top:70px}
-  .analysis-card{padding:14px}
-  .analysis-table th,.analysis-table td{white-space:nowrap}
-}
+  /* 数字カード：ラベルの上に数字 */
+  .analysis-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .analysis-stat { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 10px; min-height: 96px; padding: 16px 18px; text-align: left; }
+  .analysis-stat-label { display: block; margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1.2; text-transform: uppercase; }
+  .analysis-stat-value { display: block; margin: 0; color: var(--ui-text); font-family: var(--ui-font-num); font-size: var(--ui-fs-title); font-weight: 800; letter-spacing: -.01em; line-height: 1.1; font-variant-numeric: tabular-nums; }
 
-/* Loading keeps the real ANALYSIS menu-card frames; only their content is skeletal. */
-.analysis-loading{
-  position:relative!important;
-  display:grid!important;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
-  min-height:244px!important;
-  padding:0!important;
-  overflow:hidden;
-  background:none!important;
-  color:transparent!important;
-}
-.analysis-loading>.universe-loading{display:contents!important;visibility:visible!important}
-.analysis-loading>.universe-loading>.universe-spinner,
-.analysis-loading>.universe-loading>span,
-.analysis-loading>.universe-loading::before,
-.analysis-loading>.universe-loading::after{
-  box-sizing:border-box;
-  min-height:116px;
-  border:1px solid rgba(156,236,255,.18)!important;
-  border-radius:18px!important;
-  background:
-    linear-gradient(var(--u-skeleton-base),var(--u-skeleton-base)) 18px 20px/52% 16px no-repeat,
-    linear-gradient(var(--u-skeleton-line),var(--u-skeleton-line)) 18px 52px/76% 10px no-repeat,
-    linear-gradient(var(--u-skeleton-line),var(--u-skeleton-line)) 18px 72px/62% 10px no-repeat,
-    linear-gradient(180deg,rgba(18,25,36,.92),rgba(8,13,21,.92))!important;
-  animation:none!important;
-  box-shadow:0 14px 36px rgba(0,0,0,.16)!important;
-}
-.analysis-loading>.universe-loading>.universe-spinner{width:auto!important;height:auto!important}
-.analysis-loading>.universe-loading>span{display:block!important;font-size:0!important}
-.analysis-loading>.universe-loading::before,.analysis-loading>.universe-loading::after{content:"";display:block}
-.analysis-loading::before{display:none!important}
-.analysis-loading::after{
-  content:""!important;
-  position:absolute!important;
-  inset:0!important;
-  transform:translateX(-115%);
-  background:linear-gradient(90deg,transparent 12%,var(--u-skeleton-shine) 50%,transparent 88%)!important;
-  animation:universeSkeletonSweep 1.45s ease-in-out infinite!important;
-  pointer-events:none;
-}
-@media(max-width:680px){.analysis-loading{grid-template-columns:1fr;min-height:500px!important}}
-@media(prefers-reduced-motion:reduce){.analysis-loading::after{animation:none!important;display:none!important}}
+  /* ランキングの表 */
+  .analysis-rank-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+  .analysis-table-wrap { display: block; width: 100%; max-width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+  .analysis-table { width: max-content; min-width: 100%; border-collapse: collapse; }
+  .analysis-table th, .analysis-table td { padding: 12px 14px; border-bottom: 1px solid var(--ui-line); color: var(--ui-text); font-size: var(--ui-fs-body); font-weight: 500; text-align: left; vertical-align: top; white-space: nowrap; }
+  .analysis-table th { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; }
+  .analysis-table td.num, .analysis-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .analysis-table td:first-child { width: 40px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-weight: 800; }
+  .analysis-diff-plus, .analysis-diff-minus, .analysis-diff-zero { color: var(--ui-text); }
+  .analysis-diff-zero { color: var(--ui-text-sub); }
+
+  /* 曲名の一覧（ポップアップ） */
+  .analysis-song-list { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); overflow: hidden; }
+  .analysis-song-list > * { display: block; width: 100%; padding: 14px 18px; border: 0; border-bottom: 1px solid var(--ui-line); border-radius: 0; background: transparent; color: var(--ui-text); font-size: var(--ui-fs-body); text-align: left; }
+  .analysis-song-list > *:last-child { border-bottom: 0; }
+  @media (hover: hover) { .analysis-song-list > *:hover { background: var(--ui-panel-2); } }
+
+  /* 歌詞 */
+  .analysis-lyrics { display: grid; gap: 9px; padding: 0 16px; }
+  .analysis-lyric { padding: 12px 0; border-bottom: 1px solid var(--ui-line); }
+  .analysis-lyric-member { margin-bottom: 5px; font-size: var(--ui-fs-label); font-weight: 700; }
+  .analysis-lyric-text { font-size: var(--ui-fs-body); line-height: 1.8; white-space: pre-wrap; }
+
+  /* 見出し（戻る＋題） */
+  .analysis-subhead { display: flex; align-items: center; gap: 12px; min-width: 0; color: var(--ui-text); }
+  .analysis-subhead h2 { min-width: 0; margin: 0; font-size: var(--ui-fs-title); line-height: 1.2; overflow-wrap: anywhere; }
+  .analysis-more-btn { width: 100%; margin-top: 12px; }
+
+  /* ポップアップ */
+  .analysis-modal { position: fixed; inset: 0; z-index: 70; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); background: var(--ui-scrim); }
+  .analysis-modal[hidden] { display: none; }
+  .analysis-modal-card { display: flex; flex-direction: column; width: min(100%, 560px); max-height: 86dvh; overflow: hidden; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-bg); color: var(--ui-text); }
+  .analysis-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 14px 20px; border-bottom: 1px solid var(--ui-line); }
+  .analysis-modal-head h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
+  .analysis-modal-close { flex: none; }
+  .analysis-modal-body { padding: 16px 20px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+  /* 読み込み中：一覧と同じ行の形 */
+  .analysis-loading { display: grid; grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--ui-line); }
+  .analysis-loading > .universe-loading { display: none; }
 </style>
