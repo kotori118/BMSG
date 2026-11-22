@@ -1340,6 +1340,14 @@
   /* アイコンだけの戻るボタン：中の文字は出さない */
   body.ui-v2 .ui-back.ui-back-icon > span { display: none; }
   body.ui-v2 .profile-member-detail > .ui-back.ui-back-icon { margin-bottom: 16px; }
+  /* 相性の候補：写真 → 名前 の順。頭文字は出さない。高さは揃えない */
+  body.ui-v2 .profile-chemistry-member-grid { align-items: start; }
+  body.ui-v2 .profile-chemistry-member { align-self: start; align-content: start; gap: 8px; }
+  body.ui-v2 .profile-chemistry-member > img,
+  body.ui-v2 .profile-chemistry-member > .profile-chemistry-photo-empty { display: block; width: 100%; aspect-ratio: 1; border-radius: var(--ui-radius); object-fit: cover; background: var(--ui-panel); }
+  body.ui-v2 .profile-chemistry-member > i { display: none; }
+  body.ui-v2 .profile-chemistry-member > span { align-self: start; }
+  body.ui-v2 .profile-chemistry-member > b { align-self: start; }
 </style>
 
 <!-- LyricsStyles.html -->
@@ -7813,10 +7821,10 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
   function renderProfileChemistryImage(member) {
-    const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
+    // 頭文字は出さない。写真がなければ空の面だけ置く。
     return member.imageUrl
-      ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)"><i aria-hidden="true">${escapeHtml(initial)}</i>`
-      : `<i aria-hidden="true">${escapeHtml(initial)}</i>`;
+      ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">`
+      : '<span class="profile-chemistry-photo-empty" aria-hidden="true"></span>';
   }
 
   function renderProfileChemistryResult(memberA, memberB) {

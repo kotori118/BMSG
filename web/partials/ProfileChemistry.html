@@ -248,10 +248,10 @@
   }
 
   function renderProfileChemistryImage(member) {
-    const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
+    // 頭文字は出さない。写真がなければ空の面だけ置く。
     return member.imageUrl
-      ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)"><i aria-hidden="true">${escapeHtml(initial)}</i>`
-      : `<i aria-hidden="true">${escapeHtml(initial)}</i>`;
+      ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">`
+      : '<span class="profile-chemistry-photo-empty" aria-hidden="true"></span>';
   }
 
   function renderProfileChemistryResult(memberA, memberB) {
