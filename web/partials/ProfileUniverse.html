@@ -67,7 +67,7 @@
   .profile-members-state-title { margin: 0 0 6px; }
   /* 読み込み中：同じ形の面を流す（光なし） */
   .profile-member-skeleton,
-  .skeleton-block {
+  .ui-skeleton {
     display: block;
     animation: uiShimmer 1.4s linear infinite;
   }
@@ -76,7 +76,7 @@
   .profile-member-skeleton-copy { height: 10px; width: 40%; }
   .profile-member-skeleton-heading,
   .profile-member-skeleton-name { height: 16px; width: 70%; }
-  @media (prefers-reduced-motion: reduce) { .profile-member-skeleton, .skeleton-block { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .profile-member-skeleton, .ui-skeleton { animation: none; } }
   /* ---- 詳細（メンバーを開いた画面） ---- */
   .profile-member-detail { display: grid; gap: 16px; }
   .profile-detail-hero { display: grid; grid-template-columns: 120px 1fr; overflow: hidden; }

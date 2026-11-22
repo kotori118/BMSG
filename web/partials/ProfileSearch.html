@@ -33,9 +33,9 @@
     const panel = document.getElementById('profilePanel');
     if (!panel) return;
     panel.innerHTML = `<div class="ui-divider profile-search-head"><h2 class="ui-title ui-title-sm profile-search-title">SEARCH</h2><span class="ui-muted profile-search-result-count">—</span></div>
-      <div class="profile-search-bar"><div class="ui-search profile-search-box skeleton-block" style="min-height:var(--ui-button-h)"></div><div class="ui-btn ui-btn-compact profile-search-filter-toggle skeleton-block" style="min-width:96px"></div></div>
+      <div class="profile-search-bar"><div class="ui-search profile-search-box ui-skeleton" style="min-height:var(--ui-button-h)"></div><div class="ui-btn ui-btn-compact profile-search-filter-toggle ui-skeleton" style="min-width:96px"></div></div>
       <div class="profile-search-results-head"><h3 class="ui-label">RESULTS</h3><span class="ui-muted">—</span></div>
-      <div class="profile-search-result-list" role="status" aria-busy="true" aria-label="読み込み中">${Array.from({ length: 5 }, () => '<div class="ui-card profile-search-member profile-search-member-loading"><span class="ui-avatar profile-search-avatar skeleton-block"></span><span class="profile-search-member-copy"><span class="skeleton-block" style="height:12px;width:55%"></span><span class="skeleton-block" style="height:10px;width:30%"></span></span></div>').join('')}</div>`;
+      <div class="profile-search-result-list" role="status" aria-busy="true" aria-label="読み込み中">${Array.from({ length: 5 }, () => '<div class="ui-card profile-search-member profile-search-member-loading"><span class="ui-avatar profile-search-avatar ui-skeleton"></span><span class="profile-search-member-copy"><span class="ui-skeleton" style="height:12px;width:55%"></span><span class="ui-skeleton" style="height:10px;width:30%"></span></span></div>').join('')}</div>`;
   }
 
   function normalizeProfileSearchText(value) {

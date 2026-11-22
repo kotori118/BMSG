@@ -184,3 +184,13 @@
 | | `universe-toast` / `universe-recovery-state` | 通知／読み込みに失敗したとき |
 
 素のボタン（部品の名前がない `button`）も、画面の中では枠線のボタンになる。押した状態（`is-active` など）は塗り。
+
+## 17. 読み込み中（2種類だけ）
+| 場面 | 使うもの | 見た目 |
+| :- | :- | :- |
+| 中身の形が分かる（一覧・カード・見出し・写真） | `ui-skeleton`（本物と同じ部品と並べてつける。例：`ui-avatar ui-skeleton`）、一覧は `ui-skeleton-list` + `ui-skeleton-row` | 本物と同じ形の面がゆっくり光る |
+| 形が分からない短い待ち（保存中・準備中・設定の読み込み） | `renderUniverseLoading('〜中…')`（`ui-loading`） | 細い線のくるくると日本語の文（省略時は「読み込み中…」） |
+
+- 英語の「LOADING」は出さない。色は指定しない（くるくるは白黒）。
+- 文字だけの読み込み表示を置くときも `class="ui-loading"` をつける（くるくるが自動でつく）。
+- テスト（`tests/css-structure.test.mjs`）が、古いスケルトン・英語の LOADING・色つきの呼び出しを検査する。

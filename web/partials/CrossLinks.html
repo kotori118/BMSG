@@ -67,7 +67,7 @@
     if(!universeCrossLinksState.creditsOpen[id]){const old=detail.querySelector('.universe-profile-credits');if(old)old.remove();return;}
     if(universeCrossLinksState.credits[id]){renderUniverseProfileCredits_(detail,id);return;}
     let host=detail.querySelector('.universe-profile-credits');if(!host){host=document.createElement('section');host.className='ui-panel universe-profile-credits';const actions=detail.querySelector('.universe-profile-crosslinks');if(actions)actions.insertAdjacentElement('afterend',host);}
-    host.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...'):'<p class="ui-muted universe-crosslink-status">LOADING...</p>';
+    host.innerHTML=renderUniverseLoading();
     google.script.run.withSuccessHandler(function(response){
       if(!response||!response.ok){universeCrossLinksState.credits[id]={error:response&&response.error?response.error.message:'クレジット参加曲の読み込みに失敗しました。',songs:[]};}
       else universeCrossLinksState.credits[id]=response.data||{songs:[]};
@@ -78,7 +78,7 @@
   function renderUniverseProfileCredits_(detail,memberId){
     if(!detail)return;const id=String(memberId||''),data=universeCrossLinksState.credits[id];
     let host=detail.querySelector('.universe-profile-credits');if(!host){host=document.createElement('section');host.className='ui-panel universe-profile-credits';const actions=detail.querySelector('.universe-profile-crosslinks');if(actions)actions.insertAdjacentElement('afterend',host);}
-    if(!data){host.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...'):'<p class="ui-muted universe-crosslink-status">LOADING...</p>';return;}
+    if(!data){host.innerHTML=renderUniverseLoading();return;}
     host.innerHTML='';const heading=document.createElement('h3');heading.className='ui-heading';heading.textContent='CREATIVE CREDITS';host.appendChild(heading);
     if(data.error){const p=document.createElement('p');p.className='ui-muted universe-crosslink-status';p.textContent=data.error;host.appendChild(p);return;}
     const songs=Array.isArray(data.songs)?data.songs:[];if(!songs.length){const p=document.createElement('p');p.className='ui-muted universe-crosslink-status';p.textContent='該当するクレジット参加曲はありません。';host.appendChild(p);return;}

@@ -1,17 +1,12 @@
 <script>
-    function normalizeUniverseLoadingAccent(value) {
-      const color = String(value || '').trim();
-      return /^#[0-9a-f]{6}$/i.test(color) ? color : '#9cecff';
-    }
-
-    function renderUniverseLoading(label, accent) {
-      const safeAccent = normalizeUniverseLoadingAccent(accent);
-      const hasLabel = label !== false && label !== null;
-      // Screens still pass the old English label; show Japanese everywhere.
-      const raw = hasLabel ? String(label || '') : '';
-      const text = hasLabel ? (!raw || /^LOADING\.*$/i.test(raw) ? '読み込み中…' : raw) : '';
-      const safeLabel = typeof escapeHtml === 'function' ? escapeHtml(text) : text;
-      return '<div class="universe-loading" role="status" aria-live="polite" style="--loading-accent:' + safeAccent + '"><span class="universe-spinner" aria-hidden="true"></span>' + (hasLabel ? '<span>' + safeLabel + '</span>' : '') + '</div>';
+    // 読み込み中は2種類だけ（docs/design/universe-design-system.md 17章）。
+    //   形が分かる中身を待つ … 中身と同じ形の .ui-skeleton
+    //   形が分からない短い待ち … renderUniverseLoading()：細いくるくると日本語の文
+    // 色は指定できない。英語（LOADING…）を渡されても日本語で出す。
+    function renderUniverseLoading(label) {
+      const raw = typeof label === 'string' ? label.trim() : '';
+      const text = !raw || /^LOADING/i.test(raw) ? '読み込み中…' : raw;
+      return '<div class="ui-loading universe-loading" role="status" aria-live="polite"><span>' + escapeHtml(text) + '</span></div>';
     }
 
     function closeOnBackdrop(event, id) {

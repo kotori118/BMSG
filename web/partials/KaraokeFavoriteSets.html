@@ -136,7 +136,7 @@
       loadKaraokeFavoriteEditGroup(karaokeFavoriteState.editGroupId);
       return;
     }
-    if(body)body.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...'):'';
+    if(body)body.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading():'';
     preloadKaraokeFavoriteSettings(function(error,data){
       if(error){
         if(body)body.innerHTML='<div class="ui-empty karaoke-favorite-empty">読み込みに失敗しました</div>';

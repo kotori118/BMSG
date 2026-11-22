@@ -2,7 +2,7 @@
   const lyricsState={catalog:[],partsBySong:{},groupColors:{},group:'',unit:'',query:'',song:null,editing:null,editingIndex:-1,editDraft:null,editDirty:false,editSaving:false,singerOptions:[],initialParams:{},karaokeRoom:null,karaokeHistory:[],karaokeRoomReady:false,karaokeBusy:false,karaokeRoomRequestId:0};
   const LYRICS_GROUPS=['BE:FIRST','MAZZEL','STARGLOW','HANA','BMSG ALLSTARS'];
   const LYRICS_UNITS=['ALL','BMSG ALLSTARS','ShowMinorSavage','BMSG POSSE','BMSG EAST','BMSG WEST','BMSG SKY','BMSG GAIA','BMSG MARINE','BMSG STRIKERS','その他ユニット'];
-  function renderLyrics(){return document.getElementById('lyricsPageTemplate').innerHTML.replace('__LYRICS_LOADING__',renderUniverseLoading('LOADING...','#9cecff'));}
+  function renderLyrics(){return document.getElementById('lyricsPageTemplate').innerHTML.replace('__LYRICS_LOADING__',renderUniverseLoading());}
   function applyLyricsData(data){
     lyricsState.catalog=data.songs||[];
     if(Array.isArray(data.mainGroups)){LYRICS_GROUPS.splice(0,LYRICS_GROUPS.length,...data.mainGroups.filter(function(n){return n!=='BMSG ALLSTARS';}),'BMSG ALLSTARS');}
@@ -186,7 +186,7 @@
     if(lyricsState.editSaving)return;
     const list=ensureLyricsEditDraft_(),part=list[index];if(!part)return;lyricsState.editing=part;lyricsState.editingIndex=index;document.getElementById('lyricsTextInput').value=part.lyrics||'';const saveButton=document.getElementById('lyricsSaveButton');saveButton.disabled=false;saveButton.textContent='反映';document.getElementById('lyricsEditor').hidden=false;
     if(lyricsState.singerOptions.length){mountLyricsQuickSingerEditor_(part);return;}
-    const target=document.getElementById('lyricsSingerEditor');if(target)target.innerHTML='<div class="lyrics-editor-loading">LOADING...</div>';
+    const target=document.getElementById('lyricsSingerEditor');if(target)target.innerHTML=renderUniverseLoading();
     google.script.run.withSuccessHandler(function(options){lyricsState.singerOptions=options||[];if(lyricsState.editing===part)mountLyricsQuickSingerEditor_(part);}).withFailureHandler(function(error){showLyricsError(error);closeLyricsEditor();}).getLyricsSingerOptions();
   }
   function closeLyricsEditor(){document.getElementById('lyricsEditor').hidden=true;lyricsState.editing=null;lyricsState.editingIndex=-1;}

@@ -826,16 +826,18 @@
   @keyframes uiRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes universeSpinner { to { transform: rotate(360deg); } }
   @keyframes universeSkeletonSweep { to { transform: translateX(115%); } }
-  /* スケルトン：枠は本物のまま、中身だけ流れる面 */
-  .ui-skeleton { display: block; min-height: 16px; border-radius: var(--ui-radius); background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
+  /* 読み込み中は2種類だけ（17章）
+     1) スケルトン：中身と同じ形の面がゆっくり光る。形が分かるとき（一覧・カード・見出し）はこちら。
+        ui-skeleton を本物と同じ部品（ui-avatar・ui-card など）と並べてつけると、その形のまま光る。
+     2) くるくる：形が分からない短い待ち（保存中・準備中）。renderUniverseLoading() が出す ui-loading。 */
+  .ui-skeleton { display: block; min-height: 14px; border-radius: var(--ui-radius); color: transparent; background: linear-gradient(100deg, var(--ui-panel-2) 30%, var(--ui-line) 50%, var(--ui-panel-2) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
+  .ui-skeleton.ui-avatar { border-radius: 50%; }
   .ui-skeleton.ui-skeleton-card { min-height: 88px; border: 1px solid var(--ui-line); }
   .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
   .ui-skeleton-row { display: block; height: 104px; margin: 0 4px; border-bottom: 1px solid var(--ui-line); background: linear-gradient(100deg, var(--ui-bg) 30%, var(--ui-panel) 50%, var(--ui-bg) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
-  .skeleton-block { position: relative; overflow: hidden; background: var(--ui-panel-2); }
-  .skeleton-block::after { content: ""; position: absolute; inset: 0; transform: translateX(-110%); background: linear-gradient(90deg, transparent, var(--ui-line), transparent); animation: universeSkeletonSweep 1.35s ease-in-out infinite; }
-  /* くるくる（本当に待つときだけ） */
-  .ui-loading, .universe-loading { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-label); font-weight: 700; letter-spacing: .12em; }
-  .ui-loading:not(.universe-loading):not(.is-shared)::before, .universe-spinner { content: ""; box-sizing: border-box; width: 18px; height: 18px; flex: none; border: 2px solid var(--ui-line); border-top-color: var(--ui-text); border-right-color: var(--ui-text); border-radius: 50%; animation: universeSpinner .8s linear infinite; }
+  .ui-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 140px; padding: 24px 0; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 500; letter-spacing: .08em; text-align: center; }
+  .ui-loading[hidden] { display: none; }
+  .ui-loading::before { content: ""; width: 22px; height: 22px; border: 1.5px solid var(--ui-line); border-top-color: var(--ui-text); border-radius: 50%; animation: universeSpinner .9s linear infinite; }
   /* 通知（トースト）：塗りの帯 */
   .universe-toast { min-height: 52px; padding: 0 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--ui-radius); background: var(--ui-active-bg); color: var(--ui-active-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 700; letter-spacing: .06em; opacity: 0; transform: translateY(10px); animation: toast-in 190ms var(--ui-ease) forwards; }
   .universe-toast.toast-out { animation: toast-out 170ms var(--ui-ease) forwards; }
@@ -847,7 +849,7 @@
   .universe-recovery-state h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 800; letter-spacing: .12em; }
   .universe-recovery-state p { margin: 0; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.8; }
   .universe-recovery-retry { min-height: var(--ui-button-h); margin-top: 6px; padding: 0 20px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); cursor: pointer; }
-  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-skeleton-row, .skeleton-block::after, .ui-loading::before, .universe-spinner { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-skeleton-row, .ui-loading::before { animation: none; } }
 </style>
 
 <!-- HomeStyles.html -->
@@ -1032,7 +1034,7 @@
   .profile-members-state-title { margin: 0 0 6px; }
   /* 読み込み中：同じ形の面を流す（光なし） */
   .profile-member-skeleton,
-  .skeleton-block {
+  .ui-skeleton {
     display: block;
     animation: uiShimmer 1.4s linear infinite;
   }
@@ -1041,7 +1043,7 @@
   .profile-member-skeleton-copy { height: 10px; width: 40%; }
   .profile-member-skeleton-heading,
   .profile-member-skeleton-name { height: 16px; width: 70%; }
-  @media (prefers-reduced-motion: reduce) { .profile-member-skeleton, .skeleton-block { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .profile-member-skeleton, .ui-skeleton { animation: none; } }
   /* ---- 詳細（メンバーを開いた画面） ---- */
   .profile-member-detail { display: grid; gap: 16px; }
   .profile-detail-hero { display: grid; grid-template-columns: 120px 1fr; overflow: hidden; }
@@ -1245,6 +1247,10 @@
   .karaoke-latest-shortcut[hidden] { display: none; }
   .karaoke-title { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 18px 0 22px; }
   .karaoke-title > p { flex-basis: 100%; }
+
+  /* 読み込み中（ルームと履歴の形） */
+  .karaoke-loading { display: grid; gap: 12px; }
+  .karaoke-skel-room { height: 104px; margin-bottom: 16px; }
 
   /* ルーム */
   .karaoke-room-card { margin-bottom: 28px; padding-bottom: 22px; }
@@ -2378,7 +2384,7 @@
   <section class="management-editor-panel image-management-panel">
 
 
-    <div id="imageManagementLoading" class="management-loading image-management-loading">LOADING...</div>
+    <div id="imageManagementLoading" class="ui-loading management-loading image-management-loading">読み込み中…</div>
 
     <form id="imageManagementForm" class="image-management-form" onsubmit="return submitImageManagement(event)" hidden>
       <label class="ui-field management-field image-management-field">
@@ -2633,7 +2639,7 @@
   <section class="management-editor-panel profile-management-panel">
 
 
-    <div id="profileManagementLoading" class="management-loading profile-management-loading">LOADING...</div>
+    <div id="profileManagementLoading" class="ui-loading management-loading profile-management-loading">読み込み中…</div>
 
     <div id="profileManagementBody" hidden>
       <div class="profile-management-selectors">
@@ -2651,7 +2657,7 @@
         </label>
       </div>
 
-      <div id="profileManagementMemberLoading" class="management-loading profile-management-loading" hidden>LOADING...</div>
+      <div id="profileManagementMemberLoading" class="ui-loading management-loading profile-management-loading" hidden>読み込み中…</div>
       <form id="profileManagementForm" class="profile-management-form" onsubmit="return submitProfileManagement(event)" hidden>
         <div id="profileManagementSections"></div>
         <p id="profileManagementError" class="ui-text-danger management-error profile-management-error" role="alert" hidden></p>
@@ -2935,7 +2941,7 @@
 <div id="songLyricsManagementOverlay" class="management-editor" hidden>
   <section class="management-editor-panel slm-panel">
 
-    <div id="slmLoading" class="management-loading slm-loading" hidden>LOADING...</div>
+    <div id="slmLoading" class="ui-loading management-loading slm-loading" hidden>読み込み中…</div>
     <div id="slmBody"></div>
   </section>
 </div>
@@ -2990,7 +2996,7 @@
   function renderSlmExistingSelect(body){const artists=songLyricsManagementState.bootstrap.existingArtists||[];const songs=(songLyricsManagementState.bootstrap.songs||[]).filter(function(song){return !songLyricsManagementState.existingArtist||song.artist===songLyricsManagementState.existingArtist;});body.innerHTML='<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">既存曲を編集</h3><div class="slm-grid">'+slmSelectField_('slmExistingArtist','アーティスト',artists,songLyricsManagementState.existingArtist,'選択してください')+slmTextField_('slmSongSearch','曲名を検索','',false)+slmSongSelectField_('slmExistingSong','曲',songs,songLyricsManagementState.existingSongId)+'</div></section><div class="management-actions slm-actions"><span></span><button class="ui-btn" type="button" onclick="loadSlmExistingSong()">編集する</button></div>';const artist=document.getElementById('slmExistingArtist'),song=document.getElementById('slmExistingSong');artist.addEventListener('change',function(){songLyricsManagementState.existingArtist=artist.value;songLyricsManagementState.existingSongId='';renderSlm();});song.addEventListener('change',function(){songLyricsManagementState.existingSongId=song.value;});document.getElementById('slmSongSearch').addEventListener('input',function(event){const q=event.target.value.toLowerCase();song.innerHTML='<option value="">選択なし</option>'+songs.filter(function(x){return x.title.toLowerCase().includes(q);}).map(function(x){return '<option value="'+escapeSlm(x.songId)+'">'+escapeSlm(x.title+' / '+x.artist)+'</option>';}).join('');});}
   function loadSlmExistingSong(){const id=document.getElementById('slmExistingSong').value;if(!id){renderSlmInlineError_('曲を選択してください。');return;}openSlmExistingSong_(id);}
   function openSlmExistingSong_(songId){songLyricsManagementState.existingSongId=String(songId);songLyricsManagementState.view='existingEdit';songLyricsManagementState.dirty={info:false,credits:false,lyrics:false};setSlmBusy_(true);managementRunner_().withSuccessHandler(function(data){setSlmBusy_(false);songLyricsManagementState.existing=data;renderSlm();}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).getSongLyricsManagementSong(getUniverseUserId(),String(songId));}
-  function renderSlmExistingEdit(body){if(!songLyricsManagementState.existing){body.innerHTML='<div class="management-loading slm-loading">LOADING...</div>';return;}const d=songLyricsManagementState.existing,s=d.song,c=d.credits,creditsSection=!s.personal&&slmIsBeFirst_(s.artistId||s.artist)?'<section class="ui-panel slm-edit-section">'+slmCreditsHtml_(c,true)+'<button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingCredits()">クレジットを保存</button></section>':'';body.innerHTML='<button class="ui-btn" onclick="backSlmExistingSelect()">曲の選択に戻る</button><p class="ui-muted slm-note">SongID '+escapeSlm(s.songId)+' / '+escapeSlm(s.artist)+'</p><section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">楽曲情報</h3><div class="slm-grid">'+slmDisabledField_('アーティスト',s.artist)+slmTextField_('slmEditTitle','曲名',s.title,true)+slmDateField_('slmEditRelease','リリース日',s.releaseDate)+slmSelectField_('slmEditForm','形態',songLyricsManagementState.bootstrap.forms,s.form,'未設定')+slmTextField_('slmEditCd','CDタイトル',s.cdTitle,false)+'<label class="ui-field management-field slm-field"><span>表題曲</span><span class="slm-toggle"><input id="slmEditTitleTrack" type="checkbox" '+(s.isTitleTrack?'checked':'')+'> 表題曲</span></label></div><button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingInfo()">楽曲情報を保存</button></section>'+creditsSection+(s.personal?'':'<section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">歌詞</h3><div id="slmEditParts" class="slm-parts"></div><button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingLyrics()">歌詞を保存</button></section>');body.insertAdjacentHTML('beforeend',slmCatalogSongControls_());renderSlmParts_();bindSlmEdit_();}
+  function renderSlmExistingEdit(body){if(!songLyricsManagementState.existing){body.innerHTML='<div class="ui-loading management-loading slm-loading">読み込み中…</div>';return;}const d=songLyricsManagementState.existing,s=d.song,c=d.credits,creditsSection=!s.personal&&slmIsBeFirst_(s.artistId||s.artist)?'<section class="ui-panel slm-edit-section">'+slmCreditsHtml_(c,true)+'<button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingCredits()">クレジットを保存</button></section>':'';body.innerHTML='<button class="ui-btn" onclick="backSlmExistingSelect()">曲の選択に戻る</button><p class="ui-muted slm-note">SongID '+escapeSlm(s.songId)+' / '+escapeSlm(s.artist)+'</p><section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">楽曲情報</h3><div class="slm-grid">'+slmDisabledField_('アーティスト',s.artist)+slmTextField_('slmEditTitle','曲名',s.title,true)+slmDateField_('slmEditRelease','リリース日',s.releaseDate)+slmSelectField_('slmEditForm','形態',songLyricsManagementState.bootstrap.forms,s.form,'未設定')+slmTextField_('slmEditCd','CDタイトル',s.cdTitle,false)+'<label class="ui-field management-field slm-field"><span>表題曲</span><span class="slm-toggle"><input id="slmEditTitleTrack" type="checkbox" '+(s.isTitleTrack?'checked':'')+'> 表題曲</span></label></div><button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingInfo()">楽曲情報を保存</button></section>'+creditsSection+(s.personal?'':'<section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">歌詞</h3><div id="slmEditParts" class="slm-parts"></div><button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingLyrics()">歌詞を保存</button></section>');body.insertAdjacentHTML('beforeend',slmCatalogSongControls_());renderSlmParts_();bindSlmEdit_();}
   function backSlmExistingSelect(){if(hasSlmDirty_()&&!window.confirm('保存していない変更があります。\n曲選択へ戻りますか？'))return;songLyricsManagementState.view='existingSelect';songLyricsManagementState.existing=null;songLyricsManagementState.dirty={info:false,credits:false,lyrics:false};renderSlm();}
   function bindSlmEdit_(){['slmEditTitle','slmEditRelease','slmEditForm','slmEditCd','slmEditTitleTrack'].forEach(function(id){const e=document.getElementById(id);if(e){e.addEventListener('input',function(){songLyricsManagementState.dirty.info=true;});e.addEventListener('change',function(){songLyricsManagementState.dirty.info=true;});}});['slmEditLyricists','slmEditComposers','slmEditChoreographers'].forEach(function(id){const e=document.getElementById(id);if(e){e.addEventListener('input',function(){songLyricsManagementState.dirty.credits=true;});e.addEventListener('change',function(){songLyricsManagementState.dirty.credits=true;});}});}
   function slmPartInsertButton_(index){return '<button class="ui-btn ui-btn-compact ui-btn-ghost slm-part-insert" type="button" onclick="addSlmPart('+index+')">＋ PART</button>';}
@@ -3004,7 +3010,7 @@
 
   function refreshSlmBootstrap_(callback){setSlmBusy_(true);managementRunner_().withSuccessHandler(function(data){songLyricsManagementState.bootstrap=data;setSlmBusy_(false);if(typeof callback==='function')callback();}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).getSongLyricsManagementBootstrap(getUniverseUserId());}
   function hasSlmDirty_(){return Object.values(songLyricsManagementState.dirty).some(Boolean);}
-  function setSlmBusy_(flag){songLyricsManagementState.busy=flag;document.querySelectorAll('#songLyricsManagementOverlay button,#songLyricsManagementOverlay input,#songLyricsManagementOverlay select,#songLyricsManagementOverlay textarea,#slmGuestConfirm button').forEach(function(el){el.disabled=!!flag;});if(flag){const body=document.getElementById('slmBody');if(body&&!document.getElementById('slmBusyText'))body.insertAdjacentHTML('afterbegin','<div id="slmBusyText" class="management-loading slm-loading">LOADING...</div>');}else{const node=document.getElementById('slmBusyText');if(node)node.remove();}}
+  function setSlmBusy_(flag){songLyricsManagementState.busy=flag;document.querySelectorAll('#songLyricsManagementOverlay button,#songLyricsManagementOverlay input,#songLyricsManagementOverlay select,#songLyricsManagementOverlay textarea,#slmGuestConfirm button').forEach(function(el){el.disabled=!!flag;});if(flag){const body=document.getElementById('slmBody');if(body&&!document.getElementById('slmBusyText'))body.insertAdjacentHTML('afterbegin','<div id="slmBusyText" class="ui-loading management-loading slm-loading">読み込み中…</div>');}else{const node=document.getElementById('slmBusyText');if(node)node.remove();}}
   function renderSlmInlineError_(message){const body=document.getElementById('slmBody');if(!body)return;let node=document.getElementById('slmInlineError');if(!node){node=document.createElement('p');node.id='slmInlineError';node.className='slm-error';body.prepend(node);}node.textContent=message;}
   function renderSlmError(message){document.getElementById('slmBody').innerHTML='<p class="ui-text-danger management-error slm-error">'+escapeSlm(message)+'</p>';}
   function readSlmError(error){return String(error&&error.message?error.message:error||'エラーが発生しました。').replace(/^Exception:\s*/,'');}
@@ -3556,7 +3562,7 @@
       <h1 class="ui-title">カラオケ</h1>
       <button id="karaokePageLatestShortcut" class="ui-btn ui-btn-compact karaoke-latest-shortcut karaoke-head-latest" type="button" hidden onclick="openKaraokeLatestShortcut()">最新結果を見る</button>
     </header>
-    <main id="karaokeView" class="karaoke-view"><div class="karaoke-loading is-shared" aria-busy="true"></div></main>
+    <main id="karaokeView" class="karaoke-view"><div class="karaoke-loading" role="status" aria-label="読み込み中"><div class="ui-skeleton karaoke-skel-room"></div><div class="ui-skeleton ui-skeleton-card"></div><div class="ui-skeleton ui-skeleton-card"></div></div></main>
   </section>
 </template>
 
@@ -3916,7 +3922,7 @@
   }
 
   function renderUniverseSearchLoading() {
-    const row = '<button type="button" class="search-result universe-search-result" disabled aria-hidden="true"><span class="ui-label universe-search-type skeleton-block" style="display:block;width:52px;height:8px;border-radius:5px"></span><span class="search-result-name skeleton-block" style="display:block;width:58%;height:13px;border-radius:6px"></span><span class="ui-muted universe-search-subtitle skeleton-block" style="display:block;width:42%;height:9px;border-radius:5px"></span><span class="universe-search-arrow" aria-hidden="true">›</span></button>';
+    const row = '<button type="button" class="search-result universe-search-result" disabled aria-hidden="true"><span class="ui-label universe-search-type ui-skeleton" style="display:block;width:52px;height:8px"></span><span class="search-result-name ui-skeleton" style="display:block;width:58%;height:13px"></span><span class="ui-muted universe-search-subtitle ui-skeleton" style="display:block;width:42%;height:9px"></span><span class="universe-search-arrow" aria-hidden="true">›</span></button>';
     return '<div class="universe-search-loading">'+row+row+row+'</div>';
   }
 
@@ -4292,19 +4298,14 @@
 
 <!-- StateUI.html -->
 <script>
-    function normalizeUniverseLoadingAccent(value) {
-      const color = String(value || '').trim();
-      return /^#[0-9a-f]{6}$/i.test(color) ? color : '#9cecff';
-    }
-
-    function renderUniverseLoading(label, accent) {
-      const safeAccent = normalizeUniverseLoadingAccent(accent);
-      const hasLabel = label !== false && label !== null;
-      // Screens still pass the old English label; show Japanese everywhere.
-      const raw = hasLabel ? String(label || '') : '';
-      const text = hasLabel ? (!raw || /^LOADING\.*$/i.test(raw) ? '読み込み中…' : raw) : '';
-      const safeLabel = typeof escapeHtml === 'function' ? escapeHtml(text) : text;
-      return '<div class="universe-loading" role="status" aria-live="polite" style="--loading-accent:' + safeAccent + '"><span class="universe-spinner" aria-hidden="true"></span>' + (hasLabel ? '<span>' + safeLabel + '</span>' : '') + '</div>';
+    // 読み込み中は2種類だけ（docs/design/universe-design-system.md 17章）。
+    //   形が分かる中身を待つ … 中身と同じ形の .ui-skeleton
+    //   形が分からない短い待ち … renderUniverseLoading()：細いくるくると日本語の文
+    // 色は指定できない。英語（LOADING…）を渡されても日本語で出す。
+    function renderUniverseLoading(label) {
+      const raw = typeof label === 'string' ? label.trim() : '';
+      const text = !raw || /^LOADING/i.test(raw) ? '読み込み中…' : raw;
+      return '<div class="ui-loading universe-loading" role="status" aria-live="polite"><span>' + escapeHtml(text) + '</span></div>';
     }
 
     function closeOnBackdrop(event, id) {
@@ -5037,8 +5038,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function renderProfileDetailContent() {
     if (profileMembersState.detailStatus === 'loading') {
-      const row = () => `<div class="profile-detail-row" aria-hidden="true"><dt><span class="skeleton-block" style="display:block;width:72%;height:11px;border-radius:6px"></span></dt><dd><span class="skeleton-block" style="display:block;width:86%;height:13px;border-radius:6px"></span></dd></div>`;
-      const section = (rows) => `<section class="ui-panel profile-detail-section" aria-hidden="true"><h3 class="ui-heading profile-detail-section-title"><span class="skeleton-block" style="display:block;width:74px;height:10px;border-radius:5px"></span></h3><dl class="ui-dl profile-detail-list">${Array.from({length:rows},row).join('')}</dl></section>`;
+      const row = () => `<div class="profile-detail-row" aria-hidden="true"><dt><span class="ui-skeleton" style="display:block;width:72%;height:11px"></span></dt><dd><span class="ui-skeleton" style="display:block;width:86%;height:13px"></span></dd></div>`;
+      const section = (rows) => `<section class="ui-panel profile-detail-section" aria-hidden="true"><h3 class="ui-heading profile-detail-section-title"><span class="ui-skeleton" style="display:block;width:74px;height:10px"></span></h3><dl class="ui-dl profile-detail-list">${Array.from({length:rows},row).join('')}</dl></section>`;
       return `<div class="profile-detail-sections">${section(3)}${section(2)}</div>`;
     }
     if (profileMembersState.detailStatus === 'error') return `<div class="ui-muted profile-detail-message"><p>${escapeHtml(profileMembersState.detailError)}</p><button class="profile-retry-button" type="button" onclick="openProfileMemberDetail(profileSelectedMemberId)">再試行</button></div>`;
@@ -5161,8 +5162,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderProfileMapLoading() {
     const panel = document.getElementById('profilePanel');
     if (!panel || profileCurrentView !== 'map') return;
-    const memberChip = () => `<button class="ui-chip profile-map-member" type="button" disabled aria-hidden="true"><span class="ui-avatar profile-map-avatar skeleton-block"></span><span class="profile-map-member-name skeleton-block" style="display:block;width:72px;height:12px;border-radius:6px"></span></button>`;
-    const group = () => `<section class="ui-panel profile-map-group" aria-hidden="true"><h3 class="ui-heading ui-divider"><span class="skeleton-block" style="display:block;width:90px;height:16px;border-radius:6px"></span><b class="skeleton-block" style="display:block;width:22px;height:10px;border-radius:5px"></b></h3><div class="profile-map-member-list">${memberChip()}${memberChip()}${memberChip()}</div></section>`;
+    const memberChip = () => `<button class="ui-chip profile-map-member" type="button" disabled aria-hidden="true"><span class="ui-avatar profile-map-avatar ui-skeleton"></span><span class="profile-map-member-name ui-skeleton" style="display:block;width:72px;height:12px"></span></button>`;
+    const group = () => `<section class="ui-panel profile-map-group" aria-hidden="true"><h3 class="ui-heading ui-divider"><span class="ui-skeleton" style="display:block;width:90px;height:16px"></span><b class="ui-skeleton" style="display:block;width:22px;height:10px"></b></h3><div class="profile-map-member-list">${memberChip()}${memberChip()}${memberChip()}</div></section>`;
     panel.innerHTML = `<div class="ui-divider profile-map-head"><div><p class="profile-panel-eyebrow">RELATION MAP</p><h2 class="ui-title ui-title-sm profile-map-title">MAP</h2></div><label class="ui-label profile-map-select-label"><span>CATEGORY</span><select disabled aria-label="読み込み中"><option>—</option></select></label></div><div class="profile-map-groups">${group()}${group()}</div>`;
   }
 
@@ -5240,9 +5241,9 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const panel = document.getElementById('profilePanel');
     if (!panel) return;
     panel.innerHTML = `<div class="ui-divider profile-search-head"><h2 class="ui-title ui-title-sm profile-search-title">SEARCH</h2><span class="ui-muted profile-search-result-count">—</span></div>
-      <div class="profile-search-bar"><div class="ui-search profile-search-box skeleton-block" style="min-height:var(--ui-button-h)"></div><div class="ui-btn ui-btn-compact profile-search-filter-toggle skeleton-block" style="min-width:96px"></div></div>
+      <div class="profile-search-bar"><div class="ui-search profile-search-box ui-skeleton" style="min-height:var(--ui-button-h)"></div><div class="ui-btn ui-btn-compact profile-search-filter-toggle ui-skeleton" style="min-width:96px"></div></div>
       <div class="profile-search-results-head"><h3 class="ui-label">RESULTS</h3><span class="ui-muted">—</span></div>
-      <div class="profile-search-result-list" role="status" aria-busy="true" aria-label="読み込み中">${Array.from({ length: 5 }, () => '<div class="ui-card profile-search-member profile-search-member-loading"><span class="ui-avatar profile-search-avatar skeleton-block"></span><span class="profile-search-member-copy"><span class="skeleton-block" style="height:12px;width:55%"></span><span class="skeleton-block" style="height:10px;width:30%"></span></span></div>').join('')}</div>`;
+      <div class="profile-search-result-list" role="status" aria-busy="true" aria-label="読み込み中">${Array.from({ length: 5 }, () => '<div class="ui-card profile-search-member profile-search-member-loading"><span class="ui-avatar profile-search-avatar ui-skeleton"></span><span class="profile-search-member-copy"><span class="ui-skeleton" style="height:12px;width:55%"></span><span class="ui-skeleton" style="height:10px;width:30%"></span></span></div>').join('')}</div>`;
   }
 
   function normalizeProfileSearchText(value) {
@@ -5424,7 +5425,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const panel = document.getElementById('profilePanel');
     if (!panel || profileCurrentView !== 'chemistry') return;
     const slot = (number, active) => `<button class="ui-card profile-chemistry-slot${active ? ' active' : ''}" type="button" disabled aria-hidden="true"><span class="ui-label profile-chemistry-slot-number">${number}</span><span class="ui-label profile-chemistry-slot-empty">SELECT</span><span class="ui-heading profile-chemistry-slot-plus">+</span></button>`;
-    const member = () => `<button class="ui-panel-sunken profile-chemistry-member" type="button" disabled aria-hidden="true"><i class="skeleton-block"></i><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px"></span></button>`;
+    const member = () => `<button class="ui-panel-sunken profile-chemistry-member" type="button" disabled aria-hidden="true"><i class="ui-skeleton"></i><span class="ui-skeleton" style="display:block;width:72%;height:12px"></span></button>`;
     panel.innerHTML = `<div class="ui-divider profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="ui-title ui-title-sm profile-chemistry-title">CHEMISTRY</h2></div><div class="profile-chemistry-slots">${slot('01',true)}<span class="ui-label profile-chemistry-cross" aria-hidden="true">×</span>${slot('02',false)}</div><section class="ui-panel profile-chemistry-picker"><div class="profile-chemistry-section-head"><h3 class="ui-heading">MEMBERS</h3><span class="ui-muted">—</span></div><div class="profile-chemistry-member-grid">${member()}${member()}${member()}${member()}${member()}${member()}</div></section>`;
   }
 
@@ -5648,8 +5649,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if (errorA || errorB) {
       comparisonBody = `<div class="profile-chemistry-detail-error"><p>${escapeHtml(errorA || errorB)}</p><button type="button" onclick="loadProfileChemistryDetail('${escapeHtml(errorA ? memberA.memberId : memberB.memberId)}', true)">再試行</button></div>`;
     } else if (loading) {
-      const row = `<div class="ui-divider-top profile-chemistry-compare-row" aria-hidden="true"><dd><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></dd><dt><span class="skeleton-block" style="display:block;width:82%;height:10px;border-radius:5px;margin:auto"></span></dt><dd><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></dd></div>`;
-      comparisonBody = `<div class="ui-muted profile-chemistry-compare-head" aria-hidden="true"><strong><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></strong><span>PROFILE</span><strong><span class="skeleton-block" style="display:block;width:72%;height:12px;border-radius:6px;margin:auto"></span></strong></div><div class="profile-chemistry-compare-rows">${row}${row}${row}${row}</div>`;
+      const row = `<div class="ui-divider-top profile-chemistry-compare-row" aria-hidden="true"><dd><span class="ui-skeleton" style="display:block;width:72%;height:12px;margin:auto"></span></dd><dt><span class="ui-skeleton" style="display:block;width:82%;height:10px;margin:auto"></span></dt><dd><span class="ui-skeleton" style="display:block;width:72%;height:12px;margin:auto"></span></dd></div>`;
+      comparisonBody = `<div class="ui-muted profile-chemistry-compare-head" aria-hidden="true"><strong><span class="ui-skeleton" style="display:block;width:72%;height:12px;margin:auto"></span></strong><span>PROFILE</span><strong><span class="ui-skeleton" style="display:block;width:72%;height:12px;margin:auto"></span></strong></div><div class="profile-chemistry-compare-rows">${row}${row}${row}${row}</div>`;
     } else {
       const rows = getProfileChemistryDetailRows(memberA, memberB);
       comparisonBody = `<div class="ui-muted profile-chemistry-compare-head"><strong class="ui-strong">${escapeHtml(memberA.displayName)}</strong><span>PROFILE</span><strong class="ui-strong">${escapeHtml(memberB.displayName)}</strong></div><div class="profile-chemistry-compare-rows">${rows.map(row => {
@@ -5838,7 +5839,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   const lyricsState={catalog:[],partsBySong:{},groupColors:{},group:'',unit:'',query:'',song:null,editing:null,editingIndex:-1,editDraft:null,editDirty:false,editSaving:false,singerOptions:[],initialParams:{},karaokeRoom:null,karaokeHistory:[],karaokeRoomReady:false,karaokeBusy:false,karaokeRoomRequestId:0};
   const LYRICS_GROUPS=['BE:FIRST','MAZZEL','STARGLOW','HANA','BMSG ALLSTARS'];
   const LYRICS_UNITS=['ALL','BMSG ALLSTARS','ShowMinorSavage','BMSG POSSE','BMSG EAST','BMSG WEST','BMSG SKY','BMSG GAIA','BMSG MARINE','BMSG STRIKERS','その他ユニット'];
-  function renderLyrics(){return document.getElementById('lyricsPageTemplate').innerHTML.replace('__LYRICS_LOADING__',renderUniverseLoading('LOADING...','#9cecff'));}
+  function renderLyrics(){return document.getElementById('lyricsPageTemplate').innerHTML.replace('__LYRICS_LOADING__',renderUniverseLoading());}
   function applyLyricsData(data){
     lyricsState.catalog=data.songs||[];
     if(Array.isArray(data.mainGroups)){LYRICS_GROUPS.splice(0,LYRICS_GROUPS.length,...data.mainGroups.filter(function(n){return n!=='BMSG ALLSTARS';}),'BMSG ALLSTARS');}
@@ -6022,7 +6023,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(lyricsState.editSaving)return;
     const list=ensureLyricsEditDraft_(),part=list[index];if(!part)return;lyricsState.editing=part;lyricsState.editingIndex=index;document.getElementById('lyricsTextInput').value=part.lyrics||'';const saveButton=document.getElementById('lyricsSaveButton');saveButton.disabled=false;saveButton.textContent='反映';document.getElementById('lyricsEditor').hidden=false;
     if(lyricsState.singerOptions.length){mountLyricsQuickSingerEditor_(part);return;}
-    const target=document.getElementById('lyricsSingerEditor');if(target)target.innerHTML='<div class="lyrics-editor-loading">LOADING...</div>';
+    const target=document.getElementById('lyricsSingerEditor');if(target)target.innerHTML=renderUniverseLoading();
     google.script.run.withSuccessHandler(function(options){lyricsState.singerOptions=options||[];if(lyricsState.editing===part)mountLyricsQuickSingerEditor_(part);}).withFailureHandler(function(error){showLyricsError(error);closeLyricsEditor();}).getLyricsSingerOptions();
   }
   function closeLyricsEditor(){document.getElementById('lyricsEditor').hidden=true;lyricsState.editing=null;lyricsState.editingIndex=-1;}
@@ -6407,8 +6408,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     karaokeState.songs=data.songs||[];
     karaokeState.partsBySong=data.partsBySong||{};
     if(params&&params.mode==='latest'){
-      const article='<article aria-hidden="true"><div class="karaoke-owner"><span class="skeleton-block" style="display:block;width:42%;height:11px;border-radius:6px"></span></div><p><span class="skeleton-block" style="display:block;width:88%;height:14px;border-radius:7px"></span><span class="skeleton-block" style="display:block;width:64%;height:14px;border-radius:7px;margin-top:9px"></span></p></article>';
-      document.getElementById('karaokeView').innerHTML='<button class="ui-back" type="button" disabled aria-hidden="true"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><div class="karaoke-title"><h2><span class="skeleton-block" style="display:block;width:58%;height:24px;border-radius:8px"></span></h2></div><section class="karaoke-lyrics">'+article+article+article+article+'</section><div class="karaoke-song-footer is-single" aria-hidden="true"><button type="button" disabled><span class="skeleton-block" style="display:block;width:116px;height:12px;border-radius:6px"></span></button></div>';
+      const article='<article aria-hidden="true"><div class="karaoke-owner"><span class="ui-skeleton" style="display:block;width:42%;height:11px"></span></div><p><span class="ui-skeleton" style="display:block;width:88%;height:14px"></span><span class="ui-skeleton" style="display:block;width:64%;height:14px;margin-top:9px"></span></p></article>';
+      document.getElementById('karaokeView').innerHTML='<button class="ui-back" type="button" disabled aria-hidden="true"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><div class="karaoke-title"><h2><span class="ui-skeleton" style="display:block;width:58%;height:24px"></span></h2></div><section class="karaoke-lyrics">'+article+article+article+article+'</section><div class="karaoke-song-footer is-single" aria-hidden="true"><button type="button" disabled><span class="ui-skeleton" style="display:block;width:116px;height:12px"></span></button></div>';
       loadKaraokeRoom(params.room,function(){
         if(karaokeState.history.length)openKaraokeResultSong(karaokeState.history[0]);
         else{renderKaraokeEntry();showKaraokeError('まだ振り分け結果がありません。');}
@@ -6868,7 +6869,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
       loadKaraokeFavoriteEditGroup(karaokeFavoriteState.editGroupId);
       return;
     }
-    if(body)body.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...'):'';
+    if(body)body.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading():'';
     preloadKaraokeFavoriteSettings(function(error,data){
       if(error){
         if(body)body.innerHTML='<div class="ui-empty karaoke-favorite-empty">読み込みに失敗しました</div>';
@@ -7161,7 +7162,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function portalizeCardOverlays(){['cardReveal','cardCollectionOverlay'].forEach(function(id){const local=document.getElementById('pageContent')?document.getElementById('pageContent').querySelector('#'+id):null;if(!local)return;document.querySelectorAll('body > #'+id).forEach(function(old){old.remove();});document.body.appendChild(local);});}
   function setCardPageMode(mode){const root=document.getElementById('cardPageRoot');if(!root)return;root.classList.toggle('is-gacha-mode',mode==='gacha');}
   function initCardPage(){portalizeCardOverlays();const userId=typeof getUniverseUserId==='function'?getUniverseUserId():'';if(!userId){cardState.ready=false;cardState.userId='';const host=document.getElementById('cardApp');if(host)host.innerHTML='<div class="placeholder"><p>USERを選択してください。</p></div>';if(typeof openUserChooser==='function')openUserChooser(true);return;}cardState.userId=userId;renderCardLoading();google.script.run.withSuccessHandler(function(data){cardState.ready=true;cardState.groups=data.groups||[];cardState.cards=data.cards||[];cardState.totalCount=Number(data.totalCount||0);cardState.collectedCount=Number(data.collectedCount||0);const preferred=typeof getUniversePreferredGroupName==='function'?getUniversePreferredGroupName():'';const hasPreferred=preferred&&cardState.groups.some(function(group){return group.name===preferred;});cardState.currentGroup=hasPreferred?preferred:'ALL';if(hasPreferred)renderCardGacha();else renderCardGroupSelection();if(typeof syncUniverseCrossLinks==='function')syncUniverseCrossLinks();}).withFailureHandler(cardFailure).getTradingCardBootstrap(userId);}
-  function renderCardLoading(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="card-group-grid" aria-hidden="true">'+Array.from({length:6},function(){return '<button type="button" class="ui-card card-group-btn" disabled><span class="ui-heading card-group-name skeleton-block" style="display:block;width:58%;height:18px;border-radius:7px"></span><span class="ui-muted card-group-sub skeleton-block" style="display:block;width:34%;height:10px;border-radius:6px;margin-top:9px"></span></button>';}).join('')+'</div>';}
+  function renderCardLoading(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="card-group-grid" aria-hidden="true">'+Array.from({length:6},function(){return '<button type="button" class="ui-card card-group-btn" disabled><span class="ui-heading card-group-name ui-skeleton" style="display:block;width:58%;height:18px"></span><span class="ui-muted card-group-sub ui-skeleton" style="display:block;width:34%;height:10px;margin-top:9px"></span></button>';}).join('')+'</div>';}
   function renderCardGroupSelection(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="ui-group-tiles card-group-grid">'+cardState.groups.filter(function(group){if(group.name==='ALL')return true;if(group.name==='BMSG ALLSTARS')return false;return group.id?!isUniverseUnitGroup(group.id,group.name):!!universeGroupPhotoUrl(group.name);}).map(function(group){const count=getCardGroupCards(group.name).length;return renderUniverseGroupTile({name:group.name,photoName:group.name==='ALL'?'BMSG ALLSTARS':group.name,color:group.color,sub:count+' CARDS',onclick:'selectTradingCardGroup(\''+escapeHtml(group.name).replaceAll("'","\\'")+'\')'});}).join('')+'</div>';}
   function selectTradingCardGroup(groupName){cardState.currentGroup=groupName||'ALL';renderCardGacha();scrollAppToTop('smooth');}
   function buildCardSkyMarkup(count){let html='';const total=count||42;for(let i=0;i<total;i++){const roll=Math.random();const tone=roll<.07?'red':roll<.20?'cyan':'white';const x=(2+Math.random()*96).toFixed(2);const y=(2+Math.random()*96).toFixed(2);const size=(.6+Math.random()*2.15).toFixed(2);const opacity=(.24+Math.random()*.68).toFixed(2);const duration=(2.6+Math.random()*6.2).toFixed(2);const delay=(-Math.random()*7).toFixed(2);html+='<i class="card-space-star tone-'+tone+'" style="left:'+x+'%;top:'+y+'%;--s:'+size+'px;--o:'+opacity+';--d:'+duration+'s;--delay:'+delay+'s"></i>';}for(let j=0;j<2;j++){const y=(12+Math.random()*58).toFixed(1);const delay=(2.5+j*6.5+Math.random()*3.5).toFixed(2);const duration=(10.5+Math.random()*4.5).toFixed(2);html+='<i class="card-shooting-star shoot-'+j+'" style="top:'+y+'%;--shoot-delay:'+delay+'s;--shoot-duration:'+duration+'s"></i>';}return html;}
@@ -7238,7 +7239,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function renderPoker(){const template=document.getElementById('pokerPageTemplate');return template?template.innerHTML:'<section class="view"><h1 class="title">POKER</h1></section>';}
   function initPokerPage(params){stopPokerPolling();const uid=typeof getUniverseUserId==='function'?getUniverseUserId():'';if(!uid){const host=document.getElementById('pokerApp');if(host)host.innerHTML='<div class="ui-panel poker-panel"><p>USERを選択してください。</p></div>';if(typeof openUserChooser==='function')openUserChooser(true);return;}pokerState.userId=uid;pokerState.screen='menu';pokerLoading();google.script.run.withSuccessHandler(function(data){pokerState.users=data.users||[];pokerState.cards=data.cards||[];pokerState.room=data.room||null;if(data.room){pokerState.screen='online';renderPokerRoom();startPokerPolling();}else renderPokerMenu();}).withFailureHandler(pokerFailure).getPokerBootstrap(uid,params&&params.room?params.room:'');}
-  function pokerLoading(){const host=document.getElementById('pokerApp');if(host)host.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING POKER...','#9cecff'):'<div>LOADING...</div>';}
+  function pokerLoading(){const host=document.getElementById('pokerApp');if(host)host.innerHTML=renderUniverseLoading('ポーカーを準備中…');}
 
   function pokerRuleLabel(rule){return rule==='A'?'交換無制限モード':'交換1回モード';}
   function pokerModeLabel(mode){return String(mode||'').toUpperCase()==='ONLINE'?'みんなで':'1人で';}
@@ -7283,7 +7284,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function executeOnlineExchange(){const indices=pokerState.exchangeIndices.slice();if(!indices.length)return pokerNotify('交換するカードを選択してください。');setPokerBusy(true);google.script.run.withSuccessHandler(function(room){setPokerBusy(false);pokerState.room=room;pokerState.interaction='sort';pokerState.exchangeIndices=[];pokerState.onlineRevealCount=5;markPokerFlip(indices);renderPokerOnlinePlay();}).withFailureHandler(function(error){setPokerBusy(false);pokerFailure(error);}).exchangePokerCards({userId:pokerState.userId,roomId:pokerState.room.roomId,indices:indices});}
   function finalizeOnlinePoker(){if(pokerState.busy)return;setPokerBusy(true);google.script.run.withSuccessHandler(function(room){setPokerBusy(false);pokerState.room=room;renderPokerRoom();}).withFailureHandler(function(error){setPokerBusy(false);pokerFailure(error);}).finalizePokerHand(pokerState.userId,pokerState.room.roomId);}
 
-  function openPokerHighlights(){pokerState.screen='highlights';const host=document.getElementById('pokerApp');host.innerHTML=pokerSectionHead('神回','','renderPokerMenu()')+'<div class="ui-panel poker-panel">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading('','#9cecff'):'')+'</div>';google.script.run.withSuccessHandler(renderPokerHighlights).withFailureHandler(pokerFailure).getPokerHighlights(pokerState.userId);}
+  function openPokerHighlights(){pokerState.screen='highlights';const host=document.getElementById('pokerApp');host.innerHTML=pokerSectionHead('神回','','renderPokerMenu()')+'<div class="ui-panel poker-panel">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading():'')+'</div>';google.script.run.withSuccessHandler(renderPokerHighlights).withFailureHandler(pokerFailure).getPokerHighlights(pokerState.userId);}
   function renderPokerHighlights(items){const host=document.getElementById('pokerApp');const body=(items||[]).map(function(item){const mode=pokerModeLabel(item.mode);return '<article class="ui-panel poker-panel"><div class="poker-room-meta"><span class="ui-label poker-panel-label">'+escapeHtml(mode)+' · '+escapeHtml(pokerRuleLabel(item.ruleType))+'</span><span class="ui-muted poker-room-rule">'+escapeHtml(formatPokerDate(item.savedAt))+'</span></div><div class="poker-reveal-list">'+item.players.map(function(player){return '<div style="margin-top:14px"><div class="ui-divider poker-player-row is-ready"><strong>'+escapeHtml(player.displayName)+'</strong></div><div style="margin-top:10px">'+renderPokerHand(player.hand,5,'locked')+'</div></div>';}).join('')+'</div></article>';}).join('')||'<div class="ui-panel poker-panel poker-status"><strong>神回はまだありません</strong></div>';host.innerHTML=pokerSectionHead('神回','','renderPokerMenu()')+body;}
   function formatPokerDate(value){const date=new Date(value);if(!Number.isFinite(date.getTime()))return '';return date.toLocaleString('ja-JP',{timeZone:'Asia/Tokyo',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});}
 
@@ -7304,7 +7305,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function quizResetState_(){quizState.busy=false;quizState.screen='setup';quizState.game=null;quizState.index=0;quizState.stage='question';quizState.answers=[];quizState.awards=[];quizState.completed=false;closeQuizLyrics_();}
   function quizHost_(){return document.getElementById('quizApp');}
-  function renderQuizLoading_(){const host=quizHost_();if(host)host.innerHTML='<div class="ui-panel quiz-panel">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING QUIZ...','#9cecff'):'LOADING...')+'</div>';}
+  function renderQuizLoading_(){const host=quizHost_();if(host)host.innerHTML='<div class="ui-panel quiz-panel">'+renderUniverseLoading('クイズを準備中…')+'</div>';}
 
   function quizSetting_(title,options,current,key,extra){return '<section class="quiz-setting"><p class="ui-label quiz-setting-title">'+quizEscape_(title)+'</p><div class="quiz-options '+(extra||'')+'">'+options.map(function(option){return '<button type="button" class="ui-btn ui-btn-plain quiz-choice '+(current===option[0]?'is-selected':'')+'" onclick="setQuizSetting_(\''+key+'\',\''+quizArg_(option[0])+'\')">'+quizEscape_(option[1])+'</button>';}).join('')+'</div></section>';}
   function setQuizSetting_(key,value){quizState.settings[key]=decodeURIComponent(value);if(key==='mode'||key==='genre'){if(quizState.settings.mode!=='OFFLINE')quizState.selectedPlayers=[quizState.userId];}renderQuizSetup_();}
@@ -7318,7 +7319,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     closeQuizLyrics_();
     const overlay=document.createElement('div');
     overlay.id='quizLyricsOverlay';overlay.className='ui-modal quiz-lyrics-overlay';overlay.setAttribute('role','presentation');overlay.setAttribute('onclick','closeQuizLyricsOnBackdrop_(event)');
-    overlay.innerHTML='<section class="ui-modal-card quiz-lyrics-modal" role="dialog" aria-modal="true" aria-labelledby="quizLyricsModalTitle"><header class="ui-modal-head quiz-lyrics-modal-head"><div><small class="ui-label">LYRICS</small><h2 id="quizLyricsModalTitle" class="ui-heading">全文歌詞</h2></div><button type="button" class="ui-btn ui-btn-icon quiz-lyrics-modal-close" onclick="closeQuizLyrics_()" aria-label="歌詞を閉じる">×</button></header><div id="quizLyricsModalBody" class="quiz-lyrics-modal-body">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','#9cecff'):'LOADING...')+'</div></section>';
+    overlay.innerHTML='<section class="ui-modal-card quiz-lyrics-modal" role="dialog" aria-modal="true" aria-labelledby="quizLyricsModalTitle"><header class="ui-modal-head quiz-lyrics-modal-head"><div><small class="ui-label">LYRICS</small><h2 id="quizLyricsModalTitle" class="ui-heading">全文歌詞</h2></div><button type="button" class="ui-btn ui-btn-icon quiz-lyrics-modal-close" onclick="closeQuizLyrics_()" aria-label="歌詞を閉じる">×</button></header><div id="quizLyricsModalBody" class="quiz-lyrics-modal-body">'+renderUniverseLoading()+'</div></section>';
     document.body.appendChild(overlay);
     quizLyricsEscapeHandler_=function(event){if(event.key==='Escape')closeQuizLyrics_();};
     document.addEventListener('keydown',quizLyricsEscapeHandler_);
@@ -7370,7 +7371,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   window.openQuizRoomJoinV3_=function(){
     clearQuizQuestionTimer_();quizState.screen='join';const host=quizHost_();if(!host)return;
-    host.innerHTML='<section class="ui-panel quiz-panel quiz-v3-room-join"><p class="ui-label quiz-kicker">JOIN ROOM</p><h2 class="ui-heading quiz-panel-title">ルームに参加する</h2><div class="quiz-v3-room-input-row"><input id="quizRoomInputV3" class="ui-input quiz-room-input" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="4桁のルームID"><button class="ui-btn ui-btn-plain quiz-action ui-btn-solid is-primary" onclick="joinQuizRoomV3_()">参加</button></div><div><p class="ui-label quiz-setting-title">最新のルーム</p><div id="quizRecentRoomsV3" class="quiz-v3-recent">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading(false,'#9cecff'):'LOADING...')+'</div></div><div class="quiz-actions"><button class="ui-btn ui-btn-plain quiz-action" onclick="renderQuizSetup_()">戻る</button></div></section>';
+    host.innerHTML='<section class="ui-panel quiz-panel quiz-v3-room-join"><p class="ui-label quiz-kicker">JOIN ROOM</p><h2 class="ui-heading quiz-panel-title">ルームに参加する</h2><div class="quiz-v3-room-input-row"><input id="quizRoomInputV3" class="ui-input quiz-room-input" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="4桁のルームID"><button class="ui-btn ui-btn-plain quiz-action ui-btn-solid is-primary" onclick="joinQuizRoomV3_()">参加</button></div><div><p class="ui-label quiz-setting-title">最新のルーム</p><div id="quizRecentRoomsV3" class="quiz-v3-recent">'+renderUniverseLoading()+'</div></div><div class="quiz-actions"><button class="ui-btn ui-btn-plain quiz-action" onclick="renderQuizSetup_()">戻る</button></div></section>';
     google.script.run.withSuccessHandler(renderQuizRecentRoomsV3_).withFailureHandler(function(){const el=document.getElementById('quizRecentRoomsV3');if(el)el.innerHTML='<p class="ui-muted quiz-muted">ルームを読み込めませんでした。</p>';}).getRecentQuizRooms(quizState.userId);
   };
 
@@ -7791,15 +7792,15 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderCoverLoading(){
     const app=document.getElementById('coverApp');if(!app)return;
     if(coverState.screen==='home'){
-      app.innerHTML='<div class="cover-home-actions"><button class="ui-btn" type="button" disabled><span class="skeleton-block" style="display:block;width:54%;height:14px;border-radius:7px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="skeleton-block" style="display:block;width:62%;height:14px;border-radius:7px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="skeleton-block" style="display:block;width:44%;height:14px;border-radius:7px;margin:auto"></span></button></div>';
+      app.innerHTML='<div class="cover-home-actions"><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:54%;height:14px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:62%;height:14px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:44%;height:14px;margin:auto"></span></button></div>';
       setCanonicalCoverVisualMode('home');return;
     }
     if(coverState.screen==='songs'){
-      const row='<button type="button" class="ui-row cover-song-row" disabled aria-hidden="true"><strong class="skeleton-block" style="display:block;width:52%;height:15px;border-radius:7px"></strong></button>';
-      app.innerHTML='<h2 class="ui-label cover-section-title">'+escapeHtml(coverState.artist||'')+'</h2><div class="cover-search-wrap"><div class="ui-input cover-search" aria-hidden="true"><span class="skeleton-block" style="display:block;width:42%;height:14px;border-radius:7px"></span></div></div><div class="cover-stack">'+row+row+row+row+'</div>';
+      const row='<button type="button" class="ui-row cover-song-row" disabled aria-hidden="true"><strong class="ui-skeleton" style="display:block;width:52%;height:15px"></strong></button>';
+      app.innerHTML='<h2 class="ui-label cover-section-title">'+escapeHtml(coverState.artist||'')+'</h2><div class="cover-search-wrap"><div class="ui-input cover-search" aria-hidden="true"><span class="ui-skeleton" style="display:block;width:42%;height:14px"></span></div></div><div class="cover-stack">'+row+row+row+row+'</div>';
       setCanonicalCoverVisualMode('songs');return;
     }
-    app.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','var(--ui-line-strong)'):'<div class="ui-empty cover-empty">LOADING...</div>';
+    app.innerHTML=renderUniverseLoading();
   }
   function renderCoverMessage(message){const app=document.getElementById('coverApp');if(app)app.innerHTML='<div class="ui-empty cover-empty">'+escapeHtml(message)+'</div>';}
   function showCoverError(error){coverState.busy=false;setCoverSavingState(false);const msg=error&&error.message?error.message:String(error||'エラーが発生しました。');if(typeof showToast==='function')showToast(msg);else renderCoverMessage(msg);}
@@ -7839,7 +7840,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function openSavedCover(projectId,returnScreen){coverState.returnScreen=returnScreen||coverState.returnScreen||'projects';renderCoverLoading();google.script.run.withSuccessHandler(function(data){coverState.editor=data;coverState.coverGroup=data.coverGroup;coverState.viewMode='cover';coverState.dirty=false;coverState.screen='view';renderCoverEditor();}).withFailureHandler(showCoverError).getCoverProject({userId:getUniverseUserId(),projectId:projectId});}
   function editSavedCover(){if(!coverState.editor||!coverState.editor.isCreator)return;coverState.screen='editor';coverState.dirty=false;renderCoverEditor();}
 
-  function coverSavingIndicatorMarkup(){return typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','var(--ui-line-strong)'):'<div class="universe-loading" role="status" aria-live="polite"><span>LOADING...</span></div>';}
+  function coverSavingIndicatorMarkup(){return renderUniverseLoading();}
   function coverOverlayMarkup(){return '<div id="coverSheet" class="ui-modal cover-sheet" hidden onclick="closeCoverSheetOnBackdrop(event)"><div id="coverSheetPanel" class="ui-modal-card cover-sheet-panel"></div></div><div id="coverDialog" class="ui-modal cover-dialog" hidden onclick="closeCoverDialogOnBackdrop(event)"><div class="ui-modal-card cover-dialog-panel"><p id="coverDialogMessage" class="ui-text cover-dialog-message"></p><div class="cover-dialog-actions"><button id="coverDialogCancel" type="button" class="ui-btn" onclick="closeCoverDialog()">キャンセル</button><button id="coverDialogConfirm" type="button" class="ui-btn" onclick="confirmCoverDialog()">OK</button></div></div></div><div id="coverSaving" class="ui-muted cover-saving" hidden aria-busy="true">'+coverSavingIndicatorMarkup()+'</div>';}
   function setCoverSavingState(isSaving){
     const overlay=document.getElementById('coverSaving'),button=document.querySelector('.cover-save-button');
@@ -8145,12 +8146,12 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function openCoverProjects(){
     coverState.screen='projects';coverState.returnScreen='projects';const app=document.getElementById('coverApp');if(!app)return;
-    app.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','var(--ui-line-strong)'):'<div class="ui-empty cover-empty">LOADING...</div>';setCanonicalCoverVisualMode('projects');
+    app.innerHTML=renderUniverseLoading();setCanonicalCoverVisualMode('projects');
     google.script.run.withSuccessHandler(function(projects){if(coverState.screen!=='projects')return;coverState.bootstrap.projects=projects||[];app.innerHTML='<h2 class="ui-label cover-section-title">作ったカバー</h2>'+renderCoverProjectRows(ownCanonicalCoverProjects(projects||[]),false,false);}).withFailureHandler(showCoverError).getCoverProjects(getUniverseUserId());
   }
 
   function openCoverLibrary(){
-    coverState.screen='library';coverState.returnScreen='library';const app=document.getElementById('coverApp');if(!app)return;app.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','var(--ui-line-strong)'):'<div class="ui-empty cover-empty">LOADING...</div>';setCanonicalCoverVisualMode('library');
+    coverState.screen='library';coverState.returnScreen='library';const app=document.getElementById('coverApp');if(!app)return;app.innerHTML=renderUniverseLoading();setCanonicalCoverVisualMode('library');
     google.script.run.withSuccessHandler(function(projects){coverState.libraryProjects=projects||[];if(coverState.screen!=='library')return;app.innerHTML='<h2 class="ui-label cover-section-title">ライブラリ</h2>'+renderCoverProjectRows(coverState.libraryProjects,false,true);}).withFailureHandler(showCoverError).getCoverLibrary(getUniverseUserId());
   }
 
@@ -8247,7 +8248,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   window.initPerformanceTimerPage=function(){
     document.body.classList.add('performance-timer-active');
     const host=document.getElementById('performanceTimerApp');if(!host)return;
-    host.innerHTML='<div class="ui-panel pt-panel pt-loading">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','#9cecff'):'LOADING...')+'</div>';
+    host.innerHTML='<div class="ui-panel pt-panel pt-loading">'+renderUniverseLoading()+'</div>';
     google.script.run.withSuccessHandler(function(data){state.bootstrap=data||{songs:[],members:[]};renderTimerBody();}).withFailureHandler(renderLoadError).getPerformanceTimerBootstrap();
   };
   window.cleanupPerformanceTimerPage=function(){if(state.running)settleAt(now());clearAll();document.body.classList.remove('performance-timer-active');closePtDialog();};
@@ -8574,7 +8575,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(!universeCrossLinksState.creditsOpen[id]){const old=detail.querySelector('.universe-profile-credits');if(old)old.remove();return;}
     if(universeCrossLinksState.credits[id]){renderUniverseProfileCredits_(detail,id);return;}
     let host=detail.querySelector('.universe-profile-credits');if(!host){host=document.createElement('section');host.className='ui-panel universe-profile-credits';const actions=detail.querySelector('.universe-profile-crosslinks');if(actions)actions.insertAdjacentElement('afterend',host);}
-    host.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...'):'<p class="ui-muted universe-crosslink-status">LOADING...</p>';
+    host.innerHTML=renderUniverseLoading();
     google.script.run.withSuccessHandler(function(response){
       if(!response||!response.ok){universeCrossLinksState.credits[id]={error:response&&response.error?response.error.message:'クレジット参加曲の読み込みに失敗しました。',songs:[]};}
       else universeCrossLinksState.credits[id]=response.data||{songs:[]};
@@ -8585,7 +8586,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderUniverseProfileCredits_(detail,memberId){
     if(!detail)return;const id=String(memberId||''),data=universeCrossLinksState.credits[id];
     let host=detail.querySelector('.universe-profile-credits');if(!host){host=document.createElement('section');host.className='ui-panel universe-profile-credits';const actions=detail.querySelector('.universe-profile-crosslinks');if(actions)actions.insertAdjacentElement('afterend',host);}
-    if(!data){host.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...'):'<p class="ui-muted universe-crosslink-status">LOADING...</p>';return;}
+    if(!data){host.innerHTML=renderUniverseLoading();return;}
     host.innerHTML='';const heading=document.createElement('h3');heading.className='ui-heading';heading.textContent='CREATIVE CREDITS';host.appendChild(heading);
     if(data.error){const p=document.createElement('p');p.className='ui-muted universe-crosslink-status';p.textContent=data.error;host.appendChild(p);return;}
     const songs=Array.isArray(data.songs)?data.songs:[];if(!songs.length){const p=document.createElement('p');p.className='ui-muted universe-crosslink-status';p.textContent='該当するクレジット参加曲はありません。';host.appendChild(p);return;}
@@ -8898,13 +8899,9 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderInitialUniverseRoute_(page, params) {
     const userId = typeof getUniverseUserId === 'function' ? getUniverseUserId() : '';
     const preferencesReady = typeof universePreferencesClient !== 'undefined' && universePreferencesClient.loaded && universePreferencesClient.userId === userId;
-    if (userId && !preferencesReady && typeof loadUniverseUserPreferences_ === 'function') {
-      loadUniverseUserPreferences_(userId, function() {
-        renderRoute(page, params || {});
-      });
-      return;
-    }
+    // 画面はすぐに描く。設定（推しメン）は画面の表示に使わないので、裏で読む。
     renderRoute(page, params || {});
+    if (userId && !preferencesReady && typeof loadUniverseUserPreferences_ === 'function') loadUniverseUserPreferences_(userId);
   }
 
   function initRouter(){google.script.history.setChangeHandler(function(event){const page=event&&event.location&&event.location.parameter&&event.location.parameter.page?event.location.parameter.page:'home';if(currentRoute==='manage'&&!managementCanLeave_()){restoreManagementHistory_();return;}if(lyricsSaveNavigationLocked_()){restoreCurrentLyricsHistoryState_();if(typeof showToast==='function')showToast('保存中です');return;}if(currentRoute==='lyrics'&&typeof lyricsEditSessionActive_==='function'&&lyricsEditSessionActive_()&&typeof confirmDiscardLyricsChanges_==='function'&&!confirmDiscardLyricsChanges_()){restoreCurrentLyricsHistoryState_();return;}if(currentRoute==='cover'&&coverState&&coverState.dirty){google.script.history.replace({page:'cover'},{page:'cover'},'');if(typeof coverConfirmExternalNavigation==='function')coverConfirmExternalNavigation(page);return;}if(currentRoute==='quiz'&&typeof quizCanLeave_==='function'&&!quizCanLeave_()){const state={page:'quiz'};if(quizState&&quizState.game&&quizState.game.roomId)state.room=quizState.game.roomId;google.script.history.replace(state,state,'');return;}if(currentRoute==='metrics'&&page!=='metrics'&&typeof performanceTimerCanLeave_==='function'&&!performanceTimerCanLeave_()){google.script.history.replace({page:'metrics'},{page:'metrics'},'');return;}renderRoute(page,event.location.parameter||{});});google.script.url.getLocation(function(location){const page=location&&location.parameter&&location.parameter.page?location.parameter.page:'home';const params=location&&location.parameter?location.parameter:{};if(!location.parameter||!location.parameter.page){google.script.history.replace({page:'home'},{page:'home'},'');}renderInitialUniverseRoute_(page,params);});}

@@ -6,7 +6,7 @@
 
   function quizResetState_(){quizState.busy=false;quizState.screen='setup';quizState.game=null;quizState.index=0;quizState.stage='question';quizState.answers=[];quizState.awards=[];quizState.completed=false;closeQuizLyrics_();}
   function quizHost_(){return document.getElementById('quizApp');}
-  function renderQuizLoading_(){const host=quizHost_();if(host)host.innerHTML='<div class="ui-panel quiz-panel">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING QUIZ...','#9cecff'):'LOADING...')+'</div>';}
+  function renderQuizLoading_(){const host=quizHost_();if(host)host.innerHTML='<div class="ui-panel quiz-panel">'+renderUniverseLoading('クイズを準備中…')+'</div>';}
 
   function quizSetting_(title,options,current,key,extra){return '<section class="quiz-setting"><p class="ui-label quiz-setting-title">'+quizEscape_(title)+'</p><div class="quiz-options '+(extra||'')+'">'+options.map(function(option){return '<button type="button" class="ui-btn ui-btn-plain quiz-choice '+(current===option[0]?'is-selected':'')+'" onclick="setQuizSetting_(\''+key+'\',\''+quizArg_(option[0])+'\')">'+quizEscape_(option[1])+'</button>';}).join('')+'</div></section>';}
   function setQuizSetting_(key,value){quizState.settings[key]=decodeURIComponent(value);if(key==='mode'||key==='genre'){if(quizState.settings.mode!=='OFFLINE')quizState.selectedPlayers=[quizState.userId];}renderQuizSetup_();}
@@ -20,7 +20,7 @@
     closeQuizLyrics_();
     const overlay=document.createElement('div');
     overlay.id='quizLyricsOverlay';overlay.className='ui-modal quiz-lyrics-overlay';overlay.setAttribute('role','presentation');overlay.setAttribute('onclick','closeQuizLyricsOnBackdrop_(event)');
-    overlay.innerHTML='<section class="ui-modal-card quiz-lyrics-modal" role="dialog" aria-modal="true" aria-labelledby="quizLyricsModalTitle"><header class="ui-modal-head quiz-lyrics-modal-head"><div><small class="ui-label">LYRICS</small><h2 id="quizLyricsModalTitle" class="ui-heading">全文歌詞</h2></div><button type="button" class="ui-btn ui-btn-icon quiz-lyrics-modal-close" onclick="closeQuizLyrics_()" aria-label="歌詞を閉じる">×</button></header><div id="quizLyricsModalBody" class="quiz-lyrics-modal-body">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','#9cecff'):'LOADING...')+'</div></section>';
+    overlay.innerHTML='<section class="ui-modal-card quiz-lyrics-modal" role="dialog" aria-modal="true" aria-labelledby="quizLyricsModalTitle"><header class="ui-modal-head quiz-lyrics-modal-head"><div><small class="ui-label">LYRICS</small><h2 id="quizLyricsModalTitle" class="ui-heading">全文歌詞</h2></div><button type="button" class="ui-btn ui-btn-icon quiz-lyrics-modal-close" onclick="closeQuizLyrics_()" aria-label="歌詞を閉じる">×</button></header><div id="quizLyricsModalBody" class="quiz-lyrics-modal-body">'+renderUniverseLoading()+'</div></section>';
     document.body.appendChild(overlay);
     quizLyricsEscapeHandler_=function(event){if(event.key==='Escape')closeQuizLyrics_();};
     document.addEventListener('keydown',quizLyricsEscapeHandler_);

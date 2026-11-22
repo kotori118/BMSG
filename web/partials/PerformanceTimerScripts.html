@@ -74,7 +74,7 @@
   window.initPerformanceTimerPage=function(){
     document.body.classList.add('performance-timer-active');
     const host=document.getElementById('performanceTimerApp');if(!host)return;
-    host.innerHTML='<div class="ui-panel pt-panel pt-loading">'+(typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','#9cecff'):'LOADING...')+'</div>';
+    host.innerHTML='<div class="ui-panel pt-panel pt-loading">'+renderUniverseLoading()+'</div>';
     google.script.run.withSuccessHandler(function(data){state.bootstrap=data||{songs:[],members:[]};renderTimerBody();}).withFailureHandler(renderLoadError).getPerformanceTimerBootstrap();
   };
   window.cleanupPerformanceTimerPage=function(){if(state.running)settleAt(now());clearAll();document.body.classList.remove('performance-timer-active');closePtDialog();};

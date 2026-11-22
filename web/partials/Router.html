@@ -64,13 +64,9 @@
   function renderInitialUniverseRoute_(page, params) {
     const userId = typeof getUniverseUserId === 'function' ? getUniverseUserId() : '';
     const preferencesReady = typeof universePreferencesClient !== 'undefined' && universePreferencesClient.loaded && universePreferencesClient.userId === userId;
-    if (userId && !preferencesReady && typeof loadUniverseUserPreferences_ === 'function') {
-      loadUniverseUserPreferences_(userId, function() {
-        renderRoute(page, params || {});
-      });
-      return;
-    }
+    // 画面はすぐに描く。設定（推しメン）は画面の表示に使わないので、裏で読む。
     renderRoute(page, params || {});
+    if (userId && !preferencesReady && typeof loadUniverseUserPreferences_ === 'function') loadUniverseUserPreferences_(userId);
   }
 
   function initRouter(){google.script.history.setChangeHandler(function(event){const page=event&&event.location&&event.location.parameter&&event.location.parameter.page?event.location.parameter.page:'home';if(currentRoute==='manage'&&!managementCanLeave_()){restoreManagementHistory_();return;}if(lyricsSaveNavigationLocked_()){restoreCurrentLyricsHistoryState_();if(typeof showToast==='function')showToast('保存中です');return;}if(currentRoute==='lyrics'&&typeof lyricsEditSessionActive_==='function'&&lyricsEditSessionActive_()&&typeof confirmDiscardLyricsChanges_==='function'&&!confirmDiscardLyricsChanges_()){restoreCurrentLyricsHistoryState_();return;}if(currentRoute==='cover'&&coverState&&coverState.dirty){google.script.history.replace({page:'cover'},{page:'cover'},'');if(typeof coverConfirmExternalNavigation==='function')coverConfirmExternalNavigation(page);return;}if(currentRoute==='quiz'&&typeof quizCanLeave_==='function'&&!quizCanLeave_()){const state={page:'quiz'};if(quizState&&quizState.game&&quizState.game.roomId)state.room=quizState.game.roomId;google.script.history.replace(state,state,'');return;}if(currentRoute==='metrics'&&page!=='metrics'&&typeof performanceTimerCanLeave_==='function'&&!performanceTimerCanLeave_()){google.script.history.replace({page:'metrics'},{page:'metrics'},'');return;}renderRoute(page,event.location.parameter||{});});google.script.url.getLocation(function(location){const page=location&&location.parameter&&location.parameter.page?location.parameter.page:'home';const params=location&&location.parameter?location.parameter:{};if(!location.parameter||!location.parameter.page){google.script.history.replace({page:'home'},{page:'home'},'');}renderInitialUniverseRoute_(page,params);});}

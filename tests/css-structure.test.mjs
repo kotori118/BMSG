@@ -34,3 +34,16 @@ test('戻るボタンは BACK つきの1種類だけ（矢印だけの版は使�
   const offenders = fs.readdirSync(PARTIALS).filter((f) => f.endsWith('.html')).filter((f) => fs.readFileSync(path.join(PARTIALS, f), 'utf8').includes('ui-back-icon'));
   assert.deepEqual(offenders, []);
 });
+
+test('読み込み中は共通の2種類だけ（スケルトン ui-skeleton／くるくる renderUniverseLoading）', () => {
+  const problems = [];
+  for (const file of fs.readdirSync(PARTIALS).filter((f) => f.endsWith('.html'))) {
+    const src = fs.readFileSync(path.join(PARTIALS, file), 'utf8');
+    if (/skeleton-block/.test(src)) problems.push(`${file}: 古いスケルトン skeleton-block`);
+    if (file !== 'StateUI.html' && /LOADING/.test(src.replace(/__[A-Z_]*LOADING__/g, ''))) problems.push(`${file}: 英語の LOADING 表示`);
+    for (const m of src.matchAll(/renderUniverseLoading\(([^)]*)\)/g)) {
+      if (/,|#[0-9a-f]{3,6}/i.test(m[1])) problems.push(`${file}: renderUniverseLoading(${m[1]}) に色や2つ目の値は渡さない`);
+    }
+  }
+  assert.deepEqual(problems, []);
+});

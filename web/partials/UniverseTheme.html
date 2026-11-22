@@ -233,16 +233,18 @@
   @keyframes uiRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes universeSpinner { to { transform: rotate(360deg); } }
   @keyframes universeSkeletonSweep { to { transform: translateX(115%); } }
-  /* スケルトン：枠は本物のまま、中身だけ流れる面 */
-  .ui-skeleton { display: block; min-height: 16px; border-radius: var(--ui-radius); background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
+  /* 読み込み中は2種類だけ（17章）
+     1) スケルトン：中身と同じ形の面がゆっくり光る。形が分かるとき（一覧・カード・見出し）はこちら。
+        ui-skeleton を本物と同じ部品（ui-avatar・ui-card など）と並べてつけると、その形のまま光る。
+     2) くるくる：形が分からない短い待ち（保存中・準備中）。renderUniverseLoading() が出す ui-loading。 */
+  .ui-skeleton { display: block; min-height: 14px; border-radius: var(--ui-radius); color: transparent; background: linear-gradient(100deg, var(--ui-panel-2) 30%, var(--ui-line) 50%, var(--ui-panel-2) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
+  .ui-skeleton.ui-avatar { border-radius: 50%; }
   .ui-skeleton.ui-skeleton-card { min-height: 88px; border: 1px solid var(--ui-line); }
   .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
   .ui-skeleton-row { display: block; height: 104px; margin: 0 4px; border-bottom: 1px solid var(--ui-line); background: linear-gradient(100deg, var(--ui-bg) 30%, var(--ui-panel) 50%, var(--ui-bg) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
-  .skeleton-block { position: relative; overflow: hidden; background: var(--ui-panel-2); }
-  .skeleton-block::after { content: ""; position: absolute; inset: 0; transform: translateX(-110%); background: linear-gradient(90deg, transparent, var(--ui-line), transparent); animation: universeSkeletonSweep 1.35s ease-in-out infinite; }
-  /* くるくる（本当に待つときだけ） */
-  .ui-loading, .universe-loading { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-label); font-weight: 700; letter-spacing: .12em; }
-  .ui-loading:not(.universe-loading):not(.is-shared)::before, .universe-spinner { content: ""; box-sizing: border-box; width: 18px; height: 18px; flex: none; border: 2px solid var(--ui-line); border-top-color: var(--ui-text); border-right-color: var(--ui-text); border-radius: 50%; animation: universeSpinner .8s linear infinite; }
+  .ui-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 140px; padding: 24px 0; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 500; letter-spacing: .08em; text-align: center; }
+  .ui-loading[hidden] { display: none; }
+  .ui-loading::before { content: ""; width: 22px; height: 22px; border: 1.5px solid var(--ui-line); border-top-color: var(--ui-text); border-radius: 50%; animation: universeSpinner .9s linear infinite; }
   /* 通知（トースト）：塗りの帯 */
   .universe-toast { min-height: 52px; padding: 0 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--ui-radius); background: var(--ui-active-bg); color: var(--ui-active-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 700; letter-spacing: .06em; opacity: 0; transform: translateY(10px); animation: toast-in 190ms var(--ui-ease) forwards; }
   .universe-toast.toast-out { animation: toast-out 170ms var(--ui-ease) forwards; }
@@ -254,5 +256,5 @@
   .universe-recovery-state h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 800; letter-spacing: .12em; }
   .universe-recovery-state p { margin: 0; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.8; }
   .universe-recovery-retry { min-height: var(--ui-button-h); margin-top: 6px; padding: 0 20px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); cursor: pointer; }
-  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-skeleton-row, .skeleton-block::after, .ui-loading::before, .universe-spinner { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-skeleton-row, .ui-loading::before { animation: none; } }
 </style>

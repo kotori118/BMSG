@@ -15,15 +15,15 @@
   function renderCoverLoading(){
     const app=document.getElementById('coverApp');if(!app)return;
     if(coverState.screen==='home'){
-      app.innerHTML='<div class="cover-home-actions"><button class="ui-btn" type="button" disabled><span class="skeleton-block" style="display:block;width:54%;height:14px;border-radius:7px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="skeleton-block" style="display:block;width:62%;height:14px;border-radius:7px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="skeleton-block" style="display:block;width:44%;height:14px;border-radius:7px;margin:auto"></span></button></div>';
+      app.innerHTML='<div class="cover-home-actions"><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:54%;height:14px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:62%;height:14px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:44%;height:14px;margin:auto"></span></button></div>';
       setCanonicalCoverVisualMode('home');return;
     }
     if(coverState.screen==='songs'){
-      const row='<button type="button" class="ui-row cover-song-row" disabled aria-hidden="true"><strong class="skeleton-block" style="display:block;width:52%;height:15px;border-radius:7px"></strong></button>';
-      app.innerHTML='<h2 class="ui-label cover-section-title">'+escapeHtml(coverState.artist||'')+'</h2><div class="cover-search-wrap"><div class="ui-input cover-search" aria-hidden="true"><span class="skeleton-block" style="display:block;width:42%;height:14px;border-radius:7px"></span></div></div><div class="cover-stack">'+row+row+row+row+'</div>';
+      const row='<button type="button" class="ui-row cover-song-row" disabled aria-hidden="true"><strong class="ui-skeleton" style="display:block;width:52%;height:15px"></strong></button>';
+      app.innerHTML='<h2 class="ui-label cover-section-title">'+escapeHtml(coverState.artist||'')+'</h2><div class="cover-search-wrap"><div class="ui-input cover-search" aria-hidden="true"><span class="ui-skeleton" style="display:block;width:42%;height:14px"></span></div></div><div class="cover-stack">'+row+row+row+row+'</div>';
       setCanonicalCoverVisualMode('songs');return;
     }
-    app.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','var(--ui-line-strong)'):'<div class="ui-empty cover-empty">LOADING...</div>';
+    app.innerHTML=renderUniverseLoading();
   }
   function renderCoverMessage(message){const app=document.getElementById('coverApp');if(app)app.innerHTML='<div class="ui-empty cover-empty">'+escapeHtml(message)+'</div>';}
   function showCoverError(error){coverState.busy=false;setCoverSavingState(false);const msg=error&&error.message?error.message:String(error||'エラーが発生しました。');if(typeof showToast==='function')showToast(msg);else renderCoverMessage(msg);}
@@ -63,7 +63,7 @@
   function openSavedCover(projectId,returnScreen){coverState.returnScreen=returnScreen||coverState.returnScreen||'projects';renderCoverLoading();google.script.run.withSuccessHandler(function(data){coverState.editor=data;coverState.coverGroup=data.coverGroup;coverState.viewMode='cover';coverState.dirty=false;coverState.screen='view';renderCoverEditor();}).withFailureHandler(showCoverError).getCoverProject({userId:getUniverseUserId(),projectId:projectId});}
   function editSavedCover(){if(!coverState.editor||!coverState.editor.isCreator)return;coverState.screen='editor';coverState.dirty=false;renderCoverEditor();}
 
-  function coverSavingIndicatorMarkup(){return typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','var(--ui-line-strong)'):'<div class="universe-loading" role="status" aria-live="polite"><span>LOADING...</span></div>';}
+  function coverSavingIndicatorMarkup(){return renderUniverseLoading();}
   function coverOverlayMarkup(){return '<div id="coverSheet" class="ui-modal cover-sheet" hidden onclick="closeCoverSheetOnBackdrop(event)"><div id="coverSheetPanel" class="ui-modal-card cover-sheet-panel"></div></div><div id="coverDialog" class="ui-modal cover-dialog" hidden onclick="closeCoverDialogOnBackdrop(event)"><div class="ui-modal-card cover-dialog-panel"><p id="coverDialogMessage" class="ui-text cover-dialog-message"></p><div class="cover-dialog-actions"><button id="coverDialogCancel" type="button" class="ui-btn" onclick="closeCoverDialog()">キャンセル</button><button id="coverDialogConfirm" type="button" class="ui-btn" onclick="confirmCoverDialog()">OK</button></div></div></div><div id="coverSaving" class="ui-muted cover-saving" hidden aria-busy="true">'+coverSavingIndicatorMarkup()+'</div>';}
   function setCoverSavingState(isSaving){
     const overlay=document.getElementById('coverSaving'),button=document.querySelector('.cover-save-button');
@@ -369,12 +369,12 @@
 
   function openCoverProjects(){
     coverState.screen='projects';coverState.returnScreen='projects';const app=document.getElementById('coverApp');if(!app)return;
-    app.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','var(--ui-line-strong)'):'<div class="ui-empty cover-empty">LOADING...</div>';setCanonicalCoverVisualMode('projects');
+    app.innerHTML=renderUniverseLoading();setCanonicalCoverVisualMode('projects');
     google.script.run.withSuccessHandler(function(projects){if(coverState.screen!=='projects')return;coverState.bootstrap.projects=projects||[];app.innerHTML='<h2 class="ui-label cover-section-title">作ったカバー</h2>'+renderCoverProjectRows(ownCanonicalCoverProjects(projects||[]),false,false);}).withFailureHandler(showCoverError).getCoverProjects(getUniverseUserId());
   }
 
   function openCoverLibrary(){
-    coverState.screen='library';coverState.returnScreen='library';const app=document.getElementById('coverApp');if(!app)return;app.innerHTML=typeof renderUniverseLoading==='function'?renderUniverseLoading('LOADING...','var(--ui-line-strong)'):'<div class="ui-empty cover-empty">LOADING...</div>';setCanonicalCoverVisualMode('library');
+    coverState.screen='library';coverState.returnScreen='library';const app=document.getElementById('coverApp');if(!app)return;app.innerHTML=renderUniverseLoading();setCanonicalCoverVisualMode('library');
     google.script.run.withSuccessHandler(function(projects){coverState.libraryProjects=projects||[];if(coverState.screen!=='library')return;app.innerHTML='<h2 class="ui-label cover-section-title">ライブラリ</h2>'+renderCoverProjectRows(coverState.libraryProjects,false,true);}).withFailureHandler(showCoverError).getCoverLibrary(getUniverseUserId());
   }
 
