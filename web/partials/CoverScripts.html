@@ -204,7 +204,7 @@
 
   function renderCoverHome(){
     coverState.screen='home';coverState.dirty=false;const app=document.getElementById('coverApp');if(!app)return;
-    app.innerHTML='<div class="cover-home-actions"><button class="ui-btn" type="button" onclick="openCoverGroupSelect()">新しく作る</button><button class="ui-btn" type="button" onclick="openCoverProjects()">作ったカバーを見る</button><button class="ui-btn" type="button" onclick="openCoverLibrary()">ライブラリ</button></div>';
+    app.innerHTML=renderUniverseIndexRows([{title:'新しく作る',desc:'歌うグループと原曲を選んで、歌割りを作る',onclick:'openCoverGroupSelect()'},{title:'作ったカバーを見る',desc:'自分が作ったカバーの一覧',onclick:'openCoverProjects()'},{title:'ライブラリ',desc:'みんなが作ったカバー',onclick:'openCoverLibrary()'}],'cover-home-actions');
     setCanonicalCoverVisualMode('home');
   }
 

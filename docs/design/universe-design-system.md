@@ -176,7 +176,7 @@
 | | `ui-tabs` + `ui-tab` | つながった枠のタブ（選択中は塗り） |
 | 一覧 | `ui-list` + `ui-row`（`ui-row-plain`） | 行（右に矢印）／矢印なし |
 | | `ui-list-box` | 枠の中に行を並べる |
-| | `ui-index-row` + `ui-index-arrow` | 番号つきの大きな行（分析のトップ） |
+| | `ui-index-row`（`ui-num-hollow` `ui-index-copy` `ui-index-arrow`） | 番号つきの大きな行（分析のトップ・カバーメーカーのトップ）。描画は `renderUniverseIndexRows()`（AppHelpers） |
 | | `ui-menu-tiles` + `ui-menu-tile`（`-symbol` `-meta` `-name`） | DATA・LAB の入口のタイル |
 | 窓 | `ui-modal` + `ui-modal-card`（`-head` `-body`） | 画面の中から開く窓 |
 | 状態 | `ui-skeleton`（`ui-skeleton-card`）/ `ui-skeleton-list` + `ui-skeleton-row` / `skeleton-block` | 読み込み中の帯 |

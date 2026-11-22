@@ -14,9 +14,7 @@
       ['timeline','時系列分析','割合推移と各種ランキング'],
       ['other','その他分析','順番、フレーズ、制作者、リリース形態、レコード']
     ];
-    document.getElementById('analysisPanel').innerHTML='<div class="ui-list analysis-hub">'+items.map(function(x,i){
-      return '<button class="ui-index-row analysis-hub-row" type="button" onclick="selectAnalysisView(\''+x[0]+'\')"><span class="ui-num-hollow analysis-hub-no">'+String(i+1).padStart(2,'0')+'</span><span class="analysis-hub-copy"><strong class="ui-heading">'+x[1]+'</strong><small class="ui-muted">'+x[2]+'</small></span><span class="ui-index-arrow analysis-hub-arrow" aria-hidden="true"></span></button>';
-    }).join('')+'</div>';
+    document.getElementById('analysisPanel').innerHTML=renderUniverseIndexRows(items.map(function(x){return {title:x[1],desc:x[2],onclick:'selectAnalysisView(\''+x[0]+'\')'};}),'analysis-hub');
   }
   function memberOptions(){return analysisData.members.map(m=>'<option value="'+escapeHtml(m.name)+'"'+(analysisMember===m.name?' selected':'')+'>'+escapeHtml(m.name)+'</option>').join('');}
   function simpleRank(rows,key){return '<div class="ui-panel analysis-table-wrap"><table class="ui-table analysis-table">'+rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHtml(r.songName)+'</td><td class="num">'+Number(r[key]).toFixed(1)+'%</td></tr>').join('')+'</table></div>';}

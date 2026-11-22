@@ -1,20 +1,16 @@
 <script>
-  const UNIVERSE_DEFAULT_ACCENT = '#9cecff';
   const universePreferencesClient = {
     userId: '',
     loading: false,
     loaded: false,
     members: [],
-    accentRulesPrepared: false,
-    accentObserver: null,
     preferences: createDefaultUniversePreferences_()
   };
 
   function createDefaultUniversePreferences_() {
     return {
       userId: '', favoriteMemberId: '', favoriteMemberName: '', favoriteMemberColor: '',
-      favoriteGroupId: '', favoriteGroupName: '', supportsGroupStart: false,
-      memberColorMode: false, favoriteGroupStartMode: false
+      favoriteGroupId: '', favoriteGroupName: ''
     };
   }
 
@@ -24,7 +20,6 @@
     universePreferencesClient.loaded = false;
     universePreferencesClient.members = [];
     universePreferencesClient.preferences = createDefaultUniversePreferences_();
-    applyUniverseMemberAccent_();
     syncUniversePreferenceSettingsUI_();
   }
 
@@ -59,8 +54,6 @@
     universePreferencesClient.preferences = Object.assign(createDefaultUniversePreferences_(), data.preferences || {});
     universePreferencesClient.userId = String(universePreferencesClient.preferences.userId || universePreferencesClient.userId || '');
     universePreferencesClient.loaded = true;
-    prepareUniverseAccentRules_();
-    applyUniverseMemberAccent_();
     syncUniversePreferenceSettingsUI_();
     syncUniverseFavoriteMemberChooser_();
   }
@@ -71,9 +64,7 @@
     const current = universePreferencesClient.preferences || createDefaultUniversePreferences_();
     const payload = {
       userId: userId,
-      favoriteMemberId: Object.prototype.hasOwnProperty.call(patch, 'favoriteMemberId') ? patch.favoriteMemberId : current.favoriteMemberId,
-      memberColorMode: Object.prototype.hasOwnProperty.call(patch, 'memberColorMode') ? patch.memberColorMode : current.memberColorMode,
-      favoriteGroupStartMode: Object.prototype.hasOwnProperty.call(patch, 'favoriteGroupStartMode') ? patch.favoriteGroupStartMode : current.favoriteGroupStartMode
+      favoriteMemberId: Object.prototype.hasOwnProperty.call(patch, 'favoriteMemberId') ? patch.favoriteMemberId : current.favoriteMemberId
     };
     google.script.run.withSuccessHandler(function(response) {
       if (response && response.ok && response.data) {
@@ -133,175 +124,16 @@
   function selectUniverseFavoriteMember(memberId) {
     const member = universePreferencesClient.members.find(function(item) { return item.memberId === String(memberId); });
     if (!member) return;
-    let useMemberColor = false;
-    if (member.colorHex) useMemberColor = window.confirm('Universeを'+member.displayName+'カラーにしますか？');
-    const keepGroupStart = Boolean(universePreferencesClient.preferences.favoriteGroupStartMode && member.supportsGroupStart);
-    saveUniversePreferences_({
-      favoriteMemberId: member.memberId,
-      memberColorMode: useMemberColor,
-      favoriteGroupStartMode: keepGroupStart
-    }, function(ok) {
-      if (!ok) return;
-      closeUniverseFavoriteMemberChooser();
-      if (!member.colorHex && typeof showToast === 'function') showToast(member.displayName+'はメンバーカラー未設定のため標準カラーを使用します。');
-      if (!member.supportsGroupStart && typeof showToast === 'function') showToast('ソロアーティストは推しグループ初期表示の対象外です。');
+    saveUniversePreferences_({ favoriteMemberId: member.memberId }, function(ok) {
+      if (ok) closeUniverseFavoriteMemberChooser();
     });
-  }
-
-  function toggleUniverseMemberColorMode() {
-    const preferences = universePreferencesClient.preferences || createDefaultUniversePreferences_();
-    if (!preferences.favoriteMemberId) {
-      openUniverseFavoriteMemberChooser();
-      return;
-    }
-    if (!preferences.favoriteMemberColor) {
-      if (typeof showToast === 'function') showToast('このメンバーはカラー未設定です。');
-      return;
-    }
-    saveUniversePreferences_({memberColorMode: !preferences.memberColorMode});
-  }
-
-  function toggleUniverseFavoriteGroupStartMode() {
-    const preferences = universePreferencesClient.preferences || createDefaultUniversePreferences_();
-    if (!preferences.favoriteMemberId) {
-      openUniverseFavoriteMemberChooser();
-      return;
-    }
-    if (!preferences.supportsGroupStart) {
-      if (typeof showToast === 'function') showToast('ソロアーティストはこの設定に対応していません。');
-      return;
-    }
-    saveUniversePreferences_({favoriteGroupStartMode: !preferences.favoriteGroupStartMode});
   }
 
   function syncUniversePreferenceSettingsUI_() {
     const p = universePreferencesClient.preferences || createDefaultUniversePreferences_();
     const favorite = document.getElementById('settingsFavoriteMemberName');
     const favoriteMeta = document.getElementById('settingsFavoriteMemberMeta');
-    const colorStatus = document.getElementById('settingsMemberColorModeStatus');
-    const colorButton = document.getElementById('settingsMemberColorModeButton');
-    const groupStatus = document.getElementById('settingsFavoriteGroupStartStatus');
-    const groupButton = document.getElementById('settingsFavoriteGroupStartButton');
-    const groupMeta = document.getElementById('settingsFavoriteGroupStartMeta');
     if (favorite) favorite.textContent = p.favoriteMemberName || '未設定';
-    if (favoriteMeta) favoriteMeta.textContent = p.favoriteMemberName ? ((p.favoriteGroupName || 'SOLO') + (p.favoriteMemberColor ? ' / '+p.favoriteMemberColor : '')) : '推しメンを1人選択';
-    if (colorStatus) {
-      colorStatus.textContent = p.memberColorMode ? 'ON' : 'OFF';
-      colorStatus.classList.toggle('active', Boolean(p.memberColorMode));
-    }
-    if (colorButton) colorButton.classList.toggle('is-disabled', Boolean(p.favoriteMemberId && !p.favoriteMemberColor));
-    if (groupStatus) {
-      groupStatus.textContent = p.favoriteGroupStartMode ? 'ON' : 'OFF';
-      groupStatus.classList.toggle('active', Boolean(p.favoriteGroupStartMode));
-    }
-    if (groupButton) groupButton.classList.toggle('is-disabled', Boolean(p.favoriteMemberId && !p.supportsGroupStart));
-    if (groupMeta) groupMeta.textContent = !p.favoriteMemberId ? '推しメン設定後に利用できます' : (p.supportsGroupStart ? ((p.favoriteGroupName || '')+'を初期表示') : 'ソロアーティストは非対応');
-  }
-
-  function getUniversePreferredGroupName() {
-    const p = universePreferencesClient.preferences || createDefaultUniversePreferences_();
-    return p.favoriteGroupStartMode && p.supportsGroupStart ? String(p.favoriteGroupName || '') : '';
-  }
-
-  function getUniversePreferredProfileGroupKey() {
-    const map = {'BE:FIRST':'befirst','MAZZEL':'mazzel','STARGLOW':'starglow','HANA':'hana'};
-    const name=getUniversePreferredGroupName();
-    if(typeof profileMembersState!=='undefined'){const group=profileMembersState.groups.find(function(g){return g.name===name;});if(group)return group.key;}
-    return map[name] || 'all';
-  }
-
-  function applyUniverseMemberAccent_() {
-    prepareUniverseAccentRules_();
-    const p = universePreferencesClient.preferences || createDefaultUniversePreferences_();
-    const accent = p.memberColorMode && /^#[0-9a-f]{6}$/i.test(String(p.favoriteMemberColor || '')) ? p.favoriteMemberColor : UNIVERSE_DEFAULT_ACCENT;
-    const rgb = universeHexToRgb_(accent) || {r:156,g:236,b:255};
-    const strong = universeMixHex_(accent, '#ffffff', .34);
-    const root = document.documentElement;
-    root.style.setProperty('--universe-accent', accent);
-    root.style.setProperty('--universe-accent-rgb', rgb.r+','+rgb.g+','+rgb.b);
-    root.style.setProperty('--universe-accent-strong', strong);
-    root.style.setProperty('--cyan', accent);
-    root.style.setProperty('--cyan-strong', strong);
-    root.style.setProperty('--cyan-soft', 'rgba('+rgb.r+','+rgb.g+','+rgb.b+',.11)');
-    root.style.setProperty('--dark-line-strong', 'rgba('+rgb.r+','+rgb.g+','+rgb.b+',.24)');
-    document.body.classList.toggle('member-color-mode', accent.toLowerCase() !== UNIVERSE_DEFAULT_ACCENT);
-    rewriteUniverseInlineAccentNode_(document.body);
-  }
-
-  function prepareUniverseAccentRules_() {
-    if (universePreferencesClient.accentRulesPrepared) return;
-    universePreferencesClient.accentRulesPrepared = true;
-    Array.from(document.styleSheets || []).forEach(function(sheet) {
-      let rules;
-      try { rules = sheet.cssRules; } catch (error) { return; }
-      rewriteUniverseAccentRuleList_(rules);
-    });
-    rewriteUniverseInlineAccentNode_(document.body);
-    if (!universePreferencesClient.accentObserver && document.body) {
-      universePreferencesClient.accentObserver = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-          if (mutation.type === 'attributes') {
-            rewriteUniverseInlineAccentElement_(mutation.target);
-            return;
-          }
-          Array.from(mutation.addedNodes || []).forEach(function(node) {
-            if (node && node.nodeType === 1) rewriteUniverseInlineAccentNode_(node);
-          });
-        });
-      });
-      universePreferencesClient.accentObserver.observe(document.body, {childList:true,subtree:true,attributes:true,attributeFilter:['style']});
-    }
-  }
-
-  function rewriteUniverseAccentRuleList_(rules) {
-    if (!rules) return;
-    Array.from(rules).forEach(function(rule) {
-      if (rule.cssRules) rewriteUniverseAccentRuleList_(rule.cssRules);
-      if (!rule.style) return;
-      Array.from(rule.style).forEach(function(property) {
-        if (property === '--universe-accent' || property === '--universe-accent-rgb' || property === '--universe-accent-strong') return;
-        const value = rule.style.getPropertyValue(property);
-        const next = rewriteUniverseAccentValue_(value);
-        if (next !== value) rule.style.setProperty(property, next, rule.style.getPropertyPriority(property));
-      });
-    });
-  }
-
-  function rewriteUniverseInlineAccentNode_(root) {
-    if (!root || root.nodeType !== 1) return;
-    rewriteUniverseInlineAccentElement_(root);
-    if (root.querySelectorAll) root.querySelectorAll('[style]').forEach(rewriteUniverseInlineAccentElement_);
-  }
-
-  function rewriteUniverseInlineAccentElement_(element) {
-    if (!element || !element.style) return;
-    Array.from(element.style).forEach(function(property) {
-      const value = element.style.getPropertyValue(property);
-      const next = rewriteUniverseAccentValue_(value);
-      if (next !== value) element.style.setProperty(property, next, element.style.getPropertyPriority(property));
-    });
-  }
-
-  function rewriteUniverseAccentValue_(value) {
-    let next = String(value || '');
-    next = next.replace(/#9cecff/ig, 'var(--universe-accent)');
-    next = next.replace(/#c6f6ff/ig, 'var(--universe-accent-strong)');
-    next = next.replace(/rgba\(\s*(?:156\s*,\s*236\s*,\s*255|133\s*,\s*224\s*,\s*243|129\s*,\s*221\s*,\s*240|86\s*,\s*194\s*,\s*218|75\s*,\s*165\s*,\s*184)\s*,\s*([^)]+)\)/ig, 'rgba(var(--universe-accent-rgb),$1)');
-    next = next.replace(/rgb\(\s*(?:156\s*,\s*236\s*,\s*255|133\s*,\s*224\s*,\s*243|129\s*,\s*221\s*,\s*240|86\s*,\s*194\s*,\s*218|75\s*,\s*165\s*,\s*184)\s*\)/ig, 'rgb(var(--universe-accent-rgb))');
-    next = next.replace(/#(?:85e0f3|81ddf0|56c2da|4ba5b8)/ig, 'var(--universe-accent)');
-    return next;
-  }
-
-  function universeHexToRgb_(hex) {
-    const match = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(hex || ''));
-    return match ? {r:parseInt(match[1],16),g:parseInt(match[2],16),b:parseInt(match[3],16)} : null;
-  }
-
-  function universeMixHex_(base, other, amount) {
-    const a = universeHexToRgb_(base), b = universeHexToRgb_(other);
-    if (!a || !b) return base;
-    const mix = function(x, y) { return Math.round(x + (y - x) * amount); };
-    const hex = function(value) { return value.toString(16).padStart(2, '0'); };
-    return '#'+hex(mix(a.r,b.r))+hex(mix(a.g,b.g))+hex(mix(a.b,b.b));
+    if (favoriteMeta) favoriteMeta.textContent = p.favoriteMemberName ? (p.favoriteGroupName || 'SOLO') : '推しメンを1人選択';
   }
 </script>

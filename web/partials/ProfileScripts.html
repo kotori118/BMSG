@@ -23,7 +23,7 @@
 
   function initProfilePage() {
     profileCurrentView = 'home';
-    const preferredGroup = typeof getUniversePreferredProfileGroupKey === 'function' ? getUniversePreferredProfileGroupKey() : 'all';
+    const preferredGroup = 'all';
     profileCurrentGroup = 'all'; // group tabs were removed: always show everyone
     profileSelectedMemberId = '';
     profileDetailReturnView = 'home';

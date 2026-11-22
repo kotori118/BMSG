@@ -27,6 +27,14 @@
       return true;
     }
 
+    // 番号つきの大きな行の一覧（分析のトップ・カバーメーカーなど）。items: [{title, desc, onclick}]
+    // onclick は呼ぶ側でエスケープ済みの文字列を渡す。
+    function renderUniverseIndexRows(items, extraClass) {
+      return '<div class="ui-list' + (extraClass ? ' ' + extraClass : '') + '">' + items.map(function (item, i) {
+        return '<button class="ui-index-row" type="button" onclick="' + item.onclick + '"><span class="ui-num-hollow">' + String(i + 1).padStart(2, '0') + '</span><span class="ui-index-copy"><strong class="ui-heading">' + escapeHtml(item.title) + '</strong>' + (item.desc ? '<small class="ui-muted">' + escapeHtml(item.desc) + '</small>' : '') + '</span><span class="ui-index-arrow" aria-hidden="true"></span></button>';
+      }).join('') + '</div>';
+    }
+
     // グループ写真（Driveの画像ID・共有は「リンクを知っている全員」）。歌詞・カバーなど全画面で使う。
     // 管理画面で画像を登録できるようになるまでは、ここで管理する。
     const UNIVERSE_GROUP_PHOTO_IDS = {
