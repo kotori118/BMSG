@@ -754,6 +754,11 @@
   .ui-chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid var(--ui-line-strong); border-radius: 999px; background: transparent; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 700; cursor: pointer; }
   .ui-chip:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked)) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
   .ui-chip > input[type="checkbox"], .ui-chip > input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+  /* メンバーカラーの切り替え（--accent に色）：枠と点がその色、選ぶと色で薄く塗って ✓ */
+  .ui-chip.ui-chip-accent { gap: 8px; border: 1.5px solid var(--accent, var(--ui-line-strong)); }
+  .ui-chip.ui-chip-accent::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent, var(--ui-text)); }
+  .ui-chip.ui-chip-accent:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked)) { border-color: var(--accent, var(--ui-text)); background: color-mix(in srgb, var(--accent, var(--ui-text)) 26%, var(--ui-bg)); color: var(--ui-text); box-shadow: inset 0 0 0 1px var(--accent, var(--ui-text)); }
+  .ui-chip.ui-chip-accent:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked))::after { content: "✓"; font-weight: 900; }
   /* ON/OFF の小さな表示 */
   .ui-switch { display: inline-grid; place-items: center; flex: none; min-width: 52px; height: 28px; padding: 0 10px; border: 1px solid var(--ui-line-strong); border-radius: 999px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; }
   .ui-switch:is(.active, .is-on) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
@@ -1511,6 +1516,32 @@
   .card-back-seal::after{width:2px!important;height:100%!important;background:linear-gradient(180deg,transparent,#dffaff 18%,#fff 50%,#dffaff 82%,transparent)!important;box-shadow:0 0 10px rgba(156,236,255,.55)!important;}
   .card-back-star{opacity:.82!important;}
   .card-gacha-scene .card-space-field{display:none!important}
+
+  /* 待ち画面：裏向きのカードの束が浮いて、光が走る */
+  .card-deck { position: relative; width: 200px; height: 220px; margin: 18px auto 10px; }
+  .card-deck-card { position: absolute; left: 50%; top: 50%; width: 120px; height: 170px; margin: -85px 0 0 -60px; border: 1px solid rgba(255,255,255,.28); border-radius: 12px; background: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 6px, transparent 6px 12px), linear-gradient(160deg, #23262f, #0b0c10); box-shadow: 0 14px 30px rgba(0,0,0,.55); overflow: hidden; }
+  .card-deck-card.d1 { transform: rotate(-12deg) translateX(-22px); animation: cardDeckFloat 3.2s ease-in-out infinite; }
+  .card-deck-card.d2 { transform: rotate(9deg) translateX(22px); animation: cardDeckFloat 3.6s .4s ease-in-out infinite; }
+  .card-deck-card.d3 { display: grid; place-content: center; gap: 4px; text-align: center; color: #fff; animation: cardDeckFloatTop 2.8s ease-in-out infinite; }
+  .card-deck-card.d3 b { font-family: var(--ui-font-display); font-size: 20px; font-weight: 900; letter-spacing: .12em; }
+  .card-deck-card.d3 small { font-family: var(--ui-font-display); font-size: 9px; font-weight: 800; letter-spacing: .4em; color: rgba(255,255,255,.6); }
+  .card-deck-card.d3::after { content: ""; position: absolute; inset: -40% -60%; background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.35) 50%, transparent 60%); transform: translateX(-60%); animation: cardDeckShine 2.6s ease-in-out infinite; }
+  @keyframes cardDeckFloat { 0%, 100% { margin-top: -85px; } 50% { margin-top: -93px; } }
+  @keyframes cardDeckFloatTop { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(-1.5deg); } }
+  @keyframes cardDeckShine { 0%, 55% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
+
+  /* 引く：ため（裏面が光って揺れる）→ 確定演出（レア度の色）→ めくる */
+  .card-reveal.is-charging .card-flip-wrap { animation: cardCharge .6s ease-in-out infinite !important; filter: drop-shadow(0 0 18px rgba(255,255,255,.35)); }
+  .card-reveal.is-hint .card-flip-wrap { animation: cardShake .1s linear infinite !important; }
+  .card-reveal.is-hint.hint-ssr .card-flip-wrap { animation-duration: .07s !important; }
+  .card-reveal.hint-n .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(255,255,255,.6)); }
+  .card-reveal.hint-r .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(214,138,72,.95)) drop-shadow(0 0 48px rgba(214,138,72,.5)); }
+  .card-reveal.hint-sr .card-flip-wrap { filter: drop-shadow(0 0 24px rgba(214,228,250,1)) drop-shadow(0 0 60px rgba(170,200,255,.6)); }
+  .card-reveal.hint-ssr .card-flip-wrap { filter: drop-shadow(0 0 26px rgba(255,204,64,1)) drop-shadow(0 0 80px rgba(255,170,0,.85)); }
+  .card-reveal.is-revealed .card-flip-wrap { filter: none; }
+  @keyframes cardCharge { 0%, 100% { transform: translateY(0) rotate(-1.2deg) scale(1); } 50% { transform: translateY(-8px) rotate(1.2deg) scale(1.02); } }
+  @keyframes cardShake { 0% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(-3px, 1px) rotate(-1deg); } 50% { transform: translate(2px, -2px) rotate(1deg); } 75% { transform: translate(-2px, 2px) rotate(0); } 100% { transform: translate(0, 0) rotate(0); } }
+  @media (prefers-reduced-motion: reduce) { .card-deck-card, .card-deck-card.d3::after, .card-reveal .card-flip-wrap { animation: none !important; } }
 </style>
 
 <style>
@@ -6134,23 +6165,62 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   .song-gacha-count { margin-bottom: 14px; text-align: center; }
   @media (max-width: 390px) { .song-gacha-groups { grid-template-columns: 1fr; } }
 
-  /* 抽選の表示（画面いっぱい） */
-  .song-gacha-overlay { display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; animation: songGachaFadeIn .25s ease forwards; }
-  .song-gacha-overlay.is-static { opacity: 1; animation: none; }
-  .song-gacha-overlay.is-leaving { animation: songGachaFadeOut .25s ease forwards; }
-  .song-gacha-stage { display: grid; justify-items: center; gap: 12px; width: min(100%, 420px); text-align: center; }
-  .song-gacha-ticker { display: flex; align-items: center; justify-content: center; min-height: 96px; }
-  .song-gacha-stage.is-final .song-gacha-ticker { animation: songGachaFinal .45s cubic-bezier(.2, .85, .25, 1) both; }
-  .song-gacha-final-group { min-height: 18px; visibility: hidden; opacity: 0; }
-  .song-gacha-stage.is-ready .song-gacha-final-group { visibility: visible; opacity: 1; }
-  .song-gacha-overlay-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 22px; visibility: hidden; opacity: 0; pointer-events: none; }
+  /* 抽選の表示（画面いっぱい）。演出の見た目は下の <style data-content> */
+  .song-gacha-overlay { display: flex; align-items: center; justify-content: center; padding: 24px; overflow: hidden; }
+  .song-gacha-stage { position: relative; z-index: 3; display: grid; justify-items: center; gap: 14px; width: min(100%, 420px); text-align: center; }
+  .song-gacha-window { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 120px; padding: 0 12px; }
+  .song-gacha-ticker { margin: 0; }
+  .song-gacha-final-group { min-height: 18px; }
+  .song-gacha-overlay-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 18px; }
   .song-gacha-overlay-actions .ui-btn { width: 100%; }
   .song-gacha-selection-back { grid-column: 1 / -1; justify-self: center; }
-  .song-gacha-stage.is-ready .song-gacha-overlay-actions { visibility: visible; opacity: 1; pointer-events: auto; animation: songGachaActionsIn .3s ease both; }
-  @keyframes songGachaFadeIn { to { opacity: 1; } }
-  @keyframes songGachaFadeOut { to { opacity: 0; } }
-  @keyframes songGachaFinal { 0% { opacity: .25; transform: scale(.94); } 70% { opacity: 1; transform: scale(1.02); } 100% { transform: scale(1); } }
-  @keyframes songGachaActionsIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+<style data-content>
+  /* SONG GACHA の演出（暗い舞台・回る輪・流れる曲名・止まった瞬間の光と粒） */
+  .song-gacha-overlay {
+    --ui-bg: #06070b; --ui-panel: #14161c; --ui-panel-2: #1c1f27; --ui-line: rgba(255,255,255,.14); --ui-line-strong: rgba(255,255,255,.5);
+    --ui-text: #ffffff; --ui-text-sub: rgba(255,255,255,.62); --ui-active-bg: #ffffff; --ui-active-text: #0b0b0f;
+    background: radial-gradient(120% 80% at 50% 45%, #1a1d27 0%, #06070b 62%); color: #fff;
+    opacity: 0; animation: gachaFadeIn .3s ease forwards;
+  }
+  .song-gacha-overlay.is-static { opacity: 1; animation: none; }
+  .song-gacha-overlay.is-leaving { animation: gachaFadeOut .25s ease forwards; }
+  .gacha-photo { position: absolute; inset: -6%; z-index: 0; background: var(--gacha-photo, none) center / cover no-repeat; filter: blur(14px) brightness(.45) saturate(1.2); opacity: 0; transform: scale(1.12); transition: opacity .9s ease, transform 2.4s ease; }
+  .song-gacha-overlay.is-final .gacha-photo { opacity: 1; transform: scale(1); }
+  .gacha-glow { position: absolute; left: 50%; top: 46%; z-index: 1; width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.28) 0%, rgba(255,255,255,.06) 38%, transparent 70%); animation: gachaPulse 1.6s ease-in-out infinite; }
+  .song-gacha-overlay.is-spinning .gacha-glow { animation-duration: .45s; }
+  .gacha-rings { position: absolute; left: 50%; top: 46%; z-index: 1; width: 0; height: 0; }
+  .gacha-rings i { position: absolute; left: 50%; top: 50%; border: 1px solid rgba(255,255,255,.22); border-top-color: rgba(255,255,255,.85); border-radius: 50%; animation: gachaSpin 3s linear infinite; }
+  .gacha-rings i:nth-child(1) { width: 230px; height: 230px; margin: -115px; }
+  .gacha-rings i:nth-child(2) { width: 290px; height: 290px; margin: -145px; animation-duration: 4.2s; animation-direction: reverse; border-top-color: rgba(255,255,255,.5); }
+  .gacha-rings i:nth-child(3) { width: 360px; height: 360px; margin: -180px; animation-duration: 6s; border-style: dashed; border-top-color: rgba(255,255,255,.35); }
+  .song-gacha-overlay.is-spinning .gacha-rings i { animation-duration: .7s; }
+  .song-gacha-overlay.is-spinning .gacha-rings i:nth-child(2) { animation-duration: .95s; }
+  .song-gacha-overlay.is-final .gacha-rings { opacity: 0; transition: opacity .6s ease; }
+  .song-gacha-kicker { color: rgba(255,255,255,.7); letter-spacing: .42em; }
+  .song-gacha-ticker { color: #fff; text-shadow: 0 0 24px rgba(255,255,255,.35); }
+  .song-gacha-overlay.is-spinning .song-gacha-ticker { filter: blur(1.2px); opacity: .85; }
+  .song-gacha-overlay.is-final .song-gacha-ticker { filter: none; opacity: 1; font-size: clamp(26px, 8vw, 38px); text-shadow: 0 0 30px rgba(255,255,255,.55); animation: gachaPop .7s cubic-bezier(.2,1.4,.3,1) both; }
+  .song-gacha-final-group { visibility: hidden; opacity: 0; color: rgba(255,255,255,.75); }
+  .song-gacha-overlay.is-final .song-gacha-final-group { visibility: visible; animation: gachaRise .5s .35s ease forwards; }
+  .gacha-flash { position: absolute; inset: 0; z-index: 4; background: #fff; opacity: 0; pointer-events: none; }
+  .song-gacha-overlay.is-final .gacha-flash { animation: gachaFlash .55s ease-out; }
+  .gacha-burst { position: absolute; left: 50%; top: 46%; z-index: 2; width: 0; height: 0; }
+  .gacha-burst i { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px #fff; opacity: 0; }
+  .gacha-burst i:nth-child(3n) { width: 5px; height: 5px; }
+  .gacha-burst i:nth-child(4n) { border-radius: 1px; transform: rotate(45deg); }
+  .song-gacha-overlay.is-final .gacha-burst i { animation: gachaBurst 1.1s cubic-bezier(.15,.8,.3,1) forwards; animation-delay: var(--t, 0s); }
+  .song-gacha-overlay-actions { visibility: hidden; opacity: 0; pointer-events: none; }
+  .song-gacha-overlay.is-ready .song-gacha-overlay-actions { visibility: visible; pointer-events: auto; animation: gachaRise .4s ease forwards; }
+  @keyframes gachaFadeIn { to { opacity: 1; } }
+  @keyframes gachaFadeOut { to { opacity: 0; } }
+  @keyframes gachaSpin { to { transform: rotate(360deg); } }
+  @keyframes gachaPulse { 0%, 100% { transform: scale(.92); opacity: .7; } 50% { transform: scale(1.08); opacity: 1; } }
+  @keyframes gachaPop { 0% { transform: scale(1.6); opacity: 0; letter-spacing: .2em; } 60% { transform: scale(.96); opacity: 1; } 100% { transform: scale(1); letter-spacing: normal; } }
+  @keyframes gachaFlash { 0% { opacity: .9; } 100% { opacity: 0; } }
+  @keyframes gachaRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes gachaBurst { 0% { opacity: 1; transform: rotate(var(--a)) translateX(0) scale(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--d)) scale(.4); } }
+  @media (prefers-reduced-motion: reduce) { .song-gacha-overlay *, .song-gacha-overlay { animation: none !important; transition: none !important; } .song-gacha-overlay { opacity: 1; } .song-gacha-final-group, .song-gacha-overlay-actions { visibility: visible; opacity: 1; } }
 </style>
 <script>
   const songGachaState={enabled:{},result:null,drawing:false};
@@ -6217,39 +6287,38 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
   function songGachaOverlayMarkup(){
-    return '<div class="song-gacha-stage"><p class="ui-heading-lg song-gacha-ticker">...</p><p class="ui-label song-gacha-final-group"></p><div class="song-gacha-overlay-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="drawSongGachaAgain()">もう一度引く</button><button class="ui-btn" type="button" onclick="openSongGachaKaraoke()">歌う</button><div class="song-gacha-selection-back">'+lyxBack('backFromSongGachaReveal()')+'</div></div></div>';
+    let burst='';
+    for(let i=0;i<18;i++){burst+='<i style="--a:'+(i*20+Math.round(Math.random()*12))+'deg;--d:'+(120+Math.round(Math.random()*110))+'px;--t:'+(Math.random()*.12).toFixed(2)+'s"></i>';}
+    return '<div class="gacha-photo"></div><div class="gacha-glow"></div><div class="gacha-rings" aria-hidden="true"><i></i><i></i><i></i></div><div class="gacha-burst" aria-hidden="true">'+burst+'</div><div class="gacha-flash" aria-hidden="true"></div>'
+      +'<div class="song-gacha-stage"><p class="ui-label song-gacha-kicker">SONG GACHA</p><div class="song-gacha-window"><p class="ui-heading-lg song-gacha-ticker" aria-live="polite">...</p></div><p class="ui-label song-gacha-final-group"></p><div class="song-gacha-overlay-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="drawSongGachaAgain()">もう一度引く</button><button class="ui-btn" type="button" onclick="openSongGachaKaraoke()">歌う</button><div class="song-gacha-selection-back">'+lyxBack('backFromSongGachaReveal()')+'</div></div></div>';
   }
 
+  // 曲名が速く流れて、だんだん遅くなって止まる。止まった瞬間に光と粒、グループ写真
   function runSongGachaSequence(overlay,pool,result,reduced){
     const ticker=overlay.querySelector('.song-gacha-ticker');
     const group=overlay.querySelector('.song-gacha-final-group');
-    const stage=overlay.querySelector('.song-gacha-stage');
-    stage.classList.remove('is-final','is-ready');
-    ticker.textContent='...';
+    overlay.classList.remove('is-final','is-ready');
+    overlay.style.setProperty('--gacha-photo',universeGroupPhotoUrl(result.group)?'url(\''+universeGroupPhotoUrl(result.group)+'\')':'none');
     group.textContent='';
     if(reduced){
-      ticker.textContent=result.song.title;
-      group.textContent=result.group;
-      stage.classList.add('is-final','is-ready');
-      songGachaState.drawing=false;
-      return;
+      ticker.textContent=result.song.title;group.textContent=result.group;
+      overlay.classList.add('is-final','is-ready');songGachaState.drawing=false;return;
     }
-    let ticks=0;
-    const timer=setInterval(function(){
-      const pick=pool[Math.floor(Math.random()*pool.length)];
-      ticker.textContent=pick.song.title;
-      ticks++;
-      if(ticks>=11){
-        clearInterval(timer);
-        ticker.textContent=result.song.title;
-        group.textContent=result.group;
-        stage.classList.add('is-final');
-        setTimeout(function(){
-          stage.classList.add('is-ready');
-          songGachaState.drawing=false;
-        },450);
+    overlay.classList.add('is-spinning');
+    let delay=45;
+    function tick(){
+      if(delay>360){
+        overlay.classList.remove('is-spinning');
+        ticker.textContent=result.song.title;group.textContent=result.group;
+        overlay.classList.add('is-final');
+        setTimeout(function(){overlay.classList.add('is-ready');songGachaState.drawing=false;},900);
+        return;
       }
-    },105);
+      ticker.textContent=pool[Math.floor(Math.random()*pool.length)].song.title;
+      delay=Math.round(delay*1.13);
+      setTimeout(tick,delay);
+    }
+    setTimeout(tick,500);
   }
 
   function playSongGachaAnimation(pool,result,reduced){
@@ -6522,7 +6591,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
       '<section class="karaoke-user-settings">'+karaokeState.users.map(function(user){
         return '<article><h3 class="ui-heading">'+escapeLyrics(user.displayName)+'</h3><div class="karaoke-chips">'+singers.map(function(singer){
           const checked=karaokeState.assignments[singer.key]===user.userId?' checked':'';
-          return '<label class="ui-chip"><input type="checkbox"'+checked+' onchange="toggleKaraokeSinger(\''+encodeURIComponent(singer.key)+'\',\''+user.userId+'\',this)"><b>'+escapeLyrics(singer.name)+'</b></label>';
+          return '<label class="ui-chip ui-chip-accent" style="--accent:'+escapeLyrics(singer.color||'var(--ui-line-strong)')+'"><input type="checkbox"'+checked+' onchange="toggleKaraokeSinger(\''+encodeURIComponent(singer.key)+'\',\''+user.userId+'\',this)"><b>'+escapeLyrics(singer.name)+'</b></label>';
         }).join('')+'</div></article>';
       }).join('')+'</section>'+
       '<div class="karaoke-actions"><button class="ui-btn karaoke-random" type="button" onclick="randomizeKaraoke()">ランダム振り分け</button><button class="ui-btn karaoke-reset" type="button" onclick="resetKaraoke()">リセット</button><button class="ui-btn ui-btn-solid karaoke-start" type="button" onclick="startKaraoke()">カラオケ開始</button></div>';
@@ -7102,7 +7171,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderCardGroupSelection(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="ui-group-tiles card-group-grid">'+cardState.groups.filter(function(group){if(group.name==='ALL')return true;if(group.name==='BMSG ALLSTARS')return false;return group.id?!isUniverseUnitGroup(group.id,group.name):!!universeGroupPhotoUrl(group.name);}).map(function(group){const count=getCardGroupCards(group.name).length;return renderUniverseGroupTile({name:group.name,photoName:group.name==='ALL'?'BMSG ALLSTARS':group.name,color:group.color,sub:count+' CARDS',onclick:'selectTradingCardGroup(\''+escapeHtml(group.name).replaceAll("'","\\'")+'\')'});}).join('')+'</div>';}
   function selectTradingCardGroup(groupName){cardState.currentGroup=groupName||'ALL';renderCardGacha();scrollAppToTop('smooth');}
   function buildCardSkyMarkup(count){let html='';const total=count||42;for(let i=0;i<total;i++){const roll=Math.random();const tone=roll<.07?'red':roll<.20?'cyan':'white';const x=(2+Math.random()*96).toFixed(2);const y=(2+Math.random()*96).toFixed(2);const size=(.6+Math.random()*2.15).toFixed(2);const opacity=(.24+Math.random()*.68).toFixed(2);const duration=(2.6+Math.random()*6.2).toFixed(2);const delay=(-Math.random()*7).toFixed(2);html+='<i class="card-space-star tone-'+tone+'" style="left:'+x+'%;top:'+y+'%;--s:'+size+'px;--o:'+opacity+';--d:'+duration+'s;--delay:'+delay+'s"></i>';}for(let j=0;j<2;j++){const y=(12+Math.random()*58).toFixed(1);const delay=(2.5+j*6.5+Math.random()*3.5).toFixed(2);const duration=(10.5+Math.random()*4.5).toFixed(2);html+='<i class="card-shooting-star shoot-'+j+'" style="top:'+y+'%;--shoot-delay:'+delay+'s;--shoot-duration:'+duration+'s"></i>';}return html;}
-  function renderCardGacha(){setCardPageMode('gacha');const host=document.getElementById('cardApp');if(!host)return;const groupCards=getCardGroupCards(cardState.currentGroup);const drawn=groupCards.filter(function(card){return card.isDrawn;}).length;host.innerHTML='<div class="card-gacha-scene"><div class="card-space-field" aria-hidden="true">'+buildCardSkyMarkup(46)+'</div><div class="card-gacha-toolbar"><button type="button" class="ui-back" onclick="renderCardGroupSelection()" aria-label="グループ一覧へ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button type="button" class="ui-btn ui-btn-icon card-gacha-tool" onclick="openCardCollection()" aria-label="コレクション"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5" width="10.5" height="14" rx="2"></rect><path d="M9 5.2V4.5A1.5 1.5 0 0 1 10.5 3h7A1.5 1.5 0 0 1 19 4.5v11A1.5 1.5 0 0 1 17.5 17H15"></path><path d="M7.5 9h4.5M7.5 12h4.5M7.5 15h3"></path></svg></button></div><div class="card-gacha-head"><h2 class="ui-title ui-title-sm card-gacha-title">'+escapeHtml(cardState.currentGroup)+'</h2><div class="ui-badge card-progress">'+drawn+' / '+groupCards.length+'</div></div><div class="card-draw-stage"><div class="card-portal-shell" aria-hidden="true"><i class="card-portal-ring r1"></i><i class="card-portal-ring r2"></i><i class="card-portal-ring r3"></i><div class="card-portal-core"><div><strong>CARD PORTAL</strong><span>ORBIT READY</span></div></div></div><div class="card-draw-mark">BMSG UNIVERSE</div><div class="ui-muted card-draw-copy">Pull one card from the orbit.</div><div class="card-rarity-track" aria-label="Rarity rates"><div class="card-rarity-chip rarity-n"><b>N</b><small>70%</small></div><div class="card-rarity-chip rarity-r"><b>R</b><small>24%</small></div><div class="card-rarity-chip rarity-sr"><b>SR</b><small>5%</small></div><div class="card-rarity-chip rarity-ssr"><b>SSR</b><small>1%</small></div></div></div><div class="card-draw-actions"><button type="button" class="ui-btn ui-btn-solid ui-btn-wide card-draw-main" onclick="drawTradingCard()">引く</button></div></div>';}
+  function renderCardGacha(){setCardPageMode('gacha');const host=document.getElementById('cardApp');if(!host)return;const groupCards=getCardGroupCards(cardState.currentGroup);const drawn=groupCards.filter(function(card){return card.isDrawn;}).length;host.innerHTML='<div class="card-gacha-scene"><div class="card-space-field" aria-hidden="true">'+buildCardSkyMarkup(46)+'</div><div class="card-gacha-toolbar"><button type="button" class="ui-back" onclick="renderCardGroupSelection()" aria-label="グループ一覧へ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button type="button" class="ui-btn ui-btn-icon card-gacha-tool" onclick="openCardCollection()" aria-label="コレクション"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5" width="10.5" height="14" rx="2"></rect><path d="M9 5.2V4.5A1.5 1.5 0 0 1 10.5 3h7A1.5 1.5 0 0 1 19 4.5v11A1.5 1.5 0 0 1 17.5 17H15"></path><path d="M7.5 9h4.5M7.5 12h4.5M7.5 15h3"></path></svg></button></div><div class="card-gacha-head"><h2 class="ui-title ui-title-sm card-gacha-title">'+escapeHtml(cardState.currentGroup)+'</h2><div class="ui-badge card-progress">'+drawn+' / '+groupCards.length+'</div></div><div class="card-draw-stage"><div class="card-deck" aria-hidden="true"><span class="card-deck-card d1"></span><span class="card-deck-card d2"></span><span class="card-deck-card d3"><b>BMSG</b><small>UNIVERSE</small></span></div><div class="card-draw-mark">BMSG UNIVERSE</div><div class="ui-muted card-draw-copy">カードを1枚引く</div><div class="card-rarity-track" aria-label="Rarity rates"><div class="card-rarity-chip rarity-n"><b>N</b><small>70%</small></div><div class="card-rarity-chip rarity-r"><b>R</b><small>24%</small></div><div class="card-rarity-chip rarity-sr"><b>SR</b><small>5%</small></div><div class="card-rarity-chip rarity-ssr"><b>SSR</b><small>1%</small></div></div></div><div class="card-draw-actions"><button type="button" class="ui-btn ui-btn-solid ui-btn-wide card-draw-main" onclick="drawTradingCard()">引く</button></div></div>';}
   function getCardGroupCards(groupName){const group=cardState.groups.find(function(item){return item.name===groupName;});if(!group||groupName==='ALL')return cardState.cards.slice();const allowed={};(group.memberIds||[]).forEach(function(id){allowed[String(id)]=true;});return cardState.cards.filter(function(card){return allowed[String(card.memberId)];});}
   function seedCardRevealStars(){const host=document.querySelector('#cardReveal .card-reveal-stars');if(!host)return;host.innerHTML=buildCardSkyMarkup(58);}
   function drawTradingCard(){if(cardState.drawing)return;cardState.drawing=true;openCardRevealPending();google.script.run.withSuccessHandler(function(result){cardState.drawing=false;if(result&&result.card){const found=cardState.cards.find(function(card){return String(card.imageId)===String(result.card.imageId);});if(found)found.isDrawn=true;cardState.totalCount=Number(result.totalCount||cardState.totalCount);cardState.collectedCount=Number(result.collectedCount||cardState.collectedCount);runCardReveal(result.card,!!result.isNew);}else{closeCardReveal();cardNotify('カードを取得できませんでした。');}}).withFailureHandler(function(error){cardState.drawing=false;closeCardReveal();cardFailure(error);}).drawTradingCard(cardState.userId,cardState.currentGroup);}
@@ -7110,7 +7179,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function clearCardNewBadgeState(){if(cardNewBadgeTimer){window.clearTimeout(cardNewBadgeTimer);cardNewBadgeTimer=0;}const overlay=document.getElementById('cardReveal');if(overlay)overlay.classList.remove('is-new-card');}
 
-  function openCardRevealPending(){clearCardNewBadgeState();const overlay=document.getElementById('cardReveal');if(!overlay)return;overlay.className='card-reveal is-open';overlay.setAttribute('aria-hidden','false');seedCardRevealStars();const kicker=document.getElementById('cardRevealKicker');if(kicker)kicker.textContent='';const image=document.getElementById('cardRevealImage');if(image){image.removeAttribute('src');image.style.visibility='hidden';}document.getElementById('cardResultRarity').textContent='';document.getElementById('cardResultName').textContent='';document.getElementById('cardResultNew').textContent='';}
+  function openCardRevealPending(){clearCardNewBadgeState();const overlay=document.getElementById('cardReveal');if(!overlay)return;cardState.pendingAt=(window.performance&&performance.now)?performance.now():Date.now();overlay.className='card-reveal is-open is-charging';overlay.setAttribute('aria-hidden','false');seedCardRevealStars();const kicker=document.getElementById('cardRevealKicker');if(kicker)kicker.textContent='';const image=document.getElementById('cardRevealImage');if(image){image.removeAttribute('src');image.style.visibility='hidden';}document.getElementById('cardResultRarity').textContent='';document.getElementById('cardResultName').textContent='';document.getElementById('cardResultNew').textContent='';}
 
   function runCardReveal(card,isNew){
     clearCardNewBadgeState();
@@ -7122,7 +7191,11 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(legacy)legacy.textContent='';
     const startedAt=(window.performance&&performance.now)?performance.now():Date.now();
     const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const revealDelay=reduced?0:940;
+    // ため（最低1.5秒、裏面が光って揺れる）→ 確定演出（裏面がレア度の色で光る）→ めくる
+    const charge=reduced?0:Math.max(0,1500-(startedAt-(cardState.pendingAt||startedAt)));
+    const hint=reduced?0:({ssr:1200,sr:900,r:650}[rarity]||450);
+    const revealDelay=reduced?0:charge+hint+940;
+    if(!reduced)window.setTimeout(function(){overlay.classList.remove('is-charging');overlay.classList.add('is-hint','hint-'+rarity);},charge);
 
     function showBadgeAfterFace(){
       if(!isNew||!overlay)return;
@@ -7142,13 +7215,14 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const kicker=document.getElementById('cardRevealKicker');
 
     window.setTimeout(function(){
+      overlay.classList.remove('is-charging','is-hint');
       overlay.classList.add('is-revealed');
       window.setTimeout(function(){
         overlay.classList.add('rarity-'+rarity,'is-rarity-burst');
         const labels={n:'NORMAL SIGNAL',r:'BRONZE METEOR',sr:'SILVER NEBULA',ssr:'GOLD SUPERNOVA'};
         if(kicker)kicker.textContent=labels[rarity]||'';
       },reduced?0:520);
-    },reduced?0:60);
+    },reduced?0:charge+hint);
 
     if(isNew&&image){
       if(image.complete&&image.naturalWidth>0) showBadgeAfterFace();

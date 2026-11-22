@@ -14,7 +14,8 @@ test('部品ファイルの色はトークンだけ（値は UniverseTokens.html
   const problems = [];
   for (const file of ['Styles.html', 'UniverseTheme.html']) {
     for (const block of styleBlocks(fs.readFileSync(path.join(PARTIALS, file), 'utf8'))) {
-      for (const r of parseRules(block.css)) for (const d of r.decls) if (COLOR_LITERAL.test(d.value)) problems.push(`${file}: ${r.selector} { ${d.prop}: ${d.value} }`);
+      // 部品ファイルではトークンどうしを混ぜる color-mix(var…, var…) は使える。直接の色（#… rgb()…）は不可
+      for (const r of parseRules(block.css)) for (const d of r.decls) if (/#[0-9a-f]{3,8}\b|\b(rgba?|hsla?)\(/i.test(d.value)) problems.push(`${file}: ${r.selector} { ${d.prop}: ${d.value} }`);
     }
   }
   assert.equal(problems.length, 0, problems.join('\n'));

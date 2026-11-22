@@ -14,7 +14,7 @@ const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
 export const PARTIALS = path.join(ROOT, 'web', 'partials');
 
 export const COMPONENT_FILES = ['UniverseTokens.html', 'Styles.html', 'UniverseTheme.html'];
-export const CONTENT_FILES = ['CardStyles.html', 'PokerStyles.html', 'CoverStyles.html'];
+export const CONTENT_FILES = ['CardStyles.html', 'PokerStyles.html', 'CoverStyles.html', 'SongGacha.html'];
 
 // 画面ごとのCSSに書けない性質（見た目）
 const VISUAL = /^(color|background(-[a-z]+)?|border(-[a-z]+)*|outline(-[a-z]+)?|box-shadow|text-shadow|font(-[a-z]+)?|letter-spacing|text-transform|text-decoration(-[a-z]+)?|-webkit-text-stroke(-[a-z]+)?|-webkit-text-fill-color|fill|stroke(-[a-z]+)?|caret-color|accent-color|(-webkit-)?backdrop-filter|filter|(-webkit-)?mask(-[a-z]+)?|appearance|-webkit-appearance)$/;

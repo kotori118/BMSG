@@ -197,6 +197,32 @@
   .card-back-seal::after{width:2px!important;height:100%!important;background:linear-gradient(180deg,transparent,#dffaff 18%,#fff 50%,#dffaff 82%,transparent)!important;box-shadow:0 0 10px rgba(156,236,255,.55)!important;}
   .card-back-star{opacity:.82!important;}
   .card-gacha-scene .card-space-field{display:none!important}
+
+  /* 待ち画面：裏向きのカードの束が浮いて、光が走る */
+  .card-deck { position: relative; width: 200px; height: 220px; margin: 18px auto 10px; }
+  .card-deck-card { position: absolute; left: 50%; top: 50%; width: 120px; height: 170px; margin: -85px 0 0 -60px; border: 1px solid rgba(255,255,255,.28); border-radius: 12px; background: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 6px, transparent 6px 12px), linear-gradient(160deg, #23262f, #0b0c10); box-shadow: 0 14px 30px rgba(0,0,0,.55); overflow: hidden; }
+  .card-deck-card.d1 { transform: rotate(-12deg) translateX(-22px); animation: cardDeckFloat 3.2s ease-in-out infinite; }
+  .card-deck-card.d2 { transform: rotate(9deg) translateX(22px); animation: cardDeckFloat 3.6s .4s ease-in-out infinite; }
+  .card-deck-card.d3 { display: grid; place-content: center; gap: 4px; text-align: center; color: #fff; animation: cardDeckFloatTop 2.8s ease-in-out infinite; }
+  .card-deck-card.d3 b { font-family: var(--ui-font-display); font-size: 20px; font-weight: 900; letter-spacing: .12em; }
+  .card-deck-card.d3 small { font-family: var(--ui-font-display); font-size: 9px; font-weight: 800; letter-spacing: .4em; color: rgba(255,255,255,.6); }
+  .card-deck-card.d3::after { content: ""; position: absolute; inset: -40% -60%; background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.35) 50%, transparent 60%); transform: translateX(-60%); animation: cardDeckShine 2.6s ease-in-out infinite; }
+  @keyframes cardDeckFloat { 0%, 100% { margin-top: -85px; } 50% { margin-top: -93px; } }
+  @keyframes cardDeckFloatTop { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(-1.5deg); } }
+  @keyframes cardDeckShine { 0%, 55% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
+
+  /* 引く：ため（裏面が光って揺れる）→ 確定演出（レア度の色）→ めくる */
+  .card-reveal.is-charging .card-flip-wrap { animation: cardCharge .6s ease-in-out infinite !important; filter: drop-shadow(0 0 18px rgba(255,255,255,.35)); }
+  .card-reveal.is-hint .card-flip-wrap { animation: cardShake .1s linear infinite !important; }
+  .card-reveal.is-hint.hint-ssr .card-flip-wrap { animation-duration: .07s !important; }
+  .card-reveal.hint-n .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(255,255,255,.6)); }
+  .card-reveal.hint-r .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(214,138,72,.95)) drop-shadow(0 0 48px rgba(214,138,72,.5)); }
+  .card-reveal.hint-sr .card-flip-wrap { filter: drop-shadow(0 0 24px rgba(214,228,250,1)) drop-shadow(0 0 60px rgba(170,200,255,.6)); }
+  .card-reveal.hint-ssr .card-flip-wrap { filter: drop-shadow(0 0 26px rgba(255,204,64,1)) drop-shadow(0 0 80px rgba(255,170,0,.85)); }
+  .card-reveal.is-revealed .card-flip-wrap { filter: none; }
+  @keyframes cardCharge { 0%, 100% { transform: translateY(0) rotate(-1.2deg) scale(1); } 50% { transform: translateY(-8px) rotate(1.2deg) scale(1.02); } }
+  @keyframes cardShake { 0% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(-3px, 1px) rotate(-1deg); } 50% { transform: translate(2px, -2px) rotate(1deg); } 75% { transform: translate(-2px, 2px) rotate(0); } 100% { transform: translate(0, 0) rotate(0); } }
+  @media (prefers-reduced-motion: reduce) { .card-deck-card, .card-deck-card.d3::after, .card-reveal .card-flip-wrap { animation: none !important; } }
 </style>
 
 <style>

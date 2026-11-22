@@ -8,23 +8,62 @@
   .song-gacha-count { margin-bottom: 14px; text-align: center; }
   @media (max-width: 390px) { .song-gacha-groups { grid-template-columns: 1fr; } }
 
-  /* 抽選の表示（画面いっぱい） */
-  .song-gacha-overlay { display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; animation: songGachaFadeIn .25s ease forwards; }
-  .song-gacha-overlay.is-static { opacity: 1; animation: none; }
-  .song-gacha-overlay.is-leaving { animation: songGachaFadeOut .25s ease forwards; }
-  .song-gacha-stage { display: grid; justify-items: center; gap: 12px; width: min(100%, 420px); text-align: center; }
-  .song-gacha-ticker { display: flex; align-items: center; justify-content: center; min-height: 96px; }
-  .song-gacha-stage.is-final .song-gacha-ticker { animation: songGachaFinal .45s cubic-bezier(.2, .85, .25, 1) both; }
-  .song-gacha-final-group { min-height: 18px; visibility: hidden; opacity: 0; }
-  .song-gacha-stage.is-ready .song-gacha-final-group { visibility: visible; opacity: 1; }
-  .song-gacha-overlay-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 22px; visibility: hidden; opacity: 0; pointer-events: none; }
+  /* 抽選の表示（画面いっぱい）。演出の見た目は下の <style data-content> */
+  .song-gacha-overlay { display: flex; align-items: center; justify-content: center; padding: 24px; overflow: hidden; }
+  .song-gacha-stage { position: relative; z-index: 3; display: grid; justify-items: center; gap: 14px; width: min(100%, 420px); text-align: center; }
+  .song-gacha-window { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 120px; padding: 0 12px; }
+  .song-gacha-ticker { margin: 0; }
+  .song-gacha-final-group { min-height: 18px; }
+  .song-gacha-overlay-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 18px; }
   .song-gacha-overlay-actions .ui-btn { width: 100%; }
   .song-gacha-selection-back { grid-column: 1 / -1; justify-self: center; }
-  .song-gacha-stage.is-ready .song-gacha-overlay-actions { visibility: visible; opacity: 1; pointer-events: auto; animation: songGachaActionsIn .3s ease both; }
-  @keyframes songGachaFadeIn { to { opacity: 1; } }
-  @keyframes songGachaFadeOut { to { opacity: 0; } }
-  @keyframes songGachaFinal { 0% { opacity: .25; transform: scale(.94); } 70% { opacity: 1; transform: scale(1.02); } 100% { transform: scale(1); } }
-  @keyframes songGachaActionsIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+</style>
+<style data-content>
+  /* SONG GACHA の演出（暗い舞台・回る輪・流れる曲名・止まった瞬間の光と粒） */
+  .song-gacha-overlay {
+    --ui-bg: #06070b; --ui-panel: #14161c; --ui-panel-2: #1c1f27; --ui-line: rgba(255,255,255,.14); --ui-line-strong: rgba(255,255,255,.5);
+    --ui-text: #ffffff; --ui-text-sub: rgba(255,255,255,.62); --ui-active-bg: #ffffff; --ui-active-text: #0b0b0f;
+    background: radial-gradient(120% 80% at 50% 45%, #1a1d27 0%, #06070b 62%); color: #fff;
+    opacity: 0; animation: gachaFadeIn .3s ease forwards;
+  }
+  .song-gacha-overlay.is-static { opacity: 1; animation: none; }
+  .song-gacha-overlay.is-leaving { animation: gachaFadeOut .25s ease forwards; }
+  .gacha-photo { position: absolute; inset: -6%; z-index: 0; background: var(--gacha-photo, none) center / cover no-repeat; filter: blur(14px) brightness(.45) saturate(1.2); opacity: 0; transform: scale(1.12); transition: opacity .9s ease, transform 2.4s ease; }
+  .song-gacha-overlay.is-final .gacha-photo { opacity: 1; transform: scale(1); }
+  .gacha-glow { position: absolute; left: 50%; top: 46%; z-index: 1; width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,.28) 0%, rgba(255,255,255,.06) 38%, transparent 70%); animation: gachaPulse 1.6s ease-in-out infinite; }
+  .song-gacha-overlay.is-spinning .gacha-glow { animation-duration: .45s; }
+  .gacha-rings { position: absolute; left: 50%; top: 46%; z-index: 1; width: 0; height: 0; }
+  .gacha-rings i { position: absolute; left: 50%; top: 50%; border: 1px solid rgba(255,255,255,.22); border-top-color: rgba(255,255,255,.85); border-radius: 50%; animation: gachaSpin 3s linear infinite; }
+  .gacha-rings i:nth-child(1) { width: 230px; height: 230px; margin: -115px; }
+  .gacha-rings i:nth-child(2) { width: 290px; height: 290px; margin: -145px; animation-duration: 4.2s; animation-direction: reverse; border-top-color: rgba(255,255,255,.5); }
+  .gacha-rings i:nth-child(3) { width: 360px; height: 360px; margin: -180px; animation-duration: 6s; border-style: dashed; border-top-color: rgba(255,255,255,.35); }
+  .song-gacha-overlay.is-spinning .gacha-rings i { animation-duration: .7s; }
+  .song-gacha-overlay.is-spinning .gacha-rings i:nth-child(2) { animation-duration: .95s; }
+  .song-gacha-overlay.is-final .gacha-rings { opacity: 0; transition: opacity .6s ease; }
+  .song-gacha-kicker { color: rgba(255,255,255,.7); letter-spacing: .42em; }
+  .song-gacha-ticker { color: #fff; text-shadow: 0 0 24px rgba(255,255,255,.35); }
+  .song-gacha-overlay.is-spinning .song-gacha-ticker { filter: blur(1.2px); opacity: .85; }
+  .song-gacha-overlay.is-final .song-gacha-ticker { filter: none; opacity: 1; font-size: clamp(26px, 8vw, 38px); text-shadow: 0 0 30px rgba(255,255,255,.55); animation: gachaPop .7s cubic-bezier(.2,1.4,.3,1) both; }
+  .song-gacha-final-group { visibility: hidden; opacity: 0; color: rgba(255,255,255,.75); }
+  .song-gacha-overlay.is-final .song-gacha-final-group { visibility: visible; animation: gachaRise .5s .35s ease forwards; }
+  .gacha-flash { position: absolute; inset: 0; z-index: 4; background: #fff; opacity: 0; pointer-events: none; }
+  .song-gacha-overlay.is-final .gacha-flash { animation: gachaFlash .55s ease-out; }
+  .gacha-burst { position: absolute; left: 50%; top: 46%; z-index: 2; width: 0; height: 0; }
+  .gacha-burst i { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px #fff; opacity: 0; }
+  .gacha-burst i:nth-child(3n) { width: 5px; height: 5px; }
+  .gacha-burst i:nth-child(4n) { border-radius: 1px; transform: rotate(45deg); }
+  .song-gacha-overlay.is-final .gacha-burst i { animation: gachaBurst 1.1s cubic-bezier(.15,.8,.3,1) forwards; animation-delay: var(--t, 0s); }
+  .song-gacha-overlay-actions { visibility: hidden; opacity: 0; pointer-events: none; }
+  .song-gacha-overlay.is-ready .song-gacha-overlay-actions { visibility: visible; pointer-events: auto; animation: gachaRise .4s ease forwards; }
+  @keyframes gachaFadeIn { to { opacity: 1; } }
+  @keyframes gachaFadeOut { to { opacity: 0; } }
+  @keyframes gachaSpin { to { transform: rotate(360deg); } }
+  @keyframes gachaPulse { 0%, 100% { transform: scale(.92); opacity: .7; } 50% { transform: scale(1.08); opacity: 1; } }
+  @keyframes gachaPop { 0% { transform: scale(1.6); opacity: 0; letter-spacing: .2em; } 60% { transform: scale(.96); opacity: 1; } 100% { transform: scale(1); letter-spacing: normal; } }
+  @keyframes gachaFlash { 0% { opacity: .9; } 100% { opacity: 0; } }
+  @keyframes gachaRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes gachaBurst { 0% { opacity: 1; transform: rotate(var(--a)) translateX(0) scale(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--d)) scale(.4); } }
+  @media (prefers-reduced-motion: reduce) { .song-gacha-overlay *, .song-gacha-overlay { animation: none !important; transition: none !important; } .song-gacha-overlay { opacity: 1; } .song-gacha-final-group, .song-gacha-overlay-actions { visibility: visible; opacity: 1; } }
 </style>
 <script>
   const songGachaState={enabled:{},result:null,drawing:false};
@@ -91,39 +130,38 @@
   }
 
   function songGachaOverlayMarkup(){
-    return '<div class="song-gacha-stage"><p class="ui-heading-lg song-gacha-ticker">...</p><p class="ui-label song-gacha-final-group"></p><div class="song-gacha-overlay-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="drawSongGachaAgain()">もう一度引く</button><button class="ui-btn" type="button" onclick="openSongGachaKaraoke()">歌う</button><div class="song-gacha-selection-back">'+lyxBack('backFromSongGachaReveal()')+'</div></div></div>';
+    let burst='';
+    for(let i=0;i<18;i++){burst+='<i style="--a:'+(i*20+Math.round(Math.random()*12))+'deg;--d:'+(120+Math.round(Math.random()*110))+'px;--t:'+(Math.random()*.12).toFixed(2)+'s"></i>';}
+    return '<div class="gacha-photo"></div><div class="gacha-glow"></div><div class="gacha-rings" aria-hidden="true"><i></i><i></i><i></i></div><div class="gacha-burst" aria-hidden="true">'+burst+'</div><div class="gacha-flash" aria-hidden="true"></div>'
+      +'<div class="song-gacha-stage"><p class="ui-label song-gacha-kicker">SONG GACHA</p><div class="song-gacha-window"><p class="ui-heading-lg song-gacha-ticker" aria-live="polite">...</p></div><p class="ui-label song-gacha-final-group"></p><div class="song-gacha-overlay-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="drawSongGachaAgain()">もう一度引く</button><button class="ui-btn" type="button" onclick="openSongGachaKaraoke()">歌う</button><div class="song-gacha-selection-back">'+lyxBack('backFromSongGachaReveal()')+'</div></div></div>';
   }
 
+  // 曲名が速く流れて、だんだん遅くなって止まる。止まった瞬間に光と粒、グループ写真
   function runSongGachaSequence(overlay,pool,result,reduced){
     const ticker=overlay.querySelector('.song-gacha-ticker');
     const group=overlay.querySelector('.song-gacha-final-group');
-    const stage=overlay.querySelector('.song-gacha-stage');
-    stage.classList.remove('is-final','is-ready');
-    ticker.textContent='...';
+    overlay.classList.remove('is-final','is-ready');
+    overlay.style.setProperty('--gacha-photo',universeGroupPhotoUrl(result.group)?'url(\''+universeGroupPhotoUrl(result.group)+'\')':'none');
     group.textContent='';
     if(reduced){
-      ticker.textContent=result.song.title;
-      group.textContent=result.group;
-      stage.classList.add('is-final','is-ready');
-      songGachaState.drawing=false;
-      return;
+      ticker.textContent=result.song.title;group.textContent=result.group;
+      overlay.classList.add('is-final','is-ready');songGachaState.drawing=false;return;
     }
-    let ticks=0;
-    const timer=setInterval(function(){
-      const pick=pool[Math.floor(Math.random()*pool.length)];
-      ticker.textContent=pick.song.title;
-      ticks++;
-      if(ticks>=11){
-        clearInterval(timer);
-        ticker.textContent=result.song.title;
-        group.textContent=result.group;
-        stage.classList.add('is-final');
-        setTimeout(function(){
-          stage.classList.add('is-ready');
-          songGachaState.drawing=false;
-        },450);
+    overlay.classList.add('is-spinning');
+    let delay=45;
+    function tick(){
+      if(delay>360){
+        overlay.classList.remove('is-spinning');
+        ticker.textContent=result.song.title;group.textContent=result.group;
+        overlay.classList.add('is-final');
+        setTimeout(function(){overlay.classList.add('is-ready');songGachaState.drawing=false;},900);
+        return;
       }
-    },105);
+      ticker.textContent=pool[Math.floor(Math.random()*pool.length)].song.title;
+      delay=Math.round(delay*1.13);
+      setTimeout(tick,delay);
+    }
+    setTimeout(tick,500);
   }
 
   function playSongGachaAnimation(pool,result,reduced){
