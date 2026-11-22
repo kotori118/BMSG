@@ -616,4 +616,209 @@
     background-repeat: no-repeat;
   }
   body.ui-v2 .analysis-page select option { background: #111; color: #fff; }
+
+
+  /* ---- 分析：見出し・戻る・タブ（統一ルール） ---- */
+  body.ui-v2 .analysis-header { justify-content: flex-start; align-items: center; gap: 16px; }
+  body.ui-v2 .analysis-title { text-align: left; }
+  body.ui-v2 .analysis-service-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    width: auto;
+    height: var(--ui-button-h);
+    min-height: var(--ui-button-h);
+    padding: 0 16px 0 12px;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: var(--ui-radius);
+    color: #fff;
+    background: transparent;
+    font-family: var(--ui-font-display);
+    font-size: var(--ui-fs-label);
+    font-weight: 800;
+    letter-spacing: var(--ui-ls-label);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  body.ui-v2 .analysis-service-back span { font-size: 18px; font-weight: 500; letter-spacing: 0; }
+  body.ui-v2 .analysis-tab { flex: 1 1 0; min-width: 0; padding: 0 4px; font-size: var(--ui-fs-body-sm); letter-spacing: 0; }
+
+  /* ---- トップ（分析のハブ）：番号つきの大きな行 ---- */
+  body.ui-v2 .analysis-hub { display: grid; border-top: 1px solid var(--ui-line); }
+  body.ui-v2 .analysis-hub-row {
+    display: grid;
+    grid-template-columns: minmax(56px, auto) 1fr 16px;
+    align-items: center;
+    gap: 14px;
+    min-height: 104px;
+    padding: 18px 4px;
+    border: 0;
+    border-bottom: 1px solid var(--ui-line);
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+    transition: background 180ms ease;
+  }
+  @media (hover: hover) { body.ui-v2 .analysis-hub-row:hover { background: var(--ui-panel); } }
+  body.ui-v2 .analysis-hub-row:active { background: var(--ui-panel-2); }
+  body.ui-v2 .analysis-hub-no {
+    font-family: var(--ui-font-display);
+    font-size: clamp(40px, 11vw, 56px);
+    font-weight: 900;
+    letter-spacing: -.04em;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, .6);
+  }
+  body.ui-v2 .analysis-hub-copy strong {
+    display: block;
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-heading);
+    font-weight: 700;
+    letter-spacing: var(--ui-ls-heading);
+    line-height: 1.35;
+  }
+  body.ui-v2 .analysis-hub-copy small {
+    display: block;
+    margin-top: 6px;
+    color: var(--ui-text-sub);
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-body-sm);
+    line-height: 1.5;
+  }
+  body.ui-v2 .analysis-hub-arrow {
+    justify-self: end;
+    width: 8px;
+    height: 8px;
+    border-top: 1.5px solid #fff;
+    border-right: 1.5px solid #fff;
+    transform: rotate(45deg);
+  }
+
+  /* ---- 読み込み中（スケルトン）：ホームと同じ面と流れ ---- */
+  @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+  body.ui-v2 .analysis-loading {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    min-height: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    color: transparent !important;
+  }
+  body.ui-v2 .analysis-loading::before,
+  body.ui-v2 .analysis-loading::after,
+  body.ui-v2 .analysis-loading > .universe-loading { display: none !important; }
+  body.ui-v2 .ui-skeleton {
+    display: block;
+    height: 88px;
+    border: 1px solid var(--ui-line);
+    border-radius: var(--ui-radius);
+    background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100%;
+    animation: uiShimmer 1.4s linear infinite;
+  }
+  body.ui-v2 .home-skeleton-line { background: var(--ui-panel-2) !important; }
+  body.ui-v2 .home-skeleton-line:after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .06), transparent) !important; }
+  body.ui-v2 .home-skeleton-card,
+  body.ui-v2 .home-skeleton-list { background: var(--ui-panel) !important; }
+  @media (prefers-reduced-motion: reduce) { body.ui-v2 .ui-skeleton { animation: none; } }
+
+  /* ---- 後から開く窓（分析のポップアップ）：ボタンと同じ枠・面 ---- */
+  body.ui-v2 .analysis-modal { background: rgba(0, 0, 0, .72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  body.ui-v2 .analysis-modal-card {
+    width: min(100% - 32px, 560px);
+    max-height: 86dvh;
+    overflow: hidden;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: var(--ui-radius);
+    background: #111;
+    box-shadow: none;
+    color: #fff;
+  }
+  body.ui-v2 .analysis-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 16px 14px 20px;
+    border-bottom: 1px solid var(--ui-line);
+  }
+  body.ui-v2 .analysis-modal-head h2 {
+    margin: 0;
+    color: #fff;
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-heading);
+    font-weight: 700;
+    letter-spacing: var(--ui-ls-heading);
+  }
+  body.ui-v2 .analysis-modal-close {
+    flex: none;
+    min-height: var(--ui-button-h);
+    padding: 0 16px;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: var(--ui-radius);
+    color: #fff;
+    background: transparent;
+    font-family: var(--ui-font-display);
+    font-size: var(--ui-fs-label);
+    font-weight: 800;
+    letter-spacing: var(--ui-ls-label);
+  }
+  body.ui-v2 .analysis-modal-body { padding: 16px 20px 20px; overflow-y: auto; max-height: calc(86dvh - 80px); }
+
+
+  /* ---- 分析の数字カード：ラベルの上に数字（ずれない） ---- */
+  body.ui-v2 .analysis-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 96px;
+    padding: 16px 18px;
+  }
+  body.ui-v2 .analysis-stat-label {
+    display: block;
+    margin: 0;
+    font-family: var(--ui-font-display);
+    font-size: var(--ui-fs-label);
+    font-weight: 800;
+    letter-spacing: var(--ui-ls-label);
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--ui-text-sub);
+  }
+  body.ui-v2 .analysis-stat-value {
+    display: block;
+    margin: 0;
+    font-family: var(--ui-font-num);
+    font-size: var(--ui-fs-title);
+    font-weight: 800;
+    letter-spacing: -.01em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+  }
+
+  /* ---- ランキングの行：順位・名前・割合を一定の位置に ---- */
+  body.ui-v2 .analysis-rank-grid { grid-template-columns: 1fr; gap: 12px; }
+  body.ui-v2 .analysis-song-list,
+  body.ui-v2 .analysis-table-wrap { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); overflow: hidden; }
+  body.ui-v2 .analysis-table { width: 100%; border-collapse: collapse; font-family: var(--ui-font); }
+  body.ui-v2 .analysis-table th,
+  body.ui-v2 .analysis-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--ui-line);
+    font-size: var(--ui-fs-body);
+    font-weight: 500;
+    letter-spacing: var(--ui-ls-body);
+    text-align: left;
+    color: #fff;
+  }
+  body.ui-v2 .analysis-table th { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; }
+  body.ui-v2 .analysis-table td.num,
+  body.ui-v2 .analysis-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  body.ui-v2 .analysis-table td:first-child { width: 40px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-weight: 800; }
 </style>

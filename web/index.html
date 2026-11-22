@@ -3175,7 +3175,7 @@
     button:not(:disabled):active{transform:none!important}
   }
   /* Shared 46px service/local navigation authority. */
-  :is(.profile-service-back,.profile-detail-back,.analysis-service-back,.card-service-back,.poker-home-btn,.audit-local-back,.cover-back-btn){width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;flex:0 0 46px!important;padding:0!important;border-radius:14px!important;display:grid!important;place-items:center!important;font-size:32px!important;line-height:1!important}
+  :is(.profile-service-back,.profile-detail-back,.card-service-back,.poker-home-btn,.audit-local-back,.cover-back-btn){width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;flex:0 0 46px!important;padding:0!important;border-radius:14px!important;display:grid!important;place-items:center!important;font-size:32px!important;line-height:1!important}
   .profile-detail-back span{display:none!important}
   .profile-detail-back svg{width:20px!important;height:20px!important}
 </style>
@@ -3990,6 +3990,211 @@
     background-repeat: no-repeat;
   }
   body.ui-v2 .analysis-page select option { background: #111; color: #fff; }
+
+
+  /* ---- 分析：見出し・戻る・タブ（統一ルール） ---- */
+  body.ui-v2 .analysis-header { justify-content: flex-start; align-items: center; gap: 16px; }
+  body.ui-v2 .analysis-title { text-align: left; }
+  body.ui-v2 .analysis-service-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    width: auto;
+    height: var(--ui-button-h);
+    min-height: var(--ui-button-h);
+    padding: 0 16px 0 12px;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: var(--ui-radius);
+    color: #fff;
+    background: transparent;
+    font-family: var(--ui-font-display);
+    font-size: var(--ui-fs-label);
+    font-weight: 800;
+    letter-spacing: var(--ui-ls-label);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  body.ui-v2 .analysis-service-back span { font-size: 18px; font-weight: 500; letter-spacing: 0; }
+  body.ui-v2 .analysis-tab { flex: 1 1 0; min-width: 0; padding: 0 4px; font-size: var(--ui-fs-body-sm); letter-spacing: 0; }
+
+  /* ---- トップ（分析のハブ）：番号つきの大きな行 ---- */
+  body.ui-v2 .analysis-hub { display: grid; border-top: 1px solid var(--ui-line); }
+  body.ui-v2 .analysis-hub-row {
+    display: grid;
+    grid-template-columns: minmax(56px, auto) 1fr 16px;
+    align-items: center;
+    gap: 14px;
+    min-height: 104px;
+    padding: 18px 4px;
+    border: 0;
+    border-bottom: 1px solid var(--ui-line);
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    cursor: pointer;
+    transition: background 180ms ease;
+  }
+  @media (hover: hover) { body.ui-v2 .analysis-hub-row:hover { background: var(--ui-panel); } }
+  body.ui-v2 .analysis-hub-row:active { background: var(--ui-panel-2); }
+  body.ui-v2 .analysis-hub-no {
+    font-family: var(--ui-font-display);
+    font-size: clamp(40px, 11vw, 56px);
+    font-weight: 900;
+    letter-spacing: -.04em;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, .6);
+  }
+  body.ui-v2 .analysis-hub-copy strong {
+    display: block;
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-heading);
+    font-weight: 700;
+    letter-spacing: var(--ui-ls-heading);
+    line-height: 1.35;
+  }
+  body.ui-v2 .analysis-hub-copy small {
+    display: block;
+    margin-top: 6px;
+    color: var(--ui-text-sub);
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-body-sm);
+    line-height: 1.5;
+  }
+  body.ui-v2 .analysis-hub-arrow {
+    justify-self: end;
+    width: 8px;
+    height: 8px;
+    border-top: 1.5px solid #fff;
+    border-right: 1.5px solid #fff;
+    transform: rotate(45deg);
+  }
+
+  /* ---- 読み込み中（スケルトン）：ホームと同じ面と流れ ---- */
+  @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+  body.ui-v2 .analysis-loading {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+    min-height: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    color: transparent !important;
+  }
+  body.ui-v2 .analysis-loading::before,
+  body.ui-v2 .analysis-loading::after,
+  body.ui-v2 .analysis-loading > .universe-loading { display: none !important; }
+  body.ui-v2 .ui-skeleton {
+    display: block;
+    height: 88px;
+    border: 1px solid var(--ui-line);
+    border-radius: var(--ui-radius);
+    background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100%;
+    animation: uiShimmer 1.4s linear infinite;
+  }
+  body.ui-v2 .home-skeleton-line { background: var(--ui-panel-2) !important; }
+  body.ui-v2 .home-skeleton-line:after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .06), transparent) !important; }
+  body.ui-v2 .home-skeleton-card,
+  body.ui-v2 .home-skeleton-list { background: var(--ui-panel) !important; }
+  @media (prefers-reduced-motion: reduce) { body.ui-v2 .ui-skeleton { animation: none; } }
+
+  /* ---- 後から開く窓（分析のポップアップ）：ボタンと同じ枠・面 ---- */
+  body.ui-v2 .analysis-modal { background: rgba(0, 0, 0, .72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  body.ui-v2 .analysis-modal-card {
+    width: min(100% - 32px, 560px);
+    max-height: 86dvh;
+    overflow: hidden;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: var(--ui-radius);
+    background: #111;
+    box-shadow: none;
+    color: #fff;
+  }
+  body.ui-v2 .analysis-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 16px 14px 20px;
+    border-bottom: 1px solid var(--ui-line);
+  }
+  body.ui-v2 .analysis-modal-head h2 {
+    margin: 0;
+    color: #fff;
+    font-family: var(--ui-font);
+    font-size: var(--ui-fs-heading);
+    font-weight: 700;
+    letter-spacing: var(--ui-ls-heading);
+  }
+  body.ui-v2 .analysis-modal-close {
+    flex: none;
+    min-height: var(--ui-button-h);
+    padding: 0 16px;
+    border: 1px solid var(--ui-line-strong);
+    border-radius: var(--ui-radius);
+    color: #fff;
+    background: transparent;
+    font-family: var(--ui-font-display);
+    font-size: var(--ui-fs-label);
+    font-weight: 800;
+    letter-spacing: var(--ui-ls-label);
+  }
+  body.ui-v2 .analysis-modal-body { padding: 16px 20px 20px; overflow-y: auto; max-height: calc(86dvh - 80px); }
+
+
+  /* ---- 分析の数字カード：ラベルの上に数字（ずれない） ---- */
+  body.ui-v2 .analysis-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 96px;
+    padding: 16px 18px;
+  }
+  body.ui-v2 .analysis-stat-label {
+    display: block;
+    margin: 0;
+    font-family: var(--ui-font-display);
+    font-size: var(--ui-fs-label);
+    font-weight: 800;
+    letter-spacing: var(--ui-ls-label);
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--ui-text-sub);
+  }
+  body.ui-v2 .analysis-stat-value {
+    display: block;
+    margin: 0;
+    font-family: var(--ui-font-num);
+    font-size: var(--ui-fs-title);
+    font-weight: 800;
+    letter-spacing: -.01em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+  }
+
+  /* ---- ランキングの行：順位・名前・割合を一定の位置に ---- */
+  body.ui-v2 .analysis-rank-grid { grid-template-columns: 1fr; gap: 12px; }
+  body.ui-v2 .analysis-song-list,
+  body.ui-v2 .analysis-table-wrap { border: 1px solid var(--ui-line); border-radius: var(--ui-radius); overflow: hidden; }
+  body.ui-v2 .analysis-table { width: 100%; border-collapse: collapse; font-family: var(--ui-font); }
+  body.ui-v2 .analysis-table th,
+  body.ui-v2 .analysis-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--ui-line);
+    font-size: var(--ui-fs-body);
+    font-weight: 500;
+    letter-spacing: var(--ui-ls-body);
+    text-align: left;
+    color: #fff;
+  }
+  body.ui-v2 .analysis-table th { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; }
+  body.ui-v2 .analysis-table td.num,
+  body.ui-v2 .analysis-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  body.ui-v2 .analysis-table td:first-child { width: 40px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-weight: 800; }
 </style>
 
 </head>
@@ -5544,7 +5749,7 @@
 <template id="analysisPageTemplate">
   <section class="view analysis-page">
     <header class="analysis-header">
-      <button class="u-btn analysis-service-back" type="button" onclick="navigateTo('data')" aria-label="DATAへ戻る">‹</button>
+      <button class="u-btn analysis-service-back" type="button" onclick="navigateTo('data')" aria-label="データへ戻る"><span aria-hidden="true">‹</span> DATA</button>
       <div>
         <h1 class="analysis-title">ANALYSIS</h1>
       </div>
@@ -5552,9 +5757,9 @@
 
     <nav class="analysis-local-nav" aria-label="Analysis navigation">
       <button type="button" class="analysis-tab active" data-analysis-view="top" onclick="selectAnalysisView('top')">トップ</button>
-      <button type="button" class="analysis-tab" data-analysis-view="member" onclick="selectAnalysisView('member')">メンバー別</button>
-      <button type="button" class="analysis-tab" data-analysis-view="song" onclick="selectAnalysisView('song')">楽曲別</button>
-      <button type="button" class="analysis-tab" data-analysis-view="timeline" onclick="selectAnalysisView('timeline')">時系列別</button>
+      <button type="button" class="analysis-tab" data-analysis-view="member" onclick="selectAnalysisView('member')">メンバー</button>
+      <button type="button" class="analysis-tab" data-analysis-view="song" onclick="selectAnalysisView('song')">楽曲</button>
+      <button type="button" class="analysis-tab" data-analysis-view="timeline" onclick="selectAnalysisView('timeline')">時系列</button>
       <button type="button" class="analysis-tab" data-analysis-view="other" onclick="selectAnalysisView('other')">その他</button>
     </nav>
 
@@ -9177,13 +9382,23 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 <script>
   let analysisData=null,analysisView='top',analysisCharts=[],analysisMember='',analysisYear='all',analysisSongId='',analysisOtherView='',analysisCreatorType='lyricists';
   function renderAnalysis(){const t=document.getElementById('analysisPageTemplate');return t?t.innerHTML:'<section class="view"><h1>ANALYSIS</h1></section>';}
-  function initAnalysisPage(){analysisView='top';const panel=document.getElementById('analysisPanel');if(!panel)return;if(!analysisData){panel.innerHTML='<div class="analysis-loading">'+renderUniverseLoading('LOADING...','#9cecff')+'</div>';google.script.run.withSuccessHandler(function(data){analysisData=data;renderAnalysisView();}).withFailureHandler(function(err){panel.innerHTML='<div class="analysis-card"><h2>読み込みに失敗しました</h2><p class="analysis-muted">'+escapeHtml(String(err&&err.message||err))+'</p><button class="u-btn" onclick="retryAnalysis()">再試行</button></div>';}).getAnalysisBootstrap();}else renderAnalysisView();}
+  function initAnalysisPage(){analysisView='top';const panel=document.getElementById('analysisPanel');if(!panel)return;if(!analysisData){panel.innerHTML=analysisSkeletonMarkup();google.script.run.withSuccessHandler(function(data){analysisData=data;renderAnalysisView();}).withFailureHandler(function(err){panel.innerHTML='<div class="analysis-card"><h2>読み込みに失敗しました</h2><p class="analysis-muted">'+escapeHtml(String(err&&err.message||err))+'</p><button class="u-btn" onclick="retryAnalysis()">再試行</button></div>';}).getAnalysisBootstrap();}else renderAnalysisView();}
   function retryAnalysis(){analysisData=null;initAnalysisPage();}
   function selectAnalysisView(view){analysisView=view;analysisOtherView='';document.querySelectorAll('.analysis-tab').forEach(b=>b.classList.toggle('active',b.dataset.analysisView===view));renderAnalysisView();}
   function renderAnalysisView(){destroyAnalysisCharts();document.querySelectorAll('.analysis-tab').forEach(b=>b.classList.toggle('active',b.dataset.analysisView===analysisView));const p=document.getElementById('analysisPanel');if(!p||!analysisData)return;if(analysisView==='member')renderAnalysisMember();else if(analysisView==='song')renderAnalysisSong();else if(analysisView==='timeline')renderAnalysisTimeline();else if(analysisView==='other')renderAnalysisOther();else renderAnalysisTop();if(typeof syncUniverseCrossLinks==='function')syncUniverseCrossLinks();}
-  function renderAnalysisTop(){document.getElementById('analysisPanel').innerHTML='<div class="analysis-menu">'+[
-    ['member','メンバー別分析','歌唱・センター割合、歌い出し／歌い終わり、ランキング'],['song','楽曲別分析','歌唱・センター構成、特化度、歌詞'],['timeline','時系列分析','割合推移と各種ランキング'],['other','その他分析','順番、フレーズ、制作者、リリース形態、レコード']
-  ].map(x=>'<button class="analysis-menu-card u-btn" onclick="selectAnalysisView(\''+x[0]+'\')"><strong>'+x[1]+'</strong><span>'+x[2]+'</span></button>').join('')+'</div>';}
+  function analysisSkeletonMarkup(){return '<div class="analysis-loading ui-skeleton-grid" role="status" aria-busy="true" aria-label="読み込み中"><span class="ui-skeleton"></span><span class="ui-skeleton"></span><span class="ui-skeleton"></span></div>';}
+  // トップ：番号つきの大きな行（タブの中身とは別の見せ方）
+  function renderAnalysisTop(){
+    const items=[
+      ['member','メンバー別分析','歌唱・センター割合、歌い出し／歌い終わり、ランキング'],
+      ['song','楽曲別分析','歌唱・センター構成、特化度、歌詞'],
+      ['timeline','時系列分析','割合推移と各種ランキング'],
+      ['other','その他分析','順番、フレーズ、制作者、リリース形態、レコード']
+    ];
+    document.getElementById('analysisPanel').innerHTML='<div class="analysis-hub">'+items.map(function(x,i){
+      return '<button class="analysis-hub-row" type="button" onclick="selectAnalysisView(\''+x[0]+'\')"><span class="analysis-hub-no">'+String(i+1).padStart(2,'0')+'</span><span class="analysis-hub-copy"><strong>'+x[1]+'</strong><small>'+x[2]+'</small></span><span class="analysis-hub-arrow" aria-hidden="true"></span></button>';
+    }).join('')+'</div>';
+  }
   function memberOptions(){return analysisData.members.map(m=>'<option value="'+escapeHtml(m.name)+'"'+(analysisMember===m.name?' selected':'')+'>'+escapeHtml(m.name)+'</option>').join('');}
   function simpleRank(rows,key){return '<div class="analysis-table-wrap"><table class="analysis-table">'+rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHtml(r.songName)+'</td><td class="num">'+Number(r[key]).toFixed(1)+'%</td></tr>').join('')+'</table></div>';}
   function renderAnalysisSong(){const p=document.getElementById('analysisPanel');p.innerHTML='<div class="analysis-section"><div class="analysis-card"><h2>楽曲別 構成・歌詞分析</h2><div class="analysis-controls"><div class="analysis-search-wrap"><input id="analysisSongInput" list="analysisSongList" placeholder="楽曲名を入力または選択" oninput="filterAnalysisSongPrefix()" onchange="selectAnalysisSongByTitle()" value="'+escapeHtml((analysisData.songList.find(s=>s.id===analysisSongId)||{}).name||'')+'"><button class="u-btn" onclick="clearAnalysisSong()">✕</button></div><datalist id="analysisSongList"></datalist></div></div><div id="analysisSongBody"></div></div>';refreshAnalysisSongDatalist(analysisData.songList);if(analysisSongId)renderAnalysisSongBody(analysisData.songDetails[analysisSongId]);}
