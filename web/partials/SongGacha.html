@@ -3,7 +3,8 @@
   .song-gacha-screen { padding-bottom: 32px; }
   .song-gacha-head { display: grid; gap: 14px; margin-bottom: 24px; }
   .song-gacha-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
-  .song-gacha-group { min-height: 60px; justify-content: space-between; text-align: left; }
+  .song-gacha-group { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 60px; padding: 0 16px; text-align: left; }
+  .song-gacha-group strong { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .song-gacha-count { margin-bottom: 14px; text-align: center; }
   @media (max-width: 390px) { .song-gacha-groups { grid-template-columns: 1fr; } }
 
@@ -62,7 +63,9 @@
       +'<header class="song-gacha-head">'+lyxBack('showLyricsGroups()')+'<h2 class="ui-title">SONG GACHA</h2></header>'
       +'<div class="song-gacha-groups">'+LYRICS_GROUPS.map(function(group){
         const on=!!songGachaState.enabled[group];
-        return '<button class="ui-btn ui-btn-plain song-gacha-group'+(on?' is-on':'')+'" type="button" aria-pressed="'+on+'" onclick="toggleSongGachaGroup(\''+lyricArg(group)+'\')"><strong>'+escapeLyrics(group)+'</strong><span>'+(on?'ON':'OFF')+'</span></button>';
+        const photo=universeGroupPhotoUrl(group);
+        const look=photo?'class="ui-photo-tile ui-photo-toggle song-gacha-group" style="--ui-photo:url(\''+photo+'\')"':'class="ui-btn ui-btn-plain song-gacha-group'+(on?' is-on':'')+'"';
+        return '<button '+look+' type="button" aria-pressed="'+on+'" onclick="toggleSongGachaGroup(\''+lyricArg(group)+'\')"><strong class="ui-heading">'+escapeLyrics(group)+'</strong><span class="ui-label">'+(on?'ON':'OFF')+'</span></button>';
       }).join('')+'</div>'
       +'<p class="ui-label song-gacha-count">対象曲 '+pool.length+'曲</p>'
       +'<button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="drawSongGacha()"'+(!pool.length||songGachaState.drawing?' disabled':'')+'>引く</button>'

@@ -68,7 +68,11 @@
   /* グループのタイル（歌詞・カバーなど）：2列、名前は下に寄せる。写真あり＝ui-photo-tile、なし＝ui-card ui-accent-left */
   .ui-group-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .ui-group-tile { display: grid; align-content: end; gap: 6px; width: 100%; min-height: 132px; padding: 14px; text-align: left; }
-  .ui-group-tile > strong { overflow-wrap: anywhere; }
+  /* 名前は1行。狭い画面では少し小さく、それでも長ければ … */
+  .ui-group-tile > strong { min-width: 0; overflow: hidden; font-size: min(var(--ui-fs-heading), 3.9vw); letter-spacing: .01em; text-overflow: ellipsis; white-space: nowrap; }
+  /* 写真の ON/OFF 切り替え：OFF は白黒で薄く */
+  .ui-photo-toggle { transition: filter var(--ui-fast) var(--ui-ease), opacity var(--ui-fast) var(--ui-ease); }
+  .ui-photo-toggle[aria-pressed="false"] { filter: grayscale(1); opacity: .45; }
   .ui-photo-banner { border-radius: var(--ui-radius); background: var(--ui-panel) var(--ui-photo) center / cover no-repeat; }
 
   /* 写真や絵の入る面（角なし。枠の上側など）。中の写真は枠いっぱい */
