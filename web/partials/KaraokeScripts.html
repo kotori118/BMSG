@@ -25,14 +25,8 @@
   function initKaraokePage(params){
     params=params||{};
     karaokeState.backParams={group:params.group||'',unit:params.unit||''};
-    const cached=sessionStorage.getItem('bmsgLyricsDataV5');
-    if(cached){
-      try{applyKaraokeCatalog(JSON.parse(cached),params);return;}catch(error){}
-    }
-    google.script.run.withSuccessHandler(function(data){
-      try{sessionStorage.setItem('bmsgLyricsDataV5',JSON.stringify(data));}catch(error){}
-      applyKaraokeCatalog(data,params);
-    }).withFailureHandler(showKaraokeError).getLyricsCatalog();
+    // 曲の一覧は共通の一時保存（gas-shim）からすぐ返る
+    google.script.run.withSuccessHandler(function(data){applyKaraokeCatalog(data,params);}).withFailureHandler(showKaraokeError).getLyricsCatalog();
   }
 
   function applyKaraokeCatalog(data,params){

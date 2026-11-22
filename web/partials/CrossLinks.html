@@ -90,18 +90,13 @@
     const songId=String(lyricsState.song.songId||'');if(!songId)return;
     const meta=(lyricsState.catalog||[]).find(function(item){return String(item.songId)===songId;});
     const isBeFirst=!!(meta&&(meta.category==='BE:FIRST'||meta.artist==='BE:FIRST'));
-    document.querySelectorAll('.universe-lyrics-crosslinks').forEach(function(node){node.remove();});
-    const rows=[].slice.call(document.querySelectorAll('.lyrics-song-actions'));
-    if(!rows.length)return;
-    const target=rows[rows.length-1];
-    rows.forEach(function(row){
-      const existing=row.querySelector('.universe-lyrics-analysis-link');
-      if(existing&&(!isBeFirst||row!==target))existing.remove();
-    });
-    if(!isBeFirst||target.querySelector('.universe-lyrics-analysis-link'))return;
-    const karaoke=target.querySelector('.lyrics-karaoke-icon');
-    const button=createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'song',song:songId});},'is-light universe-lyrics-analysis-link');
-    if(karaoke)target.insertBefore(button,karaoke);else target.appendChild(button);
+    // 曲の詳細の下のボタン行に「ANALYSIS」を足す（BE:FIRST の曲だけ）
+    const target=document.querySelector('#lyricsView .lyx-actions.is-bottom');
+    if(!target)return;
+    const existing=target.querySelector('.universe-lyrics-analysis-link');
+    if(!isBeFirst){if(existing)existing.remove();return;}
+    if(existing)return;
+    target.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'song',song:songId});},'universe-lyrics-analysis-link'));
   }
 
   function syncUniverseAnalysisCrossLinks_(){
@@ -124,8 +119,6 @@
   .universe-profile-credits h3{margin:0 0 12px}
   .universe-profile-credits .universe-loading{min-height:60px}
   .universe-credit-list{display:grid;gap:8px}.universe-credit-song{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:13px 14px;text-align:left}.universe-credit-tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px}.universe-credit-tags i{padding:4px 7px}.universe-crosslink-status{margin:0}
-  .lyrics-song-actions .universe-lyrics-analysis-link{flex:1 1 120px;min-height:46px;margin:0}
-  .lyrics-song-actions.is-bottom .universe-lyrics-analysis-link{grid-column:1;grid-row:2;width:100%;min-width:0;min-height:44px;padding:0 10px;justify-self:start}
   .universe-analysis-profile-link{margin:16px 0 0}.universe-analysis-lyrics-link{margin-top:16px}
-  @media(max-width:520px){.universe-profile-crosslinks .universe-crosslink-button{flex:1 1 100%}.universe-credit-song{grid-template-columns:1fr}.universe-credit-tags{justify-content:flex-start}.lyrics-song-actions .universe-lyrics-analysis-link{padding-inline:12px}.lyrics-song-actions.is-bottom .universe-lyrics-analysis-link{padding-inline:8px}}
+  @media(max-width:520px){.universe-profile-crosslinks .universe-crosslink-button{flex:1 1 100%}.universe-credit-song{grid-template-columns:1fr}.universe-credit-tags{justify-content:flex-start}}
 </style>

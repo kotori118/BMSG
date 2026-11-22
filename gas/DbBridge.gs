@@ -18,7 +18,6 @@ function universeDbWriter_(name) {
     maintainCatalogGroupForUniverse: maintainCatalogGroupForUniverse,
     maintainCatalogGuestForUniverse: maintainCatalogGuestForUniverse,
     maintainCatalogImageForUniverse: maintainCatalogImageForUniverse,
-    migrateCatalogManagementSchemaForUniverse: migrateCatalogManagementSchemaForUniverse,
     moveCatalogMemberDisplayOrderForUniverse: moveCatalogMemberDisplayOrderForUniverse,
     moveCatalogUnitMemberForUniverse: moveCatalogUnitMemberForUniverse,
     prepareCatalogManagementForUniverse: prepareCatalogManagementForUniverse,

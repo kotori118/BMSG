@@ -30,16 +30,6 @@ function catalogManagementCallWriter_(name,payload) {
   return result;
 }
 
-/** Access check for the SETTINGS link (no user-specific data returned). */
-function getCatalogManagementAccess(userId) {
-  try {
-    catalogManagementSiteAccess_(userId);
-    return {enabled:true};
-  }catch(error){
-    return {enabled:false,message:String(error.message||'利用ユーザーを選択してください。')};
-  }
-}
-
 function getCatalogManagementBootstrap(userId){
   const uid=catalogManagementSiteAccess_(userId);
   return getCatalogManagementBootstrapForUniverse({userId:uid});
@@ -135,9 +125,6 @@ function getCatalogManagementDeletePreview(payload){
 }
 function catalogManagementDeleteSong(payload){
   return catalogManagementCallWriter_('deleteCatalogSongForUniverse',payload);
-}
-function catalogManagementMigrateSchema(payload){
-  return catalogManagementCallWriter_('migrateCatalogManagementSchemaForUniverse',payload);
 }
 /** Read-only DB integrity scan; no Sheet writes, schema migration or deployment. */
 function auditCatalogManagementDatabase(userId) {

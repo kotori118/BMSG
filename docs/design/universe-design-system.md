@@ -118,7 +118,7 @@
 ## 14. 共通部品（クラス名）
 - 入力欄・選択欄 `.ui-input`（input と select の両方）：高さ48px、枠線（強い）、面 `#1f1f1f`、角丸6px、文字は本文サイズ。選択中は白い枠。
 - ボタン `.ui-btn`：枠の白いボタン、高さ48px、英字の大文字（ラベルサイズ）。`.ui-btn-icon` は正方形（×など）。
-- 読み込み中 `.ui-skeleton-list`：実際に出る行と同じ高さ（分析のトップは104px）・同じ左右の余白の帯が流れる。行数も実際の行数に合わせる。
+- 読み込み中：実際に出る行と同じ形・同じ本数の帯を出す（番号つきの行は `renderUniverseIndexSkeleton()`。17章）。
 - 「さらに表示」など一覧の下のボタンは `.ui-btn` を使い、横いっぱいにする。
 - 曲名などの一覧（ポップアップ内）：行の内側に 14px / 18px の余白。枠線に文字が寄らないようにする。
 - 表示の切り替えが5つ以上のとき：幅を均等（grid の列数で割る）。アイコンを上、短い日本語（2〜3文字）を下に置く。英字の長い名前は使わない。（プロフィールの HOME/MAP/SEARCH/CHEMISTRY/DISCOVER で確定）
@@ -151,11 +151,11 @@
 | | `ui-card` | 押せる面（ホバーで明るくなる）。`is-selected` で白い枠 |
 | | `ui-divider` / `ui-divider-top` | 下の線／上の線 |
 | | `ui-empty` | 何もないときの点線の枠 |
-| | `ui-surface` / `ui-stage` / `ui-scrim` | 画面と同じ地／画面いっぱいの面／暗い幕 |
+| | `ui-surface` / `ui-stage` | 画面と同じ地／画面いっぱいの面 |
 | 写真 | `ui-avatar` / `ui-thumb` / `ui-media` | 丸／角丸／角なし（写真は枠いっぱい） |
 | | `ui-photo-tile` / `ui-photo-banner` | 写真の上に名前（`--ui-photo` に `url()`）／写真の帯 |
 | | `ui-group-tiles` + `ui-group-tile` | グループのタイル（歌詞・カバー・トレカ）。ユニット（ID が U〜）は `isUniverseUnitGroup()` で外す。描画は `renderUniverseGroupTile()`、写真は `UNIVERSE_GROUP_PHOTO_IDS`（AppHelpers） |
-| 色の受け渡し | `ui-accent-left` / `ui-accent-bottom` / `ui-dot` / `ui-accent-bar` / `ui-accent-text` | `--accent` の色で線・点・帯・文字 |
+| 色の受け渡し | `ui-accent-left` / `ui-accent-bottom` / `ui-dot` | `--accent` の色で線・点 |
 | 表 | `ui-dl` | 項目と値（dt / dd） |
 | | `ui-table` | 表（数字の列は `.num`） |
 | | `ui-progress` + `ui-progress-fill` | 割合の帯（`is-danger` で赤） |
@@ -163,7 +163,7 @@
 | | `ui-btn-solid` | 主な操作（塗り）。`aria-pressed="true"`・`is-active`・`is-selected`・`is-on`・`is-open`・`active` も塗り |
 | | `ui-btn-wide` / `ui-btn-compact` / `ui-btn-icon` | 横いっぱい／40px／正方形（×・☆） |
 | | `ui-btn-text`（`ui-btn-quiet`）/ `ui-btn-plain` / `ui-btn-ghost` / `ui-btn-danger` | 文字だけ（下線）／日本語の太字／枠なし／赤 |
-| | `is-correct` / `is-wrong` | 正解（塗り）／不正解（赤） |
+| | `is-wrong` | 不正解（赤） |
 | | `ui-back` | 戻る（矢印と BACK。全画面この1種類） |
 | | `ui-plain` | 見た目のないボタン（中身だけ押せる） |
 | 入力 | `ui-input` | 入力欄・選択欄・複数行。画面の中の素の input / select / textarea も同じ見た目 |
@@ -171,7 +171,6 @@
 | | `ui-field` | ラベル（最初の span）と入力欄の組 |
 | | `ui-code` | 等幅の記録 |
 | 選ぶ | `ui-chip` | 丸い切り替え（ON は塗り。中に checkbox を入れてもよい） |
-| | `ui-switch` | ON / OFF の小さな表示 |
 | | `ui-badge`（`ui-badge-solid`） | 小さな札 |
 | | `ui-tabs` + `ui-tab` | つながった枠のタブ（選択中は塗り） |
 | 一覧 | `ui-list` + `ui-row`（`ui-row-plain`） | 行（右に矢印）／矢印なし |
@@ -179,7 +178,7 @@
 | | `ui-index-row`（`ui-num-hollow` `ui-index-copy` `ui-index-arrow`） | 番号つきの大きな行（分析のトップ・カバーメーカーのトップ）。描画は `renderUniverseIndexRows()`（AppHelpers） |
 | | `ui-menu-tiles` + `ui-menu-tile`（`-symbol` `-meta` `-name`） | DATA・LAB の入口のタイル |
 | 窓 | `ui-modal` + `ui-modal-card`（`-head` `-body`） | 画面の中から開く窓 |
-| 状態 | `ui-skeleton`（`ui-skeleton-card`）/ `ui-skeleton-list` + `ui-skeleton-row` / `skeleton-block` | 読み込み中の帯 |
+| 状態 | `ui-skeleton`（`ui-skeleton-card`）、番号つきの行は `renderUniverseIndexSkeleton()` | 読み込み中の帯 |
 | | `ui-loading` / `universe-loading` | くるくる（本当に待つときだけ） |
 | | `universe-toast` / `universe-recovery-state` | 通知／読み込みに失敗したとき |
 
@@ -188,7 +187,7 @@
 ## 17. 読み込み中（2種類だけ）
 | 場面 | 使うもの | 見た目 |
 | :- | :- | :- |
-| 中身の形が分かる（一覧・カード・見出し・写真） | `ui-skeleton`（本物と同じ部品と並べてつける。例：`ui-avatar ui-skeleton`）、一覧は `ui-skeleton-list` + `ui-skeleton-row` | 本物と同じ形の面がゆっくり光る |
+| 中身の形が分かる（一覧・カード・見出し・写真） | `ui-skeleton`（本物と同じ部品と並べてつける。例：`ui-avatar ui-skeleton`） | 本物と同じ形の面がゆっくり光る |
 | 形が分からない短い待ち（保存中・準備中・設定の読み込み） | `renderUniverseLoading('〜中…')`（`ui-loading`） | 細い線のくるくると日本語の文（省略時は「読み込み中…」） |
 
 - 番号つきの行（`renderUniverseIndexRows`）を待つ間は `renderUniverseIndexSkeleton(本数)`：行と同じ並び（番号・見出し・説明）の帯。

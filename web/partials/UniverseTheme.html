@@ -84,9 +84,7 @@
   /* メンバーカラーなどの色（--accent に色を入れる） */
   .ui-accent-left { border-left: 3px solid var(--accent, var(--ui-text)); }
   .ui-accent-bottom { border-bottom: 3px solid var(--accent, var(--ui-text)); }
-  .ui-accent-text { color: var(--accent, var(--ui-text)); }
   .ui-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--accent, var(--ui-text)); }
-  .ui-accent-bar { display: block; width: 3px; border-radius: 2px; background: var(--accent, var(--ui-text)); }
 
   /* 項目と値の表（dt/dd） */
   .ui-dl { margin: 0; }
@@ -170,8 +168,6 @@
   .ui-chip.ui-chip-accent:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked)) { border-color: var(--accent, var(--ui-text)); background: color-mix(in srgb, var(--accent, var(--ui-text)) 26%, var(--ui-bg)); color: var(--ui-text); box-shadow: inset 0 0 0 1px var(--accent, var(--ui-text)); }
   .ui-chip.ui-chip-accent:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked))::after { content: "✓"; font-weight: 900; }
   /* ON/OFF の小さな表示 */
-  .ui-switch { display: inline-grid; place-items: center; flex: none; min-width: 52px; height: 28px; padding: 0 10px; border: 1px solid var(--ui-line-strong); border-radius: 999px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; }
-  .ui-switch:is(.active, .is-on) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
   /* 小さな札（状態・種類） */
   .ui-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0 8px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
   .ui-badge:is(.ui-badge-solid, .is-active) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
@@ -216,7 +212,6 @@
   @media (hover: hover) { .ui-menu-tile:hover { border-color: var(--ui-line-strong); } .ui-menu-tile:hover .ui-menu-tile-symbol::before { border-color: var(--ui-text); } }
 
   /* 正解・不正解・残りわずか（クイズなど）。正解は塗り、不正解は赤 */
-  .ui-btn.is-correct { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
   .ui-btn.is-wrong { border-color: var(--ui-danger); color: var(--ui-danger); }
   :is(.ui-panel, .ui-card, .ui-frame):is(.is-wrong, .is-timeout) { border-color: var(--ui-danger); }
   .ui-progress-fill.is-danger, .is-danger .ui-progress-fill { background: var(--ui-danger); }
@@ -233,7 +228,6 @@
   .ui-modal-body { padding: 16px 20px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   /* 画面いっぱいに重ねる面（抽選の演出など） */
   .ui-stage { position: fixed; inset: 0; z-index: 2400; background: var(--ui-bg); color: var(--ui-text); }
-  .ui-scrim { background: var(--ui-scrim); }
 
   /* ============ 5. 状態（読み込み中・通知・エラー） ============ */
   @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
@@ -248,8 +242,6 @@
   .ui-skeleton { display: block; min-height: 14px; border-radius: var(--ui-radius); color: transparent; background: linear-gradient(100deg, var(--ui-panel-2) 30%, var(--ui-line) 50%, var(--ui-panel-2) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
   .ui-skeleton.ui-avatar { border-radius: 50%; }
   .ui-skeleton.ui-skeleton-card { min-height: 88px; border: 1px solid var(--ui-line); }
-  .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
-  .ui-skeleton-row { display: block; height: 104px; margin: 0 4px; border-bottom: 1px solid var(--ui-line); background: linear-gradient(100deg, var(--ui-bg) 30%, var(--ui-panel) 50%, var(--ui-bg) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
   .ui-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 140px; padding: 24px 0; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 500; letter-spacing: .08em; text-align: center; }
   .ui-loading[hidden] { display: none; }
   .ui-loading::before { content: ""; width: 22px; height: 22px; border: 1.5px solid var(--ui-line); border-top-color: var(--ui-text); border-radius: 50%; animation: universeSpinner .9s linear infinite; }
@@ -264,5 +256,5 @@
   .universe-recovery-state h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 800; letter-spacing: .12em; }
   .universe-recovery-state p { margin: 0; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.8; }
   .universe-recovery-retry { min-height: var(--ui-button-h); margin-top: 6px; padding: 0 20px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); cursor: pointer; }
-  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-skeleton-row, .ui-loading::before { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-loading::before { animation: none; } }
 </style>

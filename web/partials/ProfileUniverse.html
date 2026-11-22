@@ -54,12 +54,10 @@
   .profile-member-visual { position: relative; aspect-ratio: 1; overflow: hidden; }
   .profile-member-visual img,
   .profile-member-visual img,
-  .profile-member-fallback,
   .profile-detail-visual img,
   .profile-map-avatar img,
   .profile-search-avatar img,
   .profile-discover-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .profile-member-fallback { display: grid; place-items: center; }
   .profile-member-accent { display: none; }
   .profile-member-body { display: grid; align-content: start; align-self: start; gap: 2px; padding: 8px 14px 12px; }
   .profile-member-body > * { margin: 0; }
@@ -114,7 +112,6 @@
   .profile-search-member-copy { display: grid; gap: 2px; }
   .profile-search-member > svg { display: none; }
   .profile-search-empty { padding: 24px 16px; text-align: center; }
-  .profile-search-loading { display: grid; gap: 8px; }
   /* ---- 相性 ---- */
   .profile-chemistry-slots { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; gap: 8px; }
   .profile-chemistry-cross { text-align: center; }
@@ -134,9 +131,6 @@
   .profile-chemistry-member > i { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
   .profile-chemistry-result { display: grid; gap: 12px; padding: 16px; }
   .profile-chemistry-score { display: flex; align-items: baseline; gap: 8px; }
-  .profile-chemistry-result-copy h3 { margin: 0; }
-  .profile-chemistry-result-copy p,
-  .profile-chemistry-result-copy small { margin: 0; }
   .profile-chemistry-compare { padding: 6px 16px; }
   .profile-chemistry-compare-head,
   .profile-chemistry-compare-row { display: grid; grid-template-columns: 96px 1fr 1fr; gap: 10px; padding: 10px 0; }

@@ -7,12 +7,7 @@
     discover: { eyebrow: 'FIND SIMILAR', title: 'DISCOVER', copy: '選んだメンバーと似ている順のランキングをここへ接続します。' }
   });
 
-  const PROFILE_GROUPS = {
-    all: 'ALL MEMBERS', befirst: 'BE:FIRST', mazzel: 'MAZZEL', starglow: 'STARGLOW', hana: 'HANA'
-  };
-
   let profileCurrentView = 'home';
-  let profileCurrentGroup = 'all';
   let profileSelectedMemberId = '';
   let profileDetailReturnView = 'home';
 
@@ -23,8 +18,6 @@
 
   function initProfilePage() {
     profileCurrentView = 'home';
-    const preferredGroup = 'all';
-    profileCurrentGroup = 'all'; // group tabs were removed: always show everyone
     profileSelectedMemberId = '';
     profileDetailReturnView = 'home';
     setProfileDetailMode(false);
@@ -42,25 +35,11 @@
     renderProfilePanel();
   }
 
-  function selectProfileGroup(group) {
-    if (!PROFILE_GROUPS[group]) return;
-    profileSelectedMemberId = '';
-    setProfileDetailMode(false);
-    profileCurrentGroup = group;
-    updateProfileControls();
-    renderProfilePanel();
-  }
-
   function updateProfileControls() {
     document.querySelectorAll('[data-profile-view]').forEach(button => {
       const active = button.dataset.profileView === profileCurrentView;
       button.classList.toggle('active', active);
       button.setAttribute('aria-current', active ? 'page' : 'false');
-    });
-    document.querySelectorAll('[data-profile-group]').forEach(button => {
-      const active = button.dataset.profileGroup === profileCurrentGroup;
-      button.classList.toggle('active', active);
-      button.setAttribute('aria-pressed', String(active));
     });
   }
 
@@ -103,8 +82,5 @@
 
     const heading = page.querySelector('.profile-heading');
     if (heading) heading.style.display = 'grid';
-
-    const serviceBack = page.querySelector('.profile-service-back');
-    if (serviceBack) serviceBack.style.display = isDetail ? 'none' : '';
   }
 </script>

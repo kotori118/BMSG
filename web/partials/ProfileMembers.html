@@ -1,55 +1,12 @@
 <script>
-  const PROFILE_MEMBERS_SESSION_KEY = 'bmsgProfileMembersV1';
-  const PROFILE_MEMBERS_SESSION_TTL = 5 * 60 * 1000;
-
   let profileMembersState = {
     status: 'idle', groups: [], members: [], error: '',
     detailStatus: 'idle', detailMemberId: '', detailFields: [], detailError: ''
   };
 
-  function readProfileMembersSessionCache() {
-    try {
-      const raw = sessionStorage.getItem(PROFILE_MEMBERS_SESSION_KEY);
-      if (!raw) return null;
-      const cached = JSON.parse(raw);
-      if (!cached || !cached.savedAt || Date.now() - Number(cached.savedAt) > PROFILE_MEMBERS_SESSION_TTL) {
-        sessionStorage.removeItem(PROFILE_MEMBERS_SESSION_KEY);
-        return null;
-      }
-      if (!Array.isArray(cached.groups) || !Array.isArray(cached.members)) return null;
-      return cached;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function writeProfileMembersSessionCache() {
-    try {
-      sessionStorage.setItem(PROFILE_MEMBERS_SESSION_KEY, JSON.stringify({
-        savedAt: Date.now(),
-        groups: profileMembersState.groups,
-        members: profileMembersState.members
-      }));
-    } catch (error) {
-      // sessionStorage is only a speed cache; PROFILE must still work without it.
-    }
-  }
-
   function loadProfileMembers(forceReload = false) {
     if (!forceReload && (profileMembersState.status === 'loading' || profileMembersState.status === 'ready')) {
       renderProfileMembersPanel(); return;
-    }
-
-    if (!forceReload) {
-      const cached = readProfileMembersSessionCache();
-      if (cached) {
-        profileMembersState.status = 'ready';
-        profileMembersState.groups = cached.groups;
-        profileMembersState.members = cached.members;syncProfileGroupChoices_();
-        profileMembersState.error = '';
-        renderProfileMembersPanel();
-        return;
-      }
     }
 
     profileMembersState.status = 'loading'; profileMembersState.error = '';
@@ -67,7 +24,6 @@
     profileMembersState.groups = Array.isArray(response.data.groups) ? response.data.groups : [];
     profileMembersState.members = Array.isArray(response.data.members) ? response.data.members : [];
     profileMembersState.error = '';
-    syncProfileGroupChoices_();writeProfileMembersSessionCache();
     renderProfilePanel();
     if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
   }
@@ -80,19 +36,9 @@
 
   function getVisibleProfileMembers() {
     const members = profileMembersState.members.slice();
-    if (profileCurrentGroup === 'all') return members.sort((a, b) => a.displayOrder - b.displayOrder);
-    const selectedGroup = profileMembersState.groups.find(group => group.key === profileCurrentGroup);
-    if (!selectedGroup) return [];
-    return members.filter(member => member.groupIds.includes(selectedGroup.groupId)).sort((a, b) =>
-      Number(memberGroupOrder(a, selectedGroup.groupId)) - Number(memberGroupOrder(b, selectedGroup.groupId)) || a.displayOrder - b.displayOrder
-    );
+    return members.sort((a, b) => a.displayOrder - b.displayOrder);
   }
 
-  function memberGroupOrder(member, groupId) {
-    if (!member || !member.groupOrders) return 9999;
-    const value = member.groupOrders[groupId];
-    return Number.isFinite(Number(value)) ? Number(value) : 9999;
-  }
 
   function renderProfileMembersPanel() {
     const panel = document.getElementById('profilePanel');
@@ -213,14 +159,6 @@
 
   function renderProfileMemberSkeletons() {
     return `<div class="ui-divider profile-members-head profile-members-head-loading"><div><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-label"></span><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-heading"></span></div></div><div class="profile-member-grid">${Array.from({ length: 6 }, () => `<div class="ui-card profile-member-card profile-member-card-loading"><div class="ui-skeleton profile-member-skeleton profile-member-skeleton-image"></div><div class="profile-member-body"><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-copy"></span><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-name"></span></div></div>`).join('')}</div>`;
-  }
-  function syncProfileGroupChoices_(){
-    const host=document.querySelector('.profile-group-scroll');if(!host)return;
-    Object.keys(PROFILE_GROUPS).forEach(function(key){if(key!=='all')delete PROFILE_GROUPS[key];});
-    const tabGroups=profileMembersState.groups.filter(function(g){return /^G/.test(String(g.groupId||''));});
-    tabGroups.forEach(function(g){PROFILE_GROUPS[g.key]=g.name;});
-    host.innerHTML='<button class="profile-group-chip" data-profile-group="all" onclick="selectProfileGroup(\'all\')">ALL</button>'+tabGroups.map(function(g){return '<button class="profile-group-chip" data-profile-group="'+escapeHtml(g.key)+'" onclick="selectProfileGroup(this.dataset.profileGroup)">'+escapeHtml(g.name)+'</button>';}).join('');
-    if(!PROFILE_GROUPS[profileCurrentGroup])profileCurrentGroup='all';updateProfileControls();
   }
 </script>
 

@@ -97,8 +97,10 @@ test('every API action resolves to a defined function', () => {
 
 test('every DB writer PJ selects by name resolves through universeDbWriter_', () => {
   const ctx = loadProject();
-  for (const n of report.dbRootsByString) assert.equal(typeof ctx.universeDbWriter_(n), 'function', n);
-  assert.throws(() => ctx.universeDbWriter_('onOpen'), /Unknown DB writer/);
+  // 使われていない入口を整理して外したもの（DB側の関数自体は内部から使われている）
+  const retired = ['migrateCatalogManagementSchemaForUniverse'];
+  for (const n of report.dbRootsByString.filter((n) => !retired.includes(n))) assert.equal(typeof ctx.universeDbWriter_(n), 'function', n);
+  for (const n of [...retired, 'onOpen']) assert.throws(() => ctx.universeDbWriter_(n), /Unknown DB writer/);
 });
 
 test('normalizeHex_ keeps the PJ behaviour and DB uses its own renamed version', () => {

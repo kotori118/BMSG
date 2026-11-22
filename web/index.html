@@ -401,7 +401,7 @@
     letter-spacing: var(--ui-ls-label);
     cursor: pointer;
   }
-  .search-status, .page-directory-label {
+  .search-status {
     margin: 28px 2px 12px;
     color: var(--ui-text-sub);
     font-family: var(--ui-font-display);
@@ -439,16 +439,6 @@
     transform: translateY(-50%) rotate(45deg);
   }
   @media (hover: hover) { .search-result:hover { background: var(--ui-panel); } }
-  .search-result-parent {
-    display: block;
-    margin-bottom: 4px;
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: var(--ui-ls-label);
-    text-transform: uppercase;
-  }
   .search-result-name { font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
 
   /* ---- 上に出る窓（設定・ユーザー・推しメン選択など） ---- */
@@ -502,7 +492,6 @@
   }
   .settings-row-button { cursor: pointer; }
   @media (hover: hover) { .settings-row-button:hover { background: var(--ui-panel); } }
-  .settings-row-button.is-disabled { opacity: .5; }
   .settings-row-copy { display: grid; gap: 4px; min-width: 0; }
   .settings-row-copy strong { font-size: var(--ui-fs-body); font-weight: 700; }
   .settings-row-copy small { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
@@ -677,9 +666,7 @@
   /* メンバーカラーなどの色（--accent に色を入れる） */
   .ui-accent-left { border-left: 3px solid var(--accent, var(--ui-text)); }
   .ui-accent-bottom { border-bottom: 3px solid var(--accent, var(--ui-text)); }
-  .ui-accent-text { color: var(--accent, var(--ui-text)); }
   .ui-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--accent, var(--ui-text)); }
-  .ui-accent-bar { display: block; width: 3px; border-radius: 2px; background: var(--accent, var(--ui-text)); }
 
   /* 項目と値の表（dt/dd） */
   .ui-dl { margin: 0; }
@@ -763,8 +750,6 @@
   .ui-chip.ui-chip-accent:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked)) { border-color: var(--accent, var(--ui-text)); background: color-mix(in srgb, var(--accent, var(--ui-text)) 26%, var(--ui-bg)); color: var(--ui-text); box-shadow: inset 0 0 0 1px var(--accent, var(--ui-text)); }
   .ui-chip.ui-chip-accent:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked))::after { content: "✓"; font-weight: 900; }
   /* ON/OFF の小さな表示 */
-  .ui-switch { display: inline-grid; place-items: center; flex: none; min-width: 52px; height: 28px; padding: 0 10px; border: 1px solid var(--ui-line-strong); border-radius: 999px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; }
-  .ui-switch:is(.active, .is-on) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
   /* 小さな札（状態・種類） */
   .ui-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0 8px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
   .ui-badge:is(.ui-badge-solid, .is-active) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
@@ -809,7 +794,6 @@
   @media (hover: hover) { .ui-menu-tile:hover { border-color: var(--ui-line-strong); } .ui-menu-tile:hover .ui-menu-tile-symbol::before { border-color: var(--ui-text); } }
 
   /* 正解・不正解・残りわずか（クイズなど）。正解は塗り、不正解は赤 */
-  .ui-btn.is-correct { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
   .ui-btn.is-wrong { border-color: var(--ui-danger); color: var(--ui-danger); }
   :is(.ui-panel, .ui-card, .ui-frame):is(.is-wrong, .is-timeout) { border-color: var(--ui-danger); }
   .ui-progress-fill.is-danger, .is-danger .ui-progress-fill { background: var(--ui-danger); }
@@ -826,7 +810,6 @@
   .ui-modal-body { padding: 16px 20px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   /* 画面いっぱいに重ねる面（抽選の演出など） */
   .ui-stage { position: fixed; inset: 0; z-index: 2400; background: var(--ui-bg); color: var(--ui-text); }
-  .ui-scrim { background: var(--ui-scrim); }
 
   /* ============ 5. 状態（読み込み中・通知・エラー） ============ */
   @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
@@ -841,8 +824,6 @@
   .ui-skeleton { display: block; min-height: 14px; border-radius: var(--ui-radius); color: transparent; background: linear-gradient(100deg, var(--ui-panel-2) 30%, var(--ui-line) 50%, var(--ui-panel-2) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
   .ui-skeleton.ui-avatar { border-radius: 50%; }
   .ui-skeleton.ui-skeleton-card { min-height: 88px; border: 1px solid var(--ui-line); }
-  .ui-skeleton-list { display: grid; border-top: 1px solid var(--ui-line); }
-  .ui-skeleton-row { display: block; height: 104px; margin: 0 4px; border-bottom: 1px solid var(--ui-line); background: linear-gradient(100deg, var(--ui-bg) 30%, var(--ui-panel) 50%, var(--ui-bg) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; }
   .ui-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 140px; padding: 24px 0; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 500; letter-spacing: .08em; text-align: center; }
   .ui-loading[hidden] { display: none; }
   .ui-loading::before { content: ""; width: 22px; height: 22px; border: 1.5px solid var(--ui-line); border-top-color: var(--ui-text); border-radius: 50%; animation: universeSpinner .9s linear infinite; }
@@ -857,7 +838,7 @@
   .universe-recovery-state h2 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 800; letter-spacing: .12em; }
   .universe-recovery-state p { margin: 0; color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); line-height: 1.8; }
   .universe-recovery-retry { min-height: var(--ui-button-h); margin-top: 6px; padding: 0 20px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); cursor: pointer; }
-  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-skeleton-row, .ui-loading::before { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .ui-skeleton, .ui-loading::before { animation: none; } }
 </style>
 
 <!-- HomeStyles.html -->
@@ -891,7 +872,7 @@
   .category-page { min-height: calc(100dvh - var(--ui-nav-h) - 64px); padding: var(--ui-top-pad) 0 20px; }
   .category-header { position: relative; display: grid; gap: 12px; margin-bottom: 22px; padding-bottom: 22px; }
   .category-title { display: grid; margin: 0; }
-  .category-title-ja, .category-card-desc { display: none; }
+  .category-card-desc { display: none; }
   .category-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
   @media (min-width: 720px) { .category-cards.data-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .category-card-inner { display: flex; flex-direction: column; align-items: stretch; width: 100%; height: 100%; }
@@ -924,9 +905,7 @@
   .analysis-hub { display: grid; }
 
   /* その他のメニュー */
-  .analysis-menu, .analysis-other-menu { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  .analysis-menu-card { min-height: var(--ui-row-h); padding: 16px 18px; }
-  .analysis-menu-card :is(strong, span) { display: block; }
+  .analysis-other-menu { display: grid; grid-template-columns: 1fr; gap: 10px; }
 
   /* 絞り込み */
   .analysis-controls { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -1029,12 +1008,10 @@
   .profile-member-visual { position: relative; aspect-ratio: 1; overflow: hidden; }
   .profile-member-visual img,
   .profile-member-visual img,
-  .profile-member-fallback,
   .profile-detail-visual img,
   .profile-map-avatar img,
   .profile-search-avatar img,
   .profile-discover-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .profile-member-fallback { display: grid; place-items: center; }
   .profile-member-accent { display: none; }
   .profile-member-body { display: grid; align-content: start; align-self: start; gap: 2px; padding: 8px 14px 12px; }
   .profile-member-body > * { margin: 0; }
@@ -1089,7 +1066,6 @@
   .profile-search-member-copy { display: grid; gap: 2px; }
   .profile-search-member > svg { display: none; }
   .profile-search-empty { padding: 24px 16px; text-align: center; }
-  .profile-search-loading { display: grid; gap: 8px; }
   /* ---- 相性 ---- */
   .profile-chemistry-slots { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; gap: 8px; }
   .profile-chemistry-cross { text-align: center; }
@@ -1109,9 +1085,6 @@
   .profile-chemistry-member > i { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
   .profile-chemistry-result { display: grid; gap: 12px; padding: 16px; }
   .profile-chemistry-score { display: flex; align-items: baseline; gap: 8px; }
-  .profile-chemistry-result-copy h3 { margin: 0; }
-  .profile-chemistry-result-copy p,
-  .profile-chemistry-result-copy small { margin: 0; }
   .profile-chemistry-compare { padding: 6px 16px; }
   .profile-chemistry-compare-head,
   .profile-chemistry-compare-row { display: grid; grid-template-columns: 96px 1fr 1fr; gap: 10px; padding: 10px 0; }
@@ -1322,10 +1295,10 @@
 <!-- CardStyles.html -->
 <style>
   .card-collection-member-count { white-space: nowrap; }
-.card-page{min-width:0}.card-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}.card-title{margin:4px 0 0}.card-book-btn{min-height:46px;padding:0 15px}.card-app{min-width:0}.card-group-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card-group-btn{min-height:96px;padding:18px;text-align:left;position:relative;overflow:hidden}.card-group-btn::after{content:'';position:absolute;inset:auto -24px -42px auto;width:94px;height:94px;pointer-events:none}.card-group-name{display:block}.card-group-sub{display:block;margin-top:7px;opacity:.55}.card-gacha-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.card-gacha-title{margin:0}.card-progress{opacity:.72}.card-draw-copy{position:relative;margin-top:12px;opacity:.6}.card-draw-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.card-draw-actions .card-draw-main{grid-column:1/-1;min-height:54px}.card-reveal-back{position:absolute;z-index:10;left:max(16px,env(safe-area-inset-left));top:max(16px,env(safe-area-inset-top));width:46px;height:46px;min-width:46px;padding:0;line-height:1}.card-result-meta{min-height:68px;text-align:center;opacity:0;transform:translateY(8px);transition:.35s ease}.card-result-name{margin-top:5px}.card-result-new{min-height:17px;margin-top:4px}.card-result-actions{height:50px;display:flex;gap:10px;margin-top:12px;opacity:0;pointer-events:none;transition:.3s ease}.orbit-a{width:300px;height:300px}.orbit-b{width:455px;height:190px;transform:translate(-50%,-50%) rotate(24deg)}.orbit-c{width:530px;height:245px;transform:translate(-50%,-50%) rotate(-34deg)}
-.card-collection-overlay{position:fixed;inset:0;z-index:230;display:none;overflow:hidden}.card-collection-overlay.is-open{display:block}.card-collection-panel{width:min(920px,100%);height:100dvh;min-height:0;margin:0 auto;padding:calc(22px + env(safe-area-inset-top)) 18px calc(42px + env(safe-area-inset-bottom));box-sizing:border-box;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}.card-collection-head{position:sticky;top:calc(-22px - env(safe-area-inset-top));z-index:3;display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 0 18px}.card-collection-head-main{min-width:0;flex:1}.card-collection-head h2{margin:4px 0 0}.card-collection-progress{margin-top:8px}.card-collection-meter{height:4px;margin-top:10px;overflow:hidden}.card-collection-meter span{display:block;width:0;height:100%;transition:width .5s ease}.card-collection-close{width:46px;height:46px;min-width:46px;padding:0;line-height:1}.card-collection-intro{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:8px 0 28px;padding:14px 0}.card-collection-intro small{max-width:220px;text-align:right;opacity:.48}.card-collection-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.card-collection-item{aspect-ratio:7/10;overflow:hidden;position:relative}.card-collection-item img{width:100%;height:100%;object-fit:cover;display:block}.card-collection-locked{height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box}.card-reset-btn{width:100%;margin-top:34px;min-height:50px}
+.card-page{min-width:0}.card-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}.card-title{margin:4px 0 0}.card-app{min-width:0}.card-group-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card-group-btn{min-height:96px;padding:18px;text-align:left;position:relative;overflow:hidden}.card-group-btn::after{content:'';position:absolute;inset:auto -24px -42px auto;width:94px;height:94px;pointer-events:none}.card-group-name{display:block}.card-group-sub{display:block;margin-top:7px;opacity:.55}.card-gacha-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.card-gacha-title{margin:0}.card-progress{opacity:.72}.card-draw-copy{position:relative;margin-top:12px;opacity:.6}.card-draw-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.card-draw-actions .card-draw-main{grid-column:1/-1;min-height:54px}.card-reveal-back{position:absolute;z-index:10;left:max(16px,env(safe-area-inset-left));top:max(16px,env(safe-area-inset-top));width:46px;height:46px;min-width:46px;padding:0;line-height:1}.card-result-meta{min-height:68px;text-align:center;opacity:0;transform:translateY(8px);transition:.35s ease}.card-result-name{margin-top:5px}.card-result-new{min-height:17px;margin-top:4px}.card-result-actions{height:50px;display:flex;gap:10px;margin-top:12px;opacity:0;pointer-events:none;transition:.3s ease}.orbit-a{width:300px;height:300px}.orbit-b{width:455px;height:190px;transform:translate(-50%,-50%) rotate(24deg)}.orbit-c{width:530px;height:245px;transform:translate(-50%,-50%) rotate(-34deg)}
+.card-collection-overlay{position:fixed;inset:0;z-index:230;display:none;overflow:hidden}.card-collection-overlay.is-open{display:block}.card-collection-panel{width:min(920px,100%);height:100dvh;min-height:0;margin:0 auto;padding:calc(22px + env(safe-area-inset-top)) 18px calc(42px + env(safe-area-inset-bottom));box-sizing:border-box;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}.card-collection-head{position:sticky;top:calc(-22px - env(safe-area-inset-top));z-index:3;display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 0 18px}.card-collection-head-main{min-width:0;flex:1}.card-collection-head h2{margin:4px 0 0}.card-collection-progress{margin-top:8px}.card-collection-meter{height:4px;margin-top:10px;overflow:hidden}.card-collection-meter span{display:block;width:0;height:100%;transition:width .5s ease}.card-collection-close{width:46px;height:46px;min-width:46px;padding:0;line-height:1}.card-collection-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.card-collection-item{aspect-ratio:7/10;overflow:hidden;position:relative}.card-collection-item img{width:100%;height:100%;object-fit:cover;display:block}.card-collection-locked{height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box}.card-reset-btn{width:100%;margin-top:34px;min-height:50px}
 @keyframes cardStarDrift{to{}}@keyframes cardOrbitPulse{0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}40%{opacity:.85}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}@keyframes cardBronzeRing{0%{opacity:0;transform:translate(-50%,-50%) scale(.35) rotate(-25deg)}38%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.45) rotate(90deg)}}@keyframes cardSilverOrbit{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(0)}30%{opacity:1}65%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(1.55) rotate(220deg)}}@keyframes cardGoldOrbit{0%{opacity:0;transform:translate(-50%,-50%) scale(.18) rotate(0)}25%{opacity:1}62%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.8) rotate(420deg)}}@keyframes cardSilverBurst{0%,22%{opacity:0;transform:translate(-50%,-50%) scale(.1)}44%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(3)}}@keyframes cardGoldSupernova{0%,20%{opacity:0;transform:translate(-50%,-50%) scale(.08)}38%{opacity:1}48%{opacity:.35}58%{opacity:1}70%{opacity:.5}100%{opacity:0;transform:translate(-50%,-50%) scale(4)}}@keyframes cardMeteor{0%{opacity:0;transform:translateX(0) rotate(-22deg)}20%{opacity:1}100%{opacity:0;transform:translateX(155vw) rotate(-22deg)}}@keyframes cardMeteorGold{0%{opacity:0;transform:translateX(0) rotate(-22deg)}14%{opacity:1}65%{opacity:1}100%{opacity:0;transform:translateX(160vw) rotate(-22deg)}}@keyframes cardSpark{0%{opacity:0;transform:scale(.7)}35%{opacity:.75}100%{opacity:0;transform:scale(1.35)}}@keyframes cardSparkSilver{0%{opacity:0;transform:scale(.55) rotate(0)}35%,62%{opacity:1}100%{opacity:0;transform:scale(1.5) rotate(80deg)}}@keyframes cardSparkGold{0%{opacity:0;transform:scale(.4) rotate(0)}25%,45%,65%{opacity:1}100%{opacity:0;transform:scale(1.8) rotate(150deg)}}
-@media(max-width:560px){.card-header{align-items:flex-start;flex-direction:column}.card-book-btn{align-self:flex-end;margin-top:-52px}.card-collection-panel{padding-left:14px;padding-right:14px}.card-collection-grid{gap:6px}.card-collection-intro{align-items:flex-start;flex-direction:column}.card-collection-intro small{text-align:left;max-width:none}}@media(min-width:760px){.card-group-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:560px){.card-header{align-items:flex-start;flex-direction:column}.card-collection-panel{padding-left:14px;padding-right:14px}.card-collection-grid{gap:6px}}@media(min-width:760px){.card-group-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
   /* Final TRADING CARD service-top authority. */
   .card-header{display:grid!important;grid-template-columns:46px minmax(0,1fr);align-items:center;gap:14px}
   .card-header>div{min-width:0}
@@ -1352,7 +1325,6 @@
   .card-reveal.is-revealed .card-flip-inner{transform:rotateY(180deg)}
   .card-back-face,.card-front-face{position:absolute;inset:0;border-radius:19px;overflow:hidden;backface-visibility:hidden}
   .card-back-face{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;border:1px solid color-mix(in srgb,var(--rarity-accent) 58%,white 8%);background:radial-gradient(circle at 50% 40%,var(--rarity-soft),transparent 42%),linear-gradient(145deg,#121b25,#030609 74%);box-shadow:inset 0 0 46px var(--rarity-soft)}
-  .card-back-group{font:600 9px var(--font-body),var(--font-body),sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--ui-text-sub)}
   .card-front-face{transform:rotateY(180deg);background:#07090b;border:2px solid var(--rarity-accent);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
   .card-front-face img{width:100%;height:100%;object-fit:cover;display:block}
   .card-reveal.is-revealed .card-result-meta{opacity:1;transform:none}
@@ -1408,17 +1380,6 @@
   .card-shooting-star.shoot-1{width:95px;transform:rotate(-27deg);background:var(--ui-panel-2)}
   .card-draw-stage{position:relative;z-index:1;min-height:365px;padding:20px 18px 18px;border-color:var(--ui-line);background:rgba(0, 0, 0, .6);}
   .card-draw-stage::before{display:none!important;}
-  .card-portal-shell{position:relative;width:min(62vw,270px);aspect-ratio:1;margin:0 auto 12px;display:grid;place-items:center;isolation:isolate;}
-  .card-portal-shell::before,.card-portal-shell::after{content:'';position:absolute;inset:8%;border-radius:50%;border:1px solid var(--ui-line);animation:cardIdleOrbit 8s linear infinite;}
-  .card-portal-shell::after{inset:20%;border-color:var(--ui-line);animation-duration:5.5s;animation-direction:reverse;}
-  .card-portal-ring{position:absolute;border-radius:50%;border:1px solid var(--ui-line);}
-  .card-portal-ring.r1{inset:1%;transform:rotate(18deg) scaleY(.52);}
-  .card-portal-ring.r2{inset:13%;transform:rotate(-32deg) scaleY(.64);border-color:var(--ui-line);}
-  .card-portal-ring.r3{inset:27%;transform:rotate(58deg) scaleY(.78);border-color:var(--ui-line);}
-  .card-portal-core{position:relative;z-index:2;width:46%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;text-align:center;background:var(--ui-bg);border:1px solid var(--ui-line);}
-  .card-portal-core::before{content:'';position:absolute;inset:-18%;border-radius:50%;background:var(--ui-panel);filter:blur(2px);animation:cardPortalSpin 9s linear infinite;z-index:-1;}
-  .card-portal-core strong{display:block;font:700 13px var(--font-display),var(--font-body),sans-serif;letter-spacing:.18em;color:var(--ui-text);}
-  .card-portal-core span{display:block;margin-top:6px;font:600 9px var(--font-body),var(--font-body),sans-serif;letter-spacing:.2em;color:var(--ui-text-sub);}
   .card-draw-mark{font-size:11px;letter-spacing:.28em;color:var(--ui-text);opacity:.75;}
   .card-rarity-track{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:16px;}
   .card-rarity-chip{min-width:0;padding:8px 4px 7px;border-radius:10px;text-align:center;border:1px solid rgba(255,255,255,.075);background:rgba(2,6,11,.52);}
@@ -1466,8 +1427,7 @@
   .card-reveal.is-rarity-burst.rarity-ssr{--rarity-accent:#ffd76a!important;--rarity-soft:rgba(255,215,106,.36)!important;background:radial-gradient(circle at 50% 45%,#2a210c 0,#0b0803 46%,#010203 100%)!important;}
   @media (max-width:560px){.card-gacha-scene{border-radius:var(--ui-radius);padding-top:4px;}}
   @media (max-width:560px){.card-draw-stage{min-height:345px;padding-top:16px;}}
-  @media (max-width:560px){.card-portal-shell{width:min(58vw,240px);}}
-  @media (prefers-reduced-motion:reduce){.card-portal-shell::before,.card-portal-shell::after,.card-portal-core::before,.card-space-star,.card-shooting-star{animation:none;}}
+  @media (prefers-reduced-motion:reduce){.card-space-star,.card-shooting-star{animation:none;}}
   .card-back-face{background:radial-gradient(circle at 50% 50%,rgba(156,236,255,.055),transparent 35%),linear-gradient(145deg,#05070a 0%,#000 48%,#05070a 100%)!important;border:1px solid rgba(220,248,255,.26)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),inset 0 0 36px rgba(156,236,255,.028)!important;}
   .card-back-face::before{content:''!important;position:absolute!important;inset:9px!important;border:1px solid rgba(198,243,255,.30)!important;border-radius:13px!important;box-shadow:inset 0 0 0 4px rgba(0,0,0,.7),inset 0 0 0 5px rgba(156,236,255,.08)!important;opacity:1!important;pointer-events:none!important;}
   .card-back-face::after{content:'✦'!important;position:absolute!important;inset:17px!important;display:grid!important;place-items:start center!important;padding-top:9px!important;border:1px solid rgba(255,255,255,.075)!important;border-radius:10px!important;color:rgba(190,241,252,.48)!important;font-size:9px!important;letter-spacing:0!important;background:radial-gradient(circle at 18% 19%,rgba(255,255,255,.72) 0 1px,transparent 1.4px),radial-gradient(circle at 82% 22%,rgba(156,236,255,.62) 0 1px,transparent 1.4px),radial-gradient(circle at 23% 78%,rgba(156,236,255,.48) 0 .9px,transparent 1.4px),radial-gradient(circle at 77% 82%,rgba(255,255,255,.6) 0 .9px,transparent 1.4px)!important;pointer-events:none!important;}
@@ -1554,10 +1514,8 @@
   .card-header>div{min-width:0;}
   .card-title{line-height:.94;max-width:100%;}
   .card-page.is-gacha-mode .card-header{margin-bottom:12px;}
-  .card-page.is-gacha-mode .card-book-btn{display:none!important;}
-  .card-book-btn,.card-collection-close,.card-gacha-tool{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;display:grid!important;place-items:center;flex:0 0 46px;}
-  .card-book-btn{margin:16px 0 0 auto;}
-  .card-book-btn svg,.card-gacha-tool svg{width:22px;height:22px;}
+  .card-collection-close,.card-gacha-tool{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;display:grid!important;place-items:center;flex:0 0 46px;}
+  .card-gacha-tool svg{width:22px;height:22px;}
   .card-reveal-back,.card-gacha-tool.is-back{line-height:1;}
   .card-collection-close{line-height:1;}
   .card-gacha-toolbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;}
@@ -1575,7 +1533,7 @@
   @keyframes cardPortalSpin{to{transform:rotate(360deg)}}
   @keyframes cardSpaceTwinkle{0%,100%{opacity:calc(var(--o,.65)*.42);transform:scale(.75)}48%{opacity:var(--o,.65);transform:scale(1.18)}70%{opacity:calc(var(--o,.65)*.66);transform:scale(.92)}}
   @keyframes cardShoot{0%,13%{left:-38%;opacity:0}16%{opacity:.72}34%{left:112%;opacity:.22}36%,100%{left:112%;opacity:0}}
-  @media(max-width:560px){.card-page{padding-top:92px;}.card-header{margin-bottom:30px;}.card-book-btn{margin:14px 0 0 auto;}.card-title{white-space:nowrap;}}
+  @media(max-width:560px){.card-page{padding-top:92px;}.card-header{margin-bottom:30px;}.card-title{white-space:nowrap;}}
 </style>
 
 <style>
@@ -1604,14 +1562,12 @@
 
   .poker-page{max-width:980px;margin:0 auto;padding-bottom:50px}
   .poker-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:24px}.poker-header .title{margin:3px 0 0}
-  .poker-app{min-height:440px}.poker-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}.poker-section-head h2{margin:0}.poker-section-head p{margin:5px 0 0}.poker-back{width:46px;height:46px;min-width:46px;padding:0}
+  .poker-app{min-height:440px}.poker-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}.poker-section-head h2{margin:0}.poker-section-head p{margin:5px 0 0}
   .poker-panel{padding:18px}.poker-panel+.poker-panel{margin-top:14px}.poker-panel-label{display:block;margin-bottom:10px}.poker-join{display:grid;grid-template-columns:1fr auto;gap:10px}.poker-input{min-width:0;height:50px;box-sizing:border-box;padding:0 16px;text-align:center}.poker-join .ui-btn{min-width:110px}.poker-room-meta{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
   .poker-player-list{display:grid;gap:8px;margin:16px 0}.poker-player-row{display:flex;align-items:center;justify-content:space-between;min-height:50px;padding:0 14px}
   .poker-actions{display:flex;gap:10px;margin-top:16px}.poker-actions .ui-btn{flex:1;min-height:50px;padding:10px 14px}.poker-actions.is-stack{flex-direction:column}
   .poker-status{text-align:center;margin:8px 0 16px}.poker-status strong{display:block}.poker-status span{display:block;margin-top:7px}
-  .poker-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;width:100%;perspective:1000px}.poker-card.is-back::before{content:'BMSG';position:absolute;inset:9px;display:flex;align-items:center;justify-content:center}
-  .poker-final-grid{display:grid;gap:14px}.poker-final-player{padding:15px}.poker-final-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.poker-vote-btn{width:100%;min-height:44px;margin-top:12px}.poker-result{text-align:center;padding:22px}.poker-result-name{margin-top:8px}.poker-waiting{padding:28px;text-align:center;line-height:1.8}
-  .poker-highlight-list{display:grid;gap:14px}.poker-empty{padding:40px 18px;text-align:center}
+  .poker-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;width:100%;perspective:1000px}.poker-card.is-back::before{content:'BMSG';position:absolute;inset:9px;display:flex;align-items:center;justify-content:center}.poker-vote-btn{width:100%;min-height:44px;margin-top:12px}
   @media(max-width:560px){.poker-panel{padding:14px}.poker-board{gap:4px}.poker-card.is-back::before{inset:5px}.poker-actions{flex-direction:column}.poker-room-meta{align-items:flex-start;flex-direction:column}.poker-join{grid-template-columns:1fr}.poker-join .ui-btn{min-height:50px}}
   /* 2026-09-11: final POKER style authority absorbed from PokerUiFixes + PokerPolishV2. */
   .poker-page{padding-top:74px;}
@@ -1627,7 +1583,6 @@
   .poker-home-btn{order:-1;margin:0;flex:none;}
   .poker-section-head{align-items:center;justify-content:flex-start;gap:14px;}
   .poker-section-head > div{min-width:0;}
-  .poker-back{order:-1;margin:0;flex:0 0 46px;}
   .poker-section-head h2{text-align:left;}
   .poker-confirm-overlay{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;padding:24px;}
   .poker-confirm-panel{width:min(100%,420px);box-sizing:border-box;padding:22px;}
@@ -1645,7 +1600,6 @@
   .poker-card{position:absolute;inset:0;border-radius:11px;overflow:hidden;border:1px solid rgba(156,236,255,.18);background:radial-gradient(circle at 50% 22%,rgba(156,236,255,.12),transparent 42%),#090d14;box-shadow:0 12px 24px rgba(0,0,0,.34);transition:transform .22s ease,opacity .22s ease,border-color .22s ease}
   .poker-card img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
   .poker-card-label{position:absolute;left:4px;right:4px;bottom:4px;padding:4px 3px;border-radius:5px;background:rgba(2,4,8,.82);font:700 clamp(6px,1.7vw,9px) var(--font-display),var(--font-body),sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-  .poker-rarity{position:absolute;top:4px;right:4px;padding:2px 4px;border-radius:4px;background:rgba(2,4,8,.82);font:800 7px var(--font-display),var(--font-body),sans-serif}
   .poker-card.rarity-r{border-color:#b87846}
   .poker-card.rarity-sr{border-color:#dbe5ef;box-shadow:0 0 14px rgba(219,229,239,.17),0 12px 24px rgba(0,0,0,.34)}
   .poker-card.rarity-ssr{border-color:#f2c64f;box-shadow:0 0 18px rgba(242,198,79,.25),0 12px 24px rgba(0,0,0,.38)}
@@ -1654,7 +1608,6 @@
   .poker-slot:focus-visible{outline:2px solid var(--poker-cyan);outline-offset:3px}
   @media (max-width:560px){.poker-card{border-radius:8px}}
   @media (prefers-reduced-motion:reduce){.poker-card{transition:none!important}}
-  .poker-card-rarity,.poker-rarity{display:none!important;}
   .poker-card-label{display:block!important;color:#fff!important;background:rgba(2,4,8,.78)!important;font-family:var(--font-body),sans-serif!important;font-weight:700!important;letter-spacing:0!important;}
   .poker-card.rarity-n{--poker-rarity-border:#9cecff;border-color:var(--poker-rarity-border)!important;box-shadow:0 12px 24px rgba(0,0,0,.34)!important;}
   .poker-card.rarity-r{--poker-rarity-border:#b87846;border-color:var(--poker-rarity-border)!important;box-shadow:0 12px 24px rgba(0,0,0,.34)!important;}
@@ -1686,7 +1639,6 @@
   .quiz-page{padding-bottom:12px}
   .quiz-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:26px}
   .quiz-header .title{margin:4px 0 0;line-height:.9}
-  .quiz-back-btn{width:46px;min-width:46px;height:46px;min-height:46px;padding:0;line-height:1}
   .quiz-app{display:grid;gap:16px;max-width:760px;margin:0 auto}
   .quiz-panel{padding:clamp(18px,4.5vw,28px)}
   .quiz-kicker,.quiz-step-label,.quiz-room-label{margin:0}
@@ -1697,13 +1649,12 @@
   .quiz-setting-title{margin:0}
   .quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   .quiz-options.is-course{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .quiz-choice,.quiz-answer,.quiz-player,.quiz-award,.quiz-action,.quiz-join-button{min-height:48px}
+  .quiz-choice,.quiz-player,.quiz-award,.quiz-action{min-height:48px}
   .quiz-player-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
   .quiz-player small{display:block;margin-top:3px}
   .quiz-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
   .quiz-action{min-height:52px}
-  .quiz-action:disabled,.quiz-choice:disabled,.quiz-answer:disabled{cursor:default;opacity:.42}
-  .quiz-online-join{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px;margin-top:12px}
+  .quiz-action:disabled,.quiz-choice:disabled{cursor:default;opacity:.42}
   .quiz-room-input{width:100%;min-height:50px;text-align:center}
   .quiz-room-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px}
   .quiz-progress{height:4px;overflow:hidden}
@@ -1711,13 +1662,11 @@
   .quiz-question-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .quiz-question-text{margin:4px 0 24px;overflow-wrap:anywhere}
   .quiz-question-text.is-lyrics{padding:22px 12px;text-align:center;line-height:1.8}
-  .quiz-answer-list{display:grid;gap:10px}
-  .quiz-answer{width:100%;padding:13px 16px;text-align:left;overflow-wrap:anywhere}
   .quiz-lyrics-link{display:inline-flex;align-items:center;min-height:44px;margin-top:10px}
   .quiz-award-step{display:grid;gap:12px}
   .quiz-award-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-  @media(min-width:680px){.quiz-options.is-course{grid-template-columns:repeat(3,minmax(0,1fr))}.quiz-answer-list{grid-template-columns:repeat(2,minmax(0,1fr))}.quiz-award-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-  @media(max-width:420px){.quiz-player-grid{grid-template-columns:1fr}.quiz-actions{grid-template-columns:1fr}.quiz-online-join{grid-template-columns:1fr 96px}}
+  @media(min-width:680px){.quiz-options.is-course{grid-template-columns:repeat(3,minmax(0,1fr))}.quiz-award-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  @media(max-width:420px){.quiz-player-grid{grid-template-columns:1fr}.quiz-actions{grid-template-columns:1fr}}
   @media(prefers-reduced-motion:reduce){.quiz-progress span{transition:none}}
   /* QUIZ final design audit: layout/typography only. Shared ButtonSystem remains surface authority. */
   .quiz-page{
@@ -1736,17 +1685,6 @@
   .quiz-header .title{
     margin:0;
     line-height:.95;
-  }
-  .quiz-back-btn{
-    order:-1;
-    flex:0 0 46px;
-    width:46px;
-    min-width:46px;
-    height:46px;
-    min-height:46px;
-    margin:0;
-    padding:0;
-    line-height:1;
   }
   .quiz-app{max-width:760px;}
   .quiz-panel{padding:clamp(18px,4.5vw,26px);}
@@ -1888,7 +1826,6 @@
   @media(max-width:600px){.cover-page{padding-top:14px}.cover-header{margin-bottom:14px}.cover-app{max-width:none}.cover-choice-stack{max-width:none}.cover-content-card{min-height:52px}.cover-member-list{grid-template-columns:1fr 1fr}}
   @media(min-width:780px){.cover-save-bar{position:sticky;bottom:0;margin-top:10px;padding-left:0;padding-right:0}.cover-sheet{align-items:center}.cover-sheet-panel{max-height:70vh}.cover-page{padding-bottom:36px}}
   /* 2026-09-11: final COVER style authority absorbed from CoverPolishV2/V3/V4. */
-  .app-shell:has(#pageContent > .cover-page) .cosmic-bg{display:none!important}
   .cover-page{min-width:0;padding-top:86px}
   .app-shell:has(#pageContent > .cover-page) .utility-actions{z-index:40}
   .cover-header{display:flex!important;flex-direction:column;align-items:flex-start;gap:14px;margin:0 0 28px}
@@ -1907,7 +1844,6 @@
   .cover-page .cover-project-row{min-height:70px;padding:14px 16px}
   .cover-page .cover-project-row strong{line-height:1.35}
   .cover-page .cover-project-row .cover-row-meta{margin-top:5px;opacity:1}
-  .cover-inline-back{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;margin:0 0 16px;display:grid!important;place-items:center;line-height:1}
   .cover-page.is-cover-saved-view .cover-view-actions{margin:14px 0 18px}
   @media(max-width:600px){.cover-page{padding-top:82px}.cover-page.is-cover-choice .cover-content-card{min-height:94px;padding:16px}}
   @media(max-width:380px){.cover-page.is-cover-choice .cover-choice-stack{gap:9px}.cover-page.is-cover-choice .cover-content-card{min-height:90px;padding:13px}}
@@ -1957,13 +1893,10 @@
   .pt-status-dot { --accent: var(--ui-text-sub); }
   .pt-timer-panel.is-running .pt-status-dot { --accent: var(--ui-text); }
   .pt-timer-panel.is-paused .pt-status-dot { --accent: var(--ui-line-strong); }
-
-  body.performance-timer-active .cosmic-bg{display:none!important}
   .performance-timer-page{
     min-height:100%;padding:72px 16px calc(88px + env(safe-area-inset-bottom));
   }
   .performance-timer-header{max-width:760px;margin:0 auto 10px;display:flex;align-items:center;gap:12px;min-width:0}
-  .performance-timer-back{width:46px;height:46px;min-width:46px;padding:0;line-height:1}
   .performance-timer-title-wrap{min-width:0}
   .performance-timer-title{margin:0}
   .performance-timer-app{max-width:760px;margin:0 auto;display:grid;gap:7px}
@@ -2069,7 +2002,6 @@
   .management-actions > * { width: 100%; }
   .management-error { margin: 0; padding: 11px 0; }
   .management-page .slm-icon-btn { min-width: 44px; min-height: 44px; }
-  .management-page .cm-busy { pointer-events: none; }
   #managementOperationsHost, #moHistory { display: grid; gap: 16px; margin-top: 16px; }
   .management-json { max-width: 100%; }
 </style>
@@ -2917,7 +2849,7 @@
   <section class="settings-panel management-panel slm-confirm-panel" role="dialog" aria-modal="true"><h3 class="ui-heading">未登録のSingerが見つかりました</h3><strong id="slmGuestName" class="ui-strong"></strong><p class="ui-muted">Guestとして登録しますか？</p><div class="slm-confirm-actions"><button class="ui-btn" type="button" onclick="markSlmGuestNotGuest()">ゲストではない</button><button class="ui-btn ui-btn-solid" type="button" onclick="confirmSlmGuestRegistration()">Guestとして登録</button></div></section>
 </div>
 <style>
-  .slm-lead{margin-top:8px}.slm-stepper{margin:0 0 18px}.slm-step{display:flex;align-items:center;justify-content:center;text-align:center}.slm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.slm-field.is-wide{grid-column:1/-1}.slm-field textarea{min-height:220px;resize:vertical;line-height:1.7}.slm-toggle{display:flex;align-items:center;gap:10px;min-height:48px}.slm-toggle input[type="checkbox"]{width:24px;max-width:24px;min-width:24px;min-height:24px;height:24px;padding:0;margin:0;flex:0 0 24px}.slm-note{margin:0}.slm-preview-list,.slm-parts{display:grid;gap:10px}.slm-preview-part,.slm-part-card{padding:13px}.slm-preview-part>div,.slm-part-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.slm-preview-part p,.slm-part-card textarea{white-space:pre-wrap}.slm-preview-part p{margin:9px 0 0}.slm-part-card{display:grid;gap:10px}.slm-part-head-actions{display:flex;gap:6px}.slm-icon-btn{width:38px;height:38px}.slm-part-insert{width:100%;min-height:42px;margin:2px 0}.slm-part-card textarea{width:100%;box-sizing:border-box;min-height:116px;padding:10px 12px}.slm-edit-section{display:grid;gap:12px;margin-top:16px}.slm-save-section{justify-self:end}.slm-confirm{z-index:1400}.slm-confirm-panel{max-width:440px}.slm-confirm-panel h3{margin:0 0 16px}.slm-confirm-panel>strong{display:block}.slm-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}.slm-success{padding:18px;text-align:center}
+  .slm-stepper{margin:0 0 18px}.slm-step{display:flex;align-items:center;justify-content:center;text-align:center}.slm-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.slm-field.is-wide{grid-column:1/-1}.slm-field textarea{min-height:220px;resize:vertical;line-height:1.7}.slm-toggle{display:flex;align-items:center;gap:10px;min-height:48px}.slm-toggle input[type="checkbox"]{width:24px;max-width:24px;min-width:24px;min-height:24px;height:24px;padding:0;margin:0;flex:0 0 24px}.slm-note{margin:0}.slm-preview-list,.slm-parts{display:grid;gap:10px}.slm-preview-part,.slm-part-card{padding:13px}.slm-preview-part>div,.slm-part-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.slm-preview-part p,.slm-part-card textarea{white-space:pre-wrap}.slm-preview-part p{margin:9px 0 0}.slm-part-card{display:grid;gap:10px}.slm-part-head-actions{display:flex;gap:6px}.slm-icon-btn{width:38px;height:38px}.slm-part-insert{width:100%;min-height:42px;margin:2px 0}.slm-part-card textarea{width:100%;box-sizing:border-box;min-height:116px;padding:10px 12px}.slm-edit-section{display:grid;gap:12px;margin-top:16px}.slm-save-section{justify-self:end}.slm-confirm{z-index:1400}.slm-confirm-panel{max-width:440px}.slm-confirm-panel h3{margin:0 0 16px}.slm-confirm-panel>strong{display:block}.slm-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
   @media(max-width:560px){.slm-panel{padding:0}.slm-grid{grid-template-columns:1fr}.slm-field.is-wide{grid-column:auto}.slm-actions .ui-btn{width:100%}.slm-confirm-actions{grid-template-columns:1fr}}
 </style>
 <script>
@@ -2974,7 +2906,7 @@
   function deleteSlmPart(index){const list=songLyricsManagementState.existing.parts;if(list.length<=1){renderSlmInlineError_('歌詞パートは1件以上必要です。');return;}if(!window.confirm('このパートを削除しますか？'))return;list.splice(index,1);songLyricsManagementState.dirty.lyrics=true;renderSlmParts_();}
   function saveSlmExistingInfo(){if(songLyricsManagementState.busy)return;const s=songLyricsManagementState.existing.song;const payload={artist:s.storedArtist??s.artist,title:document.getElementById('slmEditTitle').value,releaseDate:document.getElementById('slmEditRelease').value,form:document.getElementById('slmEditForm').value,cdTitle:document.getElementById('slmEditCd').value,isTitleTrack:document.getElementById('slmEditTitleTrack').checked};setSlmBusy_(true);managementRunner_().withSuccessHandler(function(){setSlmBusy_(false);songLyricsManagementState.dirty.info=false;managementState.dirty=false;slmReloadAfterSave_('info');}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).saveSongLyricsManagementInfo({userId:getUniverseUserId(),songId:s.songId,song:payload});}
   function saveSlmExistingCredits(){if(songLyricsManagementState.busy)return;const s=songLyricsManagementState.existing.song;const credits={lyricists:document.getElementById('slmEditLyricists').value,composers:document.getElementById('slmEditComposers').value,choreographers:document.getElementById('slmEditChoreographers').value};setSlmBusy_(true);managementRunner_().withSuccessHandler(function(){setSlmBusy_(false);slmReloadAfterSave_('credits');}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).saveSongLyricsManagementCredits({userId:getUniverseUserId(),songId:s.songId,credits:credits});}
-  function saveSlmExistingLyrics(){if(songLyricsManagementState.busy)return;const s=songLyricsManagementState.existing.song,parts=songLyricsManagementState.existing.parts.map(function(part){return{singers:part.singers,lyrics:part.lyrics};});setSlmBusy_(true);managementRunner_().withSuccessHandler(function(){setSlmBusy_(false);songLyricsManagementState.dirty.lyrics=false;try{sessionStorage.removeItem('bmsgLyricsDataV5');}catch(e){}slmReloadAfterSave_('lyrics');}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).saveSongLyricsManagementLyrics({userId:getUniverseUserId(),songId:s.songId,parts:parts});}
+  function saveSlmExistingLyrics(){if(songLyricsManagementState.busy)return;const s=songLyricsManagementState.existing.song,parts=songLyricsManagementState.existing.parts.map(function(part){return{singers:part.singers,lyrics:part.lyrics};});setSlmBusy_(true);managementRunner_().withSuccessHandler(function(){setSlmBusy_(false);songLyricsManagementState.dirty.lyrics=false;slmReloadAfterSave_('lyrics');}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).saveSongLyricsManagementLyrics({userId:getUniverseUserId(),songId:s.songId,parts:parts});}
 
   function refreshSlmBootstrap_(callback){setSlmBusy_(true);managementRunner_().withSuccessHandler(function(data){songLyricsManagementState.bootstrap=data;setSlmBusy_(false);if(typeof callback==='function')callback();}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).getSongLyricsManagementBootstrap(getUniverseUserId());}
   function hasSlmDirty_(){return Object.values(songLyricsManagementState.dirty).some(Boolean);}
@@ -3038,7 +2970,6 @@
   .cm-forms{display:grid;gap:12px}
   .cm-note{line-height:1.65;opacity:.72}
   .cm-section{margin:0 0 8px}
-  .cm-busy{opacity:.65;pointer-events:none}
   .cm-forms .management-card{margin:0}
   .cm-message{margin:10px 0;padding:10px 12px}
   .cm-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}.cm-actions>*{width:100%}
@@ -3776,92 +3707,6 @@
     }
 
     lockAppOverscroll();
-
-</script>
-
-<!-- Icons.html -->
-<script>
-    const DEMO_USERS = ['ももたん', 'みおたん', 'りおたん'];
-    let demoUserIndex = 0;
-
-    function iconSvg(type) {
-      const icons = {
-        // PROFILE is intentionally kept in the same clean person-outline direction.
-        profile: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <circle cx="16" cy="10.5" r="4.1"></circle>
-            <path d="M8.5 25.5c1.2-5.1 4-7.6 7.5-7.6s6.3 2.5 7.5 7.6"></path>
-          </svg>`,
-
-        lyrics: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M8 8.5h16M8 13.5h12M8 18.5h15M8 23.5h9"></path>
-          </svg>`,
-
-        karaoke: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <rect x="12" y="5.5" width="8" height="14" rx="4"></rect>
-            <path d="M8.5 15.5a7.5 7.5 0 0 0 15 0M16 23v4M12 27h8"></path>
-          </svg>`,
-
-        history: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M8.5 10H5V6.5M5.7 10a11 11 0 1 1-.4 10"></path>
-            <path d="M16 10v6l4 2"></path>
-          </svg>`,
-
-        ranking: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M7 25V18h5v7M14 25V10h5v15M21 25V14h5v11M5 25h23"></path>
-          </svg>`,
-
-        back: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M20.5 7.5 12 16l8.5 8.5"></path>
-          </svg>`,
-
-        analysis: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M7 24V16M13 24V10M19 24V14M25 24V7"></path>
-          </svg>`,
-
-        // LAB flask direction kept as approved.
-        lab: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <path d="M12 5h8M13 5v8L7.2 23a2.4 2.4 0 0 0 2.1 3.6h13.4a2.4 2.4 0 0 0 2.1-3.6L19 13V5"></path>
-            <path d="M9.5 21h13"></path>
-          </svg>`,
-
-        // Redesigned requested icons:
-        data: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <circle cx="8" cy="9" r="2"></circle>
-            <circle cx="24" cy="9" r="2"></circle>
-            <circle cx="16" cy="23" r="2"></circle>
-            <path d="M10 9h12M9.4 10.7l5.2 10.6M22.6 10.7l-5.2 10.6"></path>
-          </svg>`,
-
-        quiz: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <circle cx="16" cy="16" r="10.5"></circle>
-            <path d="M12.8 12.1c.5-2 2-3.2 4.2-3.2 2.5 0 4.1 1.4 4.1 3.5 0 1.9-1.1 2.8-2.8 3.8-1.5.9-2 1.7-2 3.1M16.3 23.3h.1"></path>
-          </svg>`,
-
-        poker: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <rect x="7" y="7.5" width="13.5" height="18" rx="2.4" transform="rotate(-7 13.75 16.5)"></rect>
-            <rect x="12" y="6.5" width="13.5" height="18" rx="2.4" transform="rotate(7 18.75 15.5)"></rect>
-            <path d="M18.7 12.1l1.7 2.1 2.2-1.5-1.1 2.6 2.3 1.2-2.7.2.1 2.7-1.5-2.2-2.2 1.6 1-2.5-2.5-.8 2.7-.3z"></path>
-          </svg>`,
-
-        cover: `
-          <svg viewBox="0 0 32 32" aria-hidden="true">
-            <rect x="6" y="7" width="20" height="18" rx="2.5"></rect>
-            <path d="M10 20l4.2-4.4 3.2 3 2.5-2.4L24 20M11 12h.1"></path>
-          </svg>`
-      };
-      return icons[type] || '';
-    }
 
 </script>
 
@@ -4723,12 +4568,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     discover: { eyebrow: 'FIND SIMILAR', title: 'DISCOVER', copy: '選んだメンバーと似ている順のランキングをここへ接続します。' }
   });
 
-  const PROFILE_GROUPS = {
-    all: 'ALL MEMBERS', befirst: 'BE:FIRST', mazzel: 'MAZZEL', starglow: 'STARGLOW', hana: 'HANA'
-  };
-
   let profileCurrentView = 'home';
-  let profileCurrentGroup = 'all';
   let profileSelectedMemberId = '';
   let profileDetailReturnView = 'home';
 
@@ -4739,8 +4579,6 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function initProfilePage() {
     profileCurrentView = 'home';
-    const preferredGroup = 'all';
-    profileCurrentGroup = 'all'; // group tabs were removed: always show everyone
     profileSelectedMemberId = '';
     profileDetailReturnView = 'home';
     setProfileDetailMode(false);
@@ -4758,25 +4596,11 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     renderProfilePanel();
   }
 
-  function selectProfileGroup(group) {
-    if (!PROFILE_GROUPS[group]) return;
-    profileSelectedMemberId = '';
-    setProfileDetailMode(false);
-    profileCurrentGroup = group;
-    updateProfileControls();
-    renderProfilePanel();
-  }
-
   function updateProfileControls() {
     document.querySelectorAll('[data-profile-view]').forEach(button => {
       const active = button.dataset.profileView === profileCurrentView;
       button.classList.toggle('active', active);
       button.setAttribute('aria-current', active ? 'page' : 'false');
-    });
-    document.querySelectorAll('[data-profile-group]').forEach(button => {
-      const active = button.dataset.profileGroup === profileCurrentGroup;
-      button.classList.toggle('active', active);
-      button.setAttribute('aria-pressed', String(active));
     });
   }
 
@@ -4819,65 +4643,19 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
     const heading = page.querySelector('.profile-heading');
     if (heading) heading.style.display = 'grid';
-
-    const serviceBack = page.querySelector('.profile-service-back');
-    if (serviceBack) serviceBack.style.display = isDetail ? 'none' : '';
   }
 </script>
 
 <!-- ProfileMembers.html -->
 <script>
-  const PROFILE_MEMBERS_SESSION_KEY = 'bmsgProfileMembersV1';
-  const PROFILE_MEMBERS_SESSION_TTL = 5 * 60 * 1000;
-
   let profileMembersState = {
     status: 'idle', groups: [], members: [], error: '',
     detailStatus: 'idle', detailMemberId: '', detailFields: [], detailError: ''
   };
 
-  function readProfileMembersSessionCache() {
-    try {
-      const raw = sessionStorage.getItem(PROFILE_MEMBERS_SESSION_KEY);
-      if (!raw) return null;
-      const cached = JSON.parse(raw);
-      if (!cached || !cached.savedAt || Date.now() - Number(cached.savedAt) > PROFILE_MEMBERS_SESSION_TTL) {
-        sessionStorage.removeItem(PROFILE_MEMBERS_SESSION_KEY);
-        return null;
-      }
-      if (!Array.isArray(cached.groups) || !Array.isArray(cached.members)) return null;
-      return cached;
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function writeProfileMembersSessionCache() {
-    try {
-      sessionStorage.setItem(PROFILE_MEMBERS_SESSION_KEY, JSON.stringify({
-        savedAt: Date.now(),
-        groups: profileMembersState.groups,
-        members: profileMembersState.members
-      }));
-    } catch (error) {
-      // sessionStorage is only a speed cache; PROFILE must still work without it.
-    }
-  }
-
   function loadProfileMembers(forceReload = false) {
     if (!forceReload && (profileMembersState.status === 'loading' || profileMembersState.status === 'ready')) {
       renderProfileMembersPanel(); return;
-    }
-
-    if (!forceReload) {
-      const cached = readProfileMembersSessionCache();
-      if (cached) {
-        profileMembersState.status = 'ready';
-        profileMembersState.groups = cached.groups;
-        profileMembersState.members = cached.members;syncProfileGroupChoices_();
-        profileMembersState.error = '';
-        renderProfileMembersPanel();
-        return;
-      }
     }
 
     profileMembersState.status = 'loading'; profileMembersState.error = '';
@@ -4895,7 +4673,6 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     profileMembersState.groups = Array.isArray(response.data.groups) ? response.data.groups : [];
     profileMembersState.members = Array.isArray(response.data.members) ? response.data.members : [];
     profileMembersState.error = '';
-    syncProfileGroupChoices_();writeProfileMembersSessionCache();
     renderProfilePanel();
     if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
   }
@@ -4908,19 +4685,9 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function getVisibleProfileMembers() {
     const members = profileMembersState.members.slice();
-    if (profileCurrentGroup === 'all') return members.sort((a, b) => a.displayOrder - b.displayOrder);
-    const selectedGroup = profileMembersState.groups.find(group => group.key === profileCurrentGroup);
-    if (!selectedGroup) return [];
-    return members.filter(member => member.groupIds.includes(selectedGroup.groupId)).sort((a, b) =>
-      Number(memberGroupOrder(a, selectedGroup.groupId)) - Number(memberGroupOrder(b, selectedGroup.groupId)) || a.displayOrder - b.displayOrder
-    );
+    return members.sort((a, b) => a.displayOrder - b.displayOrder);
   }
 
-  function memberGroupOrder(member, groupId) {
-    if (!member || !member.groupOrders) return 9999;
-    const value = member.groupOrders[groupId];
-    return Number.isFinite(Number(value)) ? Number(value) : 9999;
-  }
 
   function renderProfileMembersPanel() {
     const panel = document.getElementById('profilePanel');
@@ -5041,14 +4808,6 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function renderProfileMemberSkeletons() {
     return `<div class="ui-divider profile-members-head profile-members-head-loading"><div><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-label"></span><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-heading"></span></div></div><div class="profile-member-grid">${Array.from({ length: 6 }, () => `<div class="ui-card profile-member-card profile-member-card-loading"><div class="ui-skeleton profile-member-skeleton profile-member-skeleton-image"></div><div class="profile-member-body"><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-copy"></span><span class="ui-skeleton profile-member-skeleton profile-member-skeleton-name"></span></div></div>`).join('')}</div>`;
-  }
-  function syncProfileGroupChoices_(){
-    const host=document.querySelector('.profile-group-scroll');if(!host)return;
-    Object.keys(PROFILE_GROUPS).forEach(function(key){if(key!=='all')delete PROFILE_GROUPS[key];});
-    const tabGroups=profileMembersState.groups.filter(function(g){return /^G/.test(String(g.groupId||''));});
-    tabGroups.forEach(function(g){PROFILE_GROUPS[g.key]=g.name;});
-    host.innerHTML='<button class="profile-group-chip" data-profile-group="all" onclick="selectProfileGroup(\'all\')">ALL</button>'+tabGroups.map(function(g){return '<button class="profile-group-chip" data-profile-group="'+escapeHtml(g.key)+'" onclick="selectProfileGroup(this.dataset.profileGroup)">'+escapeHtml(g.name)+'</button>';}).join('');
-    if(!PROFILE_GROUPS[profileCurrentGroup])profileCurrentGroup='all';updateProfileControls();
   }
 </script>
 
@@ -5837,8 +5596,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function initLyricsPage(params){
     lyricsState.initialParams=params||{};
     loadLyricsKaraokeRoom();
-    try{const cached=sessionStorage.getItem('bmsgLyricsDataV5');if(cached){applyLyricsData(JSON.parse(cached));return;}}catch(error){}
-    google.script.run.withSuccessHandler(function(data){try{sessionStorage.setItem('bmsgLyricsDataV5',JSON.stringify(data));}catch(error){}applyLyricsData(data);}).withFailureHandler(showLyricsError).getLyricsCatalog();
+    // 曲の一覧は共通の一時保存（gas-shim）からすぐ返る
+    google.script.run.withSuccessHandler(applyLyricsData).withFailureHandler(showLyricsError).getLyricsCatalog();
   }
   function setLyricsUrl(values){
     const params={page:'lyrics'};
@@ -6030,7 +5789,6 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
       const savedParts=ensureLyricsEditDraft_().map(function(part,index){return{partOrder:index+1,singer:(part.singers||[]).map(function(s){const role=String(s.role||(s.harmony?s.harmony.toUpperCase():'MAIN')).toUpperCase();return String(s.id||'')+(role==='MAIN'?'':'_'+role.toLowerCase());}).filter(Boolean).join(','),singers:(part.singers||[]).map(function(s){return Object.assign({},s);}),lyrics:String(part.lyrics||'').trim()};});
       lyricsState.editSaving=false;lyricsState.editDirty=false;lyricsState.editDraft=null;lyricsState.song.parts=savedParts;lyricsState.partsBySong[lyricsState.song.songId]=savedParts;
       const meta=lyricsState.catalog.find(function(item){return item.songId===lyricsState.song.songId;});if(meta)meta.partCount=savedParts.length;
-      try{sessionStorage.setItem('bmsgLyricsDataV5',JSON.stringify({mainGroups:LYRICS_GROUPS.filter(function(n){return n!=='BMSG ALLSTARS';}),songs:lyricsState.catalog,partsBySong:lyricsState.partsBySong,groupColors:lyricsState.groupColors}));}catch(error){}
       renderLyricsSong();if(typeof showToast==='function')showToast('変更を保存しました');
     }).withFailureHandler(function(error){lyricsState.editSaving=false;renderLyricsSong();showLyricsError(error);}).saveLyricsSongParts({userId:userId,songId:lyricsState.song.songId,parts:parts});
   }
@@ -6408,14 +6166,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function initKaraokePage(params){
     params=params||{};
     karaokeState.backParams={group:params.group||'',unit:params.unit||''};
-    const cached=sessionStorage.getItem('bmsgLyricsDataV5');
-    if(cached){
-      try{applyKaraokeCatalog(JSON.parse(cached),params);return;}catch(error){}
-    }
-    google.script.run.withSuccessHandler(function(data){
-      try{sessionStorage.setItem('bmsgLyricsDataV5',JSON.stringify(data));}catch(error){}
-      applyKaraokeCatalog(data,params);
-    }).withFailureHandler(showKaraokeError).getLyricsCatalog();
+    // 曲の一覧は共通の一時保存（gas-shim）からすぐ返る
+    google.script.run.withSuccessHandler(function(data){applyKaraokeCatalog(data,params);}).withFailureHandler(showKaraokeError).getLyricsCatalog();
   }
 
   function applyKaraokeCatalog(data,params){
@@ -8464,7 +8216,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const originalShowLyricsError=window.showLyricsError;
     window.showLyricsError=function(error){
       const view=document.getElementById('lyricsView');
-      if(currentRoute==='lyrics'&&view&&view.querySelector('.lyrics-loading')){
+      if(currentRoute==='lyrics'&&view&&view.querySelector('.lyx-groups .ui-skeleton')){
         view.innerHTML=renderUniverseRecoveryState(recoveryMessage_(error,'歌詞の読み込みに失敗しました。'),'initLyricsPage(lyricsState.initialParams||{})');
         return;
       }
@@ -8617,18 +8369,13 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const songId=String(lyricsState.song.songId||'');if(!songId)return;
     const meta=(lyricsState.catalog||[]).find(function(item){return String(item.songId)===songId;});
     const isBeFirst=!!(meta&&(meta.category==='BE:FIRST'||meta.artist==='BE:FIRST'));
-    document.querySelectorAll('.universe-lyrics-crosslinks').forEach(function(node){node.remove();});
-    const rows=[].slice.call(document.querySelectorAll('.lyrics-song-actions'));
-    if(!rows.length)return;
-    const target=rows[rows.length-1];
-    rows.forEach(function(row){
-      const existing=row.querySelector('.universe-lyrics-analysis-link');
-      if(existing&&(!isBeFirst||row!==target))existing.remove();
-    });
-    if(!isBeFirst||target.querySelector('.universe-lyrics-analysis-link'))return;
-    const karaoke=target.querySelector('.lyrics-karaoke-icon');
-    const button=createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'song',song:songId});},'is-light universe-lyrics-analysis-link');
-    if(karaoke)target.insertBefore(button,karaoke);else target.appendChild(button);
+    // 曲の詳細の下のボタン行に「ANALYSIS」を足す（BE:FIRST の曲だけ）
+    const target=document.querySelector('#lyricsView .lyx-actions.is-bottom');
+    if(!target)return;
+    const existing=target.querySelector('.universe-lyrics-analysis-link');
+    if(!isBeFirst){if(existing)existing.remove();return;}
+    if(existing)return;
+    target.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'song',song:songId});},'universe-lyrics-analysis-link'));
   }
 
   function syncUniverseAnalysisCrossLinks_(){
@@ -8651,10 +8398,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   .universe-profile-credits h3{margin:0 0 12px}
   .universe-profile-credits .universe-loading{min-height:60px}
   .universe-credit-list{display:grid;gap:8px}.universe-credit-song{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;padding:13px 14px;text-align:left}.universe-credit-tags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:5px}.universe-credit-tags i{padding:4px 7px}.universe-crosslink-status{margin:0}
-  .lyrics-song-actions .universe-lyrics-analysis-link{flex:1 1 120px;min-height:46px;margin:0}
-  .lyrics-song-actions.is-bottom .universe-lyrics-analysis-link{grid-column:1;grid-row:2;width:100%;min-width:0;min-height:44px;padding:0 10px;justify-self:start}
   .universe-analysis-profile-link{margin:16px 0 0}.universe-analysis-lyrics-link{margin-top:16px}
-  @media(max-width:520px){.universe-profile-crosslinks .universe-crosslink-button{flex:1 1 100%}.universe-credit-song{grid-template-columns:1fr}.universe-credit-tags{justify-content:flex-start}.lyrics-song-actions .universe-lyrics-analysis-link{padding-inline:12px}.lyrics-song-actions.is-bottom .universe-lyrics-analysis-link{padding-inline:8px}}
+  @media(max-width:520px){.universe-profile-crosslinks .universe-crosslink-button{flex:1 1 100%}.universe-credit-song{grid-template-columns:1fr}.universe-credit-tags{justify-content:flex-start}}
 </style>
 
 <!-- ManagementOperations.html -->
@@ -8847,7 +8592,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function managementMutationDone_(){
     if(typeof profileMembersState!=='undefined'){profileMembersState.status='idle';profileMembersState.detailStatus='idle';}
     if(typeof universePreferencesClient!=='undefined')universePreferencesClient.loaded=false;
-    try{['bmsgLyricsDataV5','bmsgProfileMembersV1'].forEach(function(key){sessionStorage.removeItem(key);});}catch(e){}
+    if(google.script.clearCache)google.script.clearCache();
   }
   function restoreManagementHistory_(){google.script.history.replace(managementState.params,managementState.params,'');}
   // Drop responses from an editor that has been unmounted or whose user context changed.

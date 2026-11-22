@@ -2,7 +2,6 @@
   .quiz-page{padding-bottom:12px}
   .quiz-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:26px}
   .quiz-header .title{margin:4px 0 0;line-height:.9}
-  .quiz-back-btn{width:46px;min-width:46px;height:46px;min-height:46px;padding:0;line-height:1}
   .quiz-app{display:grid;gap:16px;max-width:760px;margin:0 auto}
   .quiz-panel{padding:clamp(18px,4.5vw,28px)}
   .quiz-kicker,.quiz-step-label,.quiz-room-label{margin:0}
@@ -13,13 +12,12 @@
   .quiz-setting-title{margin:0}
   .quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   .quiz-options.is-course{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .quiz-choice,.quiz-answer,.quiz-player,.quiz-award,.quiz-action,.quiz-join-button{min-height:48px}
+  .quiz-choice,.quiz-player,.quiz-award,.quiz-action{min-height:48px}
   .quiz-player-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
   .quiz-player small{display:block;margin-top:3px}
   .quiz-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
   .quiz-action{min-height:52px}
-  .quiz-action:disabled,.quiz-choice:disabled,.quiz-answer:disabled{cursor:default;opacity:.42}
-  .quiz-online-join{display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px;margin-top:12px}
+  .quiz-action:disabled,.quiz-choice:disabled{cursor:default;opacity:.42}
   .quiz-room-input{width:100%;min-height:50px;text-align:center}
   .quiz-room-banner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 16px}
   .quiz-progress{height:4px;overflow:hidden}
@@ -27,13 +25,11 @@
   .quiz-question-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .quiz-question-text{margin:4px 0 24px;overflow-wrap:anywhere}
   .quiz-question-text.is-lyrics{padding:22px 12px;text-align:center;line-height:1.8}
-  .quiz-answer-list{display:grid;gap:10px}
-  .quiz-answer{width:100%;padding:13px 16px;text-align:left;overflow-wrap:anywhere}
   .quiz-lyrics-link{display:inline-flex;align-items:center;min-height:44px;margin-top:10px}
   .quiz-award-step{display:grid;gap:12px}
   .quiz-award-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-  @media(min-width:680px){.quiz-options.is-course{grid-template-columns:repeat(3,minmax(0,1fr))}.quiz-answer-list{grid-template-columns:repeat(2,minmax(0,1fr))}.quiz-award-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
-  @media(max-width:420px){.quiz-player-grid{grid-template-columns:1fr}.quiz-actions{grid-template-columns:1fr}.quiz-online-join{grid-template-columns:1fr 96px}}
+  @media(min-width:680px){.quiz-options.is-course{grid-template-columns:repeat(3,minmax(0,1fr))}.quiz-award-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+  @media(max-width:420px){.quiz-player-grid{grid-template-columns:1fr}.quiz-actions{grid-template-columns:1fr}}
   @media(prefers-reduced-motion:reduce){.quiz-progress span{transition:none}}
   /* QUIZ final design audit: layout/typography only. Shared ButtonSystem remains surface authority. */
   .quiz-page{
@@ -52,17 +48,6 @@
   .quiz-header .title{
     margin:0;
     line-height:.95;
-  }
-  .quiz-back-btn{
-    order:-1;
-    flex:0 0 46px;
-    width:46px;
-    min-width:46px;
-    height:46px;
-    min-height:46px;
-    margin:0;
-    padding:0;
-    line-height:1;
   }
   .quiz-app{max-width:760px;}
   .quiz-panel{padding:clamp(18px,4.5vw,26px);}

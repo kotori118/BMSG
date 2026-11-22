@@ -280,7 +280,7 @@
     letter-spacing: var(--ui-ls-label);
     cursor: pointer;
   }
-  .search-status, .page-directory-label {
+  .search-status {
     margin: 28px 2px 12px;
     color: var(--ui-text-sub);
     font-family: var(--ui-font-display);
@@ -318,16 +318,6 @@
     transform: translateY(-50%) rotate(45deg);
   }
   @media (hover: hover) { .search-result:hover { background: var(--ui-panel); } }
-  .search-result-parent {
-    display: block;
-    margin-bottom: 4px;
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: var(--ui-ls-label);
-    text-transform: uppercase;
-  }
   .search-result-name { font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
 
   /* ---- 上に出る窓（設定・ユーザー・推しメン選択など） ---- */
@@ -381,7 +371,6 @@
   }
   .settings-row-button { cursor: pointer; }
   @media (hover: hover) { .settings-row-button:hover { background: var(--ui-panel); } }
-  .settings-row-button.is-disabled { opacity: .5; }
   .settings-row-copy { display: grid; gap: 4px; min-width: 0; }
   .settings-row-copy strong { font-size: var(--ui-fs-body); font-weight: 700; }
   .settings-row-copy small { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }

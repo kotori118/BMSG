@@ -30,7 +30,7 @@
     const originalShowLyricsError=window.showLyricsError;
     window.showLyricsError=function(error){
       const view=document.getElementById('lyricsView');
-      if(currentRoute==='lyrics'&&view&&view.querySelector('.lyrics-loading')){
+      if(currentRoute==='lyrics'&&view&&view.querySelector('.lyx-groups .ui-skeleton')){
         view.innerHTML=renderUniverseRecoveryState(recoveryMessage_(error,'歌詞の読み込みに失敗しました。'),'initLyricsPage(lyricsState.initialParams||{})');
         return;
       }
