@@ -4308,6 +4308,14 @@
       return '<div class="ui-loading universe-loading" role="status" aria-live="polite"><span>' + escapeHtml(text) + '</span></div>';
     }
 
+    // 番号つきの行（renderUniverseIndexRows）を待つ間のスケルトン。行と同じ高さ・本数で出す。
+    function renderUniverseIndexSkeleton(count, extraClass) {
+      const row = '<div class="ui-index-row" aria-hidden="true"><span class="ui-skeleton" style="width:56px;height:44px"></span><span class="ui-index-copy"><span class="ui-skeleton" style="width:46%;height:16px"></span><span class="ui-skeleton" style="width:78%;height:12px;margin-top:10px"></span></span><span></span></div>';
+      let rows = '';
+      for (let i = 0; i < (count || 4); i++) rows += row;
+      return '<div class="ui-list' + (extraClass ? ' ' + extraClass : '') + '" role="status" aria-busy="true" aria-label="読み込み中">' + rows + '</div>';
+    }
+
     function closeOnBackdrop(event, id) {
       if (event.target && event.target.id === id) {
         if (id === 'settingsOverlay') closeSettings();
@@ -6943,7 +6951,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function retryAnalysis(){analysisData=null;initAnalysisPage();}
   function selectAnalysisView(view){analysisView=view;analysisOtherView='';document.querySelectorAll('.analysis-tab').forEach(b=>b.classList.toggle('active',b.dataset.analysisView===view));renderAnalysisView();}
   function renderAnalysisView(){destroyAnalysisCharts();document.querySelectorAll('.analysis-tab').forEach(b=>b.classList.toggle('active',b.dataset.analysisView===analysisView));const p=document.getElementById('analysisPanel');if(!p||!analysisData)return;if(analysisView==='member')renderAnalysisMember();else if(analysisView==='song')renderAnalysisSong();else if(analysisView==='timeline')renderAnalysisTimeline();else if(analysisView==='other')renderAnalysisOther();else renderAnalysisTop();if(typeof syncUniverseCrossLinks==='function')syncUniverseCrossLinks();}
-  function analysisSkeletonMarkup(){return '<div class="analysis-loading ui-skeleton-list" role="status" aria-busy="true" aria-label="読み込み中"><span class="ui-skeleton-row"></span><span class="ui-skeleton-row"></span><span class="ui-skeleton-row"></span><span class="ui-skeleton-row"></span></div>';}
+  function analysisSkeletonMarkup(){return renderUniverseIndexSkeleton(4,'analysis-loading');}
   // トップ：番号つきの大きな行（タブの中身とは別の見せ方）
   function renderAnalysisTop(){
     const items=[
@@ -6964,7 +6972,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderAnalysisTimeline(){const p=document.getElementById('analysisPanel'),rows=analysisData.timelineData,years=[...new Set(rows.map(r=>r.year).filter(Boolean))].sort();p.innerHTML='<div class="analysis-section"><div class="ui-panel analysis-card"><h2 class="ui-heading">時系列分析</h2><div class="analysis-controls"><select class="ui-input" id="analysisTimelineYear" onchange="drawAnalysisTimeline()"><option value="all">全期間</option>'+years.map(y=>'<option value="'+y+'">'+y+'年</option>').join('')+'</select></div></div><div id="analysisTimelineBody"></div></div>';drawAnalysisTimeline();}
   function drawAnalysisTimeline(){destroyAnalysisCharts();const y=document.getElementById('analysisTimelineYear'),year=y?y.value:'all',rows=year==='all'?analysisData.timelineData:analysisData.timelineData.filter(r=>r.year===year),body=document.getElementById('analysisTimelineBody');const avgRanks=(type)=>analysisData.members.map(m=>{const vals=rows.map(r=>r[type+'Total']>0&&r[type+'Sec'][m.name]!=null?r[type+'Sec'][m.name]/r[type+'Total']*100:null).filter(v=>v!=null);return{name:m.name,val:vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0};}).sort((a,b)=>b.val-a.val);const fl=(key)=>analysisData.members.map(m=>({name:m.name,val:rows.filter(r=>r[key].includes(m.name)).length})).sort((a,b)=>b.val-a.val);body.innerHTML='<div class="analysis-section"><div class="ui-panel analysis-card"><h3 class="ui-heading">歌唱割合推移</h3><div class="analysis-chart tall"><canvas id="analysisTimelineSing"></canvas></div></div><div class="ui-panel analysis-card"><h3 class="ui-heading">センター割合推移</h3><div class="analysis-chart tall"><canvas id="analysisTimelineCenter"></canvas></div></div><div class="analysis-rank-grid">'+genericRankCard('平均歌唱割合ランキング',avgRanks('sing'),'%')+genericRankCard('平均センター割合ランキング',avgRanks('center'),'%')+genericRankCard('歌い出し回数ランキング',fl('first'),'回')+genericRankCard('歌い終わり回数ランキング',fl('last'),'回')+'</div></div>';drawTimelineChart('analysisTimelineSing',rows,'sing');drawTimelineChart('analysisTimelineCenter',rows,'center');}
   function genericRankCard(title,rows,suffix){return '<div class="ui-panel analysis-card"><h3 class="ui-heading">'+title+'</h3><div class="ui-panel analysis-table-wrap"><table class="ui-table analysis-table">'+rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHtml(r.name)+'</td><td class="num">'+(suffix==='%'?Number(r.val).toFixed(1):r.val)+suffix+'</td></tr>').join('')+'</table></div></div>';}
-  function renderAnalysisOther(){const p=document.getElementById('analysisPanel');if(!analysisOtherView){p.innerHTML='<div class="analysis-other-menu">'+[['sequence','順番分析'],['phrase','フレーズ分析'],['creator','制作者分析'],['release','リリース形態分析'],['record','レコード']].map(x=>'<button class="ui-card analysis-menu-card ui-btn" onclick="openAnalysisOther(\''+x[0]+'\')"><strong>'+x[1]+'</strong></button>').join('')+'</div>';return;}renderAnalysisOtherDetail();}
+  function renderAnalysisOther(){const p=document.getElementById('analysisPanel');if(!analysisOtherView){p.innerHTML=renderUniverseIndexRows([['sequence','順番分析','パートの受け渡し（パス）と掛け合いのランキング'],['phrase','フレーズ分析','キーワードごとに、どのメンバーが何回歌ったか'],['creator','制作者分析','作詞・作曲・コレオごとの担当曲'],['release','リリース形態分析','表題曲・シングル・アルバムなど形態別の歌唱割合'],['record','レコード','歴代の歌唱秒数・センター秒数ランキング']].map(function(x){return {title:x[1],desc:x[2],onclick:'openAnalysisOther(\''+x[0]+'\')'};}),'analysis-other-menu');return;}renderAnalysisOtherDetail();}
   function openAnalysisOther(view){analysisOtherView=view;renderAnalysisOtherDetail();}
   function renderAnalysisOtherDetail(){if(analysisOtherView==='sequence')renderOtherSequence();else if(analysisOtherView==='phrase')renderOtherPhrase();else if(analysisOtherView==='creator')renderOtherCreator();else if(analysisOtherView==='release')renderOtherRelease();else renderOtherRecord();}
   function renderOtherSequence(){const d=analysisData.sequenceData;otherShell('順番分析','<div class="analysis-rank-grid"><div class="ui-panel analysis-card"><h3 class="ui-heading">回数ランキング（Top 15）</h3>'+genericTable(['順位','パスの流れ','回数'],d.transitions.map((r,i)=>[i+1,r.label,r.count]))+'</div><div class="ui-panel analysis-card"><h3 class="ui-heading">掛け合いランキング（Top 15）</h3>'+genericTable(['順位','コンビ','掛け合い回数'],d.abaCombos.map((r,i)=>[i+1,r.label,r.count]))+'</div></div>');}
@@ -7792,12 +7800,12 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderCoverLoading(){
     const app=document.getElementById('coverApp');if(!app)return;
     if(coverState.screen==='home'){
-      app.innerHTML='<div class="cover-home-actions"><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:54%;height:14px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:62%;height:14px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:44%;height:14px;margin:auto"></span></button></div>';
+      app.innerHTML=renderUniverseIndexSkeleton(3,'cover-home-actions');
       setCanonicalCoverVisualMode('home');return;
     }
     if(coverState.screen==='songs'){
       const row='<button type="button" class="ui-row cover-song-row" disabled aria-hidden="true"><strong class="ui-skeleton" style="display:block;width:52%;height:15px"></strong></button>';
-      app.innerHTML='<h2 class="ui-label cover-section-title">'+escapeHtml(coverState.artist||'')+'</h2><div class="cover-search-wrap"><div class="ui-input cover-search" aria-hidden="true"><span class="ui-skeleton" style="display:block;width:42%;height:14px"></span></div></div><div class="cover-stack">'+row+row+row+row+'</div>';
+      app.innerHTML='<h2 class="ui-label cover-section-title">'+escapeHtml(coverState.artist||'')+'</h2><div class="cover-search-wrap"><div class="ui-input cover-search" aria-hidden="true"><span class="ui-skeleton" style="display:block;width:42%;height:14px"></span></div></div><div class="ui-list cover-song-list">'+row+row+row+row+'</div>';
       setCanonicalCoverVisualMode('songs');return;
     }
     app.innerHTML=renderUniverseLoading();

@@ -15,12 +15,12 @@
   function renderCoverLoading(){
     const app=document.getElementById('coverApp');if(!app)return;
     if(coverState.screen==='home'){
-      app.innerHTML='<div class="cover-home-actions"><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:54%;height:14px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:62%;height:14px;margin:auto"></span></button><button class="ui-btn" type="button" disabled><span class="ui-skeleton" style="display:block;width:44%;height:14px;margin:auto"></span></button></div>';
+      app.innerHTML=renderUniverseIndexSkeleton(3,'cover-home-actions');
       setCanonicalCoverVisualMode('home');return;
     }
     if(coverState.screen==='songs'){
       const row='<button type="button" class="ui-row cover-song-row" disabled aria-hidden="true"><strong class="ui-skeleton" style="display:block;width:52%;height:15px"></strong></button>';
-      app.innerHTML='<h2 class="ui-label cover-section-title">'+escapeHtml(coverState.artist||'')+'</h2><div class="cover-search-wrap"><div class="ui-input cover-search" aria-hidden="true"><span class="ui-skeleton" style="display:block;width:42%;height:14px"></span></div></div><div class="cover-stack">'+row+row+row+row+'</div>';
+      app.innerHTML='<h2 class="ui-label cover-section-title">'+escapeHtml(coverState.artist||'')+'</h2><div class="cover-search-wrap"><div class="ui-input cover-search" aria-hidden="true"><span class="ui-skeleton" style="display:block;width:42%;height:14px"></span></div></div><div class="ui-list cover-song-list">'+row+row+row+row+'</div>';
       setCanonicalCoverVisualMode('songs');return;
     }
     app.innerHTML=renderUniverseLoading();

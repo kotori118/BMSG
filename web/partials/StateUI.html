@@ -9,6 +9,14 @@
       return '<div class="ui-loading universe-loading" role="status" aria-live="polite"><span>' + escapeHtml(text) + '</span></div>';
     }
 
+    // 番号つきの行（renderUniverseIndexRows）を待つ間のスケルトン。行と同じ高さ・本数で出す。
+    function renderUniverseIndexSkeleton(count, extraClass) {
+      const row = '<div class="ui-index-row" aria-hidden="true"><span class="ui-skeleton" style="width:56px;height:44px"></span><span class="ui-index-copy"><span class="ui-skeleton" style="width:46%;height:16px"></span><span class="ui-skeleton" style="width:78%;height:12px;margin-top:10px"></span></span><span></span></div>';
+      let rows = '';
+      for (let i = 0; i < (count || 4); i++) rows += row;
+      return '<div class="ui-list' + (extraClass ? ' ' + extraClass : '') + '" role="status" aria-busy="true" aria-label="読み込み中">' + rows + '</div>';
+    }
+
     function closeOnBackdrop(event, id) {
       if (event.target && event.target.id === id) {
         if (id === 'settingsOverlay') closeSettings();
