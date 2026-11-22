@@ -21,10 +21,6 @@ const BU1 = Object.freeze({
   }),
   COLORS: Object.freeze({ INPUT: '#FFF9D6', AUTO: '#EFEFEF', ERROR: '#F4CCCC' }),
   CARD_RARITIES: Object.freeze(['SSR', 'SR', 'R', 'N']),
-  MAIN_GROUP_BANDS: Object.freeze({
-    'BE:FIRST': 100, 'MAZZEL': 200, 'STARGLOW': 300, 'HANA': 400,
-    'ソロ・その他': 500,
-  }),
   SONG_BANDS: Object.freeze({
     'BE:FIRST': 1000, 'MAZZEL': 2000, 'STARGLOW': 3000, 'HANA': 4000,
     'DEFAULT': 5000,

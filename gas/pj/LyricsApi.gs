@@ -1,5 +1,4 @@
 // Originally imported from kotori118/BMSG-PJ LyricsApi.gs (2026-11-21). This repository is now the source: edit this file directly.
-const LYRICS_CATEGORIES_ = Object.freeze(['ALL', 'BE:FIRST', 'MAZZEL', 'STARGLOW', 'HANA', 'UNIT']);
 
 function getLyricsCatalog() {
   const songs = readUniverseSongs_();
