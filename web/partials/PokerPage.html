@@ -1,7 +1,7 @@
 <template id="pokerPageTemplate">
   <section class="view poker-page">
     <header class="poker-header">
-      <button type="button" class="ui-back poker-home-btn" onclick="navigateTo('lab')" aria-label="LABへ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <button type="button" class="ui-back poker-home-btn" data-page-back onclick="if(!universeInnerBack())navigateTo('lab')" aria-label="LABへ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div>
         <h1 class="ui-title">POKER</h1>
       </div>

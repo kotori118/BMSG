@@ -1,7 +1,7 @@
 <template id="profilePageTemplate">
   <section class="view profile-page">
     <header class="ui-divider profile-header">
-      <button class="ui-back" type="button" onclick="navigateTo('data')" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <button class="ui-back" type="button" data-page-back onclick="if(!universeInnerBack())navigateTo('data')" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div class="profile-heading">
         <h1 class="ui-title profile-title">PROFILE</h1>
       </div>

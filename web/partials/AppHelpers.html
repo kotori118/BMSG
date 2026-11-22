@@ -15,6 +15,18 @@
     }
 
 
+    // 戻るは1画面に1つ（画面上部の BACK）。中の画面に戻り先（.ui-back）があれば、それを押して1段だけ戻る。
+    // 中の BACK は Styles.html で隠す。重ねて出す画面の BACK は data-keep-back で残す。
+    function universeInnerBack() {
+      const page = document.getElementById('pageContent');
+      if (!page) return false;
+      const inner = [].slice.call(page.querySelectorAll('.ui-back:not([data-page-back]):not([data-keep-back])'))
+        .find(function (b) { return !b.disabled && !b.closest('[hidden]') && !b.closest('[aria-hidden="true"]'); });
+      if (!inner) return false;
+      inner.click();
+      return true;
+    }
+
     // グループ写真（Driveの画像ID・共有は「リンクを知っている全員」）。歌詞・カバーなど全画面で使う。
     // 管理画面で画像を登録できるようになるまでは、ここで管理する。
     const UNIVERSE_GROUP_PHOTO_IDS = {
@@ -31,11 +43,19 @@
       return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
     }
 
+    // ユニット（グループIDが U で始まる）か。IDがないときは「BMSG 〜」の名前で判断（BMSG ALLSTARS は除く）
+    function isUniverseUnitGroup(id, name) {
+      const gid = String(id || '');
+      if (gid) return /^U/i.test(gid);
+      const n = String(name || '');
+      return /^BMSG /.test(n) && n !== 'BMSG ALLSTARS';
+    }
+
     // グループのタイル（共通部品 .ui-group-tile）。写真があれば写真、なければ線の色つきの面。
     // onclick は呼ぶ側でエスケープ済みの文字列を渡す。
     function renderUniverseGroupTile(opts) {
       const name = String(opts.name || '');
-      const photo = universeGroupPhotoUrl(name);
+      const photo = universeGroupPhotoUrl(opts.photoName || name);
       const look = photo
         ? 'class="ui-photo-tile ui-group-tile" style="--ui-photo:url(\'' + photo + '\')"'
         : 'class="ui-card ui-accent-left ui-group-tile" style="--accent:' + escapeHtml(opts.color || 'var(--ui-line-strong)') + '"';

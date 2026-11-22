@@ -210,7 +210,7 @@
 
   function openCoverGroupSelect(){
     coverState.screen='group';const groups=coverState.bootstrap&&coverState.bootstrap.groups||[];const app=document.getElementById('coverApp');
-    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="ui-group-tiles cover-group-tiles">'+groups.map(function(g){return renderUniverseGroupTile({name:g.groupName,color:g.color,sub:(String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS')?'メンバー全員から選ぶ':'',onclick:'selectCoverGroup(\''+escapeHtml(g.groupId)+'\')'});}).join('')+'</div>';
+    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="ui-group-tiles cover-group-tiles">'+groups.filter(function(g){return String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS'||!isUniverseUnitGroup(g.groupId,g.groupName);}).map(function(g){return renderUniverseGroupTile({name:g.groupName,color:g.color,sub:(String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS')?'メンバー全員から選ぶ':'',onclick:'selectCoverGroup(\''+escapeHtml(g.groupId)+'\')'});}).join('')+'</div>';
     setCanonicalCoverVisualMode('group');
   }
 

@@ -128,6 +128,7 @@
 ## 15. 戻るボタン・変更ボタン（全画面で共通）
 - 戻る（文字つき）`.ui-back`：高さ48px、枠なし、矢印（線）と「BACK」、下に細い線。
 - 戻るは `.ui-back`（BACK つき）の1種類だけ。矢印だけの戻るは使わない（テストで検査）。
+- 戻るは1画面に1つ。画面上部の BACK に `data-page-back` をつけ、`onclick="if(!universeInnerBack())…"` にする。中の画面に BACK（戻り先）があれば上の BACK がそれを押して1段だけ戻り、中の BACK は見せない（Styles.html）。重ねて出す画面の BACK は `data-keep-back` で残す。
 - 変更など小さなボタン `.ui-btn.ui-btn-compact`：高さ40px。
 - 写真は枠いっぱいに表示する。写真がないときは何も出さない（頭文字は出さない）。
 - メンバーの名前とグループの間は 2px。
@@ -153,7 +154,7 @@
 | | `ui-surface` / `ui-stage` / `ui-scrim` | 画面と同じ地／画面いっぱいの面／暗い幕 |
 | 写真 | `ui-avatar` / `ui-thumb` / `ui-media` | 丸／角丸／角なし（写真は枠いっぱい） |
 | | `ui-photo-tile` / `ui-photo-banner` | 写真の上に名前（`--ui-photo` に `url()`）／写真の帯 |
-| | `ui-group-tiles` + `ui-group-tile` | グループのタイル（歌詞・カバー）。描画は `renderUniverseGroupTile()`、写真は `UNIVERSE_GROUP_PHOTO_IDS`（AppHelpers） |
+| | `ui-group-tiles` + `ui-group-tile` | グループのタイル（歌詞・カバー・トレカ）。ユニット（ID が U〜）は `isUniverseUnitGroup()` で外す。描画は `renderUniverseGroupTile()`、写真は `UNIVERSE_GROUP_PHOTO_IDS`（AppHelpers） |
 | 色の受け渡し | `ui-accent-left` / `ui-accent-bottom` / `ui-dot` / `ui-accent-bar` / `ui-accent-text` | `--accent` の色で線・点・帯・文字 |
 | 表 | `ui-dl` | 項目と値（dt / dd） |
 | | `ui-table` | 表（数字の列は `.num`） |

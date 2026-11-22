@@ -570,6 +570,9 @@
   .user-choice.is-current, .favorite-member-choice.is-current { background: var(--ui-panel); }
   .user-choice.is-current strong, .favorite-member-choice.is-current strong { text-decoration: underline; text-underline-offset: 4px; }
 
+  /* ---- 戻るは1画面に1つ：画面上部の BACK（data-page-back）がある画面では、中の BACK を隠す ---- */
+  .page-content:has([data-page-back]) .ui-back:not([data-page-back]):not([data-keep-back]) { display: none; }
+
   /* ---- 通知の置き場所 ---- */
   .toast-region {
     position: fixed;
@@ -1864,7 +1867,6 @@
   .cover-page .cover-project-row strong{line-height:1.35}
   .cover-page .cover-project-row .cover-row-meta{margin-top:5px;opacity:1}
   .cover-inline-back{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;margin:0 0 16px;display:grid!important;place-items:center;line-height:1}
-  .cover-page.is-cover-editor .cover-back-btn{display:none!important}
   .cover-page.is-cover-saved-view .cover-view-actions{margin:14px 0 18px}
   @media(max-width:600px){.cover-page{padding-top:82px}.cover-page.is-cover-choice .cover-content-card{min-height:94px;padding:16px}}
   @media(max-width:380px){.cover-page.is-cover-choice .cover-choice-stack{gap:9px}.cover-page.is-cover-choice .cover-content-card{min-height:90px;padding:13px}}
@@ -3511,7 +3513,7 @@
 <template id="profilePageTemplate">
   <section class="view profile-page">
     <header class="ui-divider profile-header">
-      <button class="ui-back" type="button" onclick="navigateTo('data')" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <button class="ui-back" type="button" data-page-back onclick="if(!universeInnerBack())navigateTo('data')" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div class="profile-heading">
         <h1 class="ui-title profile-title">PROFILE</h1>
       </div>
@@ -3567,7 +3569,7 @@
 <template id="analysisPageTemplate">
   <section class="view analysis-page">
     <header class="ui-divider analysis-header">
-      <button class="ui-back" type="button" onclick="navigateTo('data')" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <button class="ui-back" type="button" data-page-back onclick="if(!universeInnerBack())navigateTo('data')" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div>
         <h1 class="ui-title analysis-title">ANALYSIS</h1>
       </div>
@@ -3589,7 +3591,7 @@
 <template id="cardPageTemplate">
   <section class="view card-page" id="cardPageRoot">
     <header class="card-header">
-      <button type="button" class="ui-back" onclick="navigateTo('lab')" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <button type="button" class="ui-back" data-page-back onclick="if(!universeInnerBack())navigateTo('lab')" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div>
         <h1 class="ui-title card-title">TRADING CARD</h1>
       </div>
@@ -3608,7 +3610,7 @@
     <div class="card-reveal-burst" aria-hidden="true"></div>
     <div class="card-reveal-meteors" aria-hidden="true"></div>
     <div class="card-reveal-sparks" aria-hidden="true"></div>
-    <button type="button" class="ui-back card-reveal-back" onclick="closeCardReveal()" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+    <button type="button" class="ui-back card-reveal-back" data-keep-back onclick="closeCardReveal()" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
     <div class="card-reveal-stage">
       <div class="card-reveal-kicker" id="cardRevealKicker"></div>
       <div class="card-flip-wrap" id="cardFlipWrap">
@@ -3655,7 +3657,7 @@
 <template id="pokerPageTemplate">
   <section class="view poker-page">
     <header class="poker-header">
-      <button type="button" class="ui-back poker-home-btn" onclick="navigateTo('lab')" aria-label="LABへ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <button type="button" class="ui-back poker-home-btn" data-page-back onclick="if(!universeInnerBack())navigateTo('lab')" aria-label="LABへ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div>
         <h1 class="ui-title">POKER</h1>
       </div>
@@ -3668,7 +3670,7 @@
 <template id="quizPageTemplate">
   <section class="view quiz-page">
     <header class="quiz-header">
-      <button type="button" class="ui-back" onclick="quizBackToLab()" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <button type="button" class="ui-back" data-page-back onclick="if(!universeInnerBack())quizBackToLab()" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div class="quiz-title-block">
         <h1 class="ui-title">QUIZ</h1>
       </div>
@@ -3681,7 +3683,7 @@
 <template id="coverPageTemplate">
   <section class="view cover-page">
     <header class="cover-header">
-      <button type="button" class="ui-back cover-back-btn" onclick="coverNavigateBack()" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <button type="button" class="ui-back cover-back-btn" data-page-back onclick="if(!universeInnerBack())coverNavigateBack()" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <h1 class="ui-title cover-title">COVER MAKER</h1>
     </header>
     <div id="coverApp" class="cover-app"></div>
@@ -3692,7 +3694,7 @@
 <template id="performanceTimerTemplate">
   <section id="performanceTimerPage" class="performance-timer-page" aria-label="歌唱・ダンス秒数計測">
     <header class="performance-timer-header">
-      <button type="button" class="ui-back" onclick="navigateTo('home')" aria-label="HOMEへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <button type="button" class="ui-back" data-page-back onclick="if(!universeInnerBack())navigateTo('home')" aria-label="HOMEへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div class="performance-timer-title-wrap">
         <h1 class="ui-heading-lg performance-timer-title">歌唱・ダンス秒数計測</h1>
       </div>
@@ -4530,6 +4532,18 @@
     }
 
 
+    // 戻るは1画面に1つ（画面上部の BACK）。中の画面に戻り先（.ui-back）があれば、それを押して1段だけ戻る。
+    // 中の BACK は Styles.html で隠す。重ねて出す画面の BACK は data-keep-back で残す。
+    function universeInnerBack() {
+      const page = document.getElementById('pageContent');
+      if (!page) return false;
+      const inner = [].slice.call(page.querySelectorAll('.ui-back:not([data-page-back]):not([data-keep-back])'))
+        .find(function (b) { return !b.disabled && !b.closest('[hidden]') && !b.closest('[aria-hidden="true"]'); });
+      if (!inner) return false;
+      inner.click();
+      return true;
+    }
+
     // グループ写真（Driveの画像ID・共有は「リンクを知っている全員」）。歌詞・カバーなど全画面で使う。
     // 管理画面で画像を登録できるようになるまでは、ここで管理する。
     const UNIVERSE_GROUP_PHOTO_IDS = {
@@ -4546,11 +4560,19 @@
       return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
     }
 
+    // ユニット（グループIDが U で始まる）か。IDがないときは「BMSG 〜」の名前で判断（BMSG ALLSTARS は除く）
+    function isUniverseUnitGroup(id, name) {
+      const gid = String(id || '');
+      if (gid) return /^U/i.test(gid);
+      const n = String(name || '');
+      return /^BMSG /.test(n) && n !== 'BMSG ALLSTARS';
+    }
+
     // グループのタイル（共通部品 .ui-group-tile）。写真があれば写真、なければ線の色つきの面。
     // onclick は呼ぶ側でエスケープ済みの文字列を渡す。
     function renderUniverseGroupTile(opts) {
       const name = String(opts.name || '');
-      const photo = universeGroupPhotoUrl(name);
+      const photo = universeGroupPhotoUrl(opts.photoName || name);
       const look = photo
         ? 'class="ui-photo-tile ui-group-tile" style="--ui-photo:url(\'' + photo + '\')"'
         : 'class="ui-card ui-accent-left ui-group-tile" style="--accent:' + escapeHtml(opts.color || 'var(--ui-line-strong)') + '"';
@@ -6715,7 +6737,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
   function karaokeSongTopNavigation_(){
-    return '<div class="karaoke-song-top-nav"><button class="ui-back" type="button" onclick="returnToLyricsFromKaraoke()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button class="ui-back" type="button" onclick="navigateTo(\'lyrics\')"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button></div>';
+    return '<div class="karaoke-song-top-nav"><button class="ui-back" type="button" onclick="returnToLyricsFromKaraoke()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button></div>';
   }
 
   function renderKaraokeSetup(){
@@ -7304,7 +7326,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function setCardPageMode(mode){const root=document.getElementById('cardPageRoot');if(!root)return;root.classList.toggle('is-gacha-mode',mode==='gacha');}
   function initCardPage(){portalizeCardOverlays();const userId=typeof getUniverseUserId==='function'?getUniverseUserId():'';if(!userId){cardState.ready=false;cardState.userId='';const host=document.getElementById('cardApp');if(host)host.innerHTML='<div class="placeholder"><p>USERを選択してください。</p></div>';if(typeof openUserChooser==='function')openUserChooser(true);return;}cardState.userId=userId;renderCardLoading();google.script.run.withSuccessHandler(function(data){cardState.ready=true;cardState.groups=data.groups||[];cardState.cards=data.cards||[];cardState.totalCount=Number(data.totalCount||0);cardState.collectedCount=Number(data.collectedCount||0);const preferred=typeof getUniversePreferredGroupName==='function'?getUniversePreferredGroupName():'';const hasPreferred=preferred&&cardState.groups.some(function(group){return group.name===preferred;});cardState.currentGroup=hasPreferred?preferred:'ALL';if(hasPreferred)renderCardGacha();else renderCardGroupSelection();if(typeof syncUniverseCrossLinks==='function')syncUniverseCrossLinks();}).withFailureHandler(cardFailure).getTradingCardBootstrap(userId);}
   function renderCardLoading(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="card-group-grid" aria-hidden="true">'+Array.from({length:6},function(){return '<button type="button" class="ui-card card-group-btn" disabled><span class="ui-heading card-group-name skeleton-block" style="display:block;width:58%;height:18px;border-radius:7px"></span><span class="ui-muted card-group-sub skeleton-block" style="display:block;width:34%;height:10px;border-radius:6px;margin-top:9px"></span></button>';}).join('')+'</div>';}
-  function renderCardGroupSelection(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="card-group-grid">'+cardState.groups.map(function(group){const count=getCardGroupCards(group.name).length;return '<button type="button" class="ui-card card-group-btn" style="--card-group-color:'+escapeHtml(group.color||'#9cecff')+'" onclick="selectTradingCardGroup(\''+escapeHtml(group.name).replaceAll("'","\\'")+'\')"><span class="ui-heading card-group-name">'+escapeHtml(group.name)+'</span><span class="ui-muted card-group-sub">'+count+' CARDS</span></button>';}).join('')+'</div>';}
+  function renderCardGroupSelection(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="ui-group-tiles card-group-grid">'+cardState.groups.filter(function(group){return group.name==='ALL'||(group.name!=='BMSG ALLSTARS'&&!isUniverseUnitGroup(group.id,group.name));}).map(function(group){const count=getCardGroupCards(group.name).length;return renderUniverseGroupTile({name:group.name,photoName:group.name==='ALL'?'BMSG ALLSTARS':group.name,color:group.color,sub:count+' CARDS',onclick:'selectTradingCardGroup(\''+escapeHtml(group.name).replaceAll("'","\\'")+'\')'});}).join('')+'</div>';}
   function selectTradingCardGroup(groupName){cardState.currentGroup=groupName||'ALL';renderCardGacha();scrollAppToTop('smooth');}
   function buildCardSkyMarkup(count){let html='';const total=count||42;for(let i=0;i<total;i++){const roll=Math.random();const tone=roll<.07?'red':roll<.20?'cyan':'white';const x=(2+Math.random()*96).toFixed(2);const y=(2+Math.random()*96).toFixed(2);const size=(.6+Math.random()*2.15).toFixed(2);const opacity=(.24+Math.random()*.68).toFixed(2);const duration=(2.6+Math.random()*6.2).toFixed(2);const delay=(-Math.random()*7).toFixed(2);html+='<i class="card-space-star tone-'+tone+'" style="left:'+x+'%;top:'+y+'%;--s:'+size+'px;--o:'+opacity+';--d:'+duration+'s;--delay:'+delay+'s"></i>';}for(let j=0;j<2;j++){const y=(12+Math.random()*58).toFixed(1);const delay=(2.5+j*6.5+Math.random()*3.5).toFixed(2);const duration=(10.5+Math.random()*4.5).toFixed(2);html+='<i class="card-shooting-star shoot-'+j+'" style="top:'+y+'%;--shoot-delay:'+delay+'s;--shoot-duration:'+duration+'s"></i>';}return html;}
   function renderCardGacha(){setCardPageMode('gacha');const host=document.getElementById('cardApp');if(!host)return;const groupCards=getCardGroupCards(cardState.currentGroup);const drawn=groupCards.filter(function(card){return card.isDrawn;}).length;host.innerHTML='<div class="card-gacha-scene"><div class="card-space-field" aria-hidden="true">'+buildCardSkyMarkup(46)+'</div><div class="card-gacha-toolbar"><button type="button" class="ui-back" onclick="renderCardGroupSelection()" aria-label="グループ一覧へ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button type="button" class="ui-btn ui-btn-icon card-gacha-tool" onclick="openCardCollection()" aria-label="コレクション"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5" width="10.5" height="14" rx="2"></rect><path d="M9 5.2V4.5A1.5 1.5 0 0 1 10.5 3h7A1.5 1.5 0 0 1 19 4.5v11A1.5 1.5 0 0 1 17.5 17H15"></path><path d="M7.5 9h4.5M7.5 12h4.5M7.5 15h3"></path></svg></button></div><div class="card-gacha-head"><h2 class="ui-title ui-title-sm card-gacha-title">'+escapeHtml(cardState.currentGroup)+'</h2><div class="ui-badge card-progress">'+drawn+' / '+groupCards.length+'</div></div><div class="card-draw-stage"><div class="card-portal-shell" aria-hidden="true"><i class="card-portal-ring r1"></i><i class="card-portal-ring r2"></i><i class="card-portal-ring r3"></i><div class="card-portal-core"><div><strong>CARD PORTAL</strong><span>ORBIT READY</span></div></div></div><div class="card-draw-mark">BMSG UNIVERSE</div><div class="ui-muted card-draw-copy">Pull one card from the orbit.</div><div class="card-rarity-track" aria-label="Rarity rates"><div class="card-rarity-chip rarity-n"><b>N</b><small>70%</small></div><div class="card-rarity-chip rarity-r"><b>R</b><small>24%</small></div><div class="card-rarity-chip rarity-sr"><b>SR</b><small>5%</small></div><div class="card-rarity-chip rarity-ssr"><b>SSR</b><small>1%</small></div></div></div><div class="card-draw-actions"><button type="button" class="ui-btn ui-btn-solid ui-btn-wide card-draw-main" onclick="drawTradingCard()">引く</button></div></div>';}
@@ -8128,7 +8150,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function openCoverGroupSelect(){
     coverState.screen='group';const groups=coverState.bootstrap&&coverState.bootstrap.groups||[];const app=document.getElementById('coverApp');
-    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="ui-group-tiles cover-group-tiles">'+groups.map(function(g){return renderUniverseGroupTile({name:g.groupName,color:g.color,sub:(String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS')?'メンバー全員から選ぶ':'',onclick:'selectCoverGroup(\''+escapeHtml(g.groupId)+'\')'});}).join('')+'</div>';
+    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="ui-group-tiles cover-group-tiles">'+groups.filter(function(g){return String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS'||!isUniverseUnitGroup(g.groupId,g.groupName);}).map(function(g){return renderUniverseGroupTile({name:g.groupName,color:g.color,sub:(String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS')?'メンバー全員から選ぶ':'',onclick:'selectCoverGroup(\''+escapeHtml(g.groupId)+'\')'});}).join('')+'</div>';
     setCanonicalCoverVisualMode('group');
   }
 

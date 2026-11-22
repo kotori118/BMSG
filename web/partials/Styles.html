@@ -449,6 +449,9 @@
   .user-choice.is-current, .favorite-member-choice.is-current { background: var(--ui-panel); }
   .user-choice.is-current strong, .favorite-member-choice.is-current strong { text-decoration: underline; text-underline-offset: 4px; }
 
+  /* ---- 戻るは1画面に1つ：画面上部の BACK（data-page-back）がある画面では、中の BACK を隠す ---- */
+  .page-content:has([data-page-back]) .ui-back:not([data-page-back]):not([data-keep-back]) { display: none; }
+
   /* ---- 通知の置き場所 ---- */
   .toast-region {
     position: fixed;
