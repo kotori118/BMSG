@@ -95,7 +95,7 @@
 
   /* ---- メンバー（ホーム） ---- */
   .profile-member-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .profile-member-card { position: relative; display: grid; align-content: start; overflow: hidden; padding: 0; text-align: left; cursor: pointer; }
+  .profile-member-card { position: relative; display: grid; grid-template-rows: auto auto; align-content: start; align-items: start; overflow: hidden; padding: 0; text-align: left; cursor: pointer; }
   .profile-member-card:active { background: var(--ui-panel-2); }
   .profile-member-visual { position: relative; aspect-ratio: 1; background: var(--ui-panel-2); border-bottom: 1px solid var(--ui-line); overflow: hidden; }
   .profile-member-visual img,
@@ -107,7 +107,8 @@
   .profile-discover-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .profile-member-fallback { display: grid; place-items: center; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: 48px; font-weight: 900; }
   .profile-member-accent { display: none; }
-  .profile-member-body { display: grid; align-content: start; gap: 2px; padding: 12px 14px 14px; }
+  .profile-member-body { display: grid; align-content: start; align-self: start; gap: 2px; padding: 8px 14px 12px; }
+  .profile-member-body > * { margin: 0; }
   .profile-member-group { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
   .profile-member-name { color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 900; letter-spacing: -.01em; text-transform: uppercase; }
   .profile-members-state { padding: 24px 16px; text-align: center; }
@@ -266,15 +267,17 @@
   .profile-search-avatar,
   .profile-discover-avatar,
   .profile-chemistry-slot-avatar,
-  .profile-chemistry-member,
   .profile-map-avatar { position: relative; overflow: hidden; }
   .profile-member-visual > img,
   .profile-detail-visual > img,
   .profile-search-avatar > img,
   .profile-discover-avatar > img,
   .profile-chemistry-slot-avatar > img,
-  .profile-chemistry-member > img,
   .profile-map-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .profile-chemistry-member > img { position: static; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; display: block; border-radius: var(--ui-radius); }
   .profile-detail-hero { grid-template-columns: 120px minmax(0, 1fr); }
   .profile-detail-visual { position: relative; aspect-ratio: auto; min-height: 120px; }
+  /* ボタン幅（クロスリンク・変更など） */
+  body.ui-v2 .ui-btn-wide { width: 100%; }
+  body.ui-v2 .ui-btn-wide + .ui-btn-wide { margin-top: 8px; }
 </style>

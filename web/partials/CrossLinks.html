@@ -44,7 +44,7 @@
   }
 
   function createUniverseCrossLinkButton_(label,onClick,className){
-    const button=document.createElement('button');button.type='button';button.className='u-btn universe-crosslink-button'+(className?' '+className:'');button.textContent=label;button.addEventListener('click',onClick);return button;
+    const button=document.createElement('button');button.type='button';button.className='ui-btn ui-btn-wide universe-crosslink-button'+(className?' '+className:'');button.textContent=label;button.addEventListener('click',onClick);return button;
   }
 
   function syncUniverseProfileCrossLinks_(){
@@ -125,8 +125,7 @@
 
 <style>
   .universe-crosslink-row{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
-  .universe-crosslink-button{min-height:44px;padding:0 16px;border:1px solid rgba(156,236,255,.28);border-radius:14px;color:var(--cyan);background:rgba(156,236,255,.08);font:700 10px "Exo 2","Zen Kaku Gothic New",sans-serif;letter-spacing:.11em}
-  .profile-member-detail>.universe-profile-crosslinks{margin:14px 0}
+    .profile-member-detail>.universe-profile-crosslinks{margin:14px 0}
   .universe-profile-credits{margin:0 0 14px;padding:18px;border:1px solid rgba(156,236,255,.16);border-radius:18px;background:rgba(255,255,255,.025)}
   .universe-profile-credits h3{margin:0 0 12px;color:var(--cyan);font:600 12px Orbitron,"Zen Kaku Gothic New",sans-serif;letter-spacing:.14em}
   .universe-profile-credits .universe-loading{min-height:60px}
