@@ -1,0 +1,103 @@
+<script>
+  // 歌詞の画面（新デザイン・白背景）。描画はこのファイルだけが担当する。
+  // 見た目は LyricsUniverse.html の .lyx-* と、共通の部品（.ui-back / .ui-btn / .ui-input / .ui-title）。
+  const LYX_CHEVRON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg>';
+
+  function lyxBack(handler, disabled) {
+    return `<button class="ui-back" type="button" onclick="${handler}"${disabled ? ' disabled' : ''}>${LYX_CHEVRON}<span class="ui-back-label">BACK</span></button>`;
+  }
+
+  function lyxRow(label, onclick) {
+    return `<button class="lyx-row" type="button" onclick="${onclick}"><span>${escapeLyrics(label)}</span><i aria-hidden="true"></i></button>`;
+  }
+
+  function lyricsGroupHeader_(title, backLabel, backHandler) {
+    return `<header class="lyx-head">${lyxBack(backHandler)}<h2 class="ui-title lyx-title">${escapeLyrics(title)}</h2><button id="lyricsLatestShortcut" class="ui-btn ui-btn-compact" type="button" hidden onclick="openKaraokeLatestShortcut()">最新結果</button></header>`;
+  }
+
+  // 一覧（グループ・カラオケルーム・ガチャ）
+  function showLyricsGroups(pushUrl) {
+    lyricsState.group = ''; lyricsState.unit = ''; lyricsState.song = null;
+    if (pushUrl !== false) setLyricsUrl({});
+    document.getElementById('lyricsView').innerHTML =
+      `<div id="lyricsKaraokeRoom">${renderLyricsKaraokeRoom()}</div>` +
+      `<section class="lyx-groups">${LYRICS_GROUPS.map(function (group) {
+        return `<button class="lyx-group" type="button" style="--lyx-accent:${escapeLyrics(lyricsGroupColor(group))}" onclick="showLyricsGroup('${lyricArg(group)}')"><span class="lyx-group-bar" aria-hidden="true"></span><strong>${escapeLyrics(group)}</strong><small>${groupSongs(group).length} SONGS</small></button>`;
+      }).join('')}</section>` +
+      `<button class="lyx-gacha" type="button" onclick="openSongGacha()"><strong>SONG GACHA</strong><small>曲を引く</small></button>`;
+    scrollLyricsTop();
+  }
+
+  function renderLyricsKaraokeRoom() {
+    if (!lyricsState.karaokeRoomReady) return '<section class="lyx-room is-loading" aria-busy="true"><div class="lyx-skel"></div></section>';
+    if (!lyricsState.karaokeRoom) {
+      return `<section class="lyx-room"><p class="lyx-label">カラオケルーム</p><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="createLyricsKaraokeRoom()">ルームを作る</button><div class="lyx-join"><input id="lyricsRoomInput" class="ui-input" inputmode="numeric" maxlength="4" placeholder="4桁のルームID"><button class="ui-btn" type="button" onclick="joinLyricsKaraokeRoom()">参加</button></div></section>`;
+    }
+    return `<section class="lyx-room is-active"><div class="lyx-roomid"><span class="lyx-label">ROOM ID</span><strong>${escapeLyrics(lyricsState.karaokeRoom.roomId)}</strong></div><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="openLatestLyricsKaraoke()">最新結果を見る</button><div class="lyx-join"><button class="ui-btn" type="button" onclick="navigateTo('karaoke')">履歴</button><button class="ui-btn" type="button" onclick="leaveLyricsKaraokeRoom()">退出</button></div></section>`;
+  }
+
+  // グループの曲一覧
+  function renderLyricsGroupSongs() {
+    const songs = activeSongs().filter(function (song) { const q = lyricsState.query; return !q || song.title.toLowerCase().startsWith(q); });
+    const backLabel = lyricsState.group === 'BMSG ALLSTARS' ? 'BMSG ALLSTARSに戻る' : 'グループ選択に戻る';
+    document.getElementById('lyricsView').innerHTML =
+      lyricsGroupHeader_(activeTitle(), backLabel, 'backFromSongs()') +
+      `<input id="lyricsSearch" class="ui-input lyx-search" type="search" placeholder="曲名を検索" value="${escapeLyrics(lyricsState.query)}">` +
+      `<p class="lyx-count">${songs.length} SONGS</p>` +
+      `<section class="lyx-list">${songs.length ? songs.map(function (song) { return lyxRow(song.title, `openLyricsSong('${lyricArg(song.songId)}')`); }).join('') : '<p class="lyx-empty">該当する曲がありません</p>'}</section>`;
+    if (typeof syncKaraokeLatestShortcut_ === 'function') syncKaraokeLatestShortcut_();
+    document.getElementById('lyricsSearch').addEventListener('input', function (e) {
+      lyricsState.query = e.target.value.trim().toLowerCase();
+      renderLyricsGroupSongs();
+      const input = document.getElementById('lyricsSearch');
+      input.focus(); input.setSelectionRange(input.value.length, input.value.length);
+    });
+  }
+
+  // BMSG ALLSTARS（ユニットごと）
+  function renderLyricsAllStars() {
+    lyricsState.unit = '';
+    const units = LYRICS_UNITS.filter(function (unit) { return unit !== 'ALL' && unit !== 'その他ユニット' && unitSongs(unit).length; });
+    if (unitSongs('その他ユニット').length) units.push('その他ユニット');
+    document.getElementById('lyricsView').innerHTML =
+      lyricsGroupHeader_('BMSG ALLSTARS', 'グループ選択に戻る', 'showLyricsGroups()') +
+      `<section class="lyx-units">${units.map(function (unit) {
+        const songs = unitSongs(unit).slice().sort(function (a, b) { return songTime(b) - songTime(a) || (Number(b.songId) || 0) - (Number(a.songId) || 0); });
+        return `<section class="lyx-unit"><h3>${escapeLyrics(unit)}</h3><div class="lyx-list">${songs.map(function (song) { return lyxRow(song.title, `openLyricsAllStarsSong('${lyricArg(unit)}','${lyricArg(song.songId)}')`); }).join('')}</div></section>`;
+      }).join('')}</section>`;
+    if (typeof syncKaraokeLatestShortcut_ === 'function') syncKaraokeLatestShortcut_();
+    scrollLyricsTop();
+  }
+
+  // 曲の操作（上：戻る・カラオケ、下：グループへ・カラオケ）
+  function lyricsSongActions(position) {
+    const disabled = lyricsState.editSaving ? ' disabled' : '';
+    const id = lyricArg(lyricsState.song.songId);
+    if (position === 'bottom') {
+      return `<div class="lyx-actions is-bottom"><button class="ui-btn ui-btn-wide" type="button" onclick="returnToLyricsGroupsFromSong()"${disabled}>グループ選択に戻る</button><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" aria-label="カラオケ設定" onclick="openKaraokeFromLyrics('${id}')"${disabled}>${lyricsMicrophoneIcon()}<span>カラオケ</span></button></div>`;
+    }
+    return `<div class="lyx-actions is-top">${lyxBack('returnToLyricsSongListFromSong()', !!disabled)}<button class="ui-btn ui-btn-compact" type="button" aria-label="カラオケ設定" onclick="openKaraokeFromLyrics('${id}')"${disabled}>${lyricsMicrophoneIcon()}<span>カラオケ</span></button></div>`;
+  }
+
+  // 曲の詳細（閲覧）。編集モードは従来の描画を使う。
+  function renderLyricsSong() {
+    const song = lyricsState.song;
+    const editing = typeof isLyricsEditMode === 'function' && isLyricsEditMode();
+    if (!editing) { lyricsState.editDraft = null; lyricsState.editDirty = false; }
+    const parts = lyricsEditableParts_();
+    if (editing) {
+      let partsHtml = lyricsInsertButton_(0);
+      parts.forEach(function (part, index) { partsHtml += lyricsEditPartHtml_(part, index) + lyricsInsertButton_(index + 1); });
+      const saveHtml = `<div class="lyx-save"><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="saveLyricsSongChanges()"${lyricsState.editSaving ? ' disabled' : ''}>変更を保存</button></div>`;
+      document.getElementById('lyricsView').innerHTML =
+        `<header class="lyx-song-head">${lyricsSongActions('top')}<h2 class="lyx-song-title">${escapeLyrics(song.title)}</h2></header><section class="lyrics-parts is-editing">${partsHtml}</section>${saveHtml}${lyricsSongActions('bottom')}`;
+    } else {
+      const partsHtml = parts.map(function (part) {
+        return `<article class="lyx-part"><p class="lyx-singer">${renderLyricsSinger(part)}</p><p class="lyx-text">${escapeLyrics(part.lyrics)}</p></article>`;
+      }).join('');
+      document.getElementById('lyricsView').innerHTML =
+        `<header class="lyx-song-head">${lyricsSongActions('top')}<h2 class="lyx-song-title">${escapeLyrics(song.title)}</h2></header><section class="lyx-parts">${partsHtml}</section>${lyricsSongActions('bottom')}`;
+    }
+    if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
+  }
+</script>

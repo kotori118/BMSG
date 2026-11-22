@@ -3082,12 +3082,26 @@
     --ui-ls-button: .16em;
 
     /* 形・間隔 */
+    --ui-bar-bg: rgba(14, 14, 14, .92);
     --ui-radius: 6px;
     --ui-button-h: 48px;
     --ui-row-h: 60px;
     --ui-tab-h: 46px;
     --ui-gap: 12px;
     --ui-pad: 16px;
+  }
+  /* 白背景の画面（歌詞など）：同じ部品・同じ書体で、色だけ白基調 */
+  body.ui-v2.ui-light {
+    --ui-bg: #ffffff;
+    --ui-panel: #f5f6f8;
+    --ui-panel-2: #eceef2;
+    --ui-line: rgba(20, 30, 40, .10);
+    --ui-line-strong: rgba(20, 30, 40, .42);
+    --ui-text: #111111;
+    --ui-text-sub: rgba(17, 17, 17, .56);
+    --ui-active-bg: #111111;
+    --ui-active-text: #ffffff;
+    --ui-bar-bg: rgba(255, 255, 255, .92);
   }
 </style>
 
@@ -3196,7 +3210,7 @@
     color: var(--ui-text);
     background: var(--ui-bg);
   }
-  html:has(body.ui-v2) { background: #0e0e0e; }
+  html:has(body.ui-v2) { background: var(--ui-bg); }
   body.ui-v2 .app-shell {
     background:
       radial-gradient(120% 60% at 50% -10%, rgba(255, 255, 255, .06), transparent 60%),
@@ -3208,7 +3222,7 @@
   body.ui-v2 .utility-actions {
     align-items: center;
     border-bottom: 1px solid var(--ui-line);
-    background: rgba(14, 14, 14, .92);
+    background: var(--ui-bar-bg);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
@@ -3233,7 +3247,7 @@
     height: 44px;
     border: 0;
     border-radius: var(--ui-radius);
-    color: #fff;
+    color: var(--ui-text);
     background: transparent;
     box-shadow: none;
     backdrop-filter: none;
@@ -3252,7 +3266,7 @@
   body.ui-v2 .bottom-nav {
     gap: 10px;
     border-top: 1px solid var(--ui-line);
-    background: rgba(14, 14, 14, .94);
+    background: var(--ui-bar-bg);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
@@ -3446,9 +3460,9 @@
   body.ui-v2 .universe-recovery-retry {
     min-height: var(--ui-button-h);
     padding: 0 24px;
-    border: 1px solid #fff;
+    border: 1px solid var(--ui-text);
     border-radius: var(--ui-radius);
-    color: #fff;
+    color: var(--ui-text);
     background: transparent;
     font-family: var(--ui-font);
     font-size: var(--ui-fs-body);
@@ -3456,7 +3470,6 @@
     letter-spacing: .16em;
     cursor: pointer;
   }
-  body.ui-v2 .ui-btn-solid { color: #111; background: #f2f2f2; border-color: #f2f2f2; }
 
   /* ---- 通知・読み込み・エラー ---- */
   body.ui-v2 .universe-toast {
@@ -3896,7 +3909,7 @@
     border: 1px solid var(--ui-line-strong);
     border-radius: var(--ui-radius);
     background: transparent;
-    color: #fff;
+    color: var(--ui-text);
     font-family: var(--ui-font-display);
     font-size: var(--ui-fs-label);
     font-weight: 800;
@@ -3905,7 +3918,7 @@
     cursor: pointer;
     transition: background 160ms ease, border-color 160ms ease;
   }
-  @media (hover: hover) { body.ui-v2 .ui-btn:hover { border-color: #fff; background: var(--ui-panel); } }
+  @media (hover: hover) { body.ui-v2 .ui-btn:hover { border-color: var(--ui-text); background: var(--ui-panel); } }
   body.ui-v2 .ui-btn:active { background: var(--ui-panel-2); }
   body.ui-v2 .ui-btn:disabled { opacity: .4; cursor: not-allowed; }
   body.ui-v2 .ui-btn-icon { width: var(--ui-button-h); padding: 0; font-size: 14px; letter-spacing: 0; }
@@ -3958,11 +3971,11 @@
     position: relative;
     display: inline-flex; align-items: center; gap: 8px; flex: none;
     height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 4px;
-    border: 0; border-radius: 0; background: transparent; color: #fff; cursor: pointer;
+    border: 0; border-radius: 0; background: transparent; color: var(--ui-text); cursor: pointer;
     font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap;
   }
   .ui-back::after {
-    content: ""; position: absolute; left: 4px; right: 4px; bottom: 10px; height: 1px; background: rgba(255, 255, 255, .45);
+    content: ""; position: absolute; left: 4px; right: 4px; bottom: 10px; height: 1px; background: var(--ui-line-strong);
     transition: background .2s ease;
   }
   .ui-back .ui-back-chevron,
@@ -3972,10 +3985,93 @@
   .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; justify-content: center; }
   .ui-back.ui-back-icon::after { display: none; }
   .ui-back.ui-back-icon > span { display: none; }
-  @media (hover: hover) { .ui-back:hover::after { background: #fff; } }
+  @media (hover: hover) { .ui-back:hover::after { background: var(--ui-text); } }
 
   /* 共通の小さいボタン（変更・もう一度など） */
   body.ui-v2 .ui-btn-compact { min-height: 40px; padding: 0 16px; font-size: var(--ui-fs-label); }
+
+  /* 共通の見出し（画面名）・ボタンの線アイコン・白背景対応 */
+  .ui-title { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900; letter-spacing: -.035em; line-height: .95; text-transform: uppercase; }
+  .ui-btn svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .ui-btn { color: var(--ui-text); border-color: var(--ui-line-strong); }
+  .ui-btn-solid { color: var(--ui-active-text); background: var(--ui-active-bg); border-color: var(--ui-active-bg); }
+  .ui-input { color: var(--ui-text); }
+  .ui-input::placeholder { color: var(--ui-text-sub); }
+</style>
+
+<!-- LyricsUniverse.html -->
+<style>
+  /* =========================================================
+     歌詞（新デザイン）。色・字・間隔・角丸はすべて共通のトークン。
+     白背景は body.ui-v2.ui-light（UniverseTokens）で切り替える。
+     ========================================================= */
+  .lyx-page { padding-top: 96px; }
+  .lyx-page-head { padding-bottom: 20px; border-bottom: 1px solid var(--ui-line); margin-bottom: 24px; }
+
+  /* 共通：区切りの見出し */
+  .lyx-label { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+
+  /* カラオケルーム */
+  .lyx-room { display: grid; gap: 12px; padding: 18px; margin-bottom: 24px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); }
+  .lyx-room .ui-btn-wide { width: 100%; }
+  .lyx-join { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  .lyx-join.is-two { grid-template-columns: 1fr 1fr; }
+  .lyx-roomid { display: grid; gap: 4px; }
+  .lyx-roomid strong { color: var(--ui-text); font-family: var(--ui-font-num); font-size: var(--ui-fs-title); font-weight: 800; letter-spacing: .08em; }
+  .lyx-room.is-loading { min-height: 120px; }
+  .lyx-skel { border-radius: var(--ui-radius); background: linear-gradient(100deg, var(--ui-panel) 30%, var(--ui-panel-2) 50%, var(--ui-panel) 70%) 0 0 / 220% 100%; animation: uiShimmer 1.4s linear infinite; min-height: 56px; }
+  @media (prefers-reduced-motion: reduce) { .lyx-skel { animation: none; } }
+
+  /* グループ（2列の枠） */
+  .lyx-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .lyx-group { position: relative; display: grid; align-content: space-between; gap: 6px; min-height: 96px; padding: 16px; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); color: var(--ui-text); text-align: left; cursor: pointer; overflow: hidden; }
+  .lyx-group strong { font-family: var(--ui-font); font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); line-height: 1.3; overflow-wrap: anywhere; }
+  .lyx-group small { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); }
+  .lyx-group-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--lyx-accent, var(--ui-text)); }
+  .lyx-group:hover { border-color: var(--ui-line-strong); }
+  .lyx-group.lyx-skel { min-height: 96px; }
+
+  /* SONG GACHA（横長の枠） */
+  .lyx-gacha { display: grid; gap: 4px; width: 100%; padding: 18px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); text-align: left; cursor: pointer; }
+  .lyx-gacha strong { font-family: var(--ui-font-display); font-size: var(--ui-fs-title); font-weight: 900; letter-spacing: -.01em; }
+  .lyx-gacha small { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); }
+
+  /* グループ・ユニットの見出し行 */
+  .lyx-head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--ui-line); }
+  .lyx-title { font-size: clamp(28px, 8vw, 40px); min-width: 0; overflow-wrap: anywhere; }
+
+  .lyx-search { margin-bottom: 10px; }
+  .lyx-count { margin: 0 0 10px; color: var(--ui-text-sub); font-family: var(--ui-font-num); font-size: var(--ui-fs-body-sm); }
+  .lyx-empty { padding: 24px 0; color: var(--ui-text-sub); text-align: center; font-size: var(--ui-fs-body-sm); }
+
+  /* 曲の一覧（行） */
+  .lyx-list { display: grid; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); overflow: hidden; background: var(--ui-panel); }
+  .lyx-row { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: var(--ui-row-h); padding: 14px 18px; border: 0; border-top: 1px solid var(--ui-line); background: transparent; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 500; letter-spacing: var(--ui-ls-body); text-align: left; cursor: pointer; }
+  .lyx-list > .lyx-row:first-child { border-top: 0; }
+  .lyx-row:hover { background: var(--ui-panel-2); }
+  .lyx-row span { min-width: 0; overflow-wrap: anywhere; }
+  .lyx-row i { flex: none; width: 8px; height: 8px; border-top: 1.5px solid var(--ui-text-sub); border-right: 1.5px solid var(--ui-text-sub); transform: rotate(45deg); }
+
+  /* ユニット（BMSG ALLSTARS） */
+  .lyx-units { display: grid; gap: 22px; }
+  .lyx-unit h3 { margin: 0 0 10px; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
+
+  /* 曲の詳細 */
+  .lyx-song-head { display: grid; gap: 16px; padding-bottom: 16px; margin-bottom: 20px; border-bottom: 1px solid var(--ui-line); }
+  .lyx-song-title { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: clamp(22px, 6vw, 30px); font-weight: 700; letter-spacing: var(--ui-ls-heading); line-height: 1.25; overflow-wrap: anywhere; }
+  .lyx-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+  .lyx-actions.is-bottom { display: grid; grid-template-columns: 1fr; margin-top: 24px; }
+  .lyx-actions.is-bottom .ui-btn { width: 100%; }
+  .lyx-actions .ui-btn { display: inline-flex; gap: 8px; align-items: center; white-space: nowrap; width: auto; }
+  .lyx-actions.is-top .ui-back { flex: none; }
+
+  .lyx-parts { display: grid; gap: 0; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); overflow: hidden; }
+  .lyx-part { display: grid; gap: 6px; padding: 16px 18px; border-top: 1px solid var(--ui-line); }
+  .lyx-part:first-child { border-top: 0; }
+  .lyx-singer { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  .lyx-text { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 500; letter-spacing: var(--ui-ls-body); line-height: 1.8; white-space: pre-wrap; }
+
+  .lyx-save { margin-top: 16px; }
 </style>
 
 </head>
@@ -5473,26 +5569,13 @@
 
 <!-- LyricsPage.html -->
 <template id="lyricsPageTemplate">
-  <section class="lyrics-page">
-    <header class="lyrics-page-head">
-      <h1>LYRICS</h1>
+  <section class="lyrics-page lyx-page">
+    <header class="lyx-page-head">
+      <h1 class="ui-title">LYRICS</h1>
     </header>
     <main id="lyricsView" class="lyrics-view">
-      <section class="lyrics-room-card is-loading" aria-hidden="true">
-        <span class="skeleton-block" style="display:block;width:28%;height:11px;border-radius:6px"></span>
-        <span class="skeleton-block" style="display:block;width:100%;height:58px;margin-top:16px;border-radius:16px"></span>
-        <div style="display:grid;grid-template-columns:minmax(0,1fr) 86px;gap:10px;margin-top:12px">
-          <span class="skeleton-block" style="display:block;width:100%;height:50px;border-radius:15px"></span>
-          <span class="skeleton-block" style="display:block;width:100%;height:50px;border-radius:15px"></span>
-        </div>
-      </section>
-      <section class="lyrics-groups" aria-hidden="true">
-        <div class="lyrics-group-card"><span class="skeleton-block" style="display:block;width:42%;height:20px;border-radius:8px"></span><span class="skeleton-block" style="display:block;width:24%;height:10px;margin-top:9px;border-radius:6px"></span></div>
-        <div class="lyrics-group-card"><span class="skeleton-block" style="display:block;width:48%;height:20px;border-radius:8px"></span><span class="skeleton-block" style="display:block;width:22%;height:10px;margin-top:9px;border-radius:6px"></span></div>
-        <div class="lyrics-group-card"><span class="skeleton-block" style="display:block;width:38%;height:20px;border-radius:8px"></span><span class="skeleton-block" style="display:block;width:26%;height:10px;margin-top:9px;border-radius:6px"></span></div>
-        <div class="lyrics-group-card"><span class="skeleton-block" style="display:block;width:34%;height:20px;border-radius:8px"></span><span class="skeleton-block" style="display:block;width:22%;height:10px;margin-top:9px;border-radius:6px"></span></div>
-        <div class="lyrics-group-card"><span class="skeleton-block" style="display:block;width:52%;height:20px;border-radius:8px"></span><span class="skeleton-block" style="display:block;width:28%;height:10px;margin-top:9px;border-radius:6px"></span></div>
-      </section>
+      <section class="lyx-room is-loading" aria-hidden="true"><div class="lyx-skel"></div></section>
+      <section class="lyx-groups" aria-hidden="true"><div class="lyx-group lyx-skel"></div><div class="lyx-group lyx-skel"></div><div class="lyx-group lyx-skel"></div><div class="lyx-group lyx-skel"></div><div class="lyx-group lyx-skel"></div></section>
     </main>
   </section>
   <div id="lyricsEditor" class="lyrics-editor" hidden>
@@ -5685,7 +5768,7 @@
       lyrics: {
         title: 'LYRICS / KARAOKE',
         parent: 'data',
-        theme: 'light'
+        theme: 'v2-light'
       },
       karaoke: {
         title: 'KARAOKE',
@@ -6618,12 +6701,11 @@
     }
 
     // 'v2' is the new monochrome design (UniverseTheme.html). It builds on the dark base.
+    // 'v2' = monochrome dark (UniverseTheme). 'v2-light' = the same parts on a white background.
     function setTheme(theme) {
-      document.body.classList.toggle(
-        'theme-light',
-        theme === 'light'
-      );
-      document.body.classList.toggle('ui-v2', theme === 'v2');
+      document.body.classList.toggle('theme-light', theme === 'light');
+      document.body.classList.toggle('ui-v2', theme === 'v2' || theme === 'v2-light');
+      document.body.classList.toggle('ui-light', theme === 'v2-light');
     }
 
     function setPageAtmosphere(route) {
@@ -8066,20 +8148,9 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
   function lyricArg(value){return encodeURIComponent(String(value));}
   function lyricsGroupColor(name){return lyricsState.groupColors[name]||'#ffffff';}
-  function lyricsGroupButtonStyle(name){return '--lyrics-group-accent:'+lyricsGroupColor(name)+';color:var(--ink);';}
-  function unitSongs(unit){return lyricsState.catalog.filter(function(song){if(unit==='ALL')return song.category==='UNIT';return song.category==='UNIT'&&song.unitCategory===unit;});}
+    function unitSongs(unit){return lyricsState.catalog.filter(function(song){if(unit==='ALL')return song.category==='UNIT';return song.category==='UNIT'&&song.unitCategory===unit;});}
   function groupSongs(group){if(group==='BMSG ALLSTARS')return unitSongs('ALL');return lyricsState.catalog.filter(function(song){return song.category===group;});}
-  function showLyricsGroups(pushUrl){lyricsState.group='';lyricsState.unit='';lyricsState.song=null;if(pushUrl!==false)setLyricsUrl({});document.getElementById('lyricsView').innerHTML='<div id="lyricsKaraokeRoom">'+renderLyricsKaraokeRoom()+'</div><section class="lyrics-groups">'+LYRICS_GROUPS.map(function(group){return '<button class="lyrics-group-card is-colored" style="'+lyricsGroupButtonStyle(group)+'" type="button" onclick="showLyricsGroup(\''+lyricArg(group)+'\')"><strong>'+escapeLyrics(group)+'</strong><span>'+groupSongs(group).length+' SONGS</span></button>';}).join('')+'</section><button class="lyrics-gacha-card" type="button" onclick="openSongGacha()"><strong>SONG GACHA</strong><span>曲を引く</span></button>';scrollLyricsTop();}
-
-  function renderLyricsKaraokeRoom(){
-    if(!lyricsState.karaokeRoomReady)return '<section class="lyrics-room-card is-loading">'+renderUniverseLoading(false,'#9cecff')+'</section>';
-    if(!lyricsState.karaokeRoom){
-      return '<section class="lyrics-room-card"><p>カラオケルーム</p><button class="lyrics-room-primary" type="button" onclick="createLyricsKaraokeRoom()">ルームを作る</button><div class="lyrics-room-join"><input id="lyricsRoomInput" inputmode="numeric" maxlength="4" placeholder="4桁のルームID"><button type="button" onclick="joinLyricsKaraokeRoom()">参加</button></div></section>';
-    }
-    return '<section class="lyrics-room-card is-active"><div class="lyrics-room-id"><span>ROOM ID</span><strong>'+escapeLyrics(lyricsState.karaokeRoom.roomId)+'</strong></div><button class="lyrics-room-primary" type="button" onclick="openLatestLyricsKaraoke()">最新結果を見る</button><div class="lyrics-room-subactions"><button type="button" onclick="navigateTo(\'karaoke\')">履歴</button><button type="button" onclick="leaveLyricsKaraokeRoom()">退出</button></div></section>';
-  }
-
-  function updateLyricsKaraokeRoom(){
+      function updateLyricsKaraokeRoom(){
     const target=document.getElementById('lyricsKaraokeRoom');
     if(target)target.innerHTML=renderLyricsKaraokeRoom();
   }
@@ -8188,39 +8259,20 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
   function showLyricsGroup(encoded,pushUrl){const group=decodeURIComponent(encoded);lyricsState.group=group;lyricsState.unit='';lyricsState.query='';if(pushUrl!==false)setLyricsUrl({group:group});if(group==='BMSG ALLSTARS')renderLyricsAllStars();else renderLyricsGroupSongs();scrollLyricsTop();}
-  function lyricsGroupHeader_(title,backLabel,backHandler){
-    return '<div class="lyrics-group-head"><h2>'+escapeLyrics(title)+'</h2><div class="lyrics-group-head-actions"><button class="ui-back" type="button" onclick="'+backHandler+'"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button id="lyricsLatestShortcut" class="u-btn karaoke-latest-shortcut lyrics-latest-shortcut" type="button" hidden onclick="openKaraokeLatestShortcut()">最新結果を見る</button></div></div>';
-  }
-
-  function renderLyricsAllStars(){
-    lyricsState.unit='';
-    const units=LYRICS_UNITS.filter(function(unit){return unit!=='ALL'&&unit!=='その他ユニット'&&unitSongs(unit).length;});
-    if(unitSongs('その他ユニット').length)units.push('その他ユニット');
-    document.getElementById('lyricsView').innerHTML=lyricsGroupHeader_('BMSG ALLSTARS','グループ選択に戻る',"showLyricsGroups()")+'<section class="lyrics-allstars-groups">'+units.map(function(unit){
-      const songs=unitSongs(unit).slice().sort(function(a,b){return songTime(b)-songTime(a)||(Number(b.songId)||0)-(Number(a.songId)||0);});
-      return '<section class="lyrics-allstars-section"><h3 class="'+(unit==='BMSG POSSE'?'is-posse':'')+'" style="color:var(--ink)">'+escapeLyrics(unit)+'</h3><div class="lyrics-song-list">'+songs.map(function(song){return '<button class="lyrics-song-card" type="button" onclick="openLyricsAllStarsSong(\''+lyricArg(unit)+'\',\''+lyricArg(song.songId)+'\')"><strong>'+escapeLyrics(song.title)+'</strong><b>›</b></button>';}).join('')+'</div></section>';
-    }).join('')+'</section>';
-    if(typeof syncKaraokeLatestShortcut_==='function')syncKaraokeLatestShortcut_();
-    scrollLyricsTop();
-  }
-
-  function openLyricsAllStarsSong(encodedUnit,encodedSong){lyricsState.unit=decodeURIComponent(encodedUnit);openLyricsSong(encodedSong);}
+      function openLyricsAllStarsSong(encodedUnit,encodedSong){lyricsState.unit=decodeURIComponent(encodedUnit);openLyricsSong(encodedSong);}
   function songTime(song){const time=Date.parse(song.releaseDate||'');return Number.isFinite(time)?time:0;}
   function activeSongs(){const songs=lyricsState.group==='BMSG ALLSTARS'?unitSongs(lyricsState.unit||'ALL'):groupSongs(lyricsState.group);return songs.slice().sort(function(a,b){return songTime(b)-songTime(a)||(Number(b.songId)||0)-(Number(a.songId)||0);});}
   function activeTitle(){return lyricsState.group==='BMSG ALLSTARS'?(lyricsState.unit||'ALL'):lyricsState.group;}
   function backFromSongs(){if(lyricsState.group==='BMSG ALLSTARS'){setLyricsUrl({group:lyricsState.group});renderLyricsAllStars();}else showLyricsGroups();}
-  function renderLyricsGroupSongs(){const songs=activeSongs().filter(function(song){const q=lyricsState.query;return !q||song.title.toLowerCase().startsWith(q);});const backLabel=lyricsState.group==='BMSG ALLSTARS'?'BMSG ALLSTARSに戻る':'グループ選択に戻る';document.getElementById('lyricsView').innerHTML=lyricsGroupHeader_(activeTitle(),backLabel,"backFromSongs()")+'<input id="lyricsSearch" class="lyrics-search" type="search" placeholder="曲名を検索" value="'+escapeLyrics(lyricsState.query)+'"><p class="lyrics-count">'+songs.length+' SONGS</p><section class="lyrics-song-list">'+(songs.length?songs.map(function(song){return '<button class="lyrics-song-card" type="button" onclick="openLyricsSong(\''+lyricArg(song.songId)+'\')"><strong>'+escapeLyrics(song.title)+'</strong><b>›</b></button>';}).join(''):'<p class="lyrics-empty">NO SONGS</p>')+'</section>';if(typeof syncKaraokeLatestShortcut_==='function')syncKaraokeLatestShortcut_();document.getElementById('lyricsSearch').addEventListener('input',function(e){lyricsState.query=e.target.value.trim().toLowerCase();renderLyricsGroupSongs();const input=document.getElementById('lyricsSearch');input.focus();input.setSelectionRange(input.value.length,input.value.length);});}
-  function openLyricsSong(encoded,pushUrl){const songId=decodeURIComponent(encoded);const meta=lyricsState.catalog.find(function(item){return item.songId===songId;});if(!meta){showLyricsError('曲が見つかりません。');return;}lyricsState.song={songId:songId,title:meta.title,artist:meta.artist,parts:lyricsState.partsBySong[songId]||[]};lyricsState.editDraft=null;lyricsState.editDirty=false;lyricsState.editing=null;lyricsState.editingIndex=-1;if(pushUrl!==false)setLyricsUrl({group:lyricsState.group,unit:lyricsState.unit,song:songId});renderLyricsSong();scrollLyricsTop();}
+    function openLyricsSong(encoded,pushUrl){const songId=decodeURIComponent(encoded);const meta=lyricsState.catalog.find(function(item){return item.songId===songId;});if(!meta){showLyricsError('曲が見つかりません。');return;}lyricsState.song={songId:songId,title:meta.title,artist:meta.artist,parts:lyricsState.partsBySong[songId]||[]};lyricsState.editDraft=null;lyricsState.editDirty=false;lyricsState.editing=null;lyricsState.editingIndex=-1;if(pushUrl!==false)setLyricsUrl({group:lyricsState.group,unit:lyricsState.unit,song:songId});renderLyricsSong();scrollLyricsTop();}
   function renderLyricsSinger(part){const items=(part.singers&&part.singers.length)?part.singers:[{name:part.singer,color:'#777777',harmony:''}];return items.map(function(singer){const mark=singer.harmony==='up'?' ↑':singer.harmony==='down'?' ↓':'';const label=singer.harmony==='sub'?'('+singer.name+')':singer.name+mark;return '<span style="color:'+escapeLyrics(singer.color)+'">'+escapeLyrics(label)+'</span>';}).join('<span class="lyrics-singer-separator"> / </span>');}
   function lyricsMicrophoneIcon(){return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="12" rx="4"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8.5 21h7"></path></svg>';}
-  function lyricsSongActions(position){const disabled=lyricsState.editSaving?' disabled':'';if(position==='bottom')return '<div class="lyrics-song-actions is-bottom"><button class="lyrics-group-return" type="button" onclick="returnToLyricsGroupsFromSong()"'+disabled+'>グループ選択に戻る</button><button class="lyrics-karaoke-icon" type="button" aria-label="カラオケ設定" onclick="openKaraokeFromLyrics(\''+lyricArg(lyricsState.song.songId)+'\')"'+disabled+'>'+lyricsMicrophoneIcon()+'<span>カラオケ</span></button></div>';return '<div class="lyrics-song-actions is-top"><button class="ui-back" type="button" onclick="returnToLyricsSongListFromSong()"'+disabled+'><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button class="lyrics-karaoke-icon" type="button" aria-label="カラオケ設定" onclick="openKaraokeFromLyrics(\''+lyricArg(lyricsState.song.songId)+'\')"'+disabled+'>'+lyricsMicrophoneIcon()+'<span>カラオケ</span></button><button class="lyrics-group-return" type="button" onclick="returnToLyricsGroupsFromSong()"'+disabled+'>グループ選択に戻る</button></div>';}
-  function cloneLyricsDraftParts_(){return (lyricsState.song&&lyricsState.song.parts||[]).map(function(part){return{partOrder:part.partOrder,singer:part.singer,singers:(part.singers||[]).map(function(s){return{id:s.id||s.raw||'',raw:s.raw||'',name:s.name||'',color:s.color||'#777777',harmony:s.harmony||'',role:s.role||(s.harmony?s.harmony.toUpperCase():'MAIN')};}),lyrics:part.lyrics||''};});}
+    function cloneLyricsDraftParts_(){return (lyricsState.song&&lyricsState.song.parts||[]).map(function(part){return{partOrder:part.partOrder,singer:part.singer,singers:(part.singers||[]).map(function(s){return{id:s.id||s.raw||'',raw:s.raw||'',name:s.name||'',color:s.color||'#777777',harmony:s.harmony||'',role:s.role||(s.harmony?s.harmony.toUpperCase():'MAIN')};}),lyrics:part.lyrics||''};});}
   function ensureLyricsEditDraft_(){if(!lyricsState.editDraft)lyricsState.editDraft=cloneLyricsDraftParts_();return lyricsState.editDraft;}
   function lyricsEditableParts_(){const editing=typeof isLyricsEditMode==='function'&&isLyricsEditMode();return editing?ensureLyricsEditDraft_():(lyricsState.song&&lyricsState.song.parts||[]);}
   function lyricsInsertButton_(index){return '<button class="u-btn lyrics-part-insert" type="button" onclick="addLyricsPartAt('+index+')" aria-label="ここにパートを追加"'+(lyricsState.editSaving?' disabled':'')+'><span>＋</span><b>パート追加</b></button>';}
   function lyricsEditPartHtml_(part,index){const saving=lyricsState.editSaving;return '<article class="lyrics-part lyrics-edit-part"><div class="lyrics-edit-part-head"><span>PART '+(index+1)+'</span><div><button class="u-btn" type="button" aria-label="上へ移動" onclick="moveLyricsPart('+index+',-1)"'+(saving||index===0?' disabled':'')+'>↑</button><button class="u-btn" type="button" aria-label="下へ移動" onclick="moveLyricsPart('+index+',1)"'+(saving||index===ensureLyricsEditDraft_().length-1?' disabled':'')+'>↓</button><button class="u-btn" type="button" aria-label="削除" onclick="deleteLyricsPart('+index+')"'+(saving?' disabled':'')+'>×</button></div></div><button class="lyrics-edit-part-body" type="button" onclick="openLyricsEditor('+index+')"'+(saving?' disabled':'')+'><div class="lyrics-singer">'+renderLyricsSinger(part)+'</div><p>'+escapeLyrics(part.lyrics||'')+'</p><small>編集</small></button></article>';}
-  function renderLyricsSong(){const song=lyricsState.song;const editing=typeof isLyricsEditMode==='function'&&isLyricsEditMode();if(!editing){lyricsState.editDraft=null;lyricsState.editDirty=false;}const parts=lyricsEditableParts_();let partsHtml='';if(editing){partsHtml+=lyricsInsertButton_(0);parts.forEach(function(part,index){partsHtml+=lyricsEditPartHtml_(part,index)+lyricsInsertButton_(index+1);});}else{partsHtml=parts.map(function(part){return '<div class="lyrics-part"><div class="lyrics-singer">'+renderLyricsSinger(part)+'</div><p>'+escapeLyrics(part.lyrics)+'</p></div>';}).join('');}const saveHtml=editing?'<div class="lyrics-edit-save"><button class="u-btn lyrics-edit-save-button" type="button" onclick="saveLyricsSongChanges()"'+(lyricsState.editSaving?' disabled':'')+'>変更を保存</button></div>':'';document.getElementById('lyricsView').innerHTML='<div class="lyrics-song-title"><h2>'+escapeLyrics(song.title)+'</h2></div>'+lyricsSongActions('top')+'<section class="lyrics-parts '+(editing?'is-editing':'')+'">'+partsHtml+'</section>'+saveHtml+lyricsSongActions('bottom');if(typeof syncUniverseCrossLinks==='function')syncUniverseCrossLinks();}
-  function lyricsEditSessionActive_(){
+    function lyricsEditSessionActive_(){
     return typeof isLyricsEditMode==='function'&&isLyricsEditMode()&&!!lyricsState.song;
   }
   function confirmDiscardLyricsChanges_(){
@@ -8287,6 +8339,111 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function showLyricsError(error){const message=error&&error.message?error.message:String(error);if(typeof showToast==='function')showToast(message);else alert(message);}
   function escapeLyrics(value){const div=document.createElement('div');div.textContent=String(value==null?'':value);return div.innerHTML;}
   window.addEventListener('beforeunload',function(event){if(typeof currentRoute!=='undefined'&&currentRoute==='lyrics'&&typeof lyricsState!=='undefined'&&(lyricsState.editSaving||lyricsState.editDirty)){event.preventDefault();event.returnValue='';}});
+</script>
+
+<!-- LyricsView.html -->
+<script>
+  // 歌詞の画面（新デザイン・白背景）。描画はこのファイルだけが担当する。
+  // 見た目は LyricsUniverse.html の .lyx-* と、共通の部品（.ui-back / .ui-btn / .ui-input / .ui-title）。
+  const LYX_CHEVRON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg>';
+
+  function lyxBack(handler, disabled) {
+    return `<button class="ui-back" type="button" onclick="${handler}"${disabled ? ' disabled' : ''}>${LYX_CHEVRON}<span class="ui-back-label">BACK</span></button>`;
+  }
+
+  function lyxRow(label, onclick) {
+    return `<button class="lyx-row" type="button" onclick="${onclick}"><span>${escapeLyrics(label)}</span><i aria-hidden="true"></i></button>`;
+  }
+
+  function lyricsGroupHeader_(title, backLabel, backHandler) {
+    return `<header class="lyx-head">${lyxBack(backHandler)}<h2 class="ui-title lyx-title">${escapeLyrics(title)}</h2><button id="lyricsLatestShortcut" class="ui-btn ui-btn-compact" type="button" hidden onclick="openKaraokeLatestShortcut()">最新結果</button></header>`;
+  }
+
+  // 一覧（グループ・カラオケルーム・ガチャ）
+  function showLyricsGroups(pushUrl) {
+    lyricsState.group = ''; lyricsState.unit = ''; lyricsState.song = null;
+    if (pushUrl !== false) setLyricsUrl({});
+    document.getElementById('lyricsView').innerHTML =
+      `<div id="lyricsKaraokeRoom">${renderLyricsKaraokeRoom()}</div>` +
+      `<section class="lyx-groups">${LYRICS_GROUPS.map(function (group) {
+        return `<button class="lyx-group" type="button" style="--lyx-accent:${escapeLyrics(lyricsGroupColor(group))}" onclick="showLyricsGroup('${lyricArg(group)}')"><span class="lyx-group-bar" aria-hidden="true"></span><strong>${escapeLyrics(group)}</strong><small>${groupSongs(group).length} SONGS</small></button>`;
+      }).join('')}</section>` +
+      `<button class="lyx-gacha" type="button" onclick="openSongGacha()"><strong>SONG GACHA</strong><small>曲を引く</small></button>`;
+    scrollLyricsTop();
+  }
+
+  function renderLyricsKaraokeRoom() {
+    if (!lyricsState.karaokeRoomReady) return '<section class="lyx-room is-loading" aria-busy="true"><div class="lyx-skel"></div></section>';
+    if (!lyricsState.karaokeRoom) {
+      return `<section class="lyx-room"><p class="lyx-label">カラオケルーム</p><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="createLyricsKaraokeRoom()">ルームを作る</button><div class="lyx-join"><input id="lyricsRoomInput" class="ui-input" inputmode="numeric" maxlength="4" placeholder="4桁のルームID"><button class="ui-btn" type="button" onclick="joinLyricsKaraokeRoom()">参加</button></div></section>`;
+    }
+    return `<section class="lyx-room is-active"><div class="lyx-roomid"><span class="lyx-label">ROOM ID</span><strong>${escapeLyrics(lyricsState.karaokeRoom.roomId)}</strong></div><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="openLatestLyricsKaraoke()">最新結果を見る</button><div class="lyx-join"><button class="ui-btn" type="button" onclick="navigateTo('karaoke')">履歴</button><button class="ui-btn" type="button" onclick="leaveLyricsKaraokeRoom()">退出</button></div></section>`;
+  }
+
+  // グループの曲一覧
+  function renderLyricsGroupSongs() {
+    const songs = activeSongs().filter(function (song) { const q = lyricsState.query; return !q || song.title.toLowerCase().startsWith(q); });
+    const backLabel = lyricsState.group === 'BMSG ALLSTARS' ? 'BMSG ALLSTARSに戻る' : 'グループ選択に戻る';
+    document.getElementById('lyricsView').innerHTML =
+      lyricsGroupHeader_(activeTitle(), backLabel, 'backFromSongs()') +
+      `<input id="lyricsSearch" class="ui-input lyx-search" type="search" placeholder="曲名を検索" value="${escapeLyrics(lyricsState.query)}">` +
+      `<p class="lyx-count">${songs.length} SONGS</p>` +
+      `<section class="lyx-list">${songs.length ? songs.map(function (song) { return lyxRow(song.title, `openLyricsSong('${lyricArg(song.songId)}')`); }).join('') : '<p class="lyx-empty">該当する曲がありません</p>'}</section>`;
+    if (typeof syncKaraokeLatestShortcut_ === 'function') syncKaraokeLatestShortcut_();
+    document.getElementById('lyricsSearch').addEventListener('input', function (e) {
+      lyricsState.query = e.target.value.trim().toLowerCase();
+      renderLyricsGroupSongs();
+      const input = document.getElementById('lyricsSearch');
+      input.focus(); input.setSelectionRange(input.value.length, input.value.length);
+    });
+  }
+
+  // BMSG ALLSTARS（ユニットごと）
+  function renderLyricsAllStars() {
+    lyricsState.unit = '';
+    const units = LYRICS_UNITS.filter(function (unit) { return unit !== 'ALL' && unit !== 'その他ユニット' && unitSongs(unit).length; });
+    if (unitSongs('その他ユニット').length) units.push('その他ユニット');
+    document.getElementById('lyricsView').innerHTML =
+      lyricsGroupHeader_('BMSG ALLSTARS', 'グループ選択に戻る', 'showLyricsGroups()') +
+      `<section class="lyx-units">${units.map(function (unit) {
+        const songs = unitSongs(unit).slice().sort(function (a, b) { return songTime(b) - songTime(a) || (Number(b.songId) || 0) - (Number(a.songId) || 0); });
+        return `<section class="lyx-unit"><h3>${escapeLyrics(unit)}</h3><div class="lyx-list">${songs.map(function (song) { return lyxRow(song.title, `openLyricsAllStarsSong('${lyricArg(unit)}','${lyricArg(song.songId)}')`); }).join('')}</div></section>`;
+      }).join('')}</section>`;
+    if (typeof syncKaraokeLatestShortcut_ === 'function') syncKaraokeLatestShortcut_();
+    scrollLyricsTop();
+  }
+
+  // 曲の操作（上：戻る・カラオケ、下：グループへ・カラオケ）
+  function lyricsSongActions(position) {
+    const disabled = lyricsState.editSaving ? ' disabled' : '';
+    const id = lyricArg(lyricsState.song.songId);
+    if (position === 'bottom') {
+      return `<div class="lyx-actions is-bottom"><button class="ui-btn ui-btn-wide" type="button" onclick="returnToLyricsGroupsFromSong()"${disabled}>グループ選択に戻る</button><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" aria-label="カラオケ設定" onclick="openKaraokeFromLyrics('${id}')"${disabled}>${lyricsMicrophoneIcon()}<span>カラオケ</span></button></div>`;
+    }
+    return `<div class="lyx-actions is-top">${lyxBack('returnToLyricsSongListFromSong()', !!disabled)}<button class="ui-btn ui-btn-compact" type="button" aria-label="カラオケ設定" onclick="openKaraokeFromLyrics('${id}')"${disabled}>${lyricsMicrophoneIcon()}<span>カラオケ</span></button></div>`;
+  }
+
+  // 曲の詳細（閲覧）。編集モードは従来の描画を使う。
+  function renderLyricsSong() {
+    const song = lyricsState.song;
+    const editing = typeof isLyricsEditMode === 'function' && isLyricsEditMode();
+    if (!editing) { lyricsState.editDraft = null; lyricsState.editDirty = false; }
+    const parts = lyricsEditableParts_();
+    if (editing) {
+      let partsHtml = lyricsInsertButton_(0);
+      parts.forEach(function (part, index) { partsHtml += lyricsEditPartHtml_(part, index) + lyricsInsertButton_(index + 1); });
+      const saveHtml = `<div class="lyx-save"><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="saveLyricsSongChanges()"${lyricsState.editSaving ? ' disabled' : ''}>変更を保存</button></div>`;
+      document.getElementById('lyricsView').innerHTML =
+        `<header class="lyx-song-head">${lyricsSongActions('top')}<h2 class="lyx-song-title">${escapeLyrics(song.title)}</h2></header><section class="lyrics-parts is-editing">${partsHtml}</section>${saveHtml}${lyricsSongActions('bottom')}`;
+    } else {
+      const partsHtml = parts.map(function (part) {
+        return `<article class="lyx-part"><p class="lyx-singer">${renderLyricsSinger(part)}</p><p class="lyx-text">${escapeLyrics(part.lyrics)}</p></article>`;
+      }).join('');
+      document.getElementById('lyricsView').innerHTML =
+        `<header class="lyx-song-head">${lyricsSongActions('top')}<h2 class="lyx-song-title">${escapeLyrics(song.title)}</h2></header><section class="lyx-parts">${partsHtml}</section>${lyricsSongActions('bottom')}`;
+    }
+    if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
+  }
 </script>
 
 <!-- SongGacha.html -->

@@ -35,7 +35,7 @@ for (const route of routes) {
   const [name, query] = route.split('?');
   await page.goto(`http://localhost:8766/?page=${name}${query ? '&' + query : ''}`, { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(Number(process.env.WAIT_MS || 6000));
-  if (process.env.CLICK) { await page.click(process.env.CLICK); await page.waitForTimeout(500); }
+  for (const sel of [process.env.CLICK, process.env.CLICK2, process.env.CLICK3].filter(Boolean)) { await page.waitForSelector(sel, { timeout: 30000 }); await page.click(sel); await page.waitForTimeout(1200); }
   const file = path.join(outDir, `${route.replace(/[^a-z0-9]+/gi, '_')}.png`);
   await page.screenshot({ path: file, fullPage: process.env.FULL === '1' });
   console.log('saved', file);

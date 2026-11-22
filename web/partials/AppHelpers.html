@@ -25,12 +25,11 @@
     }
 
     // 'v2' is the new monochrome design (UniverseTheme.html). It builds on the dark base.
+    // 'v2' = monochrome dark (UniverseTheme). 'v2-light' = the same parts on a white background.
     function setTheme(theme) {
-      document.body.classList.toggle(
-        'theme-light',
-        theme === 'light'
-      );
-      document.body.classList.toggle('ui-v2', theme === 'v2');
+      document.body.classList.toggle('theme-light', theme === 'light');
+      document.body.classList.toggle('ui-v2', theme === 'v2' || theme === 'v2-light');
+      document.body.classList.toggle('ui-light', theme === 'v2-light');
     }
 
     function setPageAtmosphere(route) {
