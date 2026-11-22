@@ -1328,6 +1328,15 @@
   /* ボタン幅（クロスリンク・変更など） */
   body.ui-v2 .ui-btn-wide { width: 100%; }
   body.ui-v2 .ui-btn-wide + .ui-btn-wide { margin-top: 8px; }
+  /* 相性の候補：写真の下に名前を必ず表示（写真は枠の中で固定の比率） */
+  body.ui-v2 .profile-chemistry-member { grid-template-rows: auto auto; align-items: start; }
+  body.ui-v2 .profile-chemistry-member > span { display: block; min-height: 16px; color: #fff; }
+  body.ui-v2 .profile-chemistry-member > i,
+  body.ui-v2 .profile-chemistry-member > img { position: relative; z-index: 0; }
+  /* 見出し横の装飾の線は表示しない（枠として見える） */
+  body.ui-v2 .profile-members-head .profile-member-accent,
+  body.ui-v2 .profile-chemistry-section-head .profile-member-accent { display: none !important; }
+  body.ui-v2 .profile-members-head > .profile-members-count { align-self: center; }
 </style>
 
 <!-- LyricsStyles.html -->
