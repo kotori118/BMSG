@@ -54,7 +54,7 @@
     let actions=detail.querySelector('.universe-profile-crosslinks');
     if(!actions){
       actions=document.createElement('div');actions.className='universe-crosslink-row universe-profile-crosslinks';
-      actions.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'member',member:member.displayName});}));
+      if(String(member.primaryGroupName||'')==='BE:FIRST')actions.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'member',member:member.displayName});}));
       actions.appendChild(createUniverseCrossLinkButton_('CREDITS',function(){toggleUniverseProfileCredits_(member.memberId);}));
       const hero=detail.querySelector('.profile-detail-hero');if(hero)hero.insertAdjacentElement('afterend',actions);else detail.prepend(actions);
     }

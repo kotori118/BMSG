@@ -217,8 +217,9 @@
   function syncProfileGroupChoices_(){
     const host=document.querySelector('.profile-group-scroll');if(!host)return;
     Object.keys(PROFILE_GROUPS).forEach(function(key){if(key!=='all')delete PROFILE_GROUPS[key];});
-    profileMembersState.groups.forEach(function(g){PROFILE_GROUPS[g.key]=g.name;});
-    host.innerHTML='<button class="profile-group-chip" data-profile-group="all" onclick="selectProfileGroup(\'all\')">ALL</button>'+profileMembersState.groups.map(function(g){return '<button class="profile-group-chip" data-profile-group="'+escapeHtml(g.key)+'" onclick="selectProfileGroup(this.dataset.profileGroup)">'+escapeHtml(g.name)+'</button>';}).join('');
+    const tabGroups=profileMembersState.groups.filter(function(g){return /^G/.test(String(g.groupId||''));});
+    tabGroups.forEach(function(g){PROFILE_GROUPS[g.key]=g.name;});
+    host.innerHTML='<button class="profile-group-chip" data-profile-group="all" onclick="selectProfileGroup(\'all\')">ALL</button>'+tabGroups.map(function(g){return '<button class="profile-group-chip" data-profile-group="'+escapeHtml(g.key)+'" onclick="selectProfileGroup(this.dataset.profileGroup)">'+escapeHtml(g.name)+'</button>';}).join('');
     if(!PROFILE_GROUPS[profileCurrentGroup])profileCurrentGroup='all';updateProfileControls();
   }
 </script>

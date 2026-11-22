@@ -4326,6 +4326,15 @@
   body.ui-v2 .profile-member-skeleton-image::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .06), transparent) !important; }
   body.ui-v2 .profile-local-tab { font-size: var(--ui-fs-label); letter-spacing: .08em; padding: 0 10px; }
   body.ui-v2 .profile-group-chip { letter-spacing: .1em; }
+  /* プロフィールの表示切り替え：5つを同じ幅、アイコンの下に短い日本語 */
+  body.ui-v2 .profile-local-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: visible; }
+  body.ui-v2 .profile-local-tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    min-width: 0; min-height: 64px; padding: 8px 2px; letter-spacing: 0;
+    font-family: var(--ui-font); font-size: 11px; font-weight: 700; text-transform: none;
+  }
+  body.ui-v2 .profile-local-tab svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+  body.ui-v2 .profile-local-tab span { white-space: nowrap; }
 </style>
 
 </head>
@@ -5818,12 +5827,12 @@
       </div>
     </div>
 
-    <nav class="profile-local-nav" aria-label="Profile navigation">
-      <button class="profile-local-tab active" type="button" data-profile-view="home" onclick="selectProfileView('home')">HOME</button>
-      <button class="profile-local-tab" type="button" data-profile-view="map" onclick="selectProfileView('map')">MAP</button>
-      <button class="profile-local-tab" type="button" data-profile-view="search" onclick="selectProfileView('search')">SEARCH</button>
-      <button class="profile-local-tab" type="button" data-profile-view="chemistry" onclick="selectProfileView('chemistry')">CHEMISTRY</button>
-      <button class="profile-local-tab" type="button" data-profile-view="discover" onclick="selectProfileView('discover')">DISCOVER</button>
+    <nav class="profile-local-nav" aria-label="プロフィールの表示切り替え">
+      <button class="profile-local-tab active" type="button" data-profile-view="home" onclick="selectProfileView('home')" aria-label="ホーム"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11 12 4.5 20 11v8.5H4z"/><path d="M9.5 19.5v-5h5v5"/></svg><span>ホーム</span></button>
+      <button class="profile-local-tab" type="button" data-profile-view="map" onclick="selectProfileView('map')" aria-label="マップ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v13l-5.5 2-6-2-5 2z"/><path d="M9 4.5v13M15 6.5v13"/></svg><span>マップ</span></button>
+      <button class="profile-local-tab" type="button" data-profile-view="search" onclick="selectProfileView('search')" aria-label="検索"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg><span>検索</span></button>
+      <button class="profile-local-tab" type="button" data-profile-view="chemistry" onclick="selectProfileView('chemistry')" aria-label="相性"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="12" r="5.5"/><circle cx="15" cy="12" r="5.5"/></svg><span>相性</span></button>
+      <button class="profile-local-tab" type="button" data-profile-view="discover" onclick="selectProfileView('discover')" aria-label="発見"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5z"/></svg><span>発見</span></button>
     </nav>
 
     <div id="profilePanel" class="profile-panel" aria-live="polite"></div>
@@ -7623,8 +7632,9 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function syncProfileGroupChoices_(){
     const host=document.querySelector('.profile-group-scroll');if(!host)return;
     Object.keys(PROFILE_GROUPS).forEach(function(key){if(key!=='all')delete PROFILE_GROUPS[key];});
-    profileMembersState.groups.forEach(function(g){PROFILE_GROUPS[g.key]=g.name;});
-    host.innerHTML='<button class="profile-group-chip" data-profile-group="all" onclick="selectProfileGroup(\'all\')">ALL</button>'+profileMembersState.groups.map(function(g){return '<button class="profile-group-chip" data-profile-group="'+escapeHtml(g.key)+'" onclick="selectProfileGroup(this.dataset.profileGroup)">'+escapeHtml(g.name)+'</button>';}).join('');
+    const tabGroups=profileMembersState.groups.filter(function(g){return /^G/.test(String(g.groupId||''));});
+    tabGroups.forEach(function(g){PROFILE_GROUPS[g.key]=g.name;});
+    host.innerHTML='<button class="profile-group-chip" data-profile-group="all" onclick="selectProfileGroup(\'all\')">ALL</button>'+tabGroups.map(function(g){return '<button class="profile-group-chip" data-profile-group="'+escapeHtml(g.key)+'" onclick="selectProfileGroup(this.dataset.profileGroup)">'+escapeHtml(g.name)+'</button>';}).join('');
     if(!PROFILE_GROUPS[profileCurrentGroup])profileCurrentGroup='all';updateProfileControls();
   }
 </script>
@@ -11156,7 +11166,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     let actions=detail.querySelector('.universe-profile-crosslinks');
     if(!actions){
       actions=document.createElement('div');actions.className='universe-crosslink-row universe-profile-crosslinks';
-      actions.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'member',member:member.displayName});}));
+      if(String(member.primaryGroupName||'')==='BE:FIRST')actions.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'member',member:member.displayName});}));
       actions.appendChild(createUniverseCrossLinkButton_('CREDITS',function(){toggleUniverseProfileCredits_(member.memberId);}));
       const hero=detail.querySelector('.profile-detail-hero');if(hero)hero.insertAdjacentElement('afterend',actions);else detail.prepend(actions);
     }
