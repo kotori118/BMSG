@@ -219,7 +219,7 @@
     const members = getVisibleProfileMembers();
     const isResultMode = Boolean(memberA && memberB);
 
-    panel.innerHTML = `<div class="profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="profile-chemistry-title">CHEMISTRY</h2>${isResultMode ? '<button class="profile-chemistry-back audit-local-back" type="button" aria-label="戻る" onclick="resetProfileChemistrySelection()">‹</button>' : ''}</div>
+    panel.innerHTML = `<div class="profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="profile-chemistry-title">CHEMISTRY</h2>${isResultMode ? '<button class="ui-back ui-back-icon profile-chemistry-back" type="button" aria-label="戻る" onclick="resetProfileChemistrySelection()">‹</button>' : ''}</div>
       <div class="profile-chemistry-slots${isResultMode ? ' result' : ''}">
         ${renderProfileChemistrySlot('a', memberA, '01')}
         <span class="profile-chemistry-cross" aria-hidden="true">×</span>

@@ -522,19 +522,6 @@
     padding-bottom: 20px;
     border-bottom: 1px solid var(--ui-line);
   }
-  body.ui-v2 .analysis-service-back {
-    flex: none;
-    width: var(--ui-button-h);
-    height: var(--ui-button-h);
-    min-height: var(--ui-button-h);
-    padding: 0;
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-    color: #fff;
-    background: transparent;
-    font-size: 22px;
-    line-height: 1;
-  }
   body.ui-v2 .analysis-title {
     margin: 0;
     color: #fff;
@@ -597,27 +584,6 @@
   /* ---- 分析：見出し・戻る・タブ（統一ルール） ---- */
   body.ui-v2 .analysis-header { justify-content: flex-start; align-items: center; gap: 16px; }
   body.ui-v2 .analysis-title { text-align: left; }
-  body.ui-v2 .analysis-service-back {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    flex: none;
-    width: auto;
-    height: var(--ui-button-h);
-    min-height: var(--ui-button-h);
-    padding: 0 16px 0 12px;
-    border: 1px solid var(--ui-line-strong);
-    border-radius: var(--ui-radius);
-    color: #fff;
-    background: transparent;
-    font-family: var(--ui-font-display);
-    font-size: var(--ui-fs-label);
-    font-weight: 800;
-    letter-spacing: var(--ui-ls-label);
-    line-height: 1;
-    white-space: nowrap;
-  }
-  body.ui-v2 .analysis-service-back span { font-size: 18px; font-weight: 500; letter-spacing: 0; }
   body.ui-v2 .analysis-tab { flex: 1 1 0; min-width: 0; padding: 0 4px; font-size: var(--ui-fs-body-sm); letter-spacing: 0; }
 
   /* ---- トップ（分析のハブ）：番号つきの大きな行 ---- */
@@ -891,4 +857,23 @@
   body.ui-v2 .analysis-song-list > *:last-child { border-bottom: 0; }
   body.ui-v2 .analysis-song-list > *:hover { background: var(--ui-panel-2); }
   @media (prefers-reduced-motion: reduce) { }
+
+  /* ============ 共通の戻るボタン（全画面で同じ）============ */
+  /* 文字つき：‹ DATA */
+  body.ui-v2 .ui-back {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none;
+    height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 16px 0 12px;
+    border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius);
+    background: transparent; color: #fff; cursor: pointer;
+    font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap;
+  }
+  body.ui-v2 .ui-back > span { font-size: 18px; font-weight: 500; letter-spacing: 0; }
+  /* アイコンだけ：‹（正方形） */
+  body.ui-v2 .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; }
+  body.ui-v2 .ui-back.ui-back-icon > span { font-size: 22px; }
+  @media (hover: hover) { body.ui-v2 .ui-back:hover { border-color: #fff; background: var(--ui-panel); } }
+
+  /* 共通の小さいボタン（変更・もう一度など） */
+  body.ui-v2 .ui-btn-compact { min-height: 40px; padding: 0 16px; font-size: var(--ui-fs-label); }
 </style>
+

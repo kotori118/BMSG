@@ -66,8 +66,6 @@
   .profile-search-box input::placeholder { color: var(--ui-text-sub); }
 
   /* ボタン（共通の .ui-btn と同じ） */
-  .profile-retry-button,
-  .profile-detail-back,
   .profile-search-selected-head button,
   .profile-chemistry-detail-error button,
   .profile-chemistry-slot-remove,
@@ -97,9 +95,10 @@
 
   /* ---- メンバー（ホーム） ---- */
   .profile-member-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .profile-member-card { position: relative; display: grid; overflow: hidden; padding: 0; text-align: left; cursor: pointer; }
+  .profile-member-card { position: relative; display: grid; align-content: start; overflow: hidden; padding: 0; text-align: left; cursor: pointer; }
   .profile-member-card:active { background: var(--ui-panel-2); }
   .profile-member-visual { position: relative; aspect-ratio: 1; background: var(--ui-panel-2); border-bottom: 1px solid var(--ui-line); overflow: hidden; }
+  .profile-member-visual img,
   .profile-member-visual img,
   .profile-member-fallback,
   .profile-detail-visual img,
@@ -108,7 +107,7 @@
   .profile-discover-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .profile-member-fallback { display: grid; place-items: center; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: 48px; font-weight: 900; }
   .profile-member-accent { display: none; }
-  .profile-member-body { display: grid; gap: 4px; padding: 14px 16px 16px; }
+  .profile-member-body { display: grid; align-content: start; gap: 2px; padding: 12px 14px 14px; }
   .profile-member-group { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
   .profile-member-name { color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 900; letter-spacing: -.01em; text-transform: uppercase; }
   .profile-members-state { padding: 24px 16px; text-align: center; }
@@ -243,17 +242,7 @@
   /* 共通の戻るボタン＋見出し（分析と同じ） */
   .profile-header { display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--ui-line); }
   .profile-heading { flex: 1; min-width: 0; text-align: left; }
-  .profile-service-back {
-    display: inline-flex; align-items: center; gap: 8px; flex: none; width: auto;
-    height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 16px 0 12px;
-    border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius);
-    background: transparent; color: #fff;
-    font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap;
-  }
-  .profile-service-back span { font-size: 18px; font-weight: 500; letter-spacing: 0; }
   .profile-title { margin: 0; color: #fff; font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900; letter-spacing: -.035em; line-height: .95; text-transform: uppercase; }
-  .profile-detail-back { display: inline-flex; align-items: center; justify-content: center; width: var(--ui-button-h); height: var(--ui-button-h); padding: 0; }
-  .profile-detail-back svg { width: 18px; height: 18px; stroke: #fff; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   /* ---- 検索（案1：入力欄が主役。絞り込みは必要な時だけ開く） ---- */
   .profile-search-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--ui-line); }
   .profile-search-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: stretch; }
@@ -271,6 +260,21 @@
   .profile-search-results-head h3 { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
   .profile-search-results-head span { color: var(--ui-text-sub); font-family: var(--ui-font-num); font-size: var(--ui-fs-body-sm); }
   .profile-search-result-list { display: grid; gap: 8px; }
+  /* 写真：枠いっぱい。頭文字は出さない */
+  .profile-member-visual,
+  .profile-detail-visual,
+  .profile-search-avatar,
+  .profile-discover-avatar,
+  .profile-chemistry-slot-avatar,
+  .profile-chemistry-member,
+  .profile-map-avatar { position: relative; overflow: hidden; }
+  .profile-member-visual > img,
+  .profile-detail-visual > img,
+  .profile-search-avatar > img,
+  .profile-discover-avatar > img,
+  .profile-chemistry-slot-avatar > img,
+  .profile-chemistry-member > img,
+  .profile-map-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .profile-detail-hero { grid-template-columns: 120px minmax(0, 1fr); }
+  .profile-detail-visual { position: relative; aspect-ratio: auto; min-height: 120px; }
 </style>
-
-

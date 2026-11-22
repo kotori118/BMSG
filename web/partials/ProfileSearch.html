@@ -163,7 +163,7 @@
   function renderProfileSearchMember(member) {
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
-    const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : escapeHtml(initial);
+    const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
     return `<button class="profile-search-member" style="--member-accent:${escapeHtml(accent)}" type="button" onclick="openProfileMemberDetail('${escapeHtml(member.memberId)}')"><span class="profile-search-avatar">${image}</span><span class="profile-search-member-copy"><b>${escapeHtml(member.displayName)}</b><small>${escapeHtml(member.primaryGroupName || 'SOLO')}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 5.5L16 12l-6.5 6.5"></path></svg></button>`;
   }
 </script>
