@@ -890,4 +890,66 @@
   }
   body.ui-v2 .analysis-song-list > *:last-child { border-bottom: 0; }
   body.ui-v2 .analysis-song-list > *:hover { background: var(--ui-panel-2); }
+
+
+  /* ---- プロフィール：分析と同じ見出し・戻る・タブ・カード ---- */
+  body.ui-v2 .profile-page { padding-top: 96px; }
+  body.ui-v2 .profile-header { display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--ui-line); }
+  body.ui-v2 .profile-heading { flex: 1; min-width: 0; text-align: left; }
+  body.ui-v2 .profile-service-back {
+    display: inline-flex; align-items: center; gap: 8px; flex: none; width: auto;
+    height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 16px 0 12px;
+    border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius);
+    color: #fff; background: transparent;
+    font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap;
+  }
+  body.ui-v2 .profile-service-back span { font-size: 18px; font-weight: 500; letter-spacing: 0; }
+  body.ui-v2 .profile-title {
+    margin: 0; color: #fff;
+    font-family: var(--ui-font-display); font-size: clamp(34px, 9vw, 48px); font-weight: 900;
+    letter-spacing: -.035em; line-height: .95; text-transform: uppercase;
+  }
+  /* 所属グループの切り替え（タブと同じ枠） */
+  body.ui-v2 .profile-group-bar { margin-bottom: 12px; }
+  body.ui-v2 .profile-group-scroll { display: flex; gap: 0; overflow-x: auto; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); }
+  body.ui-v2 .profile-group-chip {
+    flex: 1 0 auto; min-height: var(--ui-tab-h); padding: 0 14px; border: 0; border-right: 1px solid var(--ui-line); border-radius: 0;
+    background: transparent; color: var(--ui-text-sub);
+    font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); white-space: nowrap; cursor: pointer;
+  }
+  body.ui-v2 .profile-group-chip:last-child { border-right: 0; }
+  body.ui-v2 .profile-group-chip.active { background: var(--ui-active-bg); color: var(--ui-active-text); }
+  /* 表示切り替え（HOME・MAP…） */
+  body.ui-v2 .profile-local-nav { display: flex; overflow-x: auto; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); margin-bottom: 20px; }
+  body.ui-v2 .profile-local-tab {
+    flex: 1 0 auto; min-height: var(--ui-tab-h); padding: 0 12px; border: 0; border-right: 1px solid var(--ui-line); border-radius: 0;
+    background: transparent; color: var(--ui-text-sub);
+    font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); white-space: nowrap; cursor: pointer;
+  }
+  body.ui-v2 .profile-local-tab:last-child { border-right: 0; }
+  body.ui-v2 .profile-local-tab.active { background: var(--ui-active-bg); color: var(--ui-active-text); }
+  /* 見出しの小さな英字ラベル */
+  body.ui-v2 .profile-panel-eyebrow,
+  body.ui-v2 .profile-members-head .profile-panel-eyebrow { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  body.ui-v2 .profile-members-title { color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-title); font-weight: 900; letter-spacing: -.01em; text-transform: uppercase; }
+  body.ui-v2 .profile-members-count { color: var(--ui-text-sub); font-family: var(--ui-font-num); font-size: var(--ui-fs-body-sm); }
+  /* メンバーのカード：タイルと同じ面・枠（光の演出はなし） */
+  body.ui-v2 .profile-member-grid { gap: 12px; }
+  body.ui-v2 .profile-member-card {
+    border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel);
+    box-shadow: none; overflow: hidden; color: #fff; transform: none;
+  }
+  body.ui-v2 .profile-member-card:hover { border-color: var(--ui-line-strong); background: var(--ui-panel-2); }
+  body.ui-v2 .profile-member-visual { background: var(--ui-panel-2) !important; border-bottom: 1px solid var(--ui-line); }
+  body.ui-v2 .profile-member-visual::before,
+  body.ui-v2 .profile-member-visual::after { display: none !important; }
+  body.ui-v2 .profile-member-name { color: #fff; font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 900; letter-spacing: -.01em; text-transform: uppercase; }
+  body.ui-v2 .profile-member-group { color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
+  /* 読み込み中（スケルトン）：カードと同じ面 */
+  body.ui-v2 .profile-member-skeleton,
+  body.ui-v2 .profile-member-skeleton-image { background: var(--ui-panel-2) !important; }
+  body.ui-v2 .profile-member-skeleton::after,
+  body.ui-v2 .profile-member-skeleton-image::after { background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .06), transparent) !important; }
+  body.ui-v2 .profile-local-tab { font-size: var(--ui-fs-label); letter-spacing: .08em; padding: 0 10px; }
+  body.ui-v2 .profile-group-chip { letter-spacing: .1em; }
 </style>
