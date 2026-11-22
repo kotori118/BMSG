@@ -14,6 +14,7 @@
   .lyx-room .ui-btn-wide { width: 100%; }
   .lyx-join { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
   .lyx-join.is-two { grid-template-columns: 1fr 1fr; }
+  .lyx-join[hidden] { display: none; }
   .lyx-roomid { display: grid; gap: 4px; }
   .lyx-roomid strong { color: var(--ui-text); font-family: var(--ui-font-num); font-size: var(--ui-fs-title); font-weight: 800; letter-spacing: .08em; }
   .lyx-room.is-loading { min-height: 120px; }
@@ -28,6 +29,11 @@
   .lyx-group-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--lyx-accent, var(--ui-text)); }
   .lyx-group:hover { border-color: var(--ui-line-strong); }
   .lyx-group.lyx-skel { min-height: 96px; }
+  .lyx-group.has-photo { min-height: 132px; align-content: end; padding: 14px; border: 0; color: #fff; background: var(--ui-panel) var(--lyx-photo) center / cover no-repeat; }
+  .lyx-group.has-photo::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.72)); }
+  .lyx-group.has-photo > * { position: relative; }
+  .lyx-group.has-photo .lyx-group-bar { display: none; }
+  .lyx-group.has-photo small { color: rgba(255, 255, 255, 0.82); }
 
   /* SONG GACHA（横長の枠） */
   .lyx-gacha { display: grid; gap: 4px; width: 100%; padding: 18px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: transparent; color: var(--ui-text); text-align: left; cursor: pointer; }

@@ -15,6 +15,21 @@
     return `<header class="lyx-head">${lyxBack(backHandler)}<h2 class="ui-title lyx-title">${escapeLyrics(title)}</h2></header>`;
   }
 
+  // グループ写真（Driveの画像ID）。共有は「リンクを知っている全員」。
+  // 管理画面の画像登録ができるまではここで管理する。写真がないグループは英字の枠で表示。
+  const LYRICS_GROUP_PHOTO_IDS = {
+    'BE:FIRST': '1DQ6_xTcv1-jPQtDrMgi923Xrxa26y0rW',
+    'MAZZEL': '1_B6mMgMqOzUhB0wrsTO2yIGxKmJKtbpX',
+    'STARGLOW': '19IH9HqS0lMV9S-B11yFhTqMM4Zxq8OMX',
+    'HANA': '1Epbsc6-nOt1mfqDgNcmvdSo1__WLh9yu',
+    'BMSG ALLSTARS': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
+  };
+
+  function lyricsGroupPhotoUrl(group) {
+    const id = LYRICS_GROUP_PHOTO_IDS[group];
+    return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
+  }
+
   // 一覧（グループ・カラオケルーム・ガチャ）
   function showLyricsGroups(pushUrl) {
     lyricsState.group = ''; lyricsState.unit = ''; lyricsState.song = null;
@@ -22,16 +37,32 @@
     document.getElementById('lyricsView').innerHTML =
       `<div id="lyricsKaraokeRoom">${renderLyricsKaraokeRoom()}</div>` +
       `<section class="lyx-groups">${LYRICS_GROUPS.map(function (group) {
-        return `<button class="lyx-group" type="button" style="--lyx-accent:${escapeLyrics(lyricsGroupColor(group))}" onclick="showLyricsGroup('${lyricArg(group)}')"><span class="lyx-group-bar" aria-hidden="true"></span><strong>${escapeLyrics(group)}</strong><small>${groupSongs(group).length} SONGS</small></button>`;
+        const photo = lyricsGroupPhotoUrl(group);
+        const style = photo
+          ? `--lyx-photo:url('${photo}')`
+          : `--lyx-accent:${escapeLyrics(lyricsGroupColor(group))}`;
+        return `<button class="lyx-group${photo ? ' has-photo' : ''}" type="button" style="${style}" onclick="showLyricsGroup('${lyricArg(group)}')"><span class="lyx-group-bar" aria-hidden="true"></span><strong>${escapeLyrics(group)}</strong><small>${groupSongs(group).length} SONGS</small></button>`;
       }).join('')}</section>` +
       `<button class="lyx-gacha" type="button" onclick="openSongGacha()"><strong>SONG GACHA</strong><small>曲を引く</small></button>`;
     scrollLyricsTop();
   }
 
+  function toggleLyricsRoomJoin(button) {
+    const panel = document.getElementById('lyricsRoomJoin');
+    if (!panel) return;
+    const open = panel.hidden;
+    panel.hidden = !open;
+    if (button) button.setAttribute('aria-expanded', String(open));
+    if (open) {
+      const input = document.getElementById('lyricsRoomInput');
+      if (input) input.focus();
+    }
+  }
+
   function renderLyricsKaraokeRoom() {
     if (!lyricsState.karaokeRoomReady) return '<section class="lyx-room is-loading" aria-busy="true"><div class="lyx-skel"></div></section>';
     if (!lyricsState.karaokeRoom) {
-      return `<section class="lyx-room"><p class="lyx-label">カラオケルーム</p><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="createLyricsKaraokeRoom()">ルームを作る</button><div class="lyx-join"><input id="lyricsRoomInput" class="ui-input" inputmode="numeric" maxlength="4" placeholder="4桁のルームID"><button class="ui-btn" type="button" onclick="joinLyricsKaraokeRoom()">参加</button></div></section>`;
+      return `<section class="lyx-room"><p class="lyx-label">カラオケルーム</p><div class="lyx-join is-two"><button class="ui-btn ui-btn-solid" type="button" onclick="createLyricsKaraokeRoom()">ルームを作る</button><button class="ui-btn" type="button" aria-expanded="false" aria-controls="lyricsRoomJoin" onclick="toggleLyricsRoomJoin(this)">ルームに参加</button></div><div id="lyricsRoomJoin" class="lyx-join" hidden><input id="lyricsRoomInput" class="ui-input" inputmode="numeric" maxlength="4" placeholder="4桁のルームID" aria-label="4桁のルームID"><button class="ui-btn ui-btn-solid" type="button" onclick="joinLyricsKaraokeRoom()">参加</button></div></section>`;
     }
     return `<section class="lyx-room is-active"><div class="lyx-roomid"><span class="lyx-label">ROOM ID</span><strong>${escapeLyrics(lyricsState.karaokeRoom.roomId)}</strong></div><button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="openLatestLyricsKaraoke()">最新結果を見る</button><div class="lyx-join"><button class="ui-btn" type="button" onclick="navigateTo('karaoke')">履歴</button><button class="ui-btn" type="button" onclick="leaveLyricsKaraokeRoom()">退出</button></div></section>`;
   }
