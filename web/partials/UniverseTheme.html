@@ -116,6 +116,9 @@
   .ui-btn:is(.ui-btn-solid, [aria-pressed="true"], .is-active, .is-selected, .is-on, .is-open, .active) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
   @media (hover: hover) { .ui-btn:is(.ui-btn-solid, [aria-pressed="true"], .is-active, .is-selected, .is-on, .active):not(:disabled):hover { border-color: var(--ui-active-bg); background: var(--ui-active-bg); opacity: .88; } }
   .ui-btn.ui-btn-wide { width: 100%; }
+  /* 処理中のボタン：押したボタンそのものにくるくる。押せないが薄くしない */
+  .ui-btn.is-busy, .ui-btn.is-busy:disabled { opacity: 1; cursor: progress; }
+  .ui-btn.is-busy::before { content: ""; width: 14px; height: 14px; flex: none; border: 1.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: universeSpinner .8s linear infinite; }
   .ui-btn.ui-btn-compact { min-height: 40px; padding: 0 16px; }
   .ui-btn.ui-btn-icon { width: var(--ui-button-h); padding: 0; font-family: var(--ui-font); font-size: 22px; font-weight: 400; letter-spacing: 0; }
   .ui-btn.ui-btn-text { min-height: 36px; padding: 0 2px; border: 0; background: none; text-decoration: underline; text-underline-offset: 4px; }

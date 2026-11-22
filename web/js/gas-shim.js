@@ -49,6 +49,86 @@
     });
   }
 
+  // ---- 一時保存（読むだけのデータ） --------------------------------------------------
+  // 一度取ったデータは端末に置き、次からはすぐ返す（裏で最新を取り直して入れ替える）。
+  // 何かを保存・登録した（get で始まらない操作が成功した）ら、一時保存はすべて捨てる。
+  // 毎回変わるデータ（ルームの状態・得点・履歴など）は対象にしない。
+  var CACHE_PREFIX = 'bmsgApi:v1:';
+  var CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // これより古いものは使わず取り直す
+  var CACHE_REFRESH_AFTER = 20 * 1000;     // これより新しいものは取り直さない
+  var CACHEABLE = {
+    getLyricsCatalog: 1, getLyricsSong: 1, getLyricsSingerOptions: 1,
+    getAnalysisBootstrap: 1,
+    getProfileMembers: 1, getProfileMemberDetail: 1, getProfileMapData: 1, getProfileSearchData: 1, getUniverseMemberCreativeCredits: 1,
+    getUniverseHomeBootstrap: 1, getUniverseSettingsBootstrap: 1, getUniverseSearchResults: 1,
+    getTradingCardBootstrap: 1,
+    getCoverMakerBootstrap: 1, getCoverSourceSongs: 1, getCoverLibrary: 1, getCoverProjects: 1,
+    getPokerHighlights: 1, getPerformanceTimerBootstrap: 1, getKaraokeFavoriteSettings: 1,
+    getManagementPageAccess: 1, getSongLyricsManagementBootstrap: 1, getSongLyricsManagementSong: 1,
+    getImageManagementBootstrap: 1, getProfileManagementBootstrap: 1, getProfileManagementMember: 1,
+    getCatalogManagementBootstrap: 1, getCatalogManagementProfileFields: 1, getManagementOperationsBootstrap: 1
+  };
+  var memoryCache = {};
+  var inflight = {};
+
+  function cacheKey(action, args) { return CACHE_PREFIX + action + ':' + JSON.stringify(args || []); }
+  function readCache(key) {
+    var entry = memoryCache[key];
+    if (!entry) {
+      try { var raw = root.localStorage.getItem(key); if (raw) entry = memoryCache[key] = JSON.parse(raw); } catch (e) { entry = null; }
+    }
+    if (!entry || Date.now() - entry.t > CACHE_MAX_AGE) return null;
+    return entry;
+  }
+  function writeCache(key, data) {
+    var entry = { t: Date.now(), s: JSON.stringify(data) };
+    memoryCache[key] = entry;
+    try { root.localStorage.setItem(key, JSON.stringify(entry)); } catch (e) { /* 容量が足りなければ、この画面を開いている間だけ覚える */ }
+  }
+  function clearCache() {
+    memoryCache = {};
+    try {
+      for (var i = root.localStorage.length - 1; i >= 0; i--) {
+        var k = root.localStorage.key(i);
+        if (k && k.indexOf('bmsgApi:') === 0) root.localStorage.removeItem(k);
+      }
+    } catch (e) { /* 使えない環境ではメモリだけ */ }
+  }
+  // 同じ通信が同時に走らないようにまとめる（先読みと画面の読み込みが重なったときなど）
+  function fetchAndStore(action, args, key) {
+    if (inflight[key]) return inflight[key];
+    var p = invoke(action, args).then(function (data) { writeCache(key, data); delete inflight[key]; return data; },
+      function (error) { delete inflight[key]; throw error; });
+    inflight[key] = p;
+    return p;
+  }
+  function call(action, args) {
+    if (!CACHEABLE[action]) {
+      return invoke(action, args).then(function (data) {
+        if (!/^get/.test(action)) clearCache();
+        return data;
+      });
+    }
+    var key = cacheKey(action, args);
+    var hit = readCache(key);
+    if (hit) {
+      if (Date.now() - hit.t > CACHE_REFRESH_AFTER) fetchAndStore(action, args, key).catch(function () {});
+      return Promise.resolve(JSON.parse(hit.s));
+    }
+    return fetchAndStore(action, args, key).then(function (data) { return JSON.parse(JSON.stringify(data)); });
+  }
+  // 先読み：画面を出した後の空き時間に、よく使うデータを取っておく
+  script.prefetch = function (list) {
+    (list || []).forEach(function (item) {
+      var action = item[0], args = item[1] || [];
+      if (!CACHEABLE[action]) return;
+      var key = cacheKey(action, args);
+      var hit = readCache(key);
+      if (!hit || Date.now() - hit.t > CACHE_REFRESH_AFTER) fetchAndStore(action, args, key).catch(function () {});
+    });
+  };
+  script.clearCache = clearCache;
+
   // google.script.run: each withSuccessHandler/withFailureHandler returns a new runner with the handler set.
   function makeRunner(handlers) {
     return new Proxy({}, {
@@ -65,7 +145,7 @@
         if (typeof key !== 'string') return undefined;
         return function () {
           var args = Array.prototype.slice.call(arguments);
-          var promise = invoke(key, args);
+          var promise = call(key, args);
           promise.then(function (data) {
             if (typeof handlers.success === 'function') handlers.success(data);
           }, function (error) {

@@ -8,7 +8,9 @@
   .management-section-title { margin: 0; }
   .management-access-note { display: grid; gap: 10px; padding: 16px; margin-bottom: 20px; }
   .management-hub, .management-operation-list { margin-top: 16px; }
-  .management-loading[hidden], .management-editor[hidden], #managementSettingsGroup[hidden] { display: none !important; }
+  .management-editor[hidden], #managementSettingsGroup[hidden] { display: none !important; }
+  /* 管理画面では大きな読み込み中は出さない（押したボタンに処理中を出す。データは一時保存ですぐ出る） */
+  .management-loading { display: none !important; }
 
   /* 編集画面：面の中に余白、項目は縦に並べ、下のボタンは2列で横いっぱい */
   .management-panel { width: min(620px, calc(100vw - 24px)); max-height: min(92vh, 900px); overflow: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
@@ -21,6 +23,10 @@
   .management-field textarea { line-height: 1.7; resize: vertical; }
   .management-field input:disabled, .management-field select:disabled { opacity: .55; }
   .management-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-top: 16px; }
+  /* 保存の行は画面の下に貼り付く（長い歌詞を編集していても見える） */
+  .management-page .management-actions { position: sticky; bottom: 0; z-index: 4; padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); }
+  .management-page .slm-save-section { position: sticky; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 4; width: 100%; margin-top: 16px; }
+  .management-page .profile-management-primary { position: sticky; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 4; }
   .management-actions > * { width: 100%; }
   .management-error { margin: 0; padding: 11px 0; }
   .management-page .slm-icon-btn { min-width: 44px; min-height: 44px; }

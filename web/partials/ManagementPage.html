@@ -69,6 +69,17 @@
     else if(type==='image'){resetImageManagementForm();imageManagementState.bootstrap=null;openImageManagement();}
     else{cmState.form={};cmState.bootstrap=null;cmState.profileFields=null;cmState.audit=null;cmState.message='';cmState.tab=p.section==='members'?(p.action==='fields'?'fields':'members'):p.section==='groups'?(p.action==='units'?'units':'groups'):'audit';cmReload_();}
   }
+  // 押したボタンに処理中を出す：どの編集画面でも、処理中（busy）の間だけそのボタンにくるくる
+  document.addEventListener('click',function(event){
+    if(currentRoute!=='manage')return;
+    const button=event.target.closest&&event.target.closest('#managementEditorHost .ui-btn, #slmGuestConfirm .ui-btn, #imageReplaceOverlay .ui-btn');
+    if(!button)return;
+    setTimeout(function(){
+      if(!managementBusy_())return;
+      button.classList.add('is-busy');button.setAttribute('aria-busy','true');
+      const timer=setInterval(function(){if(managementBusy_()&&document.body.contains(button))return;clearInterval(timer);button.classList.remove('is-busy');button.removeAttribute('aria-busy');},120);
+    },0);
+  },true);
   function managementBusy_(){return !!((typeof moState!=='undefined'&&moState.busy)||cmState.busy||songLyricsManagementState.busy||profileManagementState.busy||imageManagementState.busy);}
   function managementDirty_(){return !!(managementState.dirty||hasSlmDirty_()||profileManagementState.dirty||imageManagementState.pendingFile);}
   function managementCanLeave_(){
