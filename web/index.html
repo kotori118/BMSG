@@ -3083,6 +3083,8 @@
 
     /* 形・間隔 */
     --ui-bar-bg: rgba(14, 14, 14, .92);
+    --ui-field-bg: #1f1f1f;
+    --ui-field-focus: #262626;
     --ui-radius: 6px;
     --ui-button-h: 48px;
     --ui-row-h: 60px;
@@ -3102,6 +3104,8 @@
     --ui-active-bg: #111111;
     --ui-active-text: #ffffff;
     --ui-bar-bg: rgba(255, 255, 255, .92);
+    --ui-field-bg: #ffffff;
+    --ui-field-focus: #ffffff;
   }
 </style>
 
@@ -3881,8 +3885,8 @@
     padding: 0 16px;
     border: 1px solid var(--ui-line-strong);
     border-radius: var(--ui-radius);
-    background: var(--ui-panel-2);
-    color: #fff;
+    background: var(--ui-field-bg);
+    color: var(--ui-text);
     font-family: var(--ui-font);
     font-size: var(--ui-fs-body);
     letter-spacing: var(--ui-ls-body);
@@ -3891,7 +3895,7 @@
     -webkit-appearance: none;
   }
   body.ui-v2 .ui-input::placeholder { color: var(--ui-text-sub); }
-  body.ui-v2 .ui-input:focus { border-color: #fff; background: #222; }
+  body.ui-v2 .ui-input:focus { border-color: var(--ui-text); background: var(--ui-field-focus); outline: none; }
   body.ui-v2 select.ui-input {
     background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
     background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
@@ -4065,7 +4069,7 @@
   .lyx-actions .ui-btn { display: inline-flex; gap: 8px; align-items: center; white-space: nowrap; width: auto; }
   .lyx-actions.is-top .ui-back { flex: none; }
 
-  .lyx-parts { display: grid; gap: 0; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: var(--ui-panel); overflow: hidden; }
+  .lyx-parts { display: grid; gap: 0; }
   .lyx-part { display: grid; gap: 6px; padding: 16px 18px; border-top: 1px solid var(--ui-line); }
   .lyx-part:first-child { border-top: 0; }
   .lyx-singer { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); text-transform: uppercase; }
@@ -8356,7 +8360,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
   function lyricsGroupHeader_(title, backLabel, backHandler) {
-    return `<header class="lyx-head">${lyxBack(backHandler)}<h2 class="ui-title lyx-title">${escapeLyrics(title)}</h2><button id="lyricsLatestShortcut" class="ui-btn ui-btn-compact" type="button" hidden onclick="openKaraokeLatestShortcut()">最新結果</button></header>`;
+    return `<header class="lyx-head">${lyxBack(backHandler)}<h2 class="ui-title lyx-title">${escapeLyrics(title)}</h2></header>`;
   }
 
   // 一覧（グループ・カラオケルーム・ガチャ）

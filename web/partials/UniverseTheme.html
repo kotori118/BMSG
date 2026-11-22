@@ -773,8 +773,8 @@
     padding: 0 16px;
     border: 1px solid var(--ui-line-strong);
     border-radius: var(--ui-radius);
-    background: var(--ui-panel-2);
-    color: #fff;
+    background: var(--ui-field-bg);
+    color: var(--ui-text);
     font-family: var(--ui-font);
     font-size: var(--ui-fs-body);
     letter-spacing: var(--ui-ls-body);
@@ -783,7 +783,7 @@
     -webkit-appearance: none;
   }
   body.ui-v2 .ui-input::placeholder { color: var(--ui-text-sub); }
-  body.ui-v2 .ui-input:focus { border-color: #fff; background: #222; }
+  body.ui-v2 .ui-input:focus { border-color: var(--ui-text); background: var(--ui-field-focus); outline: none; }
   body.ui-v2 select.ui-input {
     background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
     background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
