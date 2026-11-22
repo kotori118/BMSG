@@ -395,30 +395,7 @@
   }
   body.ui-v2 .home-title .line { display: block; }
   body.ui-v2 .home-divider { display: none; }
-  body.ui-v2 .home-title-wrap::after {
-    content: "ホーム";
-    position: static;
-    left: auto;
-    top: auto;
-    transform: none;
-    width: auto;
-    height: auto;
-    border-top: 0;
-    border-left: 0;
-    border-right: 0;
-    border-radius: 0;
-    box-shadow: none;
-    background: none;
-    display: block;
-    margin-top: 14px;
-    padding-bottom: 22px;
-    border-bottom: 1px solid var(--ui-line);
-    color: var(--ui-text-sub);
-    font-family: var(--ui-font);
-    font-size: var(--ui-fs-body-sm);
-    font-weight: 700;
-    letter-spacing: .22em;
-  }
+
   body.ui-v2 .home-dynamic { margin-top: 22px; }
   body.ui-v2 .home-today-grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
 
@@ -510,4 +487,27 @@
   body.ui-v2 .home-feature-label { order: -1; }
   body.ui-v2 .home-song-title { font-size: var(--ui-fs-title) !important; }
   body.ui-v2 .home-feature-card > .home-feature-label { position: static !important; }
+
+  /* ---- 画面を開いたときの動き（ホームと同じ：見出しが浮き上がり、タイルが順に出る） ---- */
+  @keyframes uiRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes uiRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  body.ui-v2 .category-intro .category-title-en { opacity: 0; animation: uiRise 260ms var(--ease) 180ms forwards; }
+  body.ui-v2 .category-intro .category-header { position: relative; }
+  body.ui-v2 .category-intro .category-header::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+    background: rgba(255, 255, 255, .55); transform-origin: left center; transform: scaleX(0);
+    animation: uiRule 420ms var(--ease) 340ms forwards;
+  }
+  body.ui-v2 .category-intro .category-card { opacity: 0; animation: uiRise 300ms var(--ease) forwards; }
+  body.ui-v2 .category-intro .category-card:nth-child(1) { animation-delay: 420ms; }
+  body.ui-v2 .category-intro .category-card:nth-child(2) { animation-delay: 500ms; }
+  body.ui-v2 .category-intro .category-card:nth-child(3) { animation-delay: 580ms; }
+  body.ui-v2 .category-intro .category-card:nth-child(4) { animation-delay: 660ms; }
+  body.ui-v2 .category-intro .category-card:nth-child(n+5) { animation-delay: 700ms; }
+  @media (prefers-reduced-motion: reduce) {
+    body.ui-v2 .category-intro .category-title-en,
+    body.ui-v2 .category-intro .category-header::after,
+    body.ui-v2 .category-intro .category-card { animation: none; opacity: 1; transform: none; }
+    body.ui-v2 .category-intro .category-header::after { transform: none; }
+  }
 </style>
