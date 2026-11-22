@@ -3942,8 +3942,8 @@
   body.ui-v2 .analysis-song-list > *:hover { background: var(--ui-panel-2); }
   @media (prefers-reduced-motion: reduce) { }
 
-  /* ============ 共通の戻るボタン（全画面で同じ）============ */
-  /* 文字つき：‹ DATA */
+  /* ============ 共通の戻るボタン（全画面で同じ部品）============ */
+  /* 矢印は線で描く（塗りつぶしにしない）。文字つきも、アイコンだけも同じ矢印 */
   body.ui-v2 .ui-back {
     display: inline-flex; align-items: center; justify-content: center; gap: 8px; flex: none;
     height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 16px 0 12px;
@@ -3951,16 +3951,17 @@
     background: transparent; color: #fff; cursor: pointer;
     font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap;
   }
-  body.ui-v2 .ui-back > span { font-size: 18px; font-weight: 500; letter-spacing: 0; }
-  /* アイコンだけ：‹（正方形） */
+  body.ui-v2 .ui-back .ui-back-chevron,
+  body.ui-v2 .ui-back svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  body.ui-v2 .ui-back .ui-back-label { letter-spacing: var(--ui-ls-label); }
+  /* アイコンだけ：正方形。中の文字は出さない */
   body.ui-v2 .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; }
-  body.ui-v2 .ui-back.ui-back-icon > span { font-size: 22px; }
+  body.ui-v2 .ui-back.ui-back-icon > span { display: none; }
   @media (hover: hover) { body.ui-v2 .ui-back:hover { border-color: #fff; background: var(--ui-panel); } }
 
   /* 共通の小さいボタン（変更・もう一度など） */
   body.ui-v2 .ui-btn-compact { min-height: 40px; padding: 0 16px; font-size: var(--ui-fs-label); }
 </style>
-
 
 </head>
 <body>
@@ -5436,7 +5437,7 @@
 <template id="profilePageTemplate">
   <section class="view profile-page">
     <header class="profile-header">
-      <button class="ui-back" type="button" onclick="navigateTo('data')" aria-label="データへ戻る"><span aria-hidden="true">‹</span> DATA</button>
+      <button class="ui-back" type="button" onclick="navigateTo('data')" aria-label="データへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">DATA</span></button>
       <div class="profile-heading">
         <h1 class="profile-title">PROFILE</h1>
       </div>
@@ -5505,7 +5506,7 @@
 <template id="analysisPageTemplate">
   <section class="view analysis-page">
     <header class="analysis-header">
-      <button class="ui-back" type="button" onclick="navigateTo('data')" aria-label="データへ戻る"><span aria-hidden="true">‹</span> DATA</button>
+      <button class="ui-back" type="button" onclick="navigateTo('data')" aria-label="データへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">DATA</span></button>
       <div>
         <h1 class="analysis-title">ANALYSIS</h1>
       </div>
@@ -7211,7 +7212,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="${escapeHtml(member.displayName)}" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
-    panel.innerHTML = `<article class="profile-member-detail" style="--member-accent:${escapeHtml(accent)}"><button class="ui-back ui-back-icon" type="button" onclick="closeProfileMemberDetail()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><div class="profile-detail-hero"><div class="profile-detail-visual">${image}<span class="profile-detail-line" aria-hidden="true"></span></div><div class="profile-detail-identity"><p class="profile-detail-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h2 class="profile-detail-name">${escapeHtml(member.displayName)}</h2></div></div>${renderProfileDetailContent()}</article>`;
+    panel.innerHTML = `<article class="profile-member-detail" style="--member-accent:${escapeHtml(accent)}"><button class="ui-back ui-back-icon" type="button" aria-label="メンバー一覧へ戻る" onclick="closeProfileMemberDetail()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><div class="profile-detail-hero"><div class="profile-detail-visual">${image}<span class="profile-detail-line" aria-hidden="true"></span></div><div class="profile-detail-identity"><p class="profile-detail-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h2 class="profile-detail-name">${escapeHtml(member.displayName)}</h2></div></div>${renderProfileDetailContent()}</article>`;
     if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
   }
 
@@ -7778,7 +7779,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const members = getVisibleProfileMembers();
     const isResultMode = Boolean(memberA && memberB);
 
-    panel.innerHTML = `<div class="profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="profile-chemistry-title">CHEMISTRY</h2>${isResultMode ? '<button class="ui-back ui-back-icon profile-chemistry-back" type="button" aria-label="戻る" onclick="resetProfileChemistrySelection()">‹</button>' : ''}</div>
+    panel.innerHTML = `<div class="profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="profile-chemistry-title">CHEMISTRY</h2>${isResultMode ? '<button class="ui-back ui-back-icon profile-chemistry-back" type="button" aria-label="戻る" onclick="resetProfileChemistrySelection()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>' : ''}</div>
       <div class="profile-chemistry-slots${isResultMode ? ' result' : ''}">
         ${renderProfileChemistrySlot('a', memberA, '01')}
         <span class="profile-chemistry-cross" aria-hidden="true">×</span>
