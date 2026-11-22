@@ -63,7 +63,12 @@
   .ui-photo-tile { position: relative; overflow: hidden; border: 0; border-radius: var(--ui-radius); background: var(--ui-panel) var(--ui-photo) center / cover no-repeat; color: var(--ui-on-photo); text-align: left; cursor: pointer; }
   .ui-photo-tile::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, var(--ui-photo-shade-top), var(--ui-photo-shade-bottom)); }
   .ui-photo-tile > * { position: relative; }
+  .ui-photo-tile :is(.ui-heading, .ui-heading-lg, .ui-name, .ui-title, .ui-text, .ui-strong) { color: var(--ui-on-photo); }
   .ui-photo-tile :is(.ui-label, .ui-muted) { color: var(--ui-on-photo-sub); }
+  /* グループのタイル（歌詞・カバーなど）：2列、名前は下に寄せる。写真あり＝ui-photo-tile、なし＝ui-card ui-accent-left */
+  .ui-group-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .ui-group-tile { display: grid; align-content: end; gap: 6px; width: 100%; min-height: 132px; padding: 14px; text-align: left; }
+  .ui-group-tile > strong { overflow-wrap: anywhere; }
   .ui-photo-banner { border-radius: var(--ui-radius); background: var(--ui-panel) var(--ui-photo) center / cover no-repeat; }
 
   /* 写真や絵の入る面（角なし。枠の上側など）。中の写真は枠いっぱい */
@@ -115,13 +120,11 @@
   .ui-btn.ui-btn-danger { border-color: var(--ui-danger); color: var(--ui-danger); }
   .ui-btn.ui-btn-ghost { border-color: transparent; }
 
-  /* 戻る：枠なし。矢印（線）と BACK、下に細い線。アイコンだけの版もある */
+  /* 戻る：枠なし。矢印（線）と BACK、下に細い線。全画面この1種類だけ */
   .ui-back { position: relative; display: inline-flex; align-items: center; gap: 8px; flex: none; height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 4px; border: 0; border-radius: 0; background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap; cursor: pointer; }
   .ui-back::after { content: ""; position: absolute; left: 4px; right: 4px; bottom: 10px; height: 1px; background: var(--ui-line-strong); transition: background .2s ease; }
   .ui-back svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .ui-back .ui-back-label { letter-spacing: .18em; }
-  .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; justify-content: center; }
-  .ui-back.ui-back-icon::after, .ui-back.ui-back-icon > span { display: none; }
   @media (hover: hover) { .ui-back:hover::after { background: var(--ui-text); } }
 
   /* 入力欄：.ui-input と、画面の中の素の入力欄は同じ見た目 */

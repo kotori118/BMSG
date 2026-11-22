@@ -29,3 +29,8 @@ test('決まりの検査そのものが働く', () => {
   assert.equal(checkPartial('CardStyles.html', '<style data-content>.card-face{background:#fff}</style>').length, 0);
   assert.equal(checkPartial('CardStyles.html', '<style data-content>.card-btn{background:#fff}</style>').length, 1);
 });
+
+test('戻るボタンは BACK つきの1種類だけ（矢印だけの版は使わない）', () => {
+  const offenders = fs.readdirSync(PARTIALS).filter((f) => f.endsWith('.html')).filter((f) => fs.readFileSync(path.join(PARTIALS, f), 'utf8').includes('ui-back-icon'));
+  assert.deepEqual(offenders, []);
+});

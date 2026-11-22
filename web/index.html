@@ -652,7 +652,12 @@
   .ui-photo-tile { position: relative; overflow: hidden; border: 0; border-radius: var(--ui-radius); background: var(--ui-panel) var(--ui-photo) center / cover no-repeat; color: var(--ui-on-photo); text-align: left; cursor: pointer; }
   .ui-photo-tile::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, var(--ui-photo-shade-top), var(--ui-photo-shade-bottom)); }
   .ui-photo-tile > * { position: relative; }
+  .ui-photo-tile :is(.ui-heading, .ui-heading-lg, .ui-name, .ui-title, .ui-text, .ui-strong) { color: var(--ui-on-photo); }
   .ui-photo-tile :is(.ui-label, .ui-muted) { color: var(--ui-on-photo-sub); }
+  /* グループのタイル（歌詞・カバーなど）：2列、名前は下に寄せる。写真あり＝ui-photo-tile、なし＝ui-card ui-accent-left */
+  .ui-group-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .ui-group-tile { display: grid; align-content: end; gap: 6px; width: 100%; min-height: 132px; padding: 14px; text-align: left; }
+  .ui-group-tile > strong { overflow-wrap: anywhere; }
   .ui-photo-banner { border-radius: var(--ui-radius); background: var(--ui-panel) var(--ui-photo) center / cover no-repeat; }
 
   /* 写真や絵の入る面（角なし。枠の上側など）。中の写真は枠いっぱい */
@@ -704,13 +709,11 @@
   .ui-btn.ui-btn-danger { border-color: var(--ui-danger); color: var(--ui-danger); }
   .ui-btn.ui-btn-ghost { border-color: transparent; }
 
-  /* 戻る：枠なし。矢印（線）と BACK、下に細い線。アイコンだけの版もある */
+  /* 戻る：枠なし。矢印（線）と BACK、下に細い線。全画面この1種類だけ */
   .ui-back { position: relative; display: inline-flex; align-items: center; gap: 8px; flex: none; height: var(--ui-button-h); min-height: var(--ui-button-h); padding: 0 4px; border: 0; border-radius: 0; background: transparent; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1; white-space: nowrap; cursor: pointer; }
   .ui-back::after { content: ""; position: absolute; left: 4px; right: 4px; bottom: 10px; height: 1px; background: var(--ui-line-strong); transition: background .2s ease; }
   .ui-back svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   .ui-back .ui-back-label { letter-spacing: .18em; }
-  .ui-back.ui-back-icon { width: var(--ui-button-h); padding: 0; justify-content: center; }
-  .ui-back.ui-back-icon::after, .ui-back.ui-back-icon > span { display: none; }
   @media (hover: hover) { .ui-back:hover::after { background: var(--ui-text); } }
 
   /* 入力欄：.ui-input と、画面の中の素の入力欄は同じ見た目 */
@@ -1148,8 +1151,7 @@
   body.ui-v2 .profile-chemistry-section-head .profile-member-accent { display: none !important; }
   body.ui-v2 .profile-members-head > .profile-members-count { align-self: center; }
   /* アイコンだけの戻るボタン：中の文字は出さない */
-  body.ui-v2 .ui-back.ui-back-icon > span { display: none; }
-  body.ui-v2 .profile-member-detail > .ui-back.ui-back-icon { margin-bottom: 16px; }
+  body.ui-v2 .profile-member-detail > .ui-back { margin-bottom: 16px; }
   /* 相性の候補：写真 → 名前 の順。頭文字は出さない。高さは揃えない */
   body.ui-v2 .profile-chemistry-member-grid { align-items: start; }
   body.ui-v2 .profile-chemistry-member { align-self: start; align-content: start; gap: 8px; }
@@ -1197,9 +1199,8 @@
   .lyx-join[hidden] { display: none; }
 
   /* グループ（2列のタイル） */
-  .lyx-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
-  .lyx-group { display: grid; align-content: end; gap: 6px; min-height: 132px; padding: 14px; }
-  .lyx-group strong { overflow-wrap: anywhere; }
+  .lyx-groups { margin-bottom: 14px; }
+  .lyx-group { min-height: 132px; }
 
   /* SONG GACHA（横長の枠） */
   .lyx-gacha { display: grid; gap: 4px; width: 100%; padding: 18px; text-align: left; }
@@ -1505,7 +1506,7 @@
   .card-title{line-height:.94;max-width:100%;}
   .card-page.is-gacha-mode .card-header{margin-bottom:12px;}
   .card-page.is-gacha-mode .card-book-btn{display:none!important;}
-  .card-book-btn,.card-reveal-back,.card-collection-close,.card-gacha-tool{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;display:grid!important;place-items:center;flex:0 0 46px;}
+  .card-book-btn,.card-collection-close,.card-gacha-tool{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;display:grid!important;place-items:center;flex:0 0 46px;}
   .card-book-btn{margin:16px 0 0 auto;}
   .card-book-btn svg,.card-gacha-tool svg{width:22px;height:22px;}
   .card-reveal-back,.card-gacha-tool.is-back{line-height:1;}
@@ -1548,7 +1549,7 @@
 <!-- PokerStyles.html -->
 <style>
   .poker-page{max-width:980px;margin:0 auto;padding-bottom:50px}
-  .poker-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:24px}.poker-header .title{margin:3px 0 0}.poker-home-btn{width:46px;height:46px;min-width:46px;padding:0;line-height:1}
+  .poker-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:24px}.poker-header .title{margin:3px 0 0}
   .poker-app{min-height:440px}.poker-mode-grid,.poker-rule-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.poker-mode-card,.poker-rule-card{min-height:150px;padding:22px;text-align:left;display:flex;flex-direction:column;justify-content:space-between}.poker-mode-card span,.poker-rule-card span{line-height:1.75}
   .poker-mode-card.is-wide{grid-column:1/-1;min-height:86px;flex-direction:row;align-items:center}.poker-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}.poker-section-head h2{margin:0}.poker-section-head p{margin:5px 0 0}.poker-back{width:46px;height:46px;min-width:46px;padding:0}
   .poker-panel{padding:18px}.poker-panel+.poker-panel{margin-top:14px}.poker-panel-label{display:block;margin-bottom:10px}.poker-join{display:grid;grid-template-columns:1fr auto;gap:10px}.poker-input{min-width:0;height:50px;box-sizing:border-box;padding:0 16px;text-align:center}.poker-join .ui-btn{min-width:110px}.poker-room-meta{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
@@ -1573,7 +1574,7 @@
   @media(max-width:560px){.poker-mode-card,.poker-rule-card{min-height:88px;}.poker-mode-card.is-wide{min-height:68px;}}
   .poker-header{align-items:center;justify-content:flex-start;gap:14px;}
   .poker-header > div{min-width:0;}
-  .poker-home-btn{order:-1;margin:0;flex:0 0 46px;}
+  .poker-home-btn{order:-1;margin:0;flex:none;}
   .poker-section-head{align-items:center;justify-content:flex-start;gap:14px;}
   .poker-section-head > div{min-width:0;}
   .poker-back{order:-1;margin:0;flex:0 0 46px;}
@@ -1786,6 +1787,7 @@
 
 <!-- CoverStyles.html -->
 <style>
+  .cover-group-tiles { margin-bottom: 14px; }
   /* 線の色（メンバー・グループの色）を部品の --accent に渡す */
   .cover-content-card, .cover-song-row, .cover-project-row { --accent: var(--cover-accent, var(--ui-line-strong)); }
   .cover-member-option { --accent: var(--member-color, var(--ui-line-strong)); }
@@ -3547,7 +3549,7 @@
     </header>
     <main id="lyricsView" class="lyrics-view">
       <section class="ui-divider lyx-room is-loading" aria-hidden="true"><div class="ui-skeleton lyx-skel"></div></section>
-      <section class="lyx-groups" aria-hidden="true"><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div></section>
+      <section class="ui-group-tiles lyx-groups" aria-hidden="true"><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div><div class="ui-skeleton lyx-group"></div></section>
     </main>
   </section>
   <div id="lyricsEditor" class="ui-modal lyrics-editor" hidden>
@@ -3598,7 +3600,7 @@
 <template id="cardPageTemplate">
   <section class="view card-page" id="cardPageRoot">
     <header class="card-header">
-      <button type="button" class="ui-back ui-back-icon" onclick="navigateTo('lab')" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>
+      <button type="button" class="ui-back" onclick="navigateTo('lab')" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div>
         <h1 class="ui-title card-title">TRADING CARD</h1>
       </div>
@@ -3617,7 +3619,7 @@
     <div class="card-reveal-burst" aria-hidden="true"></div>
     <div class="card-reveal-meteors" aria-hidden="true"></div>
     <div class="card-reveal-sparks" aria-hidden="true"></div>
-    <button type="button" class="ui-back ui-back-icon card-reveal-back" onclick="closeCardReveal()" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>
+    <button type="button" class="ui-back card-reveal-back" onclick="closeCardReveal()" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
     <div class="card-reveal-stage">
       <div class="card-reveal-kicker" id="cardRevealKicker"></div>
       <div class="card-flip-wrap" id="cardFlipWrap">
@@ -3664,7 +3666,7 @@
 <template id="pokerPageTemplate">
   <section class="view poker-page">
     <header class="poker-header">
-      <button type="button" class="ui-back ui-back-icon poker-home-btn" onclick="navigateTo('lab')" aria-label="LABへ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>
+      <button type="button" class="ui-back poker-home-btn" onclick="navigateTo('lab')" aria-label="LABへ戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div>
         <h1 class="ui-title">POKER</h1>
       </div>
@@ -3677,7 +3679,7 @@
 <template id="quizPageTemplate">
   <section class="view quiz-page">
     <header class="quiz-header">
-      <button type="button" class="ui-back ui-back-icon" onclick="quizBackToLab()" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>
+      <button type="button" class="ui-back" onclick="quizBackToLab()" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div class="quiz-title-block">
         <h1 class="ui-title">QUIZ</h1>
       </div>
@@ -3690,7 +3692,7 @@
 <template id="coverPageTemplate">
   <section class="view cover-page">
     <header class="cover-header">
-      <button type="button" class="ui-back ui-back-icon" onclick="coverNavigateBack()" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>
+      <button type="button" class="ui-back" onclick="coverNavigateBack()" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <h1 class="ui-title cover-title">COVER MAKER</h1>
     </header>
     <div id="coverApp" class="cover-app"></div>
@@ -3701,7 +3703,7 @@
 <template id="performanceTimerTemplate">
   <section id="performanceTimerPage" class="performance-timer-page" aria-label="歌唱・ダンス秒数計測">
     <header class="performance-timer-header">
-      <button type="button" class="ui-back ui-back-icon" onclick="navigateTo('home')" aria-label="HOMEへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>
+      <button type="button" class="ui-back" onclick="navigateTo('home')" aria-label="HOMEへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div class="performance-timer-title-wrap">
         <h1 class="ui-heading-lg performance-timer-title">歌唱・ダンス秒数計測</h1>
       </div>
@@ -4539,6 +4541,34 @@
     }
 
 
+    // グループ写真（Driveの画像ID・共有は「リンクを知っている全員」）。歌詞・カバーなど全画面で使う。
+    // 管理画面で画像を登録できるようになるまでは、ここで管理する。
+    const UNIVERSE_GROUP_PHOTO_IDS = {
+      'BE:FIRST': '1DQ6_xTcv1-jPQtDrMgi923Xrxa26y0rW',
+      'MAZZEL': '1_B6mMgMqOzUhB0wrsTO2yIGxKmJKtbpX',
+      'STARGLOW': '19IH9HqS0lMV9S-B11yFhTqMM4Zxq8OMX',
+      'HANA': '1Epbsc6-nOt1mfqDgNcmvdSo1__WLh9yu',
+      'BMSG ALLSTARS': '1Mg_mIzUzb62SpvPqrYrmffuRRldHBroO',
+      'ShowMinorSavage': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
+    };
+
+    function universeGroupPhotoUrl(name) {
+      const id = UNIVERSE_GROUP_PHOTO_IDS[String(name || '')];
+      return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
+    }
+
+    // グループのタイル（共通部品 .ui-group-tile）。写真があれば写真、なければ線の色つきの面。
+    // onclick は呼ぶ側でエスケープ済みの文字列を渡す。
+    function renderUniverseGroupTile(opts) {
+      const name = String(opts.name || '');
+      const photo = universeGroupPhotoUrl(name);
+      const look = photo
+        ? 'class="ui-photo-tile ui-group-tile" style="--ui-photo:url(\'' + photo + '\')"'
+        : 'class="ui-card ui-accent-left ui-group-tile" style="--accent:' + escapeHtml(opts.color || 'var(--ui-line-strong)') + '"';
+      const sub = opts.sub ? '<small class="ui-label">' + escapeHtml(opts.sub) + '</small>' : '';
+      return '<button type="button" ' + look + ' onclick="' + opts.onclick + '"><strong class="ui-heading">' + escapeHtml(name) + '</strong>' + sub + '</button>';
+    }
+
     function scrollAppToTop(behavior = 'smooth') {
       const scroller = document.querySelector('.page-wrap');
       if (scroller) {
@@ -5155,7 +5185,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const initial = String(member.displayName || '?').slice(0, 1).toUpperCase();
     const accent = /^#[0-9a-f]{6}$/i.test(member.colorHex || '') ? member.colorHex : '#9cecff';
     const image = member.imageUrl ? `<img src="${escapeHtml(member.imageUrl)}" data-fallback-src="${escapeHtml(member.imageFallbackUrl || '')}" alt="${escapeHtml(member.displayName)}" decoding="async" referrerpolicy="no-referrer" onerror="handleProfileImageError(this)">` : '';
-    panel.innerHTML = `<article class="profile-member-detail" style="--member-accent:${escapeHtml(accent)}"><button class="ui-back ui-back-icon" type="button" aria-label="メンバー一覧へ戻る" onclick="closeProfileMemberDetail()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><div class="ui-panel profile-detail-hero"><div class="ui-media profile-detail-visual">${image}<span class="profile-detail-line" aria-hidden="true"></span></div><div class="profile-detail-identity"><p class="ui-label profile-detail-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h2 class="ui-name ui-name-lg profile-detail-name">${escapeHtml(member.displayName)}</h2></div></div>${renderProfileDetailContent()}</article>`;
+    panel.innerHTML = `<article class="profile-member-detail" style="--member-accent:${escapeHtml(accent)}"><button class="ui-back" type="button" aria-label="メンバー一覧へ戻る" onclick="closeProfileMemberDetail()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><div class="ui-panel profile-detail-hero"><div class="ui-media profile-detail-visual">${image}<span class="profile-detail-line" aria-hidden="true"></span></div><div class="profile-detail-identity"><p class="ui-label profile-detail-group">${escapeHtml(member.primaryGroupName || 'SOLO')}</p><h2 class="ui-name ui-name-lg profile-detail-name">${escapeHtml(member.displayName)}</h2></div></div>${renderProfileDetailContent()}</article>`;
     if (typeof syncUniverseCrossLinks === 'function') syncUniverseCrossLinks();
   }
 
@@ -5722,7 +5752,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const members = getVisibleProfileMembers();
     const isResultMode = Boolean(memberA && memberB);
 
-    panel.innerHTML = `<div class="ui-divider profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="ui-title ui-title-sm profile-chemistry-title">CHEMISTRY</h2>${isResultMode ? '<button class="ui-back ui-back-icon profile-chemistry-back" type="button" aria-label="戻る" onclick="resetProfileChemistrySelection()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>' : ''}</div>
+    panel.innerHTML = `<div class="ui-divider profile-chemistry-head"><p class="profile-panel-eyebrow">TWO PEOPLE</p><h2 class="ui-title ui-title-sm profile-chemistry-title">CHEMISTRY</h2>${isResultMode ? '<button class="ui-back profile-chemistry-back" type="button" aria-label="戻る" onclick="resetProfileChemistrySelection()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>' : ''}</div>
       <div class="profile-chemistry-slots${isResultMode ? ' result' : ''}">
         ${renderProfileChemistrySlot('a', memberA, '01')}
         <span class="ui-label profile-chemistry-cross" aria-hidden="true">×</span>
@@ -6205,25 +6235,10 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     return `<header class="ui-divider lyx-head">${lyxBack(backHandler)}<h2 class="ui-title ui-title-sm lyx-title">${escapeLyrics(title)}</h2></header>`;
   }
 
-  // グループ写真（Driveの画像ID）。共有は「リンクを知っている全員」。
-  // 管理画面の画像登録ができるまではここで管理する。写真がないグループは英字の枠で表示。
-  const LYRICS_GROUP_PHOTO_IDS = {
-    'BE:FIRST': '1DQ6_xTcv1-jPQtDrMgi923Xrxa26y0rW',
-    'MAZZEL': '1_B6mMgMqOzUhB0wrsTO2yIGxKmJKtbpX',
-    'STARGLOW': '19IH9HqS0lMV9S-B11yFhTqMM4Zxq8OMX',
-    'HANA': '1Epbsc6-nOt1mfqDgNcmvdSo1__WLh9yu',
-    'BMSG ALLSTARS': '1Mg_mIzUzb62SpvPqrYrmffuRRldHBroO'
-  };
-
-  // ユニット写真（BMSG ALLSTARSの中のユニット）
+  // ユニット写真（BMSG ALLSTARSの中のユニット）。グループの写真は共通（AppHelpers の universeGroupPhotoUrl）
   const LYRICS_UNIT_PHOTO_IDS = {
     'ShowMinorSavage': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
   };
-
-  function lyricsGroupPhotoUrl(group) {
-    const id = LYRICS_GROUP_PHOTO_IDS[group];
-    return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
-  }
 
   // 一覧（グループ・カラオケルーム・ガチャ）
   function showLyricsGroups(pushUrl) {
@@ -6231,12 +6246,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if (pushUrl !== false) setLyricsUrl({});
     document.getElementById('lyricsView').innerHTML =
       `<div id="lyricsKaraokeRoom">${renderLyricsKaraokeRoom()}</div>` +
-      `<section class="lyx-groups">${LYRICS_GROUPS.map(function (group) {
-        const photo = lyricsGroupPhotoUrl(group);
-        const look = photo
-          ? `class="ui-photo-tile lyx-group" style="--ui-photo:url('${photo}')"`
-          : `class="ui-card ui-accent-left lyx-group" style="--accent:${escapeLyrics(lyricsGroupColor(group))}"`;
-        return `<button ${look} type="button" onclick="showLyricsGroup('${lyricArg(group)}')"><strong class="ui-heading">${escapeLyrics(group)}</strong><small class="ui-label">${groupSongs(group).length} SONGS</small></button>`;
+      `<section class="ui-group-tiles lyx-groups">${LYRICS_GROUPS.map(function (group) {
+        return renderUniverseGroupTile({ name: group, sub: groupSongs(group).length + ' SONGS', color: lyricsGroupColor(group), onclick: `showLyricsGroup('${lyricArg(group)}')` });
       }).join('')}</section>` +
       `<button class="ui-frame lyx-gacha" type="button" onclick="openSongGacha()"><strong class="ui-title ui-title-sm">SONG GACHA</strong><small class="ui-muted">曲を引く</small></button>`;
     scrollLyricsTop();
@@ -6548,7 +6559,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     karaokeState.partsBySong=data.partsBySong||{};
     if(params&&params.mode==='latest'){
       const article='<article aria-hidden="true"><div class="karaoke-owner"><span class="skeleton-block" style="display:block;width:42%;height:11px;border-radius:6px"></span></div><p><span class="skeleton-block" style="display:block;width:88%;height:14px;border-radius:7px"></span><span class="skeleton-block" style="display:block;width:64%;height:14px;border-radius:7px;margin-top:9px"></span></p></article>';
-      document.getElementById('karaokeView').innerHTML='<button class="ui-back ui-back-icon" type="button" disabled aria-hidden="true"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><div class="karaoke-title"><h2><span class="skeleton-block" style="display:block;width:58%;height:24px;border-radius:8px"></span></h2></div><section class="karaoke-lyrics">'+article+article+article+article+'</section><div class="karaoke-song-footer is-single" aria-hidden="true"><button type="button" disabled><span class="skeleton-block" style="display:block;width:116px;height:12px;border-radius:6px"></span></button></div>';
+      document.getElementById('karaokeView').innerHTML='<button class="ui-back" type="button" disabled aria-hidden="true"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><div class="karaoke-title"><h2><span class="skeleton-block" style="display:block;width:58%;height:24px;border-radius:8px"></span></h2></div><section class="karaoke-lyrics">'+article+article+article+article+'</section><div class="karaoke-song-footer is-single" aria-hidden="true"><button type="button" disabled><span class="skeleton-block" style="display:block;width:116px;height:12px;border-radius:6px"></span></button></div>';
       loadKaraokeRoom(params.room,function(){
         if(karaokeState.history.length)openKaraokeResultSong(karaokeState.history[0]);
         else{renderKaraokeEntry();showKaraokeError('まだ振り分け結果がありません。');}
@@ -7288,7 +7299,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
   function otherShell(title,html){
-    document.getElementById('analysisPanel').innerHTML='<div class="analysis-section"><div class="analysis-subhead"><button class="ui-back ui-back-icon" aria-label="戻る" onclick="analysisOtherView=\'\';renderAnalysisOther()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><h2 class="ui-heading">'+title+'</h2></div>'+html+'</div>';
+    document.getElementById('analysisPanel').innerHTML='<div class="analysis-section"><div class="analysis-subhead"><button class="ui-back" aria-label="戻る" onclick="analysisOtherView=\'\';renderAnalysisOther()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><h2 class="ui-heading">'+title+'</h2></div>'+html+'</div>';
   }
 
 
@@ -7307,7 +7318,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderCardGroupSelection(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="card-group-grid">'+cardState.groups.map(function(group){const count=getCardGroupCards(group.name).length;return '<button type="button" class="ui-card card-group-btn" style="--card-group-color:'+escapeHtml(group.color||'#9cecff')+'" onclick="selectTradingCardGroup(\''+escapeHtml(group.name).replaceAll("'","\\'")+'\')"><span class="ui-heading card-group-name">'+escapeHtml(group.name)+'</span><span class="ui-muted card-group-sub">'+count+' CARDS</span></button>';}).join('')+'</div>';}
   function selectTradingCardGroup(groupName){cardState.currentGroup=groupName||'ALL';renderCardGacha();scrollAppToTop('smooth');}
   function buildCardSkyMarkup(count){let html='';const total=count||42;for(let i=0;i<total;i++){const roll=Math.random();const tone=roll<.07?'red':roll<.20?'cyan':'white';const x=(2+Math.random()*96).toFixed(2);const y=(2+Math.random()*96).toFixed(2);const size=(.6+Math.random()*2.15).toFixed(2);const opacity=(.24+Math.random()*.68).toFixed(2);const duration=(2.6+Math.random()*6.2).toFixed(2);const delay=(-Math.random()*7).toFixed(2);html+='<i class="card-space-star tone-'+tone+'" style="left:'+x+'%;top:'+y+'%;--s:'+size+'px;--o:'+opacity+';--d:'+duration+'s;--delay:'+delay+'s"></i>';}for(let j=0;j<2;j++){const y=(12+Math.random()*58).toFixed(1);const delay=(2.5+j*6.5+Math.random()*3.5).toFixed(2);const duration=(10.5+Math.random()*4.5).toFixed(2);html+='<i class="card-shooting-star shoot-'+j+'" style="top:'+y+'%;--shoot-delay:'+delay+'s;--shoot-duration:'+duration+'s"></i>';}return html;}
-  function renderCardGacha(){setCardPageMode('gacha');const host=document.getElementById('cardApp');if(!host)return;const groupCards=getCardGroupCards(cardState.currentGroup);const drawn=groupCards.filter(function(card){return card.isDrawn;}).length;host.innerHTML='<div class="card-gacha-scene"><div class="card-space-field" aria-hidden="true">'+buildCardSkyMarkup(46)+'</div><div class="card-gacha-toolbar"><button type="button" class="ui-back ui-back-icon" onclick="renderCardGroupSelection()" aria-label="グループ一覧へ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><button type="button" class="ui-btn ui-btn-icon card-gacha-tool" onclick="openCardCollection()" aria-label="コレクション"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5" width="10.5" height="14" rx="2"></rect><path d="M9 5.2V4.5A1.5 1.5 0 0 1 10.5 3h7A1.5 1.5 0 0 1 19 4.5v11A1.5 1.5 0 0 1 17.5 17H15"></path><path d="M7.5 9h4.5M7.5 12h4.5M7.5 15h3"></path></svg></button></div><div class="card-gacha-head"><h2 class="ui-title ui-title-sm card-gacha-title">'+escapeHtml(cardState.currentGroup)+'</h2><div class="ui-badge card-progress">'+drawn+' / '+groupCards.length+'</div></div><div class="card-draw-stage"><div class="card-portal-shell" aria-hidden="true"><i class="card-portal-ring r1"></i><i class="card-portal-ring r2"></i><i class="card-portal-ring r3"></i><div class="card-portal-core"><div><strong>CARD PORTAL</strong><span>ORBIT READY</span></div></div></div><div class="card-draw-mark">BMSG UNIVERSE</div><div class="ui-muted card-draw-copy">Pull one card from the orbit.</div><div class="card-rarity-track" aria-label="Rarity rates"><div class="card-rarity-chip rarity-n"><b>N</b><small>70%</small></div><div class="card-rarity-chip rarity-r"><b>R</b><small>24%</small></div><div class="card-rarity-chip rarity-sr"><b>SR</b><small>5%</small></div><div class="card-rarity-chip rarity-ssr"><b>SSR</b><small>1%</small></div></div></div><div class="card-draw-actions"><button type="button" class="ui-btn ui-btn-solid ui-btn-wide card-draw-main" onclick="drawTradingCard()">引く</button></div></div>';}
+  function renderCardGacha(){setCardPageMode('gacha');const host=document.getElementById('cardApp');if(!host)return;const groupCards=getCardGroupCards(cardState.currentGroup);const drawn=groupCards.filter(function(card){return card.isDrawn;}).length;host.innerHTML='<div class="card-gacha-scene"><div class="card-space-field" aria-hidden="true">'+buildCardSkyMarkup(46)+'</div><div class="card-gacha-toolbar"><button type="button" class="ui-back" onclick="renderCardGroupSelection()" aria-label="グループ一覧へ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button type="button" class="ui-btn ui-btn-icon card-gacha-tool" onclick="openCardCollection()" aria-label="コレクション"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5" width="10.5" height="14" rx="2"></rect><path d="M9 5.2V4.5A1.5 1.5 0 0 1 10.5 3h7A1.5 1.5 0 0 1 19 4.5v11A1.5 1.5 0 0 1 17.5 17H15"></path><path d="M7.5 9h4.5M7.5 12h4.5M7.5 15h3"></path></svg></button></div><div class="card-gacha-head"><h2 class="ui-title ui-title-sm card-gacha-title">'+escapeHtml(cardState.currentGroup)+'</h2><div class="ui-badge card-progress">'+drawn+' / '+groupCards.length+'</div></div><div class="card-draw-stage"><div class="card-portal-shell" aria-hidden="true"><i class="card-portal-ring r1"></i><i class="card-portal-ring r2"></i><i class="card-portal-ring r3"></i><div class="card-portal-core"><div><strong>CARD PORTAL</strong><span>ORBIT READY</span></div></div></div><div class="card-draw-mark">BMSG UNIVERSE</div><div class="ui-muted card-draw-copy">Pull one card from the orbit.</div><div class="card-rarity-track" aria-label="Rarity rates"><div class="card-rarity-chip rarity-n"><b>N</b><small>70%</small></div><div class="card-rarity-chip rarity-r"><b>R</b><small>24%</small></div><div class="card-rarity-chip rarity-sr"><b>SR</b><small>5%</small></div><div class="card-rarity-chip rarity-ssr"><b>SSR</b><small>1%</small></div></div></div><div class="card-draw-actions"><button type="button" class="ui-btn ui-btn-solid ui-btn-wide card-draw-main" onclick="drawTradingCard()">引く</button></div></div>';}
   function getCardGroupCards(groupName){const group=cardState.groups.find(function(item){return item.name===groupName;});if(!group||groupName==='ALL')return cardState.cards.slice();const allowed={};(group.memberIds||[]).forEach(function(id){allowed[String(id)]=true;});return cardState.cards.filter(function(card){return allowed[String(card.memberId)];});}
   function seedCardRevealStars(){const host=document.querySelector('#cardReveal .card-reveal-stars');if(!host)return;host.innerHTML=buildCardSkyMarkup(58);}
   function drawTradingCard(){if(cardState.drawing)return;cardState.drawing=true;openCardRevealPending();google.script.run.withSuccessHandler(function(result){cardState.drawing=false;if(result&&result.card){const found=cardState.cards.find(function(card){return String(card.imageId)===String(result.card.imageId);});if(found)found.isDrawn=true;cardState.totalCount=Number(result.totalCount||cardState.totalCount);cardState.collectedCount=Number(result.collectedCount||cardState.collectedCount);runCardReveal(result.card,!!result.isNew);}else{closeCardReveal();cardNotify('カードを取得できませんでした。');}}).withFailureHandler(function(error){cardState.drawing=false;closeCardReveal();cardFailure(error);}).drawTradingCard(cardState.userId,cardState.currentGroup);}
@@ -7387,7 +7398,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function markPokerFlip(indices){if(pokerState.flipTimer)clearTimeout(pokerState.flipTimer);pokerState.flipIndices=Array.isArray(indices)?indices.slice():[indices];pokerState.flipTimer=setTimeout(function(){pokerState.flipIndices=[];pokerState.flipTimer=null;},640);}
 
   function renderPokerMenu(){stopPokerPolling();pokerState.screen='menu';pokerState.room=null;pokerState.flipIndices=[];const host=document.getElementById('pokerApp');if(!host)return;host.innerHTML='<div class="poker-mode-grid"><button type="button" class="ui-card poker-mode-card" onclick="renderPokerOfflineRules()"><strong class="ui-heading">1人で</strong></button><button type="button" class="ui-card poker-mode-card" onclick="renderPokerOnlineMenu()"><strong class="ui-heading">みんなで</strong></button><button type="button" class="ui-card poker-mode-card is-wide" onclick="openPokerHighlights()"><strong class="ui-heading">神回</strong></button></div>';}
-  function pokerSectionHead(title,copy,back){return '<div class="poker-section-head"><div><h2 class="ui-heading-lg">'+escapeHtml(title)+'</h2></div><button type="button" class="ui-back ui-back-icon" onclick="'+back+'" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button></div>';}
+  function pokerSectionHead(title,copy,back){return '<div class="poker-section-head"><div><h2 class="ui-heading-lg">'+escapeHtml(title)+'</h2></div><button type="button" class="ui-back" onclick="'+back+'" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button></div>';}
   function ruleCard(rule,handler){return '<button type="button" class="ui-card poker-rule-card" onclick="'+handler+'(\''+rule+'\')"><strong class="ui-heading">'+pokerRuleLabel(rule)+'</strong></button>';}
 
   function renderPokerOfflineRules(){pokerState.screen='offline-rules';const host=document.getElementById('pokerApp');host.innerHTML=pokerSectionHead('1人で','','renderPokerMenu()')+'<div class="poker-rule-grid">'+ruleCard('A','startOfflinePoker')+ruleCard('B','startOfflinePoker')+'</div>';}
@@ -7496,7 +7507,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function quizBackToLab(){if(!quizCanLeave_())return;navigateTo('lab');}
   function quizCanLeave_(){if(currentRoute!=='quiz'||!quizState.game||quizState.completed||quizState.screen==='result')return true;if(!window.confirm('このクイズを諦めますか？\n途中の成績は保存されません。'))return false;const id=quizState.game.gameId;quizState.completed=true;google.script.run.withFailureHandler(function(){}).abandonQuizGame(quizState.userId,id);return true;}
 
-  function quizFailure_(error){quizState.busy=false;const message=String(error&&error.message||error||'クイズの処理に失敗しました。');const host=quizHost_();if(host)host.innerHTML='<section class="ui-panel quiz-panel"><p class="ui-label quiz-kicker">ERROR</p><h2 class="ui-heading quiz-panel-title">読み込みに失敗しました</h2><p class="ui-muted quiz-muted">'+quizEscape_(message)+'</p><div class="quiz-actions"><button class="ui-btn ui-btn-plain quiz-action ui-btn-solid is-primary" onclick="initQuizPage({})">再試行</button><button class="ui-back ui-back-icon" aria-label="戻る" onclick="navigateTo(\'lab\')"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button></div></section>';quizNotify_(message);}
+  function quizFailure_(error){quizState.busy=false;const message=String(error&&error.message||error||'クイズの処理に失敗しました。');const host=quizHost_();if(host)host.innerHTML='<section class="ui-panel quiz-panel"><p class="ui-label quiz-kicker">ERROR</p><h2 class="ui-heading quiz-panel-title">読み込みに失敗しました</h2><p class="ui-muted quiz-muted">'+quizEscape_(message)+'</p><div class="quiz-actions"><button class="ui-btn ui-btn-plain quiz-action ui-btn-solid is-primary" onclick="initQuizPage({})">再試行</button><button class="ui-back" aria-label="戻る" onclick="navigateTo(\'lab\')"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button></div></section>';quizNotify_(message);}
   function quizNotify_(message){if(typeof showToast==='function')showToast(message);}
   function quizUserName_(id){const user=quizState.users.find(function(item){return item.userId===id;});if(user)return user.displayName;const fallback=typeof UNIVERSE_USERS!=='undefined'?UNIVERSE_USERS.find(function(item){return item.id===id;}):null;return fallback?fallback.name:'';}
   function quizGenreLabel_(){return '歌詞';}
@@ -8128,7 +8139,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function openCoverGroupSelect(){
     coverState.screen='group';const groups=coverState.bootstrap&&coverState.bootstrap.groups||[];const app=document.getElementById('coverApp');
-    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="cover-stack cover-choice-stack">'+groups.map(function(g){return '<button type="button" class="ui-card ui-accent-left cover-content-card" style="--cover-accent:'+escapeHtml(g.color)+'" onclick="selectCoverGroup(\''+escapeHtml(g.groupId)+'\')"><strong class=\"ui-heading\">'+escapeHtml(g.groupName)+'</strong></button>';}).join('')+'</div>';
+    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="ui-group-tiles cover-group-tiles">'+groups.map(function(g){return renderUniverseGroupTile({name:g.groupName,color:g.color,sub:(String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS')?'メンバー全員から選ぶ':'',onclick:'selectCoverGroup(\''+escapeHtml(g.groupId)+'\')'});}).join('')+'</div>';
     setCanonicalCoverVisualMode('group');
   }
 
@@ -8302,7 +8313,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
   function renderCoverEditor(){
     const data=coverState.editor;if(!data)return;coverState.screen=data.isSaved&&!data.isCreator?'view':(coverState.screen==='view'?'view':'editor');const editing=coverState.screen==='editor'&&data.isCreator;const app=document.getElementById('coverApp');const assignmentMap=coverAssignmentMap();const memberMap=coverMemberMap();const isSavedView=coverState.screen==='view';
-    let html='<div class="ui-divider cover-editor-head"><button type="button" class="ui-back ui-back-icon" aria-label="戻る" onclick="coverNavigateBack()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button><h2 class="ui-heading-lg cover-song-heading">'+escapeHtml(data.title||data.sourceSong.title)+'</h2><div class="ui-muted cover-song-context">'+escapeHtml(data.sourceSong.artist)+' → '+escapeHtml(data.coverGroup.groupName)+(data.creatorDisplayName?' / '+escapeHtml(data.creatorDisplayName):'')+'</div><div class="cover-tabs"><button type="button" class="ui-btn cover-tab '+(coverState.viewMode==='original'?'is-active':'')+'" onclick="setCoverViewMode(\'original\')">ORIGINAL</button><button type="button" class="ui-btn cover-tab '+(coverState.viewMode==='cover'?'is-active':'')+'" onclick="setCoverViewMode(\'cover\')">COVER</button></div>';
+    let html='<div class="ui-divider cover-editor-head"><button type="button" class="ui-back" aria-label="戻る" onclick="coverNavigateBack()"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><h2 class="ui-heading-lg cover-song-heading">'+escapeHtml(data.title||data.sourceSong.title)+'</h2><div class="ui-muted cover-song-context">'+escapeHtml(data.sourceSong.artist)+' → '+escapeHtml(data.coverGroup.groupName)+(data.creatorDisplayName?' / '+escapeHtml(data.creatorDisplayName):'')+'</div><div class="cover-tabs"><button type="button" class="ui-btn cover-tab '+(coverState.viewMode==='original'?'is-active':'')+'" onclick="setCoverViewMode(\'original\')">ORIGINAL</button><button type="button" class="ui-btn cover-tab '+(coverState.viewMode==='cover'?'is-active':'')+'" onclick="setCoverViewMode(\'cover\')">COVER</button></div>';
     if(editing)html+='<div class="cover-tools"><button type="button" class="ui-btn" onclick="openCoverBulkChange()">パート変更</button><button type="button" class="ui-btn" onclick="openCoverRatio()">割合確認</button></div>';html+='</div>';
     if(data.isSaved&&coverState.screen==='view'&&data.isCreator){html+='<div class="cover-view-actions" style="display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px"><button type="button" class="ui-btn" style="width:100%!important;min-width:0!important" onclick="editSavedCover()">編集</button><button type="button" class="ui-btn" style="width:100%!important;min-width:0!important" onclick="requestDeleteCover()">削除</button><button type="button" class="ui-btn" style="width:100%!important;min-width:0!important" onclick="setCurrentCoverSharing('+(!data.isShared)+')">'+(data.isShared?'共有解除':'共有')+'</button></div>';}
     html+='<div class="cover-lyrics">'+data.parts.map(function(part){if(coverState.viewMode==='original')return '<div class="ui-divider cover-lyric-row"><div class="ui-label cover-original-label">'+escapeHtml(part.originalSingerLabel)+'</div><div class="ui-text cover-lyric-text">'+escapeHtml(part.lyrics)+'</div></div>';const memberId=assignmentMap[String(part.order)]||'';const member=memberMap[memberId];const label=member?member.name:(memberId===part.originalMemberId?part.originalSingerLabel:(memberId||'未設定'));const color=member?member.color:'#777777';return '<div class="ui-divider cover-lyric-row"><button type="button" class="ui-chip cover-assignee" style="--cover-member-color:'+escapeHtml(color)+'" '+(editing?'onclick="openCoverMemberSheet('+Number(part.order)+')"':'disabled')+'><span class="cover-assignee-dot"></span>'+escapeHtml(label)+'</button><div class="ui-text cover-lyric-text">'+escapeHtml(part.lyrics)+'</div></div>';}).join('')+'</div>';

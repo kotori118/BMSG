@@ -1,7 +1,7 @@
 <template id="cardPageTemplate">
   <section class="view card-page" id="cardPageRoot">
     <header class="card-header">
-      <button type="button" class="ui-back ui-back-icon" onclick="navigateTo('lab')" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>
+      <button type="button" class="ui-back" onclick="navigateTo('lab')" aria-label="LABへ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div>
         <h1 class="ui-title card-title">TRADING CARD</h1>
       </div>
@@ -20,7 +20,7 @@
     <div class="card-reveal-burst" aria-hidden="true"></div>
     <div class="card-reveal-meteors" aria-hidden="true"></div>
     <div class="card-reveal-sparks" aria-hidden="true"></div>
-    <button type="button" class="ui-back ui-back-icon card-reveal-back" onclick="closeCardReveal()" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg></button>
+    <button type="button" class="ui-back card-reveal-back" onclick="closeCardReveal()" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
     <div class="card-reveal-stage">
       <div class="card-reveal-kicker" id="cardRevealKicker"></div>
       <div class="card-flip-wrap" id="cardFlipWrap">

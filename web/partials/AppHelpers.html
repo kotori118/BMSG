@@ -15,6 +15,34 @@
     }
 
 
+    // グループ写真（Driveの画像ID・共有は「リンクを知っている全員」）。歌詞・カバーなど全画面で使う。
+    // 管理画面で画像を登録できるようになるまでは、ここで管理する。
+    const UNIVERSE_GROUP_PHOTO_IDS = {
+      'BE:FIRST': '1DQ6_xTcv1-jPQtDrMgi923Xrxa26y0rW',
+      'MAZZEL': '1_B6mMgMqOzUhB0wrsTO2yIGxKmJKtbpX',
+      'STARGLOW': '19IH9HqS0lMV9S-B11yFhTqMM4Zxq8OMX',
+      'HANA': '1Epbsc6-nOt1mfqDgNcmvdSo1__WLh9yu',
+      'BMSG ALLSTARS': '1Mg_mIzUzb62SpvPqrYrmffuRRldHBroO',
+      'ShowMinorSavage': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
+    };
+
+    function universeGroupPhotoUrl(name) {
+      const id = UNIVERSE_GROUP_PHOTO_IDS[String(name || '')];
+      return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
+    }
+
+    // グループのタイル（共通部品 .ui-group-tile）。写真があれば写真、なければ線の色つきの面。
+    // onclick は呼ぶ側でエスケープ済みの文字列を渡す。
+    function renderUniverseGroupTile(opts) {
+      const name = String(opts.name || '');
+      const photo = universeGroupPhotoUrl(name);
+      const look = photo
+        ? 'class="ui-photo-tile ui-group-tile" style="--ui-photo:url(\'' + photo + '\')"'
+        : 'class="ui-card ui-accent-left ui-group-tile" style="--accent:' + escapeHtml(opts.color || 'var(--ui-line-strong)') + '"';
+      const sub = opts.sub ? '<small class="ui-label">' + escapeHtml(opts.sub) + '</small>' : '';
+      return '<button type="button" ' + look + ' onclick="' + opts.onclick + '"><strong class="ui-heading">' + escapeHtml(name) + '</strong>' + sub + '</button>';
+    }
+
     function scrollAppToTop(behavior = 'smooth') {
       const scroller = document.querySelector('.page-wrap');
       if (scroller) {

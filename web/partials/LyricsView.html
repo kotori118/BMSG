@@ -15,25 +15,10 @@
     return `<header class="ui-divider lyx-head">${lyxBack(backHandler)}<h2 class="ui-title ui-title-sm lyx-title">${escapeLyrics(title)}</h2></header>`;
   }
 
-  // グループ写真（Driveの画像ID）。共有は「リンクを知っている全員」。
-  // 管理画面の画像登録ができるまではここで管理する。写真がないグループは英字の枠で表示。
-  const LYRICS_GROUP_PHOTO_IDS = {
-    'BE:FIRST': '1DQ6_xTcv1-jPQtDrMgi923Xrxa26y0rW',
-    'MAZZEL': '1_B6mMgMqOzUhB0wrsTO2yIGxKmJKtbpX',
-    'STARGLOW': '19IH9HqS0lMV9S-B11yFhTqMM4Zxq8OMX',
-    'HANA': '1Epbsc6-nOt1mfqDgNcmvdSo1__WLh9yu',
-    'BMSG ALLSTARS': '1Mg_mIzUzb62SpvPqrYrmffuRRldHBroO'
-  };
-
-  // ユニット写真（BMSG ALLSTARSの中のユニット）
+  // ユニット写真（BMSG ALLSTARSの中のユニット）。グループの写真は共通（AppHelpers の universeGroupPhotoUrl）
   const LYRICS_UNIT_PHOTO_IDS = {
     'ShowMinorSavage': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
   };
-
-  function lyricsGroupPhotoUrl(group) {
-    const id = LYRICS_GROUP_PHOTO_IDS[group];
-    return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
-  }
 
   // 一覧（グループ・カラオケルーム・ガチャ）
   function showLyricsGroups(pushUrl) {
@@ -41,12 +26,8 @@
     if (pushUrl !== false) setLyricsUrl({});
     document.getElementById('lyricsView').innerHTML =
       `<div id="lyricsKaraokeRoom">${renderLyricsKaraokeRoom()}</div>` +
-      `<section class="lyx-groups">${LYRICS_GROUPS.map(function (group) {
-        const photo = lyricsGroupPhotoUrl(group);
-        const look = photo
-          ? `class="ui-photo-tile lyx-group" style="--ui-photo:url('${photo}')"`
-          : `class="ui-card ui-accent-left lyx-group" style="--accent:${escapeLyrics(lyricsGroupColor(group))}"`;
-        return `<button ${look} type="button" onclick="showLyricsGroup('${lyricArg(group)}')"><strong class="ui-heading">${escapeLyrics(group)}</strong><small class="ui-label">${groupSongs(group).length} SONGS</small></button>`;
+      `<section class="ui-group-tiles lyx-groups">${LYRICS_GROUPS.map(function (group) {
+        return renderUniverseGroupTile({ name: group, sub: groupSongs(group).length + ' SONGS', color: lyricsGroupColor(group), onclick: `showLyricsGroup('${lyricArg(group)}')` });
       }).join('')}</section>` +
       `<button class="ui-frame lyx-gacha" type="button" onclick="openSongGacha()"><strong class="ui-title ui-title-sm">SONG GACHA</strong><small class="ui-muted">曲を引く</small></button>`;
     scrollLyricsTop();
