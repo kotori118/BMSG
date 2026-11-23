@@ -6595,7 +6595,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(typeof karaokeState==='undefined'||!karaokeState.song)return'';
     const meta=(karaokeState.songs||[]).find(function(item){return String(item.songId)===String(karaokeState.song.songId);});
     if(!meta)return'';
-    if(['BE:FIRST','MAZZEL','STARGLOW','HANA'].indexOf(String(meta.category||meta.artist||''))>=0)return String(meta.category||meta.artist);
+    const category=String(meta.category||meta.artist||'');
+    if(category&&category!=='UNIT'&&category!=='ALL')return category;
     return String(meta.unitCategory||'');
   }
 
@@ -7390,14 +7391,17 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     return false;
   };
 
+  // コース一覧がまだ届かないときの仮の一覧。グループはDBの一覧（LYRICS_GROUPS）から作る
+  function quizFallbackCourses_(){
+    const groups=(typeof LYRICS_GROUPS!=='undefined'?LYRICS_GROUPS:[]).filter(function(n){return n!=='BMSG ALLSTARS';}).map(function(n){return {value:String(n).toUpperCase(),label:String(n)};});
+    return groups.concat([{value:'UNIT',label:'ユニット'},{value:'ALL',label:'全部'}]);
+  }
+
   renderQuizSetup_=function(){
     safeClearQuizTimer_();quizState.screen='setup';quizState.completed=false;
     var s=quizState.settings;
     var offline=s.mode==='OFFLINE',host=quizHost_();if(!host)return;
-    var courseHtml=quizSetting_('コース',(quizState.courses.length?quizState.courses:[
-      {value:'BE:FIRST',label:'BE:FIRST'},{value:'MAZZEL',label:'MAZZEL'},{value:'STARGLOW',label:'STARGLOW'},
-      {value:'HANA',label:'HANA'},{value:'UNIT',label:'ユニット'},{value:'ALL',label:'全部'}
-    ]).map(function(x){return[x.value,x.label];}),s.course,'course','is-course');
+    var courseHtml=quizSetting_('コース',(quizState.courses.length?quizState.courses:quizFallbackCourses_()).map(function(x){return[x.value,x.label];}),s.course,'course','is-course');
     var selectedCount=Array.isArray(quizState.selectedPlayers)?quizState.selectedPlayers.length:0;
     host.innerHTML='<section class="ui-panel quiz-panel"><div class="quiz-settings">'+
       quizSetting_('モード',[['OFFLINE','オフライン'],['ONLINE','オンライン']],s.mode,'mode')+

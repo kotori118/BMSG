@@ -15,7 +15,8 @@
     if(typeof karaokeState==='undefined'||!karaokeState.song)return'';
     const meta=(karaokeState.songs||[]).find(function(item){return String(item.songId)===String(karaokeState.song.songId);});
     if(!meta)return'';
-    if(['BE:FIRST','MAZZEL','STARGLOW','HANA'].indexOf(String(meta.category||meta.artist||''))>=0)return String(meta.category||meta.artist);
+    const category=String(meta.category||meta.artist||'');
+    if(category&&category!=='UNIT'&&category!=='ALL')return category;
     return String(meta.unitCategory||'');
   }
 

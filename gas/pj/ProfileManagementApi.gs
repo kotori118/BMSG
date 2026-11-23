@@ -1,5 +1,6 @@
 // Originally imported from kotori118/BMSG-PJ ProfileManagementApi.gs (2026-11-21). This repository is now the source: edit this file directly.
-const PROFILE_MGMT_GROUPS_ = Object.freeze(['BE:FIRST','MAZZEL','STARGLOW','HANA','BMSG POSSE']);
+// 並び順は 01_Groups の DisplayOrder（アーカイブ除外）。未所属メンバーは最後の「BMSG POSSE」にまとめる。
+const PROFILE_MGMT_UNGROUPED_ = 'BMSG POSSE';
 
 /**
  * SETTINGS > プロフィール管理専用API。
@@ -20,11 +21,12 @@ function getProfileManagementBootstrap() {
   });
 
   const grouped = {};
-  PROFILE_MGMT_GROUPS_.concat(Object.values(groupNameById)).filter(Boolean).forEach(function(name){ grouped[name] = []; });
+  groups.filter(function(row){return String(row.RecordStatus||'ACTIVE')!=='ARCHIVED';}).slice().sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);}).forEach(function(row){const name=String(row.GroupName||'').trim();if(name)grouped[name]=[];});
   members.forEach(function(row){
     const memberId = asId_(row.MemberID);
     if (!memberId) return;
     const groupName = profileMgmtCategoryForMember_(memberId, row.GroupID, groupNameById);
+    if (!grouped[groupName] && groupName === PROFILE_MGMT_UNGROUPED_) grouped[groupName] = [];
     if (!grouped[groupName]) return;
     grouped[groupName].push({
       memberId: memberId,
@@ -213,7 +215,7 @@ function profileMgmtCategoryForMember_(memberId, groupId, groupNameById) {
   if (name) return name;
   // Primary group is explicit; remaining existing solo profiles use the BMSG POSSE bucket.
   // MemberID ranges no longer imply identity after global M allocation.
-  return !asId_(groupId) ? 'BMSG POSSE' : '';
+  return !asId_(groupId) ? PROFILE_MGMT_UNGROUPED_ : '';
 }
 
 function profileMgmtReadObjects_(sheet) {

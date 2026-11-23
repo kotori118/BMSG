@@ -1,5 +1,6 @@
 // Originally imported from kotori118/BMSG-PJ ImageManagementApi.gs (2026-11-21). This repository is now the source: edit this file directly.
-const IMAGE_MGMT_GROUPS_ = Object.freeze(['BE:FIRST','MAZZEL','STARGLOW','HANA','BMSG POSSE']);
+// 並び順は 01_Groups の DisplayOrder（アーカイブ除外）。未所属メンバーは最後の「BMSG POSSE」にまとめる。
+const IMAGE_MGMT_UNGROUPED_ = 'BMSG POSSE';
 const IMAGE_MGMT_RARITIES_ = Object.freeze(['SSR','SR','R','N']);
 const IMAGE_MGMT_MIME_EXT_ = Object.freeze({'image/jpeg':'jpg','image/png':'png'});
 
@@ -10,11 +11,13 @@ function getImageManagementBootstrap() {
   const groupNameById = {};
   groups.forEach(function(row){ groupNameById[asId_(row.GroupID)] = String(row.GroupName || '').trim(); });
   const grouped = {};
-  IMAGE_MGMT_GROUPS_.concat(Object.values(groupNameById)).filter(Boolean).forEach(function(name){ grouped[name] = []; });
+  groups.filter(function(row){return String(row.RecordStatus||'ACTIVE')!=='ARCHIVED';}).slice().sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);}).forEach(function(row){const name=String(row.GroupName||'').trim();if(name)grouped[name]=[];});
   members.forEach(function(row){
     const memberId = asId_(row.MemberID);
     const category = imageMgmtCategoryForMember_(memberId, row.GroupID, groupNameById);
-    if (!category || !grouped[category]) return;
+    if (!category) return;
+    if (!grouped[category] && category === IMAGE_MGMT_UNGROUPED_) grouped[category] = [];
+    if (!grouped[category]) return;
     grouped[category].push({
       memberId: memberId,
       name: String(row.DisplayName || memberId).trim(),
@@ -204,7 +207,7 @@ function imageMgmtResolveMember_(core, memberId) {
 
 function imageMgmtCategoryForMember_(memberId, groupId, groupNameById) {
   const name = groupNameById[asId_(groupId)] || '';
-  return name || (!asId_(groupId) ? 'BMSG POSSE' : '');
+  return name || (!asId_(groupId) ? IMAGE_MGMT_UNGROUPED_ : '');
 }
 
 function imageMgmtNormalizeRarity_(rarity) {
