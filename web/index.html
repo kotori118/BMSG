@@ -5663,7 +5663,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function applyLyricsData(data){
     lyricsState.catalog=data.songs||[];
     if(Array.isArray(data.mainGroups)){LYRICS_GROUPS.splice(0,LYRICS_GROUPS.length,...data.mainGroups.filter(function(n){return n!=='BMSG ALLSTARS';}),'BMSG ALLSTARS');}
-    if(Array.isArray(data.unitGroups)){const tail=['ShowMinorSavage','BMSG ALLSTARS'];LYRICS_UNITS.splice(0,LYRICS_UNITS.length,'ALL',...data.unitGroups.filter(function(n){return n!=='ALL'&&tail.indexOf(n)<0;}),...tail,'その他ユニット');}
+    if(Array.isArray(data.unitGroups)){const tail=['BMSG ALLSTARS'];LYRICS_UNITS.splice(0,LYRICS_UNITS.length,'ALL',...data.unitGroups.filter(function(n){return n!=='ALL'&&tail.indexOf(n)<0;}),...tail,'その他ユニット');}
     const units=[...new Set(lyricsState.catalog.filter(function(s){return s.category==='UNIT';}).map(function(s){return s.unitCategory;}))];units.forEach(function(n){if(n&&!LYRICS_UNITS.includes(n))LYRICS_UNITS.push(n);});
     lyricsState.partsBySong=data.partsBySong||{};
     lyricsState.groupColors=data.groupColors||{};
