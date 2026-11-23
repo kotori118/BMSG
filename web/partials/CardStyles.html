@@ -55,8 +55,6 @@
   .card-reveal.rarity-ssr .card-reveal-orbit{border-width:2px;animation:cardGoldOrbit 2.55s cubic-bezier(.16,.8,.2,1)}
   .card-reveal.rarity-ssr .card-reveal-burst{animation:cardRayBurstGold 2.4s ease-out}
   .card-reveal.rarity-sr .card-reveal-burst,.card-reveal.rarity-ssr .card-reveal-burst{width:min(150vw,640px);height:min(150vw,640px);border-radius:50%;background:repeating-conic-gradient(from 0deg,var(--rarity-accent) 0 3deg,transparent 3deg 19deg);-webkit-mask-image:radial-gradient(circle,#000 0,transparent 70%);mask-image:radial-gradient(circle,#000 0,transparent 70%);}
-  .card-reveal.rarity-ssr .card-flip-wrap{animation:cardQuake .6s ease-in-out .15s 1}
-  .card-reveal.rarity-sr .card-flip-wrap{animation:cardQuakeSmall .45s ease-in-out .15s 1}
   .card-reveal.rarity-ssr .card-reveal-meteors::before,.card-reveal.rarity-ssr .card-reveal-meteors::after{height:3px;animation:cardMeteorGold 1.45s ease-out 2}
   .card-reveal.rarity-ssr .card-reveal-sparks{animation:cardSparkGold 2.45s ease-out}
   .card-reveal.rarity-ssr .card-flip-wrap{filter:drop-shadow(0 0 30px rgba(255,215,106,.35)) drop-shadow(0 30px 52px rgba(0,0,0,.55))}
@@ -212,6 +210,4 @@
 @keyframes cardSpinTurn{from{transform:rotateY(0deg)}to{transform:rotateY(1260deg)}}
 @keyframes cardRayBurst{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}30%{opacity:.75}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2) rotate(40deg)}}
 @keyframes cardRayBurstGold{0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(0)}25%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(1.4) rotate(90deg)}}
-@keyframes cardQuake{0%,100%{transform:translate(0,0) rotate(0)}20%{transform:translate(-7px,3px) rotate(-1.2deg)}40%{transform:translate(7px,-3px) rotate(1.2deg)}60%{transform:translate(-4px,2px) rotate(-.6deg)}80%{transform:translate(3px,-1px) rotate(.4deg)}}
-@keyframes cardQuakeSmall{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
 </style>
