@@ -148,20 +148,20 @@
       overlay.classList.add('is-final','is-ready');songGachaState.drawing=false;return;
     }
     overlay.classList.add('is-spinning');
-    let delay=45;
+    let delay=40;
     function tick(){
-      if(delay>240){
+      if(delay>170){
         overlay.classList.remove('is-spinning');
         ticker.textContent=result.song.title;group.textContent=result.group;
         overlay.classList.add('is-final');
-        setTimeout(function(){overlay.classList.add('is-ready');songGachaState.drawing=false;},450);
+        setTimeout(function(){overlay.classList.add('is-ready');songGachaState.drawing=false;},300);
         return;
       }
       ticker.textContent=pool[Math.floor(Math.random()*pool.length)].song.title;
       delay=Math.round(delay*1.13);
       setTimeout(tick,delay);
     }
-    setTimeout(tick,220);
+    setTimeout(tick,100);
   }
 
   function playSongGachaAnimation(pool,result,reduced){

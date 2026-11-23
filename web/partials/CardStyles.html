@@ -39,7 +39,7 @@
   .card-reveal-burst{position:absolute;left:50%;top:50%;width:20px;height:20px;border-radius:50%;transform:translate(-50%,-50%);opacity:0}
   .card-reveal-meteors::before,.card-reveal-meteors::after{content:'';position:absolute;width:190px;height:2px;top:22%;left:-28%;background:var(--ui-active-bg);transform:rotate(-22deg);opacity:0}
   .card-reveal-meteors::after{top:69%;left:auto;right:-28%;transform:rotate(-28deg)}
-  .card-reveal-sparks{position:absolute;inset:0;opacity:0;background:var(--ui-active-bg)}
+  .card-reveal-sparks{position:absolute;inset:0;opacity:0;background:radial-gradient(circle at 50% 46%,var(--rarity-soft),transparent 62%)}
   .card-reveal.rarity-n{--rarity-accent:#9cecff;--rarity-soft:rgba(156,236,255,.16)}
   .card-reveal.rarity-r{--rarity-accent:#c98955;--rarity-soft:rgba(201,137,85,.24);background:radial-gradient(circle at 50% 45%,#4a2f1c 0,#22160d 50%,#10141b 100%)}
   .card-reveal.rarity-sr{--rarity-accent:#e4edf7;--rarity-soft:rgba(210,228,245,.26);background:radial-gradient(circle at 50% 45%,#3b5068 0,#1b2735 50%,#10161f 100%)}
@@ -50,10 +50,13 @@
   .card-reveal.rarity-r .card-reveal-meteors::before,.card-reveal.rarity-r .card-reveal-meteors::after{animation:cardMeteor 1.2s ease-out}
   .card-reveal.rarity-r .card-reveal-sparks{animation:cardSpark 1.45s ease-out}
   .card-reveal.rarity-sr .card-reveal-orbit{animation:cardSilverOrbit 1.95s ease-out}
-  .card-reveal.rarity-sr .card-reveal-burst{box-shadow:0 0 70px 30px rgba(156,236,255,.14),0 0 160px 80px rgba(156,236,255,.08);animation:cardSilverBurst 1.9s ease-out}
+  .card-reveal.rarity-sr .card-reveal-burst{animation:cardRayBurst 1.8s ease-out}
   .card-reveal.rarity-sr .card-reveal-sparks{animation:cardSparkSilver 1.9s ease-out}
   .card-reveal.rarity-ssr .card-reveal-orbit{border-width:2px;animation:cardGoldOrbit 2.55s cubic-bezier(.16,.8,.2,1)}
-  .card-reveal.rarity-ssr .card-reveal-burst{box-shadow:0 0 70px 30px rgba(255,215,106,.2),0 0 160px 80px rgba(255,176,32,.11);animation:cardGoldSupernova 2.5s ease-out}
+  .card-reveal.rarity-ssr .card-reveal-burst{animation:cardRayBurstGold 2.4s ease-out}
+  .card-reveal.rarity-sr .card-reveal-burst,.card-reveal.rarity-ssr .card-reveal-burst{width:min(150vw,640px);height:min(150vw,640px);border-radius:50%;background:repeating-conic-gradient(from 0deg,var(--rarity-accent) 0 3deg,transparent 3deg 19deg);-webkit-mask-image:radial-gradient(circle,#000 0,transparent 70%);mask-image:radial-gradient(circle,#000 0,transparent 70%);}
+  .card-reveal.rarity-ssr .card-flip-wrap{animation:cardQuake .6s ease-in-out .15s 1}
+  .card-reveal.rarity-sr .card-flip-wrap{animation:cardQuakeSmall .45s ease-in-out .15s 1}
   .card-reveal.rarity-ssr .card-reveal-meteors::before,.card-reveal.rarity-ssr .card-reveal-meteors::after{height:3px;animation:cardMeteorGold 1.45s ease-out 2}
   .card-reveal.rarity-ssr .card-reveal-sparks{animation:cardSparkGold 2.45s ease-out}
   .card-reveal.rarity-ssr .card-flip-wrap{filter:drop-shadow(0 0 30px rgba(255,215,106,.35)) drop-shadow(0 30px 52px rgba(0,0,0,.55))}
@@ -108,7 +111,7 @@
   .card-reveal.is-rarity-burst .card-flip-wrap::before{opacity:1!important;}
   .card-reveal:not(.is-rarity-burst) .card-flip-wrap::before{opacity:0!important;}
   /* カードの裏：明るめの紺で、絵柄は枠と中央の印だけ（前の重ね書きは全部消した） */
-  .card-back-face{background:linear-gradient(160deg,#4d6480 0%,#2a3b52 50%,#172334 100%);border:1px solid rgba(220,244,255,.55);box-shadow:inset 0 0 0 9px rgba(16,26,38,.5),inset 0 0 0 10px rgba(220,244,255,.4);}
+  .card-back-face{background:linear-gradient(160deg,#4d6480 0%,#2a3b52 50%,#172334 100%);border:1px solid rgba(220,244,255,.55);box-shadow:inset 0 0 0 1px rgba(220,244,255,.3);}
   .card-back-face::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.045) 0 2px,transparent 2px 12px);pointer-events:none;}
   .card-back-face::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 46%,rgba(220,244,255,.3),transparent 48%);pointer-events:none;}
   .card-back-design{position:absolute;inset:0;display:grid;place-items:center;}
@@ -206,3 +209,7 @@
 <style>
   /* Card-local authority retained from cross-screen audit: persistent pre-draw UI is star-free. */
 </style>
+@keyframes cardRayBurst{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}30%{opacity:.75}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2) rotate(40deg)}}
+@keyframes cardRayBurstGold{0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(0)}25%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(1.4) rotate(90deg)}}
+@keyframes cardQuake{0%,100%{transform:translate(0,0) rotate(0)}20%{transform:translate(-7px,3px) rotate(-1.2deg)}40%{transform:translate(7px,-3px) rotate(1.2deg)}60%{transform:translate(-4px,2px) rotate(-.6deg)}80%{transform:translate(3px,-1px) rotate(.4deg)}}
+@keyframes cardQuakeSmall{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
