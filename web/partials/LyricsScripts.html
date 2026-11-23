@@ -1,11 +1,12 @@
 <script>
   const lyricsState={catalog:[],partsBySong:{},groupColors:{},group:'',unit:'',query:'',song:null,editing:null,editingIndex:-1,editDraft:null,editDirty:false,editSaving:false,singerOptions:[],initialParams:{},karaokeRoom:null,karaokeHistory:[],karaokeRoomReady:false,karaokeBusy:false,karaokeRoomRequestId:0};
   const LYRICS_GROUPS=['BE:FIRST','MAZZEL','STARGLOW','HANA','BMSG ALLSTARS'];
-  const LYRICS_UNITS=['ALL','BMSG ALLSTARS','ShowMinorSavage','BMSG POSSE','BMSG EAST','BMSG WEST','BMSG SKY','BMSG GAIA','BMSG MARINE','BMSG STRIKERS','その他ユニット'];
+  const LYRICS_UNITS=['ALL'];
   function renderLyrics(){return document.getElementById('lyricsPageTemplate').innerHTML.replace('__LYRICS_LOADING__',renderUniverseLoading());}
   function applyLyricsData(data){
     lyricsState.catalog=data.songs||[];
     if(Array.isArray(data.mainGroups)){LYRICS_GROUPS.splice(0,LYRICS_GROUPS.length,...data.mainGroups.filter(function(n){return n!=='BMSG ALLSTARS';}),'BMSG ALLSTARS');}
+    if(Array.isArray(data.unitGroups)){const tail=['ShowMinorSavage','BMSG ALLSTARS'];LYRICS_UNITS.splice(0,LYRICS_UNITS.length,'ALL',...data.unitGroups.filter(function(n){return n!=='ALL'&&tail.indexOf(n)<0;}),...tail,'その他ユニット');}
     const units=[...new Set(lyricsState.catalog.filter(function(s){return s.category==='UNIT';}).map(function(s){return s.unitCategory;}))];units.forEach(function(n){if(n&&!LYRICS_UNITS.includes(n))LYRICS_UNITS.push(n);});
     lyricsState.partsBySong=data.partsBySong||{};
     lyricsState.groupColors=data.groupColors||{};
