@@ -210,8 +210,11 @@
       karaokeSongTopNavigation_()+'<div class="karaoke-title"><h2 class="ui-heading-lg">カラオケ設定</h2></div>'+
       '<section class="karaoke-user-settings">'+karaokeState.users.map(function(user){
         return '<article><h3 class="ui-heading">'+escapeLyrics(user.displayName)+'</h3><div class="karaoke-chips">'+singers.map(function(singer){
-          const checked=karaokeState.assignments[singer.key]===user.userId?' checked':'';
-          return '<label class="ui-chip ui-chip-accent" style="--accent:'+escapeLyrics(singer.color||'var(--ui-line-strong)')+'"><input type="checkbox"'+checked+' onchange="toggleKaraokeSinger(\''+encodeURIComponent(singer.key)+'\',\''+user.userId+'\',this)"><b>'+escapeLyrics(singer.name)+'</b></label>';
+          const owner=karaokeState.assignments[singer.key];
+          const checked=owner===user.userId?' checked':'';
+          // 別の人に選ばれているメンバーはグレーアウトして選べない
+          const locked=!!owner&&owner!==user.userId;
+          return '<label class="ui-chip ui-chip-accent'+(locked?' is-locked':'')+'" style="--accent:'+escapeLyrics(singer.color||'var(--ui-line-strong)')+'"><input type="checkbox"'+checked+(locked?' disabled':'')+' onchange="toggleKaraokeSinger(\''+encodeURIComponent(singer.key)+'\',\''+user.userId+'\',this)"><b>'+escapeLyrics(singer.name)+'</b></label>';
         }).join('')+'</div></article>';
       }).join('')+'</section>'+
       '<div class="karaoke-actions"><button class="ui-btn karaoke-random" type="button" onclick="randomizeKaraoke()">ランダム振り分け</button><button class="ui-btn karaoke-reset" type="button" onclick="resetKaraoke()">リセット</button><button class="ui-btn ui-btn-solid karaoke-start" type="button" onclick="startKaraoke()">カラオケ開始</button></div>';
