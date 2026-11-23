@@ -513,7 +513,8 @@ function readCoverSheetFromSpreadsheet_(ss, name) {
 }
 
 function buildCoverGroups_(snapshot) {
-  return snapshot.groups.filter(function(g){return String(g.RecordStatus||'ACTIVE')!=='ARCHIVED';}).slice().sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);}).map(function(g){return {groupId:asId_(g.GroupID),groupName:String(g.GroupName||''),color:normalizeHex_(g.ColorHex,'#9cecff')};});
+  // G から始まるグループと、例外の BMSG ALLSTARS だけ出す（U の各ユニットは出さない）
+  return snapshot.groups.filter(function(g){return String(g.RecordStatus||'ACTIVE')!=='ARCHIVED'&&(String(g.GroupID||'').startsWith('G')||String(g.GroupName||'').trim()==='BMSG ALLSTARS');}).slice().sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);}).map(function(g){return {groupId:asId_(g.GroupID),groupName:String(g.GroupName||''),color:normalizeHex_(g.ColorHex,'#9cecff')};});
 }
 function requireCoverGroup_(snapshot, groupId) {
   const row=snapshot.groups.find(function(g){return asId_(g.GroupID)===groupId&&String(g.RecordStatus||'ACTIVE')!=='ARCHIVED';});
