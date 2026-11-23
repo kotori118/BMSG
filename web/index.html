@@ -1399,7 +1399,7 @@
   .card-back-face,.card-front-face{-webkit-backface-visibility:hidden!important;backface-visibility:hidden!important;outline:0!important;}
   .card-back-face{transform:rotateY(0deg) translateZ(.6px)!important;}
   .card-front-face{transform:rotateY(180deg) translateZ(.6px)!important;background:transparent!important;border:0!important;box-shadow:none!important;}
-  .card-front-face img{border-radius:19px!important;display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;}
+  .card-front-face img{display:block;width:100%;height:100%;object-fit:cover;border-radius:0;}
   .card-reveal.is-revealed .card-back-face{visibility:hidden;transition:visibility 0s linear .44s;}
   .card-reveal.is-rarity-burst .card-flip-wrap::before{opacity:1!important;}
   .card-reveal:not(.is-rarity-burst) .card-flip-wrap::before{opacity:0!important;}
@@ -1424,7 +1424,6 @@
   @media (prefers-reduced-motion:reduce){.card-shooting-star{display:none!important;}}
   .card-flip-wrap,.card-flip-inner,.card-front-face{background:transparent!important;}
   .card-front-face{border:0!important;box-shadow:none!important;overflow:hidden!important;}
-  .card-front-face img{position:absolute!important;left:-12.5%!important;top:-12.5%!important;width:125%!important;height:125%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;transform:none!important;border-radius:16px!important;}
   .card-reveal.is-new-card .card-front-face::after{content:'NEW';position:absolute;z-index:5;left:12px;top:12px;padding:7px 11px 6px;border-radius:999px;font:800 10px var(--font-display),var(--font-body),sans-serif;letter-spacing:.12em;color:#fff;background:linear-gradient(145deg,rgba(24,31,38,.94),rgba(5,8,12,.96));border:1px solid color-mix(in srgb,var(--rarity-accent,#9cecff) 72%,white 8%);box-shadow:0 4px 16px rgba(0,0,0,.34),0 0 14px var(--rarity-soft,rgba(156,236,255,.18));}
   .card-page.is-gacha-mode,.card-page.is-gacha-mode .card-app,.card-page.is-gacha-mode .card-gacha-scene{overscroll-behavior-y:auto;touch-action:pan-y;}
   .card-reveal.is-open{overscroll-behavior:none;touch-action:none;}
@@ -1444,9 +1443,9 @@
   @keyframes cardDeckShine { 0%, 55% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
 
   /* 引く：ため（裏面が光って揺れる）→ 確定演出（レア度の色）→ めくる */
+  /* SSR だけくるくる回ってからめくる（回転の終わりは表向き） */
+  .card-reveal.is-spin .card-flip-inner { animation: cardSpinTurn 1.2s cubic-bezier(.2,.7,.2,1) forwards; }
   .card-reveal.is-charging .card-flip-wrap { animation: cardCharge .6s ease-in-out infinite !important; filter: drop-shadow(0 0 18px rgba(255,255,255,.35)); }
-  .card-reveal.is-hint .card-flip-wrap { animation: cardShake .1s linear infinite !important; }
-  .card-reveal.is-hint.hint-ssr .card-flip-wrap { animation-duration: .07s !important; }
   .card-reveal.hint-n .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(255,255,255,.6)); }
   .card-reveal.hint-r .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(214,138,72,.95)) drop-shadow(0 0 48px rgba(214,138,72,.5)); }
   .card-reveal.hint-sr .card-flip-wrap { filter: drop-shadow(0 0 24px rgba(214,228,250,1)) drop-shadow(0 0 60px rgba(170,200,255,.6)); }
@@ -1503,6 +1502,7 @@
   /* Card-local authority retained from cross-screen audit: persistent pre-draw UI is star-free. */
 </style>
 <style>
+@keyframes cardSpinTurn{from{transform:rotateY(0deg)}to{transform:rotateY(1260deg)}}
 @keyframes cardRayBurst{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}30%{opacity:.75}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2) rotate(40deg)}}
 @keyframes cardRayBurstGold{0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(0)}25%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(1.4) rotate(90deg)}}
 @keyframes cardQuake{0%,100%{transform:translate(0,0) rotate(0)}20%{transform:translate(-7px,3px) rotate(-1.2deg)}40%{transform:translate(7px,-3px) rotate(1.2deg)}60%{transform:translate(-4px,2px) rotate(-.6deg)}80%{transform:translate(3px,-1px) rotate(.4deg)}}
@@ -3518,6 +3518,10 @@
 </template>
 
 <!-- CardPage.html -->
+<style>
+  /* 戻るは「もう一度引く」の下 */
+  .card-reveal-stage .card-reveal-back { position: static; margin-top: 14px; }
+</style>
 <template id="cardPageTemplate">
   <section class="view card-page" id="cardPageRoot">
     <header class="card-header">
@@ -3540,7 +3544,6 @@
     <div class="card-reveal-burst" aria-hidden="true"></div>
     <div class="card-reveal-meteors" aria-hidden="true"></div>
     <div class="card-reveal-sparks" aria-hidden="true"></div>
-    <button type="button" class="ui-back card-reveal-back" data-keep-back onclick="closeCardReveal()" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
     <div class="card-reveal-stage">
       <div class="card-reveal-kicker" id="cardRevealKicker"></div>
       <div class="card-flip-wrap" id="cardFlipWrap">
@@ -3561,6 +3564,7 @@
       <div class="card-result-actions" id="cardResultActions">
         <button type="button" class="ui-btn ui-btn-solid" onclick="drawTradingCardFromReveal()">もう一度引く</button>
       </div>
+      <button type="button" class="ui-back card-reveal-back" data-keep-back onclick="closeCardReveal()" aria-label="戻る"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
     </div>
   </div>
 
@@ -6581,9 +6585,10 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const button=document.createElement('button');
     button.type='button';
     button.className='ui-btn ui-btn-icon ui-btn-ghost karaoke-favorite-star'+(karaokeFavoriteState.setupApplied?' is-applied':'');
-    button.textContent=karaokeFavoriteState.setupApplied?'★':'☆';
-    button.setAttribute('aria-label',karaokeFavoriteState.setupApplied?'推しセット適用済み':'推しセットを適用');
-    button.onclick=applyKaraokeFavoriteSet;
+    const applied=karaokeFavoriteState.setupApplied;
+    button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="'+(applied?'currentColor':'none')+'" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12.00 3.00 L14.59 8.44 L20.56 9.22 L16.18 13.36 L17.29 19.28 L12.00 16.40 L6.71 19.28 L7.82 13.36 L3.44 9.22 L9.41 8.44 Z"/></svg>';
+    button.setAttribute('aria-label',applied?'推しセット適用済み（押すと解除）':'推しセットを適用');
+    button.onclick=toggleKaraokeFavoriteSet;
     title.appendChild(button);
   }
 
@@ -6599,6 +6604,17 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     karaokeFavoriteState.setupAssignments=map;
     renderKaraokeSetup();
     if(typeof showToast==='function')showToast(group.groupName+' の推しセットを適用しました');
+  }
+
+  // 星：未適用なら適用、適用済みなら解除して元に戻す
+  function toggleKaraokeFavoriteSet(){
+    if(!karaokeFavoriteState.setupApplied){applyKaraokeFavoriteSet();return;}
+    karaokeState.assignments={};
+    karaokeFavoriteState.setupApplied=false;
+    karaokeFavoriteState.setupGroupId='';
+    karaokeFavoriteState.setupAssignments=null;
+    renderKaraokeSetup();
+    if(typeof showToast==='function')showToast('推しセットを解除しました');
   }
 
   function applyKaraokeFavoriteSet(){
@@ -6989,11 +7005,9 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(legacy)legacy.textContent='';
     const startedAt=(window.performance&&performance.now)?performance.now():Date.now();
     const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // ため（最低1.5秒、裏面が光って揺れる）→ 確定演出（裏面がレア度の色で光る）→ めくる
-    const charge=reduced?0:Math.max(0,1500-(startedAt-(cardState.pendingAt||startedAt)));
-    const hint=reduced?0:({ssr:1200,sr:900,r:650}[rarity]||450);
-    const revealDelay=reduced?0:charge+hint+940;
-    if(!reduced)window.setTimeout(function(){overlay.classList.remove('is-charging');overlay.classList.add('is-hint','hint-'+rarity);},charge);
+    // シンプルに：めくる。SSR だけ回転してからめくる。SR はめくった後に光る。
+    const spin=!reduced&&rarity==='ssr';
+    const revealDelay=reduced?0:(spin?1300:600);
 
     function showBadgeAfterFace(){
       if(!isNew||!overlay)return;
@@ -7012,15 +7026,14 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(legacy)legacy.textContent='';
     const kicker=document.getElementById('cardRevealKicker');
 
+    overlay.classList.remove('is-charging');
+    if(spin)overlay.classList.add('is-spin');
+    overlay.classList.add('is-revealed');
     window.setTimeout(function(){
-      overlay.classList.remove('is-charging','is-hint');
-      overlay.classList.add('is-revealed');
-      window.setTimeout(function(){
-        overlay.classList.add('rarity-'+rarity,'is-rarity-burst');
-        const labels={n:'NORMAL SIGNAL',r:'BRONZE METEOR',sr:'SILVER NEBULA',ssr:'GOLD SUPERNOVA'};
-        if(kicker)kicker.textContent=labels[rarity]||'';
-      },reduced?0:520);
-    },reduced?0:charge+hint);
+      overlay.classList.add('rarity-'+rarity,'is-rarity-burst');
+      const labels={n:'NORMAL SIGNAL',r:'BRONZE METEOR',sr:'SILVER NEBULA',ssr:'GOLD SUPERNOVA'};
+      if(kicker)kicker.textContent=labels[rarity]||'';
+    },reduced?0:(spin?1100:520));
 
     if(isNew&&image){
       if(image.complete&&image.naturalWidth>0) showBadgeAfterFace();

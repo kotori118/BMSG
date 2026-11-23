@@ -106,7 +106,7 @@
   .card-back-face,.card-front-face{-webkit-backface-visibility:hidden!important;backface-visibility:hidden!important;outline:0!important;}
   .card-back-face{transform:rotateY(0deg) translateZ(.6px)!important;}
   .card-front-face{transform:rotateY(180deg) translateZ(.6px)!important;background:transparent!important;border:0!important;box-shadow:none!important;}
-  .card-front-face img{border-radius:19px!important;display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;}
+  .card-front-face img{display:block;width:100%;height:100%;object-fit:cover;border-radius:0;}
   .card-reveal.is-revealed .card-back-face{visibility:hidden;transition:visibility 0s linear .44s;}
   .card-reveal.is-rarity-burst .card-flip-wrap::before{opacity:1!important;}
   .card-reveal:not(.is-rarity-burst) .card-flip-wrap::before{opacity:0!important;}
@@ -131,7 +131,6 @@
   @media (prefers-reduced-motion:reduce){.card-shooting-star{display:none!important;}}
   .card-flip-wrap,.card-flip-inner,.card-front-face{background:transparent!important;}
   .card-front-face{border:0!important;box-shadow:none!important;overflow:hidden!important;}
-  .card-front-face img{position:absolute!important;left:-12.5%!important;top:-12.5%!important;width:125%!important;height:125%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;transform:none!important;border-radius:16px!important;}
   .card-reveal.is-new-card .card-front-face::after{content:'NEW';position:absolute;z-index:5;left:12px;top:12px;padding:7px 11px 6px;border-radius:999px;font:800 10px var(--font-display),var(--font-body),sans-serif;letter-spacing:.12em;color:#fff;background:linear-gradient(145deg,rgba(24,31,38,.94),rgba(5,8,12,.96));border:1px solid color-mix(in srgb,var(--rarity-accent,#9cecff) 72%,white 8%);box-shadow:0 4px 16px rgba(0,0,0,.34),0 0 14px var(--rarity-soft,rgba(156,236,255,.18));}
   .card-page.is-gacha-mode,.card-page.is-gacha-mode .card-app,.card-page.is-gacha-mode .card-gacha-scene{overscroll-behavior-y:auto;touch-action:pan-y;}
   .card-reveal.is-open{overscroll-behavior:none;touch-action:none;}
@@ -151,9 +150,9 @@
   @keyframes cardDeckShine { 0%, 55% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
 
   /* 引く：ため（裏面が光って揺れる）→ 確定演出（レア度の色）→ めくる */
+  /* SSR だけくるくる回ってからめくる（回転の終わりは表向き） */
+  .card-reveal.is-spin .card-flip-inner { animation: cardSpinTurn 1.2s cubic-bezier(.2,.7,.2,1) forwards; }
   .card-reveal.is-charging .card-flip-wrap { animation: cardCharge .6s ease-in-out infinite !important; filter: drop-shadow(0 0 18px rgba(255,255,255,.35)); }
-  .card-reveal.is-hint .card-flip-wrap { animation: cardShake .1s linear infinite !important; }
-  .card-reveal.is-hint.hint-ssr .card-flip-wrap { animation-duration: .07s !important; }
   .card-reveal.hint-n .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(255,255,255,.6)); }
   .card-reveal.hint-r .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(214,138,72,.95)) drop-shadow(0 0 48px rgba(214,138,72,.5)); }
   .card-reveal.hint-sr .card-flip-wrap { filter: drop-shadow(0 0 24px rgba(214,228,250,1)) drop-shadow(0 0 60px rgba(170,200,255,.6)); }
@@ -210,6 +209,7 @@
   /* Card-local authority retained from cross-screen audit: persistent pre-draw UI is star-free. */
 </style>
 <style>
+@keyframes cardSpinTurn{from{transform:rotateY(0deg)}to{transform:rotateY(1260deg)}}
 @keyframes cardRayBurst{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}30%{opacity:.75}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2) rotate(40deg)}}
 @keyframes cardRayBurstGold{0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(0)}25%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(1.4) rotate(90deg)}}
 @keyframes cardQuake{0%,100%{transform:translate(0,0) rotate(0)}20%{transform:translate(-7px,3px) rotate(-1.2deg)}40%{transform:translate(7px,-3px) rotate(1.2deg)}60%{transform:translate(-4px,2px) rotate(-.6deg)}80%{transform:translate(3px,-1px) rotate(.4deg)}}

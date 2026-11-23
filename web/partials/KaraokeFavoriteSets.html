@@ -46,9 +46,10 @@
     const button=document.createElement('button');
     button.type='button';
     button.className='ui-btn ui-btn-icon ui-btn-ghost karaoke-favorite-star'+(karaokeFavoriteState.setupApplied?' is-applied':'');
-    button.textContent=karaokeFavoriteState.setupApplied?'★':'☆';
-    button.setAttribute('aria-label',karaokeFavoriteState.setupApplied?'推しセット適用済み':'推しセットを適用');
-    button.onclick=applyKaraokeFavoriteSet;
+    const applied=karaokeFavoriteState.setupApplied;
+    button.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true" fill="'+(applied?'currentColor':'none')+'" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12.00 3.00 L14.59 8.44 L20.56 9.22 L16.18 13.36 L17.29 19.28 L12.00 16.40 L6.71 19.28 L7.82 13.36 L3.44 9.22 L9.41 8.44 Z"/></svg>';
+    button.setAttribute('aria-label',applied?'推しセット適用済み（押すと解除）':'推しセットを適用');
+    button.onclick=toggleKaraokeFavoriteSet;
     title.appendChild(button);
   }
 
@@ -64,6 +65,17 @@
     karaokeFavoriteState.setupAssignments=map;
     renderKaraokeSetup();
     if(typeof showToast==='function')showToast(group.groupName+' の推しセットを適用しました');
+  }
+
+  // 星：未適用なら適用、適用済みなら解除して元に戻す
+  function toggleKaraokeFavoriteSet(){
+    if(!karaokeFavoriteState.setupApplied){applyKaraokeFavoriteSet();return;}
+    karaokeState.assignments={};
+    karaokeFavoriteState.setupApplied=false;
+    karaokeFavoriteState.setupGroupId='';
+    karaokeFavoriteState.setupAssignments=null;
+    renderKaraokeSetup();
+    if(typeof showToast==='function')showToast('推しセットを解除しました');
   }
 
   function applyKaraokeFavoriteSet(){
