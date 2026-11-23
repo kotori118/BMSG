@@ -233,6 +233,8 @@
     }
     if(input.checked)karaokeState.assignments[key]=userId;
     else if(current===userId)delete karaokeState.assignments[key];
+    // 他の枠のグレーアウトを更新する
+    renderKaraokeSetup();
   }
 
   function shuffleKaraoke_(items){
