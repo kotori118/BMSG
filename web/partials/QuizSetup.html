@@ -174,7 +174,7 @@
   // コース一覧がまだ届かないときの仮の一覧。グループはDBの一覧（LYRICS_GROUPS）から作る
   function quizFallbackCourses_(){
     const groups=(typeof LYRICS_GROUPS!=='undefined'?LYRICS_GROUPS:[]).filter(function(n){return n!=='BMSG ALLSTARS';}).map(function(n){return {value:String(n).toUpperCase(),label:String(n)};});
-    return groups.concat([{value:'UNIT',label:'ユニット'},{value:'ALL',label:'全部'}]);
+    return groups.concat([{value:'ALL',label:'BMSG ALLSTARS'}]);
   }
 
   renderQuizSetup_=function(){
