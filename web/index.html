@@ -744,11 +744,9 @@
   .ui-chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid var(--ui-line-strong); border-radius: 999px; background: transparent; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 700; cursor: pointer; }
   .ui-chip:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked)) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
   .ui-chip > input[type="checkbox"], .ui-chip > input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
-  /* メンバーカラーの切り替え（--accent に色）：枠と点がその色、選ぶと色で薄く塗って ✓ */
+  /* メンバーカラーの切り替え（--accent に色）：枠がその色、選ぶと色で薄く塗る */
   .ui-chip.ui-chip-accent { gap: 8px; border: 1.5px solid var(--accent, var(--ui-line-strong)); }
-  .ui-chip.ui-chip-accent::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent, var(--ui-text)); }
   .ui-chip.ui-chip-accent:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked)) { border-color: var(--accent, var(--ui-text)); background: color-mix(in srgb, var(--accent, var(--ui-text)) 26%, var(--ui-bg)); color: var(--ui-text); box-shadow: inset 0 0 0 1px var(--accent, var(--ui-text)); }
-  .ui-chip.ui-chip-accent:is([aria-pressed="true"], .is-active, .is-selected, .is-on, .active, :has(input:checked))::after { content: "✓"; font-weight: 900; }
   /* ON/OFF の小さな表示 */
   /* 小さな札（状態・種類） */
   .ui-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0 8px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
@@ -1504,10 +1502,12 @@
 <style>
   /* Card-local authority retained from cross-screen audit: persistent pre-draw UI is star-free. */
 </style>
+<style>
 @keyframes cardRayBurst{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}30%{opacity:.75}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2) rotate(40deg)}}
 @keyframes cardRayBurstGold{0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(0)}25%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(1.4) rotate(90deg)}}
 @keyframes cardQuake{0%,100%{transform:translate(0,0) rotate(0)}20%{transform:translate(-7px,3px) rotate(-1.2deg)}40%{transform:translate(7px,-3px) rotate(1.2deg)}60%{transform:translate(-4px,2px) rotate(-.6deg)}80%{transform:translate(3px,-1px) rotate(.4deg)}}
 @keyframes cardQuakeSmall{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
+</style>
 
 <!-- PokerStyles.html -->
 <style>
