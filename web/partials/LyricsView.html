@@ -15,11 +15,6 @@
     return `<header class="ui-divider lyx-head">${lyxBack(backHandler)}<h2 class="ui-title ui-title-sm lyx-title">${escapeLyrics(title)}</h2></header>`;
   }
 
-  // ユニット写真（BMSG ALLSTARSの中のユニット）。グループの写真は共通（AppHelpers の universeGroupPhotoUrl）
-  const LYRICS_UNIT_PHOTO_IDS = {
-    'ShowMinorSavage': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
-  };
-
   // 一覧（グループ・カラオケルーム・ガチャ）
   function showLyricsGroups(pushUrl) {
     lyricsState.group = ''; lyricsState.unit = ''; lyricsState.song = null;
@@ -80,7 +75,8 @@
       lyricsGroupHeader_('BMSG ALLSTARS', 'グループ選択に戻る', 'showLyricsGroups()') +
       `<section class="lyx-units">${units.map(function (unit) {
         const songs = unitSongs(unit).slice().sort(function (a, b) { return songTime(b) - songTime(a) || (Number(b.songId) || 0) - (Number(a.songId) || 0); });
-        const unitPhoto = LYRICS_UNIT_PHOTO_IDS[unit] ? `<div class="ui-photo-banner lyx-unit-photo" style="--ui-photo:url('https://lh3.googleusercontent.com/d/${LYRICS_UNIT_PHOTO_IDS[unit]}')" aria-hidden="true"></div>` : '';
+        const unitPhotoUrl = universeGroupPhotoUrl(unit);
+        const unitPhoto = unitPhotoUrl ? `<div class="ui-photo-banner lyx-unit-photo" style="--ui-photo:url('${unitPhotoUrl}')" aria-hidden="true"></div>` : '';
         return `<section class="lyx-unit">${unitPhoto}<h3 class="ui-heading">${escapeLyrics(unit)}</h3><div class="ui-list lyx-list">${songs.map(function (song) { return lyxRow(song.title, `openLyricsAllStarsSong('${lyricArg(unit)}','${lyricArg(song.songId)}')`); }).join('')}</div></section>`;
       }).join('')}</section>`;
     if (typeof syncKaraokeLatestShortcut_ === 'function') syncKaraokeLatestShortcut_();

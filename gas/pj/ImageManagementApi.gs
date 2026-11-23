@@ -321,3 +321,129 @@ function imageMgmtPreviewUrl_(fileId) {
     return '';
   }
 }
+
+// ---- グループ写真（09_Images の行を流用。MemberID は "GROUP:グループ名"、Rarity は "GROUP"）----
+// 既存のメンバー画像の行・集計には影響しない（レア度が SSR/SR/R/N ではないため）。
+const IMAGE_MGMT_GROUP_RARITY_ = 'GROUP';
+const IMAGE_MGMT_GROUP_PREFIX_ = 'GROUP:';
+
+// 画面表示用：グループ名 → Drive の画像ID
+function getGroupPhotos() {
+  const core = SpreadsheetApp.openById(UNIVERSE_CONFIG.CORE_DB_ID);
+  const table = imageMgmtReadTable_(core.getSheetByName(UNIVERSE_CONFIG.SHEETS.IMAGES));
+  const photos = {};
+  table.rows.forEach(function(row){
+    if (String(row.record.Rarity || '').trim().toUpperCase() !== IMAGE_MGMT_GROUP_RARITY_) return;
+    const key = String(row.record.MemberID || '').trim();
+    if (key.indexOf(IMAGE_MGMT_GROUP_PREFIX_) !== 0) return;
+    const fileId = String(row.record.DriveFileID || '').trim();
+    if (fileId) photos[key.slice(IMAGE_MGMT_GROUP_PREFIX_.length)] = fileId;
+  });
+  return {photos: photos};
+}
+
+function saveGroupPhotoManagement(payload) {
+  payload = payload || {};
+  normalizeUniverseStateUserId_(payload.userId);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  let newFile = null;
+  let targetCell = null;
+  let dbUpdated = false;
+  try {
+    const core = SpreadsheetApp.openById(UNIVERSE_CONFIG.CORE_DB_ID);
+    const groupName = String(payload.groupName || '').trim();
+    const groups = imageMgmtReadObjects_(core.getSheetByName(UNIVERSE_CONFIG.SHEETS.GROUPS));
+    if (!groupName || !groups.some(function(row){ return String(row.GroupName || '').trim() === groupName; })) {
+      throw new Error('グループが見つかりません。');
+    }
+    const mimeType = String(payload.mimeType || '').trim().toLowerCase();
+    if (!IMAGE_MGMT_MIME_EXT_[mimeType]) throw new Error('この画像形式には対応していません。JPEGまたはPNGの画像を選択してください。');
+    const base64 = String(payload.base64 || '').replace(/^data:[^;]+;base64,/, '');
+    if (!base64) throw new Error('画像データを読み込めませんでした。');
+
+    const existing = imageMgmtFindGroupRow_(core, groupName);
+    const oldFileId = existing ? String(existing.record.DriveFileID || '').trim() : '';
+    const oldFileExists = oldFileId ? imageMgmtDriveFileExists_(oldFileId) : false;
+    if (oldFileExists) {
+      if (!payload.replace) throw new Error('既存のグループ写真があります。差し替えるか確認してください。');
+      if (String(payload.expectedOldFileId || '') !== oldFileId) throw new Error('画像データが更新されています。画面を開き直して確認してください。');
+    }
+
+    const folder = DriveApp.getFolderById(imageMgmtGetFolderId_());
+    const extension = imageMgmtResolveExtension_(payload.fileName, mimeType);
+    const blob = Utilities.newBlob(Utilities.base64Decode(base64), mimeType, '[GROUP]' + groupName + '.' + extension);
+    newFile = folder.createFile(blob);
+
+    const target = existing || imageMgmtAppendGroupRow_(core, groupName);
+    targetCell = target.sheet.getRange(target.rowNumber, target.map.DriveFileID + 1);
+    targetCell.setValue(newFile.getId());
+    SpreadsheetApp.flush();
+    if (String(targetCell.getDisplayValue()).trim() !== newFile.getId()) throw new Error('グループ写真の登録を確認できませんでした。');
+    dbUpdated = true;
+
+    if (oldFileId && oldFileId !== newFile.getId() && oldFileExists) {
+      try {
+        DriveApp.getFileById(oldFileId).setTrashed(true);
+      } catch (trashError) {
+        targetCell.setValue(oldFileId);
+        SpreadsheetApp.flush();
+        dbUpdated = false;
+        try { newFile.setTrashed(true); } catch (ignore) {}
+        throw new Error('古い画像を安全に整理できなかったため、差し替えを取り消しました。');
+      }
+    }
+    return {ok: true, message: 'グループ写真を登録しました。', groupName: groupName, driveFileId: newFile.getId()};
+  } catch (error) {
+    if (newFile && !dbUpdated) {
+      try { newFile.setTrashed(true); } catch (ignore) {}
+    }
+    throw error;
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function imageMgmtFindGroupRow_(core, groupName) {
+  const table = imageMgmtReadTable_(core.getSheetByName(UNIVERSE_CONFIG.SHEETS.IMAGES));
+  const key = IMAGE_MGMT_GROUP_PREFIX_ + groupName;
+  const matches = table.rows.filter(function(row){
+    return String(row.record.Rarity || '').trim().toUpperCase() === IMAGE_MGMT_GROUP_RARITY_ &&
+      String(row.record.MemberID || '').trim() === key;
+  });
+  if (matches.length > 1) throw new Error('同じグループの写真データが重複しています。修復してください。');
+  const match = matches[0] || null;
+  if (match) match.map = table.map;
+  return match;
+}
+
+function imageMgmtAppendGroupRow_(core, groupName) {
+  const sheet = core.getSheetByName(UNIVERSE_CONFIG.SHEETS.IMAGES);
+  const table = imageMgmtReadTable_(sheet);
+  ['ImageID','MemberID','Rarity','DriveFileID','IsProfileMain'].forEach(function(name){
+    if (table.map[name] == null) throw new Error('09_Images に必要な列「' + name + '」がありません。');
+  });
+  let liveMax = 0;
+  table.rows.forEach(function(row){
+    const imageNo = Number(asId_(row.record.ImageID));
+    if (Number.isFinite(imageNo)) liveMax = Math.max(liveMax, imageNo);
+  });
+  const reservation = reserveUniverseId_('IMAGE','GLOBAL',liveMax,null,'BMSG-PJ','グループ写真行: ' + groupName);
+  try {
+    const values = new Array(table.headers.length).fill('');
+    values[table.map.ImageID] = reservation.issuedId;
+    values[table.map.MemberID] = IMAGE_MGMT_GROUP_PREFIX_ + groupName;
+    values[table.map.Rarity] = IMAGE_MGMT_GROUP_RARITY_;
+    values[table.map.DriveFileID] = '';
+    values[table.map.IsProfileMain] = false;
+    const rowNumber = table.rows.reduce(function(maxRow, row){ return Math.max(maxRow, row.rowNumber); }, 1) + 1;
+    if (rowNumber > sheet.getMaxRows()) sheet.insertRowsAfter(sheet.getMaxRows(), rowNumber - sheet.getMaxRows());
+    sheet.getRange(rowNumber, 1, 1, table.headers.length).setValues([values]);
+    SpreadsheetApp.flush();
+    finalizeUniverseIdReservation_(reservation, true, '09_Images グループ写真行作成完了');
+    return {sheet: sheet, rowNumber: rowNumber, map: table.map, record: {}};
+  } catch (error) {
+    try { finalizeUniverseIdReservation_(reservation, false, '09_Images グループ写真行作成失敗'); } catch (ignore) {}
+    throw error;
+  }
+}

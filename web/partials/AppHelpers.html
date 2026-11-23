@@ -35,9 +35,9 @@
       }).join('') + '</div>';
     }
 
-    // グループ写真（Driveの画像ID・共有は「リンクを知っている全員」）。歌詞・カバーなど全画面で使う。
-    // 管理画面で画像を登録できるようになるまでは、ここで管理する。
-    const UNIVERSE_GROUP_PHOTO_IDS = {
+    // グループ写真。正は DB（管理画面の「グループ写真」で登録し、getGroupPhotos で読む）。
+    // DBに未登録のグループは下の旧ID（移行用）を使う。全グループを管理画面で登録できたら旧IDの表を消す。
+    const UNIVERSE_GROUP_PHOTO_LEGACY_IDS = {
       'BE:FIRST': '1DQ6_xTcv1-jPQtDrMgi923Xrxa26y0rW',
       'MAZZEL': '1_B6mMgMqOzUhB0wrsTO2yIGxKmJKtbpX',
       'STARGLOW': '19IH9HqS0lMV9S-B11yFhTqMM4Zxq8OMX',
@@ -45,10 +45,21 @@
       'BMSG ALLSTARS': '1Mg_mIzUzb62SpvPqrYrmffuRRldHBroO',
       'ShowMinorSavage': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
     };
+    let universeGroupPhotoIds = null;
 
     function universeGroupPhotoUrl(name) {
-      const id = UNIVERSE_GROUP_PHOTO_IDS[String(name || '')];
+      const key = String(name || '');
+      const id = (universeGroupPhotoIds && universeGroupPhotoIds[key]) || UNIVERSE_GROUP_PHOTO_LEGACY_IDS[key];
       return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
+    }
+
+    function loadUniverseGroupPhotos(done) {
+      try {
+        google.script.run.withSuccessHandler(function (data) {
+          universeGroupPhotoIds = (data && data.photos) || {};
+          if (done) done();
+        }).withFailureHandler(function () { if (done) done(); }).getGroupPhotos();
+      } catch (e) { if (done) done(); }
     }
 
     // ユニット（グループIDが U で始まる）か。IDがないときは「BMSG 〜」の名前で判断（BMSG ALLSTARS は除く）

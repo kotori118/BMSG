@@ -65,7 +65,7 @@
     getCoverMakerBootstrap: 1, getCoverSourceSongs: 1, getCoverLibrary: 1, getCoverProjects: 1,
     getPokerHighlights: 1, getPerformanceTimerBootstrap: 1, getKaraokeFavoriteSettings: 1,
     getManagementPageAccess: 1, getSongLyricsManagementBootstrap: 1, getSongLyricsManagementSong: 1,
-    getImageManagementBootstrap: 1, getProfileManagementBootstrap: 1, getProfileManagementMember: 1,
+    getImageManagementBootstrap: 1, getGroupPhotos: 1, getProfileManagementBootstrap: 1, getProfileManagementMember: 1,
     getCatalogManagementBootstrap: 1, getCatalogManagementProfileFields: 1, getManagementOperationsBootstrap: 1
   };
   var memoryCache = {};

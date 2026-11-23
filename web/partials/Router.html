@@ -68,8 +68,9 @@
     renderRoute(page, params || {});
     if (userId && !preferencesReady && typeof loadUniverseUserPreferences_ === 'function') loadUniverseUserPreferences_(userId);
     // よく使うデータを、最初の画面を出した後の空き時間に先読みする（次に開く画面がすぐ出る）
+    if (typeof loadUniverseGroupPhotos === 'function') loadUniverseGroupPhotos();
     if (google.script.prefetch) setTimeout(function () {
-      google.script.prefetch([['getLyricsCatalog', []], ['getProfileMembers', []], ['getAnalysisBootstrap', []]].concat(userId ? [['getUniverseHomeBootstrap', [userId]], ['getTradingCardBootstrap', [userId]]] : []));
+      google.script.prefetch([['getLyricsCatalog', []], ['getProfileMembers', []], ['getAnalysisBootstrap', []], ['getGroupPhotos', []]].concat(userId ? [['getUniverseHomeBootstrap', [userId]], ['getTradingCardBootstrap', [userId]]] : []));
     }, 1500);
   }
 

@@ -45,6 +45,29 @@
       <button id="imageManagementSubmit" class="ui-btn ui-btn-solid ui-btn-wide image-management-primary" type="submit">画像を登録する</button>
     </form>
 
+    <section class="ui-divider-top image-management-repair image-management-group-photo">
+      <div>
+        <strong class="ui-strong">グループ写真</strong>
+        <small class="ui-muted">グループ一覧・カバーメーカーなどで使う写真です。登録すると全画面に反映されます。</small>
+      </div>
+      <form id="imageGroupPhotoForm" class="image-management-form" onsubmit="return submitGroupPhoto(event)" hidden>
+        <label class="ui-field management-field image-management-field">
+          <span>グループ</span>
+          <select id="imageGroupPhotoGroup" onchange="refreshGroupPhotoStatus()">
+            <option value="">選択してください</option>
+          </select>
+        </label>
+        <p id="imageGroupPhotoStatus" class="ui-muted">グループを選択してください</p>
+        <label class="ui-field management-field image-management-field ui-frame image-management-file-field">
+          <span>画像</span>
+          <input id="imageGroupPhotoFile" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
+          <b id="imageGroupPhotoFileName">JPEGまたはPNGを選択</b>
+        </label>
+        <p id="imageGroupPhotoError" class="ui-text-danger management-error image-management-error" role="alert" hidden></p>
+        <button id="imageGroupPhotoSubmit" class="ui-btn ui-btn-solid ui-btn-wide image-management-primary" type="submit">グループ写真を登録する</button>
+      </form>
+    </section>
+
     <section class="ui-divider-top image-management-repair">
       <div>
         <strong class="ui-strong">画像データを修復</strong>
@@ -126,6 +149,8 @@
     setImageManagementLoading(false);
     document.getElementById('imageManagementForm').hidden = false;
     changeImageManagementGroup();
+    renderGroupPhotoOptions(data.groups);
+    loadUniverseGroupPhotos(function(){ refreshGroupPhotoStatus(); });
   }
 
   function setImageManagementLoading(loading) {
@@ -243,6 +268,55 @@
     setImageManagementBusy_(true);const button=document.getElementById('imageManagementRepairButton');button.disabled=true;
     managementRunner_().withSuccessHandler(function(result){setImageManagementBusy_(false);button.disabled=false;const suffix=result&&result.warnings?'\n判断できない画像が '+result.warnings+' 件あります。':'';showImageManagementToast('画像データを修復しました。更新 '+((result&&result.updated)||0)+' 件。'+suffix);}).withFailureHandler(function(error){setImageManagementBusy_(false);button.disabled=false;showImageManagementError(readImageManagementError(error));}).repairImageManagementData(getUniverseUserId());
   }
+
+  function renderGroupPhotoOptions(groups) {
+    const select = document.getElementById('imageGroupPhotoGroup');
+    if (!select) return;
+    select.innerHTML = '<option value="">選択してください</option>' + (groups||[]).map(function(item){return '<option value="'+escapeImageManagementHtml(item.name)+'">'+escapeImageManagementHtml(item.name)+'</option>';}).join('');
+    document.getElementById('imageGroupPhotoForm').hidden = false;
+    refreshGroupPhotoStatus();
+  }
+
+  function refreshGroupPhotoStatus() {
+    const name = document.getElementById('imageGroupPhotoGroup').value;
+    const node = document.getElementById('imageGroupPhotoStatus');
+    if (!name) { node.textContent = 'グループを選択してください'; return; }
+    const registered = !!(typeof universeGroupPhotoIds !== 'undefined' && universeGroupPhotoIds && universeGroupPhotoIds[name]);
+    node.textContent = registered ? '登録済みです。新しい画像を選ぶと差し替えます。' : '未登録です。';
+  }
+
+  function submitGroupPhoto(event) {
+    event.preventDefault();
+    const name = document.getElementById('imageGroupPhotoGroup').value;
+    const input = document.getElementById('imageGroupPhotoFile');
+    const file = input.files && input.files[0];
+    clearImageManagementError();
+    if (!name || !file) { showGroupPhotoError('グループと画像を選択してください。'); return false; }
+    const registered = !!(universeGroupPhotoIds && universeGroupPhotoIds[name]);
+    if (registered && !window.confirm('登録済みのグループ写真を差し替えますか？')) return false;
+    readImageManagementFile_(file, function(base64){ saveGroupPhoto_(name, file, base64, registered); }, function(error){ showGroupPhotoError(error); });
+    return false;
+  }
+
+  function saveGroupPhoto_(groupName, file, base64, replace) {
+    const button = document.getElementById('imageGroupPhotoSubmit');
+    const expected = (universeGroupPhotoIds && universeGroupPhotoIds[groupName]) || '';
+    button.disabled = true;
+    managementRunner_().withSuccessHandler(function(result){
+      button.disabled = false;
+      managementMutationDone_();
+      universeGroupPhotoIds = null;
+      loadUniverseGroupPhotos(function(){ refreshGroupPhotoStatus(); });
+      document.getElementById('imageGroupPhotoFile').value = '';
+      document.getElementById('imageGroupPhotoFileName').textContent = 'JPEGまたはPNGを選択';
+      showImageManagementToast((result && result.message) || 'グループ写真を登録しました。');
+    }).withFailureHandler(function(error){
+      button.disabled = false;
+      showGroupPhotoError(readImageManagementError(error));
+    }).saveGroupPhotoManagement({userId:getUniverseUserId(), groupName:groupName, mimeType:file.type, fileName:file.name, base64:base64, replace:replace, expectedOldFileId:expected});
+  }
+
+  function showGroupPhotoError(message){const node=document.getElementById('imageGroupPhotoError');if(!node)return;node.textContent=message||'処理に失敗しました。';node.hidden=false;}
 
   function showImageManagementError(message){const node=document.getElementById('imageManagementError');if(!node)return;node.textContent=message||'処理に失敗しました。';node.hidden=false;}
   function clearImageManagementError(){const node=document.getElementById('imageManagementError');if(node){node.textContent='';node.hidden=true;}}

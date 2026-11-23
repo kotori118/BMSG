@@ -331,7 +331,7 @@ function catalogValidateRestoreSnapshot_(snapshot){
     if(!valid)throw new Error(BU1.SHEETS.SONGS+'の参照不整合: SongID '+songId+' / ArtistID '+(artistId||'（空欄）'));
   });
   [BU1.SHEETS.SONG_CREDITS,BU1.SHEETS.LYRICS_PARTS,BU1.SHEETS.METRICS].forEach(function(n){refs(n,'SongID',songs);});
-  const images=byName[BU1.SHEETS.CARDS],h=images.values[0];images.values.slice(1).forEach(function(r){if(id_(r[h.indexOf('ImageID')])&&!members.has(id_(r[h.indexOf('MemberID')])))throw new Error('画像のメンバー参照が不正です。');});
+  const images=byName[BU1.SHEETS.CARDS],h=images.values[0];images.values.slice(1).forEach(function(r){if(String(r[h.indexOf('Rarity')]||'').trim().toUpperCase()==='GROUP')return;if(id_(r[h.indexOf('ImageID')])&&!members.has(id_(r[h.indexOf('MemberID')])))throw new Error('画像のメンバー参照が不正です。');});
   // Histories are retained, so a snapshot may not silently undo their current group labels.
   const groupTable=byName[BU1.SHEETS.GROUPS],nameCol=groupTable.values[0].indexOf('GroupName'),names=new Set(groupTable.values.slice(1).map(function(r){return String(r[nameCol]||'').toUpperCase();}));
   const current=catalogTable_(openCoreSpreadsheet_(),BU1.SHEETS.GROUPS,['GroupName']),currentNames=new Set(current.rows.map(function(r){return String(r.values[current.map.GroupName]).toUpperCase();}));

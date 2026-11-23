@@ -88,11 +88,13 @@ test('every API action resolves to a defined function', () => {
   const names = Object.keys(actions);
   // Favorites and recent history were removed on 2026-11-22.
   const removed = ['getUniverseFavorites', 'setUniverseFavorite', 'recordUniverseActivity'];
-  assert.deepEqual(names.slice().sort(), report.apiActions.filter((n) => !removed.includes(n)).sort());
-  assert.equal(names.length, 96);
+  // Group photos (registered in management, 2026-11-23) are added after the import snapshot.
+  const added = ['getGroupPhotos', 'saveGroupPhotoManagement'];
+  assert.deepEqual(names.slice().sort(), [...report.apiActions.filter((n) => !removed.includes(n)), ...added].sort());
+  assert.equal(names.length, 98);
   for (const n of names) assert.equal(typeof actions[n].fn, 'function', n);
   for (const n of [...report.apiExcluded, ...removed]) assert.ok(!(n in actions), `${n} must not be exposed`);
-  assert.equal(names.filter((n) => actions[n].read).length, 44);
+  assert.equal(names.filter((n) => actions[n].read).length, 45);
 });
 
 test('every DB writer PJ selects by name resolves through universeDbWriter_', () => {
