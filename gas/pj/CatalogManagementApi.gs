@@ -9,7 +9,6 @@ function catalogManagementSiteAccess_(userId) {
 function catalogManagementRefreshCaches_() {
   try {
     clearUniverseCacheKeys_([
-      UNIVERSE_CACHE_KEYS_.ANALYSIS,
       UNIVERSE_CACHE_KEYS_.SEARCH,
       UNIVERSE_CACHE_KEYS_.HOME_LOOKUP,
       UNIVERSE_CACHE_KEYS_.PROFILE_MEMBERS,

@@ -431,7 +431,7 @@ function deleteCoverProject(payload) {
 }
 
 function getCoverCoreSnapshot_() {
-  const ss = SpreadsheetApp.openById(UNIVERSE_CONFIG.CORE_DB_ID);
+  const ss = getCoreSpreadsheet_();
   return {
     groups: readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.GROUPS),
     members: readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.MEMBERS),
@@ -443,7 +443,7 @@ function getCoverCoreSnapshot_() {
 }
 
 function getCoverBootstrapSnapshot_() {
-  const ss = SpreadsheetApp.openById(UNIVERSE_CONFIG.CORE_DB_ID);
+  const ss = getCoreSpreadsheet_();
   return {
     groups: readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.GROUPS),
     members: readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.MEMBERS),
@@ -455,7 +455,7 @@ function getCoverBootstrapSnapshot_() {
 }
 
 function getCoverScopedSnapshot_(groupId, songId) {
-  const ss = SpreadsheetApp.openById(UNIVERSE_CONFIG.CORE_DB_ID);
+  const ss = getCoreSpreadsheet_();
   const sid = asId_(songId);
   return {
     groups: readCoverSheetMatchesFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.GROUPS, 'GroupID', groupId, true),
@@ -502,9 +502,11 @@ function readCoverSheetMatchesFromSpreadsheet_(ss, name, field, expected, compar
 }
 
 function readCoverSheetFromSpreadsheet_(ss, name) {
-  const sheet = ss.getSheetByName(name);
-  if (!sheet) throw new Error('Core DB sheet not found: ' + name);
-  const values = sheet.getDataRange().getValues();
+  const values = universeCoreCached_('sheet-range:' + name, function() {
+    const sheet = ss.getSheetByName(name);
+    if (!sheet) throw new Error('Core DB sheet not found: ' + name);
+    return sheet.getDataRange().getValues();
+  });
   if (values.length < 2) return [];
   const headers = values[0].map(function(v){return String(v || '').trim();});
   return values.slice(1).filter(function(row){return row.some(function(v){return v !== '' && v !== null;});}).map(function(row){

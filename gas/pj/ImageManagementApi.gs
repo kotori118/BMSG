@@ -332,14 +332,12 @@ const IMAGE_MGMT_GROUP_PREFIX_ = 'GROUP:';
 
 // 画面表示用：グループ名 → Drive の画像ID
 function getGroupPhotos() {
-  const core = SpreadsheetApp.openById(UNIVERSE_CONFIG.CORE_DB_ID);
-  const table = imageMgmtReadTable_(core.getSheetByName(UNIVERSE_CONFIG.SHEETS.IMAGES));
   const photos = {};
-  table.rows.forEach(function(row){
-    if (String(row.record.Rarity || '').trim().toUpperCase() !== IMAGE_MGMT_GROUP_RARITY_) return;
-    const key = String(row.record.MemberID || '').trim();
+  readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.IMAGES).forEach(function(record){
+    if (String(record.Rarity || '').trim().toUpperCase() !== IMAGE_MGMT_GROUP_RARITY_) return;
+    const key = String(record.MemberID || '').trim();
     if (key.indexOf(IMAGE_MGMT_GROUP_PREFIX_) !== 0) return;
-    const fileId = String(row.record.DriveFileID || '').trim();
+    const fileId = String(record.DriveFileID || '').trim();
     if (fileId) photos[key.slice(IMAGE_MGMT_GROUP_PREFIX_.length)] = fileId;
   });
   return {photos: photos};

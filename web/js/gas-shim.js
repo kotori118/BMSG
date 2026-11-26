@@ -57,7 +57,7 @@
   var CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // これより古いものは使わず取り直す
   var CACHE_REFRESH_AFTER = 20 * 1000;     // これより新しいものは取り直さない
   var CACHEABLE = {
-    getLyricsCatalog: 1, getLyricsSong: 1, getLyricsSingerOptions: 1,
+    getLyricsCatalog: 1, getLyricsParts: 1, getLyricsSong: 1, getLyricsSingerOptions: 1,
     getAnalysisBootstrap: 1,
     getProfileMembers: 1, getProfileMemberDetail: 1, getProfileMapData: 1, getProfileSearchData: 1, getUniverseMemberCreativeCredits: 1,
     getUniverseHomeBootstrap: 1, getUniverseSettingsBootstrap: 1, getUniverseSearchResults: 1,

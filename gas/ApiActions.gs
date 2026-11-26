@@ -47,6 +47,7 @@ function universeApiActions_() {
     getKaraokeFavoriteSet: { fn: getKaraokeFavoriteSet, read: true },
     getKaraokeFavoriteSettings: { fn: getKaraokeFavoriteSettings, read: true },
     getLyricsCatalog: { fn: getLyricsCatalog, read: true },
+    getLyricsParts: { fn: getLyricsParts, read: true },
     getLyricsSingerOptions: { fn: getLyricsSingerOptions, read: true },
     getLyricsSong: { fn: getLyricsSong, read: true },
     getManagementAuditHistory: { fn: getManagementAuditHistory, read: true },

@@ -1,14 +1,31 @@
 // Originally imported from kotori118/BMSG-PJ LyricsApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 
+// 歌詞の一覧（曲名・グループなど。本文は入れない＝軽い）。本文は getLyricsParts で別に読む。
 function getLyricsCatalog() {
+  return universeCoreCached_('lyrics-catalog', function() {
+    const model = buildLyricsModel_();
+    return {categories: model.categories, mainGroups: model.mainGroups, unitGroups: model.unitGroups, groupColors: model.groupColors, songs: model.songs};
+  });
+}
+
+// 全曲の歌詞本文（曲ID → パートの並び）。一覧を出した後に裏で読む。
+function getLyricsParts() {
+  return universeCoreCached_('lyrics-parts', function() {
+    return {partsBySong: buildLyricsModel_().partsBySong};
+  });
+}
+
+function buildLyricsModel_() {
   const songs = readUniverseSongs_();
   const visibleSongIds = new Set(songs.map(function(song){return asId_(song.SongID);}));
   const parts = readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.LYRICS_PARTS).filter(function(part){return visibleSongIds.has(asId_(part.SongID));});
   const singerMap = buildLyricsSingerMap_();
   const groups=readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.GROUPS);
-  const mainGroups=groups.filter(function(g){return String(g.GroupID||'').startsWith('G')&&String(g.RecordStatus||'ACTIVE')!=='ARCHIVED';}).sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);}).map(function(g){return String(g.GroupName);});
+  const byOrder=function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);};
+  const active=function(g){return String(g.RecordStatus||'ACTIVE')!=='ARCHIVED';};
+  const mainGroups=groups.filter(function(g){return String(g.GroupID||'').startsWith('G')&&active(g);}).sort(byOrder).map(function(g){return String(g.GroupName);});
   // ALLSTARS の中のユニット順（01_Groups の DisplayOrder）。
-  const unitGroups=groups.filter(function(g){return String(g.GroupID||'').startsWith('U')&&String(g.RecordStatus||'ACTIVE')!=='ARCHIVED';}).sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);}).map(function(g){return String(g.GroupName);});
+  const unitGroups=groups.filter(function(g){return String(g.GroupID||'').startsWith('U')&&active(g);}).sort(byOrder).map(function(g){return String(g.GroupName);});
   const groupColors = groups.reduce(function(map,row){
     const name=String(row.GroupName||'').trim();
     const color=String(row.ColorHex||'').trim();

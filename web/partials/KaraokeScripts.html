@@ -31,7 +31,7 @@
 
   function applyKaraokeCatalog(data,params){
     karaokeState.songs=data.songs||[];
-    karaokeState.partsBySong=data.partsBySong||{};
+    if(data.partsBySong){karaokeState.partsBySong=data.partsBySong;}else{karaokeState.partsBySong=lyricsState.partsBySong;ensureLyricsParts_();}
     if(params&&params.mode==='latest'){
       const article='<article aria-hidden="true"><div class="karaoke-owner"><span class="ui-skeleton" style="display:block;width:42%;height:11px"></span></div><p><span class="ui-skeleton" style="display:block;width:88%;height:14px"></span><span class="ui-skeleton" style="display:block;width:64%;height:14px;margin-top:9px"></span></p></article>';
       document.getElementById('karaokeView').innerHTML='<button class="ui-back" type="button" disabled aria-hidden="true"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><div class="karaoke-title"><h2><span class="ui-skeleton" style="display:block;width:58%;height:24px"></span></h2></div><section class="karaoke-lyrics">'+article+article+article+article+'</section><div class="karaoke-song-footer is-single" aria-hidden="true"><button type="button" disabled><span class="ui-skeleton" style="display:block;width:116px;height:12px"></span></button></div>';
@@ -157,6 +157,7 @@
   function karaokeFailure(error){karaokeState.busy=false;showKaraokeError(error);}
 
   function openKaraokeSetup(songId,pushUrl){
+    if(!lyricsState.partsLoaded&&!Object.keys(karaokeState.partsBySong||{}).length){ensureLyricsParts_(function(){openKaraokeSetup(songId,pushUrl);});return;}
     if(typeof clearKaraokeFavoriteApplied==='function')clearKaraokeFavoriteApplied();
     const id=decodeURIComponent(String(songId));
     const meta=karaokeState.songs.find(function(item){return String(item.songId)===id;});
@@ -304,6 +305,7 @@
 
   function openKaraokeResultSong(item){
     if(!item)return;
+    if(!lyricsState.partsLoaded&&!Object.keys(karaokeState.partsBySong||{}).length){ensureLyricsParts_(function(){openKaraokeResultSong(item);});return;}
     const id=String(item.songId||'');
     const meta=karaokeState.songs.find(function(song){return String(song.songId)===id;})||item;
     karaokeState.song={songId:id,title:meta.title||item.title||'',artist:meta.artist||item.artist||'',parts:karaokeState.partsBySong[id]||[]};

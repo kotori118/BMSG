@@ -4,7 +4,6 @@
  * Keep mutation-to-cache dependencies here so feature APIs do not drift apart.
  */
 const UNIVERSE_CACHE_KEYS_ = Object.freeze({
-  ANALYSIS: 'analysis_bootstrap_v3_artist_id',
   SEARCH: 'UNIVERSE_SEARCH_INDEX_V3',
   HOME_LOOKUP: 'universe-state-lookup-v3',
   CARD_CATALOG: 'trading_card_catalog_v3',
@@ -49,7 +48,6 @@ function clearUniverseImageRepairCaches_() {
 
 function clearUniverseSongMutationCaches_() {
   const keys = [
-    UNIVERSE_CACHE_KEYS_.ANALYSIS,
     UNIVERSE_CACHE_KEYS_.SEARCH,
     UNIVERSE_CACHE_KEYS_.HOME_LOOKUP
   ];
@@ -64,8 +62,9 @@ function clearUniverseSongMutationCaches_() {
   clearUniverseCacheKeys_(keys);
 }
 
+// 分析・歌詞などの読み取りは DB の版で保存している（CoreRepository.gs）。版を変えて作り直させる。
 function clearUniverseAnalysisMutationCaches_() {
-  clearUniverseCacheKeys_([UNIVERSE_CACHE_KEYS_.ANALYSIS]);
+  invalidateCoreReadCache_();
 }
 
 function clearUniverseCacheKeys_(keys) {

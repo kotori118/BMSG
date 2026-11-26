@@ -16,6 +16,16 @@
  */
 const UNIVERSE_API_SERVICE_ = 'bmsg-universe-api';
 
+// ログ（遊びの記録・設定）だけに書く操作。これ以外の書き込みは DB を変えるものとして扱う。
+const UNIVERSE_LOG_ONLY_ACTIONS_ = Object.freeze({
+  abandonQuizGame: 1, createKaraokeRoom: 1, createPokerRoom: 1, createQuizGame: 1, deleteCoverProject: 1,
+  drawTradingCard: 1, exchangePokerCards: 1, finalizePokerHand: 1, joinKaraokeRoom: 1, joinPokerRoom: 1,
+  joinQuizRoom: 1, leaveKaraokeRoom: 1, leavePokerRoom: 1, reorderPokerHand: 1, resetTradingCardCollection: 1,
+  saveCoverProject: 1, saveKaraokeAssignment: 1, saveKaraokeFavoriteSet: 1, saveOfflinePokerHighlight: 1,
+  savePokerHighlight: 1, saveUniverseUserPreferences: 1, setCoverProjectShared: 1, startPokerRoom: 1,
+  submitQuizResult: 1, votePokerWinner: 1, parseSongLyricsManagement: 1
+});
+
 function doGet(e) {
   return universeApiRespond_(universeApiHandle_('GET', e));
 }
@@ -36,7 +46,10 @@ function universeApiHandle_(method, e) {
     if (method === 'GET' && !entry.read) {
       throw universeApiError_('METHOD_NOT_ALLOWED', 'この操作はPOSTで呼び出してください: ' + request.action);
     }
+    universeRequestContext_.read = !!entry.read;
     const data = entry.fn.apply(null, request.args);
+    // DB（歌詞・メンバー・画像など）を変える書き込みのあとは、保存した読み取りをまとめて無効にする
+    if (!entry.read && !UNIVERSE_LOG_ONLY_ACTIONS_[request.action]) invalidateCoreReadCache_();
     return { ok: true, data: typeof data === 'undefined' ? null : data };
   } catch (error) {
     const code = error && error.universeApiCode;

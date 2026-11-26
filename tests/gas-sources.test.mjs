@@ -88,13 +88,13 @@ test('every API action resolves to a defined function', () => {
   const names = Object.keys(actions);
   // Favorites and recent history were removed on 2026-11-22.
   const removed = ['getUniverseFavorites', 'setUniverseFavorite', 'recordUniverseActivity'];
-  // Group photos (registered in management, 2026-11-23) are added after the import snapshot.
-  const added = ['getGroupPhotos', 'saveGroupPhotoManagement'];
+  // Added after the import snapshot: group photos (2026-11-23), lyrics bodies split from the catalog (2026-11-26).
+  const added = ['getGroupPhotos', 'saveGroupPhotoManagement', 'getLyricsParts'];
   assert.deepEqual(names.slice().sort(), [...report.apiActions.filter((n) => !removed.includes(n)), ...added].sort());
-  assert.equal(names.length, 98);
+  assert.equal(names.length, 99);
   for (const n of names) assert.equal(typeof actions[n].fn, 'function', n);
   for (const n of [...report.apiExcluded, ...removed]) assert.ok(!(n in actions), `${n} must not be exposed`);
-  assert.equal(names.filter((n) => actions[n].read).length, 45);
+  assert.equal(names.filter((n) => actions[n].read).length, 46);
 });
 
 test('every DB writer PJ selects by name resolves through universeDbWriter_', () => {
@@ -181,4 +181,33 @@ test('favorites and recent history are gone from the server', () => {
   for (const word of ['RECENT_ACTIVITIES', 'USER_FAVORITES', 'appendRecentActivity_', 'appendCoverActivity_', 'readUniverseFavorites_', 'readUniverseRecent_']) {
     assert.ok(!all.includes(word), `${word} should be removed`);
   }
+});
+
+// 読み取りの保存（CoreRepository.gs）：長い値は分けて保存し、日付は日付のまま戻る。書き込みの要求では保存を使わない。
+test('core read cache stores long values in chunks and keeps dates', () => {
+  const ctx = loadProject();
+  const store = new Map();
+  ctx.CacheService = { getScriptCache: () => ({
+    get: (k) => (store.has(k) ? store.get(k) : null),
+    put: (k, v) => { store.set(k, v); },
+    putAll: (o) => { for (const [k, v] of Object.entries(o)) { if (String(v).length > 100000) throw new Error('too big'); store.set(k, v); } },
+    getAll: (keys) => Object.fromEntries(keys.filter((k) => store.has(k)).map((k) => [k, store.get(k)])),
+  }) };
+  let builds = 0;
+  const big = { text: 'あ'.repeat(70000), when: new Date('2026-01-02T03:04:05Z') };
+  const builder = () => { builds++; return big; };
+  vm.runInContext('universeRequestContext_.read = true', ctx);
+  const first = ctx.universeCoreCached_('t', builder);
+  const second = ctx.universeCoreCached_('t', builder);
+  assert.equal(builds, 1, 'second read comes from the cache');
+  assert.equal(second.text.length, 70000);
+  assert.equal(Object.prototype.toString.call(second.when), '[object Date]');
+  assert.equal(second.when.getTime(), big.when.getTime());
+  ctx.invalidateCoreReadCache_();
+  ctx.universeCoreCached_('t', builder);
+  assert.equal(builds, 2, 'a DB write makes the next read rebuild');
+  vm.runInContext('universeRequestContext_.read = false', ctx);
+  ctx.universeCoreCached_('t', builder);
+  assert.equal(builds, 3, 'write requests never use the cache');
+  assert.equal(first.text, second.text);
 });
