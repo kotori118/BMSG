@@ -8,7 +8,7 @@ on:
     paths:
       - 'gas/**'
       - 'tests/gas-sources.test.mjs'
-      - 'docs/migration/import-report.json'
+      - 'tests/fixtures/gas-import-report.json'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/deploy.yml'

@@ -8,7 +8,7 @@ import * as walk from 'acorn-walk';
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const GAS = path.join(ROOT, 'gas');
-const report = JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'migration', 'import-report.json'), 'utf8'));
+const report = JSON.parse(fs.readFileSync(path.join(ROOT, 'tests', 'fixtures', 'gas-import-report.json'), 'utf8'));
 
 function gsFiles(dir) {
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
