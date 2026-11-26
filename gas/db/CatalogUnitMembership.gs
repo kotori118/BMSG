@@ -8,12 +8,12 @@
  * No row is physically deleted: shifting rows could invalidate other references.
  */
 function catalogUnitMembershipContext_(ss,groupId) {
-  const groups=catalogTable_(ss,BU1.SHEETS.GROUPS,['GroupID','RecordStatus']);
+  const groups=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS,['GroupID','RecordStatus']);
   const group=catalogRow_(groups,'GroupID',groupId);
   catalogEnsureActive_(groups,group);
   if(!groupId.startsWith('U'))
     throw new Error('所属の除外・並べ替えはユニットでのみ実行できます。');
-  const links=catalogTable_(ss,BU1.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
+  const links=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
   const selected=links.rows.filter(function(r){
     return id_(r.values[links.map.GroupID])===groupId;
   });
@@ -103,7 +103,7 @@ function removeCatalogUnitMemberForUniverse(payload) {
     const current=ctx.rows.find(function(r){return r.memberId===memberId;});
     if(!current)throw new Error('このメンバーは指定ユニットに所属していません。');
     catalogUnitMembershipExpectOrder_(current.order,payload.expectedOrder);
-    const members=catalogTable_(ss,BU1.SHEETS.MEMBERS,['MemberID','GroupID','RecordStatus']);
+    const members=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS,['MemberID','GroupID','RecordStatus']);
     const member=catalogRow_(members,'MemberID',memberId);
     catalogEnsureActive_(members,member);
     if(id_(member.values[members.map.GroupID])===groupId)

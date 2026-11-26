@@ -96,7 +96,7 @@ function saveSongInfoForUniverse(payload) {
   if (!songId) throw new Error('SongIDがありません。');
   return withSharedWriterLock_('楽曲情報保存', function() {
     const ss = openCoreSpreadsheet_();
-    const sheet = requireSheet_(ss, BU1.SHEETS.SONGS);
+    const sheet = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS);
     const table = readTable_(sheet);
     const target = table.rows.filter(r => id_(r.values[table.map.SongID]) === songId);
     if (target.length !== 1) throw new Error('06_SongsでSongIDを一意に確認できません。');
@@ -113,7 +113,7 @@ function saveSongInfoForUniverse(payload) {
     afterSong[table.map.CDTitle] = song.cdTitle;
     afterSong[table.map.IsTitleTrack] = song.isTitleTrack;
 
-    const creditsSheet = requireSheet_(ss, BU1.SHEETS.SONG_CREDITS);
+    const creditsSheet = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.SONG_CREDITS);
     const creditsTable = readTable_(creditsSheet);
     const creditRows = creditsTable.rows.filter(r => id_(r.values[creditsTable.map.SongID]) === songId);
     if (creditRows.length > 1) throw new Error('07_SongCreditsでSongIDが重複しています。');
@@ -166,12 +166,12 @@ function saveSongCreditsForUniverse(payload) {
   const credits = normalizeUniverseServiceCredits_(payload.credits || {});
   return withSharedWriterLock_('クレジット保存', function() {
     const ss = openCoreSpreadsheet_();
-    const songsTable = readTable_(requireSheet_(ss, BU1.SHEETS.SONGS));
+    const songsTable = readTable_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS));
     const songRows = songsTable.rows.filter(r => id_(r.values[songsTable.map.SongID]) === songId);
     if (songRows.length !== 1) throw new Error('06_SongsでSongIDを一意に確認できません。');
     const songRow = songRows[0];
     if (!universeServiceBeFirst_(songsTable,songRow)) throw new Error('SongCreditsはBE:FIRSTの楽曲のみ登録できます。');
-    const sheet = requireSheet_(ss, BU1.SHEETS.SONG_CREDITS);
+    const sheet = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.SONG_CREDITS);
     const table = readTable_(sheet);
     requireColumns_(table, ['SongID','Lyricists','Composers','Choreographers']);
     const rows = table.rows.filter(r => id_(r.values[table.map.SongID]) === songId);
@@ -277,8 +277,8 @@ function universeServiceBeFirst_(table, row) {
     (table.map.ArtistID != null ? universeServiceStoredArtist_(table,row) === 'G1' : universeServiceStoredArtist_(table,row) === 'BE:FIRST');
 }
 function universeServiceArtistIdentity_(ss, value) {
-  const groups = readTable_(requireSheet_(ss, BU1.SHEETS.GROUPS));
-  const members = readTable_(requireSheet_(ss, BU1.SHEETS.MEMBERS));
+  const groups = readTable_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.GROUPS));
+  const members = readTable_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.MEMBERS));
   const entries = groups.rows.map(r => ({id:id_(r.values[groups.map.GroupID]), name:clean_(r.values[groups.map.GroupName])}))
     .concat(members.rows.map(r => ({id:id_(r.values[members.map.MemberID]), name:clean_(r.values[members.map.DisplayName])})));
   const matches = entries.filter(entry => entry.id && (entry.id === value || entry.name === value));
@@ -287,8 +287,8 @@ function universeServiceArtistIdentity_(ss, value) {
 }
 function universeServiceSingerById_(ss) {
   const result = { '99':{id:'99',name:'ALL'}, '109':{id:'109',name:'その他'} };
-  const members = readTable_(requireSheet_(ss, BU1.SHEETS.MEMBERS));
-  const guests = readTable_(requireSheet_(ss, BU1.SHEETS.GUESTS));
+  const members = readTable_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.MEMBERS));
+  const guests = readTable_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.GUESTS));
   members.rows.forEach(function(r) {
     const id = id_(r.values[members.map.MemberID]), name = clean_(r.values[members.map.DisplayName]);
     if (id && name) result[id] = {id:id,name:name};
@@ -330,8 +330,8 @@ function registerGuestCore_(ss, name, context) {
   context = context || {};
   name = clean_(name);
   if (!name) throw new Error('Guest名を入力してください。');
-  const memberTable = readTable_(requireSheet_(ss, BU1.SHEETS.MEMBERS));
-  const guestSheet = requireSheet_(ss, BU1.SHEETS.GUESTS);
+  const memberTable = readTable_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.MEMBERS));
+  const guestSheet = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.GUESTS);
   const guestTable = readTable_(guestSheet);
   requireColumns_(memberTable, ['DisplayName']);
   requireColumns_(guestTable, ['GuestID','DisplayName']);
@@ -385,7 +385,7 @@ function registerGuestCore_(ss, name, context) {
 
 function createSongWithPartsCore_(ss, song, credits, parsedParts, context) {
   context = context || {};
-  const songsSheet = requireSheet_(ss, BU1.SHEETS.SONGS);
+  const songsSheet = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS);
   const songsTable = readTable_(songsSheet);
   const usesArtistId = songsTable.map.ArtistID != null;
   const artistColumn = usesArtistId ? 'ArtistID' : 'Artist';
@@ -423,7 +423,7 @@ function createSongWithPartsCore_(ss, song, credits, parsedParts, context) {
     let creditsSheet = null;
     let creditsTable = null;
     if (artist.id === 'G1') {
-      creditsSheet = requireSheet_(ss, BU1.SHEETS.SONG_CREDITS);
+      creditsSheet = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.SONG_CREDITS);
       creditsTable = readTable_(creditsSheet);
       requireColumns_(creditsTable, ['SongID','Lyricists','Composers','Choreographers']);
       const creditValues = new Array(creditsTable.header.length).fill('');
@@ -435,7 +435,7 @@ function createSongWithPartsCore_(ss, song, credits, parsedParts, context) {
       rollback.push({sheet:creditsSheet,row:appendStyledRow_(creditsSheet, creditValues)});
     }
 
-    const partsSheet = requireSheet_(ss, BU1.SHEETS.LYRICS_PARTS);
+    const partsSheet = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.LYRICS_PARTS);
     const partsTable = readTable_(partsSheet);
     requireColumns_(partsTable, ['SongID','PartOrder','Singer','Lyrics']);
     parts.forEach(function(part,index){
@@ -472,7 +472,7 @@ function createSongWithPartsCore_(ss, song, credits, parsedParts, context) {
 }
 
 function universeServiceRequireLyricsSong_(ss,songId) {
-  const songs = readTable_(requireSheet_(ss, BU1.SHEETS.SONGS));
+  const songs = readTable_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS));
   const matches = songs.rows.filter(row => id_(row.values[songs.map.SongID]) === songId);
   if (matches.length !== 1) throw new Error('曲を一意に確認できません。');
   if (universeServicePersonalSong_(songs,matches[0])) throw new Error('個人曲の歌詞は登録できません。');
@@ -490,7 +490,7 @@ function replaceSongPartsCore_(ss, songId, incoming) {
     if (!singer) throw new Error('Part ' + (index + 1) + ' のSingerを選択してください。');
     return {partOrder:index + 1, singer:singer, lyrics:lyrics};
   });
-  const sheet = requireSheet_(ss, BU1.SHEETS.LYRICS_PARTS);
+  const sheet = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.LYRICS_PARTS);
   let table = readTable_(sheet);
   requireColumns_(table, ['SongID','PartOrder','Singer','Lyrics']);
   const oldRows = table.rows.filter(function(r){ return id_(r.values[table.map.SongID]) === songId; }).map(function(r){ return {rowNumber:r.rowNumber, values:r.values.slice()}; });

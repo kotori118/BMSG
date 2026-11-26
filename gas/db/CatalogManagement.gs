@@ -51,7 +51,7 @@ function catalogRequiredString_(value,name,max) {
   return v;
 }
 function catalogAudit_(kind,id,action,before,after,actor) {
-  const ss=SpreadsheetApp.openById(BU1.LOG_DB_ID);
+  const ss=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID);
   const sheet=ss.getSheetByName('CATALOG_Audit');
   if(!sheet)throw new Error('CATALOG_Auditが未準備です。');
   const t=readTable_(sheet);
@@ -98,17 +98,17 @@ function catalogWriteRecord_(table,row,updates,kind,action,actor) {
 }
 function catalogSchemaStatus_(ss){
   const defs=[
-    [BU1.SHEETS.GROUPS,BU_CATALOG_SCHEMA_.groups],
-    [BU1.SHEETS.MEMBERS,BU_CATALOG_SCHEMA_.members],
-    [BU1.SHEETS.SONGS,BU_CATALOG_SCHEMA_.songs]
+    [UNIVERSE_CONFIG.SHEETS.GROUPS,BU_CATALOG_SCHEMA_.groups],
+    [UNIVERSE_CONFIG.SHEETS.MEMBERS,BU_CATALOG_SCHEMA_.members],
+    [UNIVERSE_CONFIG.SHEETS.SONGS,BU_CATALOG_SCHEMA_.songs]
   ];
   const missing=[];
   defs.forEach(([name,headers])=>{
     const sheet=requireSheet_(ss,name);
     const present=sheet.getRange(1,1,1,Math.max(1,sheet.getLastColumn())).getDisplayValues()[0];
-    headers.filter(k=>present.indexOf(k)<0 && !(name===BU1.SHEETS.SONGS && present.includes('ArtistID'))).forEach(k=>missing.push(name+'.'+k));
+    headers.filter(k=>present.indexOf(k)<0 && !(name===UNIVERSE_CONFIG.SHEETS.SONGS && present.includes('ArtistID'))).forEach(k=>missing.push(name+'.'+k));
   });
-  const audit=SpreadsheetApp.openById(BU1.LOG_DB_ID).getSheetByName('CATALOG_Audit');
+  const audit=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID).getSheetByName('CATALOG_Audit');
   if(!audit)missing.push('Log.CATALOG_Audit');
   else {
     const actual=audit.getRange(1,1,1,Math.max(1,audit.getLastColumn())).getDisplayValues()[0];
@@ -123,10 +123,10 @@ function getCatalogManagementBootstrapForUniverse(payload) {
   catalogRequireUser_(payload);
   const ss=openCoreSpreadsheet_();
   const schema=catalogSchemaStatus_(ss);
-  const groups=readTable_(requireSheet_(ss,BU1.SHEETS.GROUPS));
-  const members=readTable_(requireSheet_(ss,BU1.SHEETS.MEMBERS));
-  const songs=readTable_(requireSheet_(ss,BU1.SHEETS.SONGS));
-  const gm=readTable_(requireSheet_(ss,BU1.SHEETS.GROUP_MEMBERS));
+  const groups=readTable_(requireSheet_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS));
+  const members=readTable_(requireSheet_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS));
+  const songs=readTable_(requireSheet_(ss,UNIVERSE_CONFIG.SHEETS.SONGS));
+  const gm=readTable_(requireSheet_(ss,UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS));
   return {ok:true,schema,
     groups:groups.rows.filter(r=>id_(r.values[groups.map.GroupID])).map(r=>catalogRec_(groups,r)),
     members:members.rows.filter(r=>id_(r.values[members.map.MemberID])).map(r=>catalogRec_(members,r)),
@@ -139,13 +139,13 @@ function migrateCatalogManagementSchemaForUniverse(payload){
   const actor=catalogRequireUser_(payload);
   if(String(payload.confirm||'')!=='MIGRATE_CATALOG_V1')throw new Error('移行確認コードが必要です。');
   const backup=String(PropertiesService.getScriptProperties().getProperty('UNIVERSE_CATALOG_BACKUP_ID')||'').trim();
-  if(!backup||backup===BU1.CORE_DB_ID)throw new Error('別ファイルに作成したCore DBバックアップのIDを設定してください。');
+  if(!backup||backup===UNIVERSE_CONFIG.CORE_DB_ID)throw new Error('別ファイルに作成したCore DBバックアップのIDを設定してください。');
   const backupFile=DriveApp.getFileById(backup);
   if(!backupFile||!backupFile.getName())throw new Error('バックアップを確認できません。');
   return withSharedWriterLock_('カタログスキーマ移行',function(){
     const ss=openCoreSpreadsheet_();
     if(catalogSchemaStatus_(ss).ready)return {ok:true,alreadyReady:true};
-    const existingAudit=SpreadsheetApp.openById(BU1.LOG_DB_ID).getSheetByName('CATALOG_Audit');
+    const existingAudit=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID).getSheetByName('CATALOG_Audit');
     if(existingAudit) {
       const h=existingAudit.getRange(1,1,1,Math.max(1,existingAudit.getLastColumn())).getDisplayValues()[0];
       const required=['AuditID','EntityType','EntityID','Action','BeforeJSON','AfterJSON','ActorEmail','OccurredAt','Source'];
@@ -153,32 +153,32 @@ function migrateCatalogManagementSchemaForUniverse(payload){
         throw new Error('既存CATALOG_Auditの列構造に不整合があります。スキーマ変更は中止しました。');
     }
     const specs=[
-      [BU1.SHEETS.GROUPS,BU_CATALOG_SCHEMA_.groups],
-      [BU1.SHEETS.MEMBERS,BU_CATALOG_SCHEMA_.members],
-      [BU1.SHEETS.SONGS,BU_CATALOG_SCHEMA_.songs]
+      [UNIVERSE_CONFIG.SHEETS.GROUPS,BU_CATALOG_SCHEMA_.groups],
+      [UNIVERSE_CONFIG.SHEETS.MEMBERS,BU_CATALOG_SCHEMA_.members],
+      [UNIVERSE_CONFIG.SHEETS.SONGS,BU_CATALOG_SCHEMA_.songs]
     ];
     specs.forEach(([name,fields])=>{
       const sh=requireSheet_(ss,name);
       const h=sh.getRange(1,1,1,Math.max(sh.getLastColumn(),1)).getDisplayValues()[0];
       fields.forEach(field=>{
-        if(h.indexOf(field)>=0||(name===BU1.SHEETS.SONGS&&h.includes('ArtistID')))return;
+        if(h.indexOf(field)>=0||(name===UNIVERSE_CONFIG.SHEETS.SONGS&&h.includes('ArtistID')))return;
         let col=sh.getLastColumn()+1;
         if(col>sh.getMaxColumns())sh.insertColumnAfter(sh.getMaxColumns());
         sh.getRange(1,col).setValue(field);
         h[col-1]=field;
       });
     });
-    const g=catalogTable_(ss,BU1.SHEETS.GROUPS,['GroupID','GroupName','RecordStatus']);
+    const g=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS,['GroupID','GroupName','RecordStatus']);
     g.rows.forEach(r=>{
       if(id_(r.values[g.map.GroupID])&&!clean_(r.values[g.map.RecordStatus]))
         g.sheet.getRange(r.rowNumber,g.map.RecordStatus+1).setValue('ACTIVE');
     });
-    const m=catalogTable_(ss,BU1.SHEETS.MEMBERS,['MemberID','DisplayName','RecordStatus']);
+    const m=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS,['MemberID','DisplayName','RecordStatus']);
     m.rows.forEach(r=>{
       if(id_(r.values[m.map.MemberID])&&!clean_(r.values[m.map.RecordStatus]))
         m.sheet.getRange(r.rowNumber,m.map.RecordStatus+1).setValue('ACTIVE');
     });
-    const s=catalogTable_(ss,BU1.SHEETS.SONGS,['SongID','Title']);
+    const s=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.SONGS,['SongID','Title']);
     const ids={};
     m.rows.forEach(r=>{if(id_(r.values[m.map.MemberID]))ids[clean_(r.values[m.map.DisplayName])]=id_(r.values[m.map.MemberID]);});
     if(s.map.ArtistID==null)s.rows.forEach(r=>{
@@ -191,7 +191,7 @@ function migrateCatalogManagementSchemaForUniverse(payload){
         s.sheet.getRange(r.rowNumber,s.map.SoloMemberID+1).setValue(ids[solo.member]);
       }
     });
-    const log=SpreadsheetApp.openById(BU1.LOG_DB_ID);
+    const log=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID);
     if(!log.getSheetByName('CATALOG_Audit')){
       const sh=log.insertSheet('CATALOG_Audit');
       sh.getRange(1,1,1,9).setValues([['AuditID','EntityType','EntityID','Action','BeforeJSON','AfterJSON','ActorEmail','OccurredAt','Source']]);
@@ -220,8 +220,8 @@ function catalogRequireUniqueColor_(ss,proposed,exceptKind,exceptId) {
   const color=normalizeCatalogHex_(proposed);
   if(!color)throw new Error('カラーコードを選択してください。');
   const tables=[
-    {sheet:BU1.SHEETS.GROUPS,id:'GroupID',name:'GroupName',kind:'GROUP',label:'グループ・ユニット'},
-    {sheet:BU1.SHEETS.MEMBERS,id:'MemberID',name:'DisplayName',kind:'MEMBER',label:'メンバー'}
+    {sheet:UNIVERSE_CONFIG.SHEETS.GROUPS,id:'GroupID',name:'GroupName',kind:'GROUP',label:'グループ・ユニット'},
+    {sheet:UNIVERSE_CONFIG.SHEETS.MEMBERS,id:'MemberID',name:'DisplayName',kind:'MEMBER',label:'メンバー'}
   ];
   const conflicts=[];
   tables.forEach(function(def){
@@ -258,7 +258,7 @@ function createCatalogGroupForUniverse(payload){
   const color=normalizeCatalogHex_(payload.color||'#777777');
   return withSharedWriterLock_('グループ作成',function(){
     const ss=openCoreSpreadsheet_();catalogRequireReady_(ss);
-    const t=catalogTable_(ss,BU1.SHEETS.GROUPS,['GroupID','GroupName','ColorHex','DisplayOrder','RecordStatus']);
+    const t=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS,['GroupID','GroupName','ColorHex','DisplayOrder','RecordStatus']);
     if(t.rows.some(r=>clean_(r.values[t.map.GroupName]).toLowerCase()===name.toLowerCase()))throw new Error('同名グループが既に存在します。');
     catalogRequireUniqueColor_(ss,color,'GROUP','');
     const reservation=reserveNumberForKey_(ss,'NEXT_GROUP_ID_'+kind,'BMSG-DB_SITE_CATALOG','サイトでGroup作成: '+name);
@@ -286,10 +286,10 @@ function updateCatalogGroupForUniverse(payload){
   const actor=catalogRequireUser_(payload),gid=id_(payload.groupId);
   return withSharedWriterLock_('グループ編集',function(){
     const ss=openCoreSpreadsheet_();catalogRequireReady_(ss);
-    const t=catalogTable_(ss,BU1.SHEETS.GROUPS,['GroupID','GroupName','ColorHex','RecordStatus']);
+    const t=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS,['GroupID','GroupName','ColorHex','RecordStatus']);
     const row=catalogRow_(t,'GroupID',gid),before=catalogRec_(t,row);
     const newName=catalogRequiredString_(payload.name||before.GroupName,'グループ名',100);
-    const songs=readTable_(requireSheet_(ss,BU1.SHEETS.SONGS));
+    const songs=readTable_(requireSheet_(ss,UNIVERSE_CONFIG.SHEETS.SONGS));
     if(songs.map.ArtistID==null&&newName!==before.GroupName&&songs.rows.some(r=>clean_(r.values[songs.map.Artist])===before.GroupName))
       throw new Error('曲のArtistに使用中のためグループ名は変更できません。');
     if(t.rows.some(r=>r!==row&&id_(r.values[t.map.GroupID])!==gid&&clean_(r.values[t.map.GroupName]).toLowerCase()===newName.toLowerCase()))throw new Error('同じ名前のグループが存在します。');
@@ -303,14 +303,14 @@ function createCatalogMemberForUniverse(payload){
   const groupId=id_(payload.primaryGroupId),color=normalizeCatalogHex_(payload.color||'#777777');
   return withSharedWriterLock_('メンバー作成',function(){
     const ss=openCoreSpreadsheet_();catalogRequireReady_(ss);
-    const g=catalogTable_(ss,BU1.SHEETS.GROUPS,['GroupID','GroupName','RecordStatus']);
+    const g=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS,['GroupID','GroupName','RecordStatus']);
     const grp=catalogRow_(g,'GroupID',groupId);catalogEnsureActive_(g,grp);
     if(!groupId.startsWith('G'))throw new Error('主所属にはGROUPを指定してください。ユニットへの参加は所属管理から追加します。');
-    const m=catalogTable_(ss,BU1.SHEETS.MEMBERS,['MemberID','GroupID','DisplayName','ColorHex','DisplayOrder','RecordStatus']);
+    const m=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS,['MemberID','GroupID','DisplayName','ColorHex','DisplayOrder','RecordStatus']);
     if(m.rows.some(r=>clean_(r.values[m.map.DisplayName]).toLowerCase()===name.toLowerCase()))throw new Error('同名メンバーが登録済みです。');
     catalogRequireUniqueColor_(ss,color,'MEMBER','');
-    const gm=catalogTable_(ss,BU1.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
-    const p=catalogTable_(ss,BU1.SHEETS.PROFILES,['MemberID']);
+    const gm=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
+    const p=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.PROFILES,['MemberID']);
     const res=reserveNumberForKey_(ss,'NEXT_MEMBER_ID_GLOBAL','BMSG-DB_SITE_CATALOG','サイトでMember作成: '+name);
     const rows=[];
     try{
@@ -349,7 +349,7 @@ function updateCatalogMemberForUniverse(payload){
   const actor=catalogRequireUser_(payload),memberId=id_(payload.memberId);
   return withSharedWriterLock_('メンバー更新',function(){
     const ss=openCoreSpreadsheet_();catalogRequireReady_(ss);
-    const t=catalogTable_(ss,BU1.SHEETS.MEMBERS,['MemberID','DisplayName','ColorHex','RecordStatus']);
+    const t=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS,['MemberID','DisplayName','ColorHex','RecordStatus']);
     const row=catalogRow_(t,'MemberID',memberId);catalogEnsureActive_(t,row);
     const name=catalogRequiredString_(payload.name||row.values[t.map.DisplayName],'メンバー名',120);
     if(t.rows.some(r=>r.rowNumber!==row.rowNumber&&clean_(r.values[t.map.DisplayName]).toLowerCase()===name.toLowerCase()))throw new Error('同名メンバーが存在します。');
@@ -361,12 +361,12 @@ function addCatalogUnitMemberForUniverse(payload){
   const actor=catalogRequireUser_(payload),groupId=id_(payload.groupId),memberId=id_(payload.memberId);
   return withSharedWriterLock_('ユニット所属追加',function(){
     const ss=openCoreSpreadsheet_();catalogRequireReady_(ss);
-    const groups=catalogTable_(ss,BU1.SHEETS.GROUPS,['GroupID','RecordStatus']);
+    const groups=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS,['GroupID','RecordStatus']);
     const g=catalogRow_(groups,'GroupID',groupId);catalogEnsureActive_(groups,g);
     if(!groupId.startsWith('U'))throw new Error('所属追加先はUNITのみ選択してください。');
-    const members=catalogTable_(ss,BU1.SHEETS.MEMBERS,['MemberID','RecordStatus']);
+    const members=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS,['MemberID','RecordStatus']);
     catalogEnsureActive_(members,catalogRow_(members,'MemberID',memberId));
-    const gm=catalogTable_(ss,BU1.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
+    const gm=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
     if(gm.rows.some(r=>id_(r.values[gm.map.GroupID])===groupId&&id_(r.values[gm.map.MemberID])===memberId))throw new Error('所属済みです。');
     const v=new Array(gm.header.length).fill('');
     v[gm.map.GroupID]=groupId;v[gm.map.MemberID]=memberId;
@@ -390,14 +390,14 @@ function addCatalogUnitMemberForUniverse(payload){
  * references block deletion. IDRegistry is intentionally retained.
  */
 function catalogSongDeletePlan_(ss,songId) {
-  const songs=catalogTable_(ss,BU1.SHEETS.SONGS,['SongID','Title']);
+  const songs=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.SONGS,['SongID','Title']);
   const song=catalogRow_(songs,'SongID',songId);
   const rows=[{sheet:songs.sheet,rowNumber:song.rowNumber,label:'06_Songs'}];
   const counts={},blockers=[];
   const children=[
-    [BU1.SHEETS.SONG_CREDITS,'07_SongCredits'],
-    [BU1.SHEETS.LYRICS_PARTS,'08_LyricsParts'],
-    [BU1.SHEETS.METRICS,'10_PerformanceMetrics']
+    [UNIVERSE_CONFIG.SHEETS.SONG_CREDITS,'07_SongCredits'],
+    [UNIVERSE_CONFIG.SHEETS.LYRICS_PARTS,'08_LyricsParts'],
+    [UNIVERSE_CONFIG.SHEETS.PERFORMANCE_METRICS,'10_PerformanceMetrics']
   ];
   children.forEach(function(item){
     const table=catalogTable_(ss,item[0],['SongID']);
@@ -406,8 +406,8 @@ function catalogSongDeletePlan_(ss,songId) {
     found.forEach(function(r){rows.push({sheet:table.sheet,rowNumber:r.rowNumber,label:item[1]});});
   });
   const skip={};
-  [BU1.SHEETS.SONGS].concat(children.map(function(x){return x[0];})).forEach(function(k){skip[k]=true;});
-  const log=SpreadsheetApp.openById(BU1.LOG_DB_ID);
+  [UNIVERSE_CONFIG.SHEETS.SONGS].concat(children.map(function(x){return x[0];})).forEach(function(k){skip[k]=true;});
+  const log=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID);
   const pattern=new RegExp('(^|[^0-9])'+songId+'([^0-9]|$)');
   function inspect(sheet) {
     if(sheet.getLastRow()<2||sheet.getLastColumn()<1)return;
@@ -450,7 +450,7 @@ function deleteCatalogSongForUniverse(payload) {
     throw new Error('削除する曲のSongIDと、外部参照の確認が必要です。');
   const props=PropertiesService.getScriptProperties();
   const backup=clean_(props.getProperty('UNIVERSE_CATALOG_BACKUP_ID'));
-  if(!backup||backup===BU1.CORE_DB_ID)throw new Error('別ファイルのCore DBバックアップを設定してください。');
+  if(!backup||backup===UNIVERSE_CONFIG.CORE_DB_ID)throw new Error('別ファイルのCore DBバックアップを設定してください。');
   if(!DriveApp.getFileById(backup).getName())throw new Error('バックアップを確認できません。');
   return withSharedWriterLock_('楽曲完全削除',function(){
     const ss=openCoreSpreadsheet_();catalogRequireReady_(ss);

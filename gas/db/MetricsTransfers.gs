@@ -7,7 +7,7 @@
  * Returns the newly appended row for writer rollback, or null if present.
  */
 function ensurePerformanceMetricRowForSong_(ss, songId) {
-  const sheet=requireSheet_(ss,BU1.SHEETS.METRICS);
+  const sheet=requireSheet_(ss,UNIVERSE_CONFIG.SHEETS.PERFORMANCE_METRICS);
   const id=id_(songId);
   if(!id)throw new Error('秒数行のSongIDがありません。');
   const last=sheet.getLastRow();

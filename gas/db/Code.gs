@@ -4,28 +4,13 @@
  * 共通設定・メニュー・安全な読書きヘルパー
  */
 
+// DBのID・シート名は UNIVERSE_CONFIG（pj/Config.gs）が正。ここにはDB管理側だけの決まりを置く。
 const BU1 = Object.freeze({
-  VERSION: '1.1.0',
-  CORE_DB_ID: '1-1AY6-BACOaGW3HIgYS0UjFMPSh-cjvYMMnJ_UYoRFY',
-  LOG_DB_ID: '10vDKc_Q431iMDTTqB2A16i-Yp28oXSInoKiJXZtonRQ',
-  CARD_IMAGE_FOLDER_ID: '1ayh-EAbV585JqRofClrTHjBxNTQlfQBK',
-  ID_REGISTRY_SHEET: 'IDRegistry',
-  SHEETS: Object.freeze({
-    GUIDE: '00_管理ガイド', INPUT_LYRICS: '入力_歌詞',
-    INPUT_PROFILE: '入力_プロフィール', INPUT_MEMBERSHIP: '入力_所属',
-    GROUPS: '01_Groups', MEMBERS: '02_Members',
-    GUESTS: '03_Guests', GROUP_MEMBERS: '04_GroupMembers',
-    PROFILES: '05_Profiles', SONGS: '06_Songs', SONG_CREDITS: '07_SongCredits',
-    LYRICS_PARTS: '08_LyricsParts', CARDS: '09_Images',
-    METRICS: '10_PerformanceMetrics',
-  }),
-  COLORS: Object.freeze({ INPUT: '#FFF9D6', AUTO: '#EFEFEF', ERROR: '#F4CCCC' }),
-  CARD_RARITIES: Object.freeze(['SSR', 'SR', 'R', 'N']),
+  // SongID の採番帯（グループごとの番号の範囲。既存データの番号体系）
   SONG_BANDS: Object.freeze({
     'BE:FIRST': 1000, 'MAZZEL': 2000, 'STARGLOW': 3000, 'HANA': 4000,
     'DEFAULT': 5000,
   }),
-  SPECIAL_SINGERS: Object.freeze({ '99': 'ALL', '109': 'その他' }),
 });
 
 const BU_ID_REGISTRY_HEADERS_ = Object.freeze([
@@ -38,7 +23,7 @@ function withSharedWriterLock_(label, fn) {
   try { return fn(); } finally { lock.releaseLock(); }
 }
 
-function openCoreSpreadsheet_() { return SpreadsheetApp.openById(BU1.CORE_DB_ID); }
+function openCoreSpreadsheet_() { return SpreadsheetApp.openById(UNIVERSE_CONFIG.CORE_DB_ID); }
 
 function requireSheet_(ss, name) {
   const sheet = ss.getSheetByName(name);
@@ -95,8 +80,8 @@ function normalizeDateForSheet_(value) {
 }
 
 function idRegistryTable_() {
-  const ss = SpreadsheetApp.openById(BU1.LOG_DB_ID);
-  const sheet = ss.getSheetByName(BU1.ID_REGISTRY_SHEET);
+  const ss = SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID);
+  const sheet = ss.getSheetByName(UNIVERSE_CONFIG.SHEETS.ID_REGISTRY);
   if (!sheet) throw new Error('BMSG_ Universe_Log に IDRegistry シートがありません');
   const table = readTable_(sheet);
   requireColumns_(table, BU_ID_REGISTRY_HEADERS_);
@@ -108,22 +93,22 @@ function resolveIssueSpec_(ss, key) {
   if (key === 'NEXT_GROUP_ID_GROUP' || key === 'NEXT_GROUP_ID_UNIT') {
     const prefix = key === 'NEXT_GROUP_ID_GROUP' ? 'G' : 'U';
     return { entity:'GROUP', scope:'GLOBAL',
-      liveMax:maxPrefixedNumericColumn_(requireSheet_(ss,BU1.SHEETS.GROUPS),'GroupID',/^[GU](\d+)$/),
+      liveMax:maxPrefixedNumericColumn_(requireSheet_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS),'GroupID',/^[GU](\d+)$/),
       formatter:function(n){return prefix+n;} };
   }
   if (key === 'NEXT_MEMBER_ID_GLOBAL') {
     return { entity:'MEMBER', scope:'GLOBAL',
-      liveMax:maxPrefixedNumericColumn_(requireSheet_(ss,BU1.SHEETS.MEMBERS),'MemberID',/^M(\d+)$/),
+      liveMax:maxPrefixedNumericColumn_(requireSheet_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS),'MemberID',/^M(\d+)$/),
       formatter:function(n){return 'M'+n;} };
   }
   if (key === 'NEXT_GROUP_ID' || /^NEXT_MEMBER_ID_\d+$/.test(key))
     throw new Error('番号帯方式の旧採番キーは廃止されました。G/U/M対応の新採番を使用してください。');
   if (key === 'NEXT_GUEST_ID') {
-    return { entity:'GUEST', scope:'GLOBAL', liveMax:maxNumericColumn_(requireSheet_(ss, BU1.SHEETS.GUESTS), 'GuestID') };
+    return { entity:'GUEST', scope:'GLOBAL', liveMax:maxNumericColumn_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.GUESTS), 'GuestID') };
   }
   if ((m = String(key).match(/^NEXT_SONG_ID_(\d+)$/))) {
     const band = Number(m[1]);
-    return { entity:'SONG', scope:String(band), liveMax:maxNumericColumnInBand_(requireSheet_(ss, BU1.SHEETS.SONGS), 'SongID', band, band + 999) };
+    return { entity:'SONG', scope:String(band), liveMax:maxNumericColumnInBand_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS), 'SongID', band, band + 999) };
   }
   if (key === 'NEXT_PROFILE_ID') {
     return { entity:'PROFILE', scope:'GLOBAL', liveMax:maxProfileNumber_(ss), formatter:function(n){ return 'P' + padNumber_(n, 3); } };
@@ -158,7 +143,7 @@ function maxNumericColumnInBand_(sheet, headerName, min, maxAllowed) {
 
 function maxProfileNumber_(ss) {
   let max = 0;
-  const profiles = requireSheet_(ss, BU1.SHEETS.PROFILES);
+  const profiles = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.PROFILES);
   const headers = profiles.getRange(1,1,1,Math.max(1,profiles.getLastColumn())).getDisplayValues()[0];
   headers.forEach(function(value){ const m=String(value||'').trim().match(/^P(\d+)$/i); if(m) max=Math.max(max,Number(m[1])); });
   try {

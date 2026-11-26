@@ -21,7 +21,7 @@ function pfMgmtActive_(value) {
   return value===true || /^(TRUE|1)$/i.test(clean_(value));
 }
 function pfMgmtRequireShape_(ss) {
-  const profile=catalogTable_(ss,BU1.SHEETS.PROFILES,['MemberID']);
+  const profile=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.PROFILES,['MemberID']);
   const settings=catalogTable_(ss,PF_MGMT_SETTINGS_,PF_MGMT_HEADERS_);
   const seen=Object.create(null),labels=Object.create(null);
   settings.rows.forEach(function(r){
@@ -83,8 +83,8 @@ function getCatalogProfileFieldsForUniverse(payload) {
 function pfMgmtBackupGate_() {
   const props=PropertiesService.getScriptProperties();
   const docs=[
-    ['UNIVERSE_CATALOG_BACKUP_ID',BU1.CORE_DB_ID],
-    ['UNIVERSE_CATALOG_LOG_BACKUP_ID',BU1.LOG_DB_ID]
+    ['UNIVERSE_CATALOG_BACKUP_ID',UNIVERSE_CONFIG.CORE_DB_ID],
+    ['UNIVERSE_CATALOG_LOG_BACKUP_ID',UNIVERSE_CONFIG.LOG_DB_ID]
   ];
   docs.forEach(function(pair){
     const value=clean_(props.getProperty(pair[0]));
@@ -93,7 +93,7 @@ function pfMgmtBackupGate_() {
     const file=DriveApp.getFileById(value);
     if(!file||!file.getName())throw new Error('バックアップにアクセスできません: '+pair[0]);
     const backup=SpreadsheetApp.openById(value);
-    const required=pair[0]==='UNIVERSE_CATALOG_BACKUP_ID'?BU1.SHEETS.PROFILES:'IDRegistry';
+    const required=pair[0]==='UNIVERSE_CATALOG_BACKUP_ID'?UNIVERSE_CONFIG.SHEETS.PROFILES:'IDRegistry';
     if(!backup.getSheetByName(required))throw new Error('バックアップに必要なタブがありません: '+required);
   });
 }

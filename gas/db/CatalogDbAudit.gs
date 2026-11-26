@@ -9,14 +9,14 @@
 function auditCatalogDatabaseForUniverse(payload) {
   catalogRequireUser_(payload||{});
   const ss=openCoreSpreadsheet_();
-  const groups=catalogTable_(ss,BU1.SHEETS.GROUPS,['GroupID','GroupName']);
-  const members=catalogTable_(ss,BU1.SHEETS.MEMBERS,['MemberID','GroupID','DisplayName']);
-  const links=catalogTable_(ss,BU1.SHEETS.GROUP_MEMBERS,['GroupID','MemberID']);
-  const profiles=catalogTable_(ss,BU1.SHEETS.PROFILES,['MemberID']);
-  const songs=catalogTable_(ss,BU1.SHEETS.SONGS,['SongID','Title']);
-  const credits=catalogTable_(ss,BU1.SHEETS.SONG_CREDITS,['SongID','Lyricists','Composers','Choreographers']);
-  const lyrics=catalogTable_(ss,BU1.SHEETS.LYRICS_PARTS,['SongID','PartOrder']);
-  const metrics=catalogTable_(ss,BU1.SHEETS.METRICS,['SongID']);
+  const groups=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS,['GroupID','GroupName']);
+  const members=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS,['MemberID','GroupID','DisplayName']);
+  const links=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS,['GroupID','MemberID']);
+  const profiles=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.PROFILES,['MemberID']);
+  const songs=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.SONGS,['SongID','Title']);
+  const credits=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.SONG_CREDITS,['SongID','Lyricists','Composers','Choreographers']);
+  const lyrics=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.LYRICS_PARTS,['SongID','PartOrder']);
+  const metrics=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.PERFORMANCE_METRICS,['SongID']);
   const warnings=[];
   const sampleLimit=25;
   function warn(code,message) {
@@ -111,7 +111,7 @@ function auditCatalogDatabaseForUniverse(payload) {
   });
   const legacy=tabs.filter(function(t){return t.category==='LEGACY_INPUT';}).map(function(t){return t.name;});
   const review=tabs.filter(function(t){return t.category==='REVIEW_ARCHIVE';}).map(function(t){return t.name;});
-  const log=SpreadsheetApp.openById(BU1.LOG_DB_ID);
+  const log=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID);
   const schema=catalogSchemaStatus_(ss);
   return {
     ok:true,readOnly:true,schema:schema,coreTabCount:tabs.length,logTabCount:log.getSheets().length,

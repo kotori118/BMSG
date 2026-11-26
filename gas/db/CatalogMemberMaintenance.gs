@@ -23,7 +23,7 @@ function moveCatalogMemberDisplayOrderForUniverse(payload) {
   if(['UP','DOWN'].indexOf(direction)<0)throw new Error('上下の移動方向を選択してください。');
   return withSharedWriterLock_('メンバーの表示順変更',function(){
     const ss=openCoreSpreadsheet_();catalogRequireReady_(ss);
-    const m=catalogTable_(ss,BU1.SHEETS.MEMBERS,['MemberID','GroupID','DisplayOrder','RecordStatus']);
+    const m=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS,['MemberID','GroupID','DisplayOrder','RecordStatus']);
     const current=catalogRow_(m,'MemberID',id);catalogEnsureActive_(m,current);
     const group=id_(current.values[m.map.GroupID]);
     const peers=m.rows.filter(function(r){
@@ -37,7 +37,7 @@ function moveCatalogMemberDisplayOrderForUniverse(payload) {
     const idx=peers.findIndex(function(r){return r.rowNumber===current.rowNumber;});
     const next=peers[idx+(direction==='UP'?-1:1)];
     if(!next)return {ok:true,memberId:id,unchanged:true};
-    const links=catalogTable_(ss,BU1.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
+    const links=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
     const primaryLinks=[current,next].map(function(member){return catalogRow_({sheet:links.sheet,map:links.map,rows:links.rows.filter(function(r){return id_(r.values[links.map.GroupID])===group;})},'MemberID',member.values[m.map.MemberID]);});
     const primaryOrders=primaryLinks.map(function(r){return r.values[links.map.DisplayOrder];});
     if(primaryOrders.some(function(n){return !Number.isSafeInteger(Number(n))||Number(n)<1;})||Number(primaryOrders[0])===Number(primaryOrders[1]))throw new Error('主所属の表示順を点検してください。');
@@ -74,15 +74,15 @@ function changeCatalogMemberPrimaryGroupForUniverse(payload) {
   if(!mid||!gid)throw new Error('メンバーと新しい主所属を選択してください。');
   return withSharedWriterLock_('メンバー主所属変更',function(){
     const ss=openCoreSpreadsheet_();catalogRequireReady_(ss);
-    const members=catalogTable_(ss,BU1.SHEETS.MEMBERS,['MemberID','GroupID','RecordStatus']);
+    const members=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS,['MemberID','GroupID','RecordStatus']);
     const m=catalogRow_(members,'MemberID',mid);catalogEnsureActive_(members,m);
     const oldGroup=id_(m.values[members.map.GroupID]);
     if(oldGroup===gid)return {ok:true,memberId:mid,unchanged:true};
-    const groups=catalogTable_(ss,BU1.SHEETS.GROUPS,['GroupID','RecordStatus']);
+    const groups=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUPS,['GroupID','RecordStatus']);
     const g=catalogRow_(groups,'GroupID',gid);catalogEnsureActive_(groups,g);
     if(!gid.startsWith('G'))
       throw new Error('主所属はグループのみ指定できます。ユニットは別管理です。');
-    const links=catalogTable_(ss,BU1.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
+    const links=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS,['GroupID','MemberID','DisplayOrder']);
     const own=links.rows.filter(function(r){return id_(r.values[links.map.MemberID])===mid;});
     const oldLinks=own.filter(function(r){return id_(r.values[links.map.GroupID])===oldGroup;});
     const newLinks=own.filter(function(r){return id_(r.values[links.map.GroupID])===gid;});
@@ -144,11 +144,11 @@ function changeCatalogMemberPrimaryGroupForUniverse(payload) {
  * remain as immutable evidence of the issued ID and previous changes.
  */
 function catalogMemberDeletePlan_(ss,mid) {
-  const members=catalogTable_(ss,BU1.SHEETS.MEMBERS,['MemberID','GroupID','DisplayName']);
+  const members=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.MEMBERS,['MemberID','GroupID','DisplayName']);
   const m=catalogRow_(members,'MemberID',mid);
-  const profiles=catalogTable_(ss,BU1.SHEETS.PROFILES,['MemberID']);
+  const profiles=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.PROFILES,['MemberID']);
   const profile=catalogRow_(profiles,'MemberID',mid);
-  const links=catalogTable_(ss,BU1.SHEETS.GROUP_MEMBERS,['MemberID','GroupID']);
+  const links=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS,['MemberID','GroupID']);
   const ownLinks=links.rows.filter(function(r){return id_(r.values[links.map.MemberID])===mid;});
   const home=id_(m.values[members.map.GroupID]);
   const blockers=[];
@@ -179,7 +179,7 @@ function catalogMemberDeletePlan_(ss,mid) {
     const used=countMatches(sheet,except);
     if(used)blockers.push(sheet.getName()+'に参照 '+used+'件');
   });
-  const log=SpreadsheetApp.openById(BU1.LOG_DB_ID);
+  const log=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID);
   log.getSheets().forEach(function(sheet){
     if(['IDRegistry','CATALOG_Audit'].indexOf(sheet.getName())>=0)return;
     const used=countMatches(sheet,null);
