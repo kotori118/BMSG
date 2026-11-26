@@ -48,8 +48,18 @@ node tests/browser/screens.mjs <出力先> data lab   # 実データで画面を
 
 ## 廃止した機能
 
-- お気に入り・履歴（2026-11-22）：画面、API（`getUniverseFavorites`、`setUniverseFavorite`、`recordUniverseActivity`）、カード・カバー・ポーカー・クイズでの履歴の書き込み、全画面を監視していた処理を削除。Log DB の `UserFavorites`、`RecentActivities` シートとデータは残してある（アプリからは使わない）。
-- メンバーカラー・推しグループから始める（2026-11-26）：設定は推しメンを選んで保存するだけ。Users シートの `MemberColorMode`、`FavoriteGroupStartMode` 列は残してある（読み書きしない）。
+- お気に入り・履歴（2026-11-22）：画面、API（`getUniverseFavorites`、`setUniverseFavorite`、`recordUniverseActivity`）、カード・カバー・ポーカー・クイズでの履歴の書き込み、全画面を監視していた処理を削除。Log DB の `UserFavorites`、`RecentActivities` シートは 2026-11-26 に削除（中身は `docs/archive/log-sheets-removed-2026-11-26.md`）。
+- メンバーカラー・推しグループから始める（2026-11-26）：設定は推しメンを選んで保存するだけ。Users シートの `MemberColorMode`、`FavoriteGroupStartMode` 列は 2026-11-26 に削除（中身は同じ記録に残した）。
+
+## 速さのしくみ
+
+- 読み取りの API は、DB のシートの中身と、重い結果（歌詞の一覧・歌詞本文・分析）をサーバーに保存して使う（`gas/pj/CoreRepository.gs` の `universeCoreCached_`）。保存は10分で切れる。
+- DB を変える書き込み（管理画面など）が終わると、保存はまとめて作り直しになる（`gas/Dispatcher.gs`）。ログだけに書く操作は `UNIVERSE_LOG_ONLY_ACTIONS_` に並べる。新しい書き込みの操作を足すとき、DB を変えないならここに足す。
+- スプレッドシートを直接編集したときは、最長10分で画面に反映される。
+- 歌詞は一覧（軽い）と本文（`getLyricsParts`）を分けて読む。本文は一覧を出した後に裏で読む。
+- 画面側は読み取りの結果を端末に24時間保存し、裏で新しくする（`web/js/gas-shim.js`）。
+- GAS の返す内容を変えたとき（項目を足す・形を変える）は、`web/js/gas-shim.js` の `CACHE_VERSION` を1つ上げる。上げないと、端末に残った古い保存結果が最大24時間使われる。
+- Drive の画像は `universeImageUrl(id, 幅)`（`web/partials/AppHelpers.html`）で、大きさを指定した小さい版だけを読む。
 
 ## デプロイ
 
