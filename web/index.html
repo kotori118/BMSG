@@ -866,7 +866,8 @@
   .home-feature-card.has-photo { position: relative; justify-content: center; min-height: 150px; }
   .home-feature-card.has-photo .home-feature-copy { max-width: 50%; }
   .home-feature-photo { position: absolute; top: 0; right: 0; bottom: 0; width: 54%; clip-path: polygon(24% 0, 100% 0, 100% 100%, 0 100%); }
-  .home-feature-photo > img { object-position: center 30%; }
+  /* 左の斜めの切れ目で隠れる分だけ右へ寄せて、写真の中心が見える部分の真ん中に来るようにする */
+  .home-feature-photo > img { object-position: 25% 30%; }
   .home-feature-card strong { overflow-wrap: anywhere; }
   .home-birthday-card { gap: 12px; }
   .home-birthday-copy { display: grid; gap: 7px; width: 100%; }
