@@ -1,108 +1,112 @@
 <style>
+  /* カバーメーカーの並べ方。見た目は部品 .ui-*、担当の色だけ data-content */
+  .cover-page { min-width: 0; min-height: 100%; padding: 86px 0 96px; }
+  @media (max-width: 600px) { .cover-page { padding-top: 82px; } }
+  @media (min-width: 780px) { .cover-page { padding-bottom: 36px; } }
+  .app-shell:has(#pageContent > .cover-page) .utility-actions { z-index: 40; }
+  .cover-app { max-width: 760px; margin: 0 auto; }
+  .cover-header { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin: 0 0 28px; }
+  .cover-page.is-cover-editor .cover-header { margin-bottom: 16px; }
+  .cover-title { max-width: 100%; margin: 0; line-height: .96; }
+  .cover-section-title { margin: 0 0 16px; }
   .cover-group-tiles { margin-bottom: 14px; }
   /* 線の色（メンバー・グループの色）を部品の --accent に渡す */
   .cover-content-card, .cover-project-row { --accent: var(--cover-accent, var(--ui-line-strong)); }
 
-  .cover-page{min-height:100%;padding:22px 0 96px}
-  .cover-app{max-width:760px;margin:0 auto}
-  .cover-stack{display:grid;grid-template-columns:1fr;gap:10px}
-  .cover-choice-stack{max-width:520px;margin:0 auto}
-  .cover-content-card,.cover-project-row{width:100%;min-height:58px;text-align:left;justify-content:flex-start;padding:14px 16px}
-  .cover-content-card{min-height:54px}
-  .cover-content-card strong,.cover-project-row strong{display:block;line-height:1.35}
-  .cover-row-meta{display:block;margin-top:4px;opacity:.62}
-  .cover-empty{padding:30px 16px;text-align:center;opacity:.62}
-  .cover-search-wrap{margin:0 0 12px}
-  .cover-search{width:100%;padding:0 14px}
-  .cover-song-heading{margin:0 0 4px;line-height:1.35}
-  .cover-song-context{opacity:.6;margin-bottom:12px}
-  .cover-lyrics{padding-bottom:96px}
-  .cover-lyric-row{padding:15px 2px 16px}
-  .cover-lyric-text{white-space:pre-wrap;line-height:1.9}
-  .cover-original-label{margin:0 0 7px;opacity:.62}
-  .cover-save-bar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
-  .cover-save-inner{max-width:760px;margin:0 auto;display:flex;justify-content:center}
-  .cover-save-inner .ui-btn{width:min(360px,100%);min-height:50px}
-  .cover-sheet{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center;padding:18px 12px 0}
-  .cover-sheet[hidden],.cover-dialog[hidden]{display:none!important}
-  .cover-sheet-panel{width:min(620px,100%);max-height:min(72dvh,680px);overflow:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
-  .cover-sheet-title{margin:0 0 12px;text-align:center}
-  .cover-member-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .cover-member-option{ --accent: var(--member-color, var(--ui-line-strong));min-height:50px;justify-content:center;text-align:center}
-  .cover-dialog{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
-  .cover-dialog-panel{width:min(430px,100%);padding:20px}
-  .cover-dialog-message{margin:0 0 18px;line-height:1.7}
-  .cover-dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .cover-saving{position:fixed;inset:0;z-index:120;display:grid;place-items:center}
-  .cover-saving[hidden]{display:none!important}
-  .cover-ratio-list{display:grid;gap:12px}
-  .cover-ratio-row{display:grid;grid-template-columns:minmax(76px,1fr) 2fr auto;gap:10px;align-items:center}
-  .cover-ratio-track{height:7px;overflow:hidden}
-  .cover-bulk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-  .cover-bulk-select{width:100%;height:48px;padding:0 10px}
-  .cover-bulk-apply{display:block!important;width:min(260px,100%);min-height:48px;margin:0 auto}
-  .cover-project-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
-  .cover-badge{padding:3px 7px;opacity:.72}
-  .cover-view-actions{display:flex;justify-content:center;gap:10px;margin:14px 0}
-  .cover-view-actions .ui-btn{width:auto;min-width:128px;min-height:48px}
-  .cover-view-actions.is-single{display:flex}
-  @media(max-width:600px){.cover-header{margin-bottom:14px}.cover-app{max-width:none}.cover-choice-stack{max-width:none}.cover-content-card{min-height:52px}.cover-member-list{grid-template-columns:1fr 1fr}}
-  @media(min-width:780px){.cover-save-bar{position:sticky;bottom:0;margin-top:10px;padding-left:0;padding-right:0}.cover-sheet{align-items:center}.cover-sheet-panel{max-height:70vh}.cover-page{padding-bottom:36px}}
-  /* 2026-09-11: final COVER style authority absorbed from CoverPolishV2/V3/V4. */
-  .cover-page{min-width:0;padding-top:86px}
-  .app-shell:has(#pageContent > .cover-page) .utility-actions{z-index:40}
-  .cover-header{display:flex!important;flex-direction:column;align-items:flex-start;gap:14px;margin:0 0 28px}
-  .cover-title{margin:0;max-width:100%;line-height:.96}
-  .cover-section-title{margin:0 0 16px}
-  .cover-page.is-cover-choice .cover-choice-stack{max-width:none;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .cover-page.is-cover-choice .cover-content-card{position:relative;isolation:isolate;overflow:hidden;min-width:0;min-height:98px;padding:18px;justify-content:flex-start;align-items:center;text-align:left}
-  .cover-page.is-cover-choice .cover-content-card::after{content:'';position:absolute;z-index:-1;right:-28px;bottom:-30px;width:76px;height:76px;pointer-events:none}
-  .cover-page.is-cover-choice .cover-content-card strong{position:relative;z-index:1;display:block;line-height:1.2;overflow-wrap:anywhere}
-  .cover-page.is-cover-group .cover-content-card:last-child:nth-child(odd),.cover-page.is-cover-artist .cover-content-card:last-child:nth-child(odd){grid-column:1}
-  .cover-project-row{min-height:68px;padding:15px 17px}
-  .cover-search{height:52px}
-  .cover-page.is-cover-editor .cover-header{margin-bottom:16px}
-  .cover-page .cover-member-list{grid-template-columns:1fr;gap:10px}
-  .cover-page .cover-member-option{min-height:54px;padding:10px;justify-content:center;text-align:center}
-  .cover-page .cover-project-row{min-height:70px;padding:14px 16px}
-  .cover-page .cover-project-row strong{line-height:1.35}
-  .cover-page .cover-project-row .cover-row-meta{margin-top:5px;opacity:1}
-  .cover-page.is-cover-saved-view .cover-view-actions{margin:14px 0 18px}
-  @media(max-width:600px){.cover-page{padding-top:82px}.cover-page.is-cover-choice .cover-content-card{min-height:94px;padding:16px}}
-  @media(max-width:380px){.cover-page.is-cover-choice .cover-choice-stack{gap:9px}.cover-page.is-cover-choice .cover-content-card{min-height:90px;padding:13px}}
-  /* Confirmation actions use the same substantial tap geometry as the rest of Universe. */
-  .cover-dialog-actions .ui-btn{min-height:50px;padding:0 14px;justify-content:center;text-align:center}
-  /* 2026-09-30: COVER external source + BMSG ALLSTARS selection. */
-  .cover-page .cover-allstar-member-card{display:flex!important;flex-direction:column;justify-content:center;gap:7px}
-  .cover-member-select-state{min-height:14px}
-  .cover-choice-next{display:flex;justify-content:center;margin-top:18px}
-  .cover-choice-next .ui-btn{width:min(320px,100%);min-height:52px}
-  .cover-external-form{display:grid;gap:16px;max-width:720px;margin:0 auto}
-  .cover-field{display:grid;gap:7px}
-  .cover-field input,.cover-field textarea{width:100%;box-sizing:border-box;padding:13px 14px;line-height:1.65}
-  .cover-field input{min-height:52px}
-  .cover-field textarea{resize:vertical;min-height:112px;white-space:pre-wrap}
-  .cover-external-primary{width:min(320px,100%);min-height:52px;margin:4px auto 0}
-  .cover-external-summary{display:grid;gap:4px;margin-bottom:16px;padding:14px 16px}
-  .cover-external-preview{display:grid;gap:12px}
-  .cover-external-part{display:grid;gap:12px;padding:15px}
-  .cover-external-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-  .cover-external-actions .ui-btn{min-height:52px}
-  @media(max-width:600px){
-    .cover-external-form{max-width:none}
-    .cover-external-part{padding:13px}
-    .cover-external-actions{grid-template-columns:1fr}
-  }
+  /* 一覧 */
+  .cover-stack { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .cover-choice-stack { max-width: 520px; margin: 0 auto; }
+  .cover-content-card { justify-content: flex-start; width: 100%; min-height: 54px; padding: 14px 16px; text-align: left; }
+  .cover-project-row { justify-content: flex-start; width: 100%; min-height: 70px; padding: 14px 16px; text-align: left; }
+  .cover-content-card strong, .cover-project-row strong { display: block; line-height: 1.35; }
+  .cover-row-meta { display: block; margin-top: 4px; opacity: .62; }
+  .cover-project-row .cover-row-meta { margin-top: 5px; opacity: 1; }
+  .cover-empty { padding: 30px 16px; text-align: center; opacity: .62; }
+  .cover-search-wrap { margin: 0 0 12px; }
+  .cover-search { width: 100%; height: 52px; padding: 0 14px; }
+  .cover-project-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+  .cover-badge { padding: 3px 7px; opacity: .72; }
+  /* グループ・メンバーを選ぶ画面：2列のタイル */
+  .cover-page.is-cover-choice .cover-choice-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: none; }
+  .cover-page.is-cover-choice .cover-content-card { position: relative; isolation: isolate; overflow: hidden; align-items: center; justify-content: flex-start; min-width: 0; min-height: 98px; padding: 18px; text-align: left; }
+  .cover-page.is-cover-choice .cover-content-card strong { position: relative; z-index: 1; display: block; line-height: 1.2; overflow-wrap: anywhere; }
+  .cover-page.is-cover-group .cover-content-card:last-child:nth-child(odd),
+  .cover-page.is-cover-artist .cover-content-card:last-child:nth-child(odd) { grid-column: 1; }
+  .cover-page .cover-allstar-member-card { display: flex; flex-direction: column; justify-content: center; gap: 7px; }
+  .cover-member-select-state { min-height: 14px; }
+  .cover-choice-next { display: flex; justify-content: center; margin-top: 18px; }
+  .cover-choice-next .ui-btn { width: min(320px, 100%); min-height: 52px; }
 
   /* 曲の詳細：題は流れる。ORIGINAL/COVER と道具の帯だけ上に止める（上のバーの下） */
   .cover-editor-head { display: grid; gap: 8px; padding-bottom: 12px; }
   .cover-toolbar { position: sticky; top: var(--ui-bar-h); z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 4px; padding: 8px 0; }
+  .cover-page.is-cover-saved-view .cover-toolbar { position: static; }
   .cover-tabs { flex: 0 1 220px; }
   .cover-tools { display: flex; flex: none; gap: 14px; }
-  .cover-page.is-cover-saved-view .cover-toolbar { position: static; }
+  .cover-song-heading { margin: 0 0 4px; line-height: 1.35; }
+  .cover-song-context { margin-bottom: 12px; opacity: .6; }
+  .cover-lyrics { padding-bottom: 96px; }
+  .cover-lyric-row { padding: 15px 2px 16px; }
+  .cover-lyric-text { white-space: pre-wrap; line-height: 1.9; }
+  .cover-original-label { margin: 0 0 7px; opacity: .62; }
   /* 歌唱者：歌詞と同じ「点＋名前」。編集中は「変更」を添える */
   .cover-assignee { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; margin-bottom: 4px; }
   .cover-register-song { margin-top: 14px; }
+  .cover-view-actions { display: flex; justify-content: center; gap: 10px; margin: 14px 0; }
+  .cover-page.is-cover-saved-view .cover-view-actions { margin: 14px 0 18px; }
+  .cover-view-actions .ui-btn { width: auto; min-width: 128px; min-height: 48px; }
+  .cover-save-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 10px max(16px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  .cover-save-inner { display: flex; justify-content: center; max-width: 760px; margin: 0 auto; }
+  .cover-save-inner .ui-btn { width: min(360px, 100%); min-height: 50px; }
+
+  /* 担当を選ぶシート・割合・まとめて変更 */
+  .cover-sheet { position: fixed; inset: 0; z-index: 90; display: flex; align-items: flex-end; justify-content: center; padding: 18px 12px 0; }
+  .cover-sheet-panel { width: min(620px, 100%); max-height: min(72dvh, 680px); overflow: auto; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); }
+  .cover-sheet-title { margin: 0 0 12px; text-align: center; }
+  .cover-member-list { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .cover-member-option { --accent: var(--member-color, var(--ui-line-strong)); justify-content: center; min-height: 54px; padding: 10px; text-align: center; }
+  .cover-ratio-list { display: grid; gap: 12px; }
+  .cover-ratio-row { display: grid; grid-template-columns: minmax(76px, 1fr) 2fr auto; align-items: center; gap: 10px; }
+  .cover-ratio-track { height: 7px; overflow: hidden; }
+  .cover-bulk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .cover-bulk-select { width: 100%; height: 48px; padding: 0 10px; }
+  .ui-btn.cover-bulk-apply { display: block; width: min(260px, 100%); min-height: 48px; margin: 0 auto; }
+  .cover-dialog { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; }
+  .cover-dialog-panel { width: min(430px, 100%); padding: 20px; }
+  .cover-dialog-message { margin: 0 0 18px; line-height: 1.7; }
+  .cover-dialog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cover-dialog-actions .ui-btn { justify-content: center; min-height: 50px; padding: 0 14px; text-align: center; }
+  .cover-saving { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; }
+
+  /* 外部の曲を登録 */
+  .cover-external-form { display: grid; gap: 16px; max-width: 720px; margin: 0 auto; }
+  .cover-field { display: grid; gap: 7px; }
+  .cover-field input, .cover-field textarea { width: 100%; box-sizing: border-box; padding: 13px 14px; line-height: 1.65; }
+  .cover-field input { min-height: 52px; }
+  .cover-field textarea { min-height: 112px; resize: vertical; white-space: pre-wrap; }
+  .cover-external-primary { width: min(320px, 100%); min-height: 52px; margin: 4px auto 0; }
+  .cover-external-summary { display: grid; gap: 4px; margin-bottom: 16px; padding: 14px 16px; }
+  .cover-external-preview { display: grid; gap: 12px; }
+  .cover-external-part { display: grid; gap: 12px; padding: 15px; }
+  .cover-external-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+  .cover-external-actions .ui-btn { min-height: 52px; }
+
+  @media (max-width: 600px) {
+    .cover-app, .cover-choice-stack, .cover-external-form { max-width: none; }
+    .cover-content-card { min-height: 52px; }
+    .cover-page.is-cover-choice .cover-content-card { min-height: 94px; padding: 16px; }
+    .cover-external-part { padding: 13px; }
+    .cover-external-actions { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 380px) {
+    .cover-page.is-cover-choice .cover-choice-stack { gap: 9px; }
+    .cover-page.is-cover-choice .cover-content-card { min-height: 90px; padding: 13px; }
+  }
+  @media (min-width: 780px) {
+    .cover-save-bar { position: sticky; bottom: 0; margin-top: 10px; padding-left: 0; padding-right: 0; }
+    .cover-sheet { align-items: center; }
+    .cover-sheet-panel { max-height: 70vh; }
+  }
 </style>
 <style data-content>
   /* 中身の見た目（絵柄・レア度・メンバーカラー）。ボタン・入力欄はここに書かない */

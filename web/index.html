@@ -120,6 +120,8 @@
 
 <!-- Styles.html -->
 <style>
+  /* hidden 属性は、どの表示指定より必ず勝つ（ここだけ !important を使う） */
+  [hidden] { display: none !important; }
   /* =========================================================
      BMSG UNIVERSE 土台（全画面共通）
      画面の枠・上のバー・下のメニュー・左のメニュー・検索・設定・通知の置き場所。
@@ -266,7 +268,6 @@
 
   /* ---- 左のメニュー ---- */
   .app-menu { position: fixed; inset: 0; z-index: 150; }
-  .app-menu[hidden] { display: none; }
   .app-menu-backdrop { position: absolute; inset: 0; background: var(--ui-scrim); }
   .app-menu-panel {
     position: absolute;
@@ -350,7 +351,6 @@
     margin: 0;
     color: var(--ui-text);
     font-family: var(--ui-font-display);
-    font-size: clamp(34px, 9vw, 48px);
     font-weight: 900;
     letter-spacing: -.035em;
     line-height: .95;
@@ -374,6 +374,7 @@
 
   /* 検索 */
   .universe-search-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  @media (max-width: 520px) { .universe-search-form { grid-template-columns: 1fr; } }
   .search-field {
     min-height: var(--ui-button-h);
     padding: 0 16px;
@@ -464,6 +465,7 @@
     color: var(--ui-text);
   }
   .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+  .overlay-title { font-size: clamp(34px, 9vw, 48px); }
   .modal-title { font-size: clamp(30px, 8vw, 40px); }
   .settings-eyebrow { margin: 0 0 6px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); }
   .settings-group { margin-top: 22px; }
@@ -567,7 +569,7 @@
     position: fixed;
     left: 50%;
     bottom: calc(var(--ui-nav-h) + 22px + env(safe-area-inset-bottom));
-    z-index: 130;
+    z-index: 1400; /* 設定などの重ね画面より上 */
     width: min(calc(100% - 32px), 520px);
     transform: translateX(-50%);
     pointer-events: none;
@@ -677,7 +679,8 @@
 
   /* 表（ランキングなど）：行は線で区切る。数字の列は .num で右寄せ */
   .ui-table { width: 100%; border-collapse: collapse; color: var(--ui-text); font-family: var(--ui-font); }
-  .ui-table th, .ui-table td { padding: 12px 14px; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-body); font-weight: 500; text-align: left; vertical-align: top; }
+  .ui-table th, .ui-table td { padding: 12px 14px; border-bottom: 1px solid var(--ui-line); text-align: left; vertical-align: top; }
+  .ui-table td { font-size: var(--ui-fs-body); font-weight: 500; }
   .ui-table th { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; }
   .ui-table :is(td, th).num { text-align: right; font-variant-numeric: tabular-nums; }
   .ui-table tr:last-child td { border-bottom: 0; }
@@ -696,6 +699,7 @@
   .ui-btn:is(.ui-btn-solid, [aria-pressed="true"], .is-active, .is-selected, .is-on, .is-open, .active) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
   @media (hover: hover) { .ui-btn:is(.ui-btn-solid, [aria-pressed="true"], .is-active, .is-selected, .is-on, .active):not(:disabled):hover { border-color: var(--ui-active-bg); background: var(--ui-active-bg); opacity: .88; } }
   .ui-btn.ui-btn-wide { width: 100%; }
+  .ui-btn-wide + .ui-btn-wide { margin-top: 8px; }
   /* 処理中のボタン：押したボタンそのものにくるくる。押せないが薄くしない */
   .ui-btn.is-busy, .ui-btn.is-busy:disabled { opacity: 1; cursor: progress; }
   .ui-btn.is-busy::before { content: ""; width: 14px; height: 14px; flex: none; border: 1.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: universeSpinner .8s linear infinite; }
@@ -752,7 +756,7 @@
   /* ON/OFF の小さな表示 */
   /* 小さな札（状態・種類） */
   .ui-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0 8px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
-  .ui-badge:is(.ui-badge-solid, .is-active) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
+  .ui-badge.is-active { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
 
   /* タブ：つながった枠。選択中は塗る */
   .ui-tabs { display: flex; overflow-x: auto; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); }
@@ -803,7 +807,6 @@
 
   /* ============ 4. 重ねて出すもの ============ */
   .ui-modal { position: fixed; inset: 0; z-index: 1300; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); background: var(--ui-scrim); }
-  .ui-modal[hidden] { display: none; }
   .ui-modal-card { display: flex; flex-direction: column; width: min(100%, 560px); max-height: 86dvh; overflow: hidden; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-bg); color: var(--ui-text); }
   .ui-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 14px 20px; border-bottom: 1px solid var(--ui-line); }
   .ui-modal-head h2, .ui-modal-head h3 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
@@ -823,7 +826,6 @@
   .ui-skeleton.ui-avatar { border-radius: 50%; }
   .ui-skeleton.ui-skeleton-card { min-height: 88px; border: 1px solid var(--ui-line); }
   .ui-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 140px; padding: 24px 0; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 500; letter-spacing: .08em; text-align: center; }
-  .ui-loading[hidden] { display: none; }
   .ui-loading::before { content: ""; width: 22px; height: 22px; border: 1.5px solid var(--ui-line); border-top-color: var(--ui-text); border-radius: 50%; animation: universeSpinner .9s linear infinite; }
   /* 通知（トースト）：塗りの帯 */
   .universe-toast { min-height: 52px; padding: 0 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--ui-radius); background: var(--ui-active-bg); color: var(--ui-active-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 700; letter-spacing: .06em; opacity: 0; transform: translateY(10px); animation: toast-in 190ms var(--ui-ease) forwards; }
@@ -952,84 +954,70 @@
 <!-- ProfileUniverse.html -->
 <style>
   /* =========================================================
-     プロフィール（統一版）。色・文字・間隔はすべて UniverseTokens の変数。
-     古い指定（光・青緑・固有の大きさ）は使わない。
+     プロフィールの並べ方。見た目は部品 .ui-*（色・文字は UniverseTokens の変数）。
      ========================================================= */
-  /* ---- 共通の面と枠 ---- */
   .profile-page { padding-top: 96px; }
   /* 見出し・説明の補助（ラベルは表示しない方針） */
   .profile-panel-eyebrow,
   .profile-panel-copy,
-  .profile-discover-sub { display: none; }
+  .profile-discover-sub,
+  .profile-member-accent { display: none; }
   .profile-panel { display: grid; gap: 24px; margin-top: 32px; }
   .profile-members-head,
   .profile-discover-head,
-  .profile-search-head,
   .profile-chemistry-head,
-  .profile-map-head {
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 12px;
-    padding-bottom: 14px;
-  }
+  .profile-map-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-bottom: 14px; }
+  .profile-members-head > .profile-members-count { align-self: center; }
   .profile-members-title,
   .profile-discover-head .profile-members-title,
   .profile-search-title,
   .profile-chemistry-title,
-  .profile-map-title {
-    margin: 0; line-height: .95;
-  }
-  /* 面（すべての箱はこれ） */
-  /* 入力欄・選択欄（共通の .ui-input と同じ） */
-  .profile-search-box input,
+  .profile-map-title { margin: 0; line-height: .95; }
+  /* 選択欄（共通の .ui-input と同じ大きさ） */
   .profile-map-select-label select,
-  .profile-search-field-options select {
-    display: block; width: 100%; min-height: var(--ui-button-h); padding: 0 16px;
-  }
-  /* ボタン（共通の .ui-btn と同じ） */
+  .profile-search-field-options select { display: block; width: 100%; min-height: var(--ui-button-h); padding: 0 16px; }
+  /* ボタン（共通の .ui-btn と同じ大きさ） */
   .profile-search-selected-head button,
-  .profile-chemistry-detail-error button,
-  .profile-chemistry-slot-remove,
-  .profile-search-field-toggle {
-    min-height: var(--ui-button-h); padding: 0 20px; cursor: pointer;
-  }
-  /* 表示切り替え（上の5つ）は universe の枠の形 */
-  .profile-local-nav {
-    display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: hidden;
-  }
-  .profile-local-tab {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
-    min-width: 0; min-height: 64px; padding: 8px 2px;
-  }
+  .profile-chemistry-detail-error button { min-height: var(--ui-button-h); padding: 0 20px; cursor: pointer; }
+  /* 表示切り替え（上の5つ） */
+  .profile-local-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); overflow: hidden; }
+  .profile-local-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; min-width: 0; min-height: 64px; padding: 8px 2px; }
   .profile-local-tab svg { width: 20px; height: 20px; }
+  /* 共通の戻るボタン＋見出し（分析と同じ） */
+  .profile-header { display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; }
+  .profile-heading { flex: 1; min-width: 0; text-align: left; }
+  .profile-title { margin: 0; line-height: .95; }
+
+  /* 写真：枠いっぱい。頭文字は出さない */
+  .profile-member-visual > img,
+  .profile-detail-visual > img,
+  .profile-search-avatar > img,
+  .profile-discover-avatar > img,
+  .profile-chemistry-slot-avatar > img,
+  .profile-map-avatar > img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+
   /* ---- メンバー（ホーム） ---- */
   .profile-member-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .profile-member-card { position: relative; display: grid; grid-template-rows: auto auto; align-content: start; align-items: start; overflow: hidden; padding: 0; text-align: left; cursor: pointer; }
   .profile-member-visual { position: relative; aspect-ratio: 1; overflow: hidden; }
-  .profile-member-visual img,
-  .profile-member-visual img,
-  .profile-detail-visual img,
-  .profile-map-avatar img,
-  .profile-search-avatar img,
-  .profile-discover-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .profile-member-accent { display: none; }
   .profile-member-body { display: grid; align-content: start; align-self: start; gap: 2px; padding: 8px 14px 12px; }
   .profile-member-body > * { margin: 0; }
   .profile-members-state { padding: 24px 16px; text-align: center; }
   .profile-members-state-title { margin: 0 0 6px; }
-  /* 読み込み中：同じ形の面を流す（光なし） */
-  .profile-member-skeleton,
-  .ui-skeleton {
-    display: block;
-    animation: uiShimmer 1.4s linear infinite;
-  }
+  /* 読み込み中：同じ形の面を流す（光は部品 .ui-skeleton と同じ） */
+  .profile-member-skeleton { display: block; animation: uiShimmer 1.4s linear infinite; }
   .profile-member-skeleton-image { aspect-ratio: 1; }
   .profile-member-skeleton-label,
-  .profile-member-skeleton-copy { height: 10px; width: 40%; }
+  .profile-member-skeleton-copy { width: 40%; height: 10px; }
   .profile-member-skeleton-heading,
-  .profile-member-skeleton-name { height: 16px; width: 70%; }
-  @media (prefers-reduced-motion: reduce) { .profile-member-skeleton, .ui-skeleton { animation: none; } }
+  .profile-member-skeleton-name { width: 70%; height: 16px; }
+  @media (prefers-reduced-motion: reduce) { .profile-member-skeleton { animation: none; } }
+
   /* ---- 詳細（メンバーを開いた画面） ---- */
   .profile-member-detail { display: grid; gap: 16px; }
-  .profile-detail-hero { display: grid; overflow: hidden; }
+  .profile-member-detail > .ui-back { margin-bottom: 16px; }
+  .profile-detail-hero { display: grid; grid-template-columns: 120px minmax(0, 1fr); overflow: hidden; }
+  .profile-detail-visual { position: relative; min-height: 120px; overflow: hidden; }
   .profile-detail-identity { display: grid; align-content: center; gap: 6px; padding: 16px 18px; }
   .profile-detail-line { display: none; }
   .profile-detail-name { margin: 0; }
@@ -1039,6 +1027,7 @@
   .profile-detail-list { display: grid; margin: 0; }
   .profile-detail-row { display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 10px 0; }
   .profile-detail-row dd { margin: 0; }
+
   /* ---- マップ ---- */
   .profile-map-select-label { display: grid; gap: 8px; }
   .profile-map-groups { display: grid; gap: 12px; }
@@ -1046,39 +1035,49 @@
   .profile-map-group h3 { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; padding-bottom: 12px; }
   .profile-map-member-list { display: flex; flex-wrap: wrap; gap: 8px; }
   .profile-map-member { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 4px 16px 4px 4px; }
-  .profile-map-avatar { width: 44px; height: 44px; overflow: hidden; }
-  /* ---- 検索 ---- */
-  .profile-search-box { display: flex; align-items: center; gap: 10px; }
+  .profile-map-avatar { position: relative; width: 44px; height: 44px; overflow: hidden; }
+
+  /* ---- 検索（入力欄が主役。絞り込みは必要な時だけ開く） ---- */
+  .profile-search-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 14px; }
+  .profile-search-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: stretch; gap: 8px; }
+  .profile-search-box { display: flex; align-items: center; gap: 10px; min-height: var(--ui-button-h); padding: 0 14px; }
   .profile-search-box svg { flex: none; width: 18px; height: 18px; }
-  .profile-search-box input { padding: 0; }
+  .profile-search-box input { display: block; width: 100%; min-height: var(--ui-button-h); padding: 0; }
+  .profile-search-filter-toggle { min-height: var(--ui-button-h); padding: 0 16px; cursor: pointer; }
   .profile-search-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .profile-search-field { padding: 0; }
-  .profile-search-field-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+  .profile-search-field-toggle { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: var(--ui-button-h); padding: 0 20px; cursor: pointer; }
   .profile-search-tags { display: flex; flex-wrap: wrap; gap: 8px; }
   .profile-search-tag { min-height: var(--ui-button-h); padding: 0 16px; cursor: pointer; }
   .profile-search-results { display: grid; gap: 8px; }
+  .profile-search-results-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .profile-search-results-head h3 { margin: 0; }
+  .profile-search-result-list { display: grid; gap: 8px; }
   .profile-search-member { display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 12px; padding: 10px 14px; cursor: pointer; }
-  .profile-search-avatar { width: 52px; height: 52px; overflow: hidden; }
-  .profile-search-member-copy { display: grid; gap: 2px; }
   .profile-search-member > svg { display: none; }
+  .profile-search-avatar { position: relative; width: 52px; height: 52px; overflow: hidden; }
+  .profile-search-member-copy { display: grid; gap: 2px; }
   .profile-search-empty { padding: 24px 16px; text-align: center; }
+
   /* ---- 相性 ---- */
   .profile-chemistry-slots { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; gap: 8px; }
   .profile-chemistry-cross { text-align: center; }
   .profile-chemistry-slot { position: relative; display: grid; align-content: center; justify-items: center; gap: 8px; min-height: 180px; padding: 16px 12px; text-align: center; cursor: pointer; }
   .profile-chemistry-slot-number { position: absolute; top: 12px; left: 14px; }
   .profile-chemistry-slot-plus { line-height: 1; }
-  .profile-chemistry-slot-avatar { width: 72px; height: 72px; overflow: hidden; }
-  .profile-chemistry-slot-avatar img,
-  .profile-chemistry-member img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .profile-chemistry-slot-remove { min-height: 36px; padding: 0 12px; }
-  .profile-chemistry-picker { padding: 16px; display: grid; gap: 14px; }
+  .profile-chemistry-slot-avatar { position: relative; width: 72px; height: 72px; overflow: hidden; }
+  .profile-chemistry-slot-remove { min-height: 36px; padding: 0 12px; cursor: pointer; }
+  .profile-chemistry-picker { display: grid; gap: 14px; padding: 16px; }
   .profile-chemistry-section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
   .profile-chemistry-section-head h3 { margin: 0; }
-  .profile-chemistry-member-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .profile-chemistry-member { display: grid; gap: 8px; padding: 10px; text-align: left; cursor: pointer; }
+  /* 相性の候補：写真 → 名前 の順。高さは揃えない */
+  .profile-chemistry-member-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; gap: 8px; }
+  .profile-chemistry-member { display: grid; grid-template-rows: auto auto; align-self: start; align-content: start; align-items: start; gap: 8px; padding: 10px; text-align: left; cursor: pointer; }
   .profile-chemistry-member > img,
-  .profile-chemistry-member > i { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+  .profile-chemistry-member > .profile-chemistry-photo-empty { position: relative; z-index: 0; display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
+  .profile-chemistry-member > i { display: none; }
+  .profile-chemistry-member > span { display: block; align-self: start; min-height: 16px; }
+  .profile-chemistry-member > b { align-self: start; }
   .profile-chemistry-result { display: grid; gap: 12px; padding: 16px; }
   .profile-chemistry-score { display: flex; align-items: baseline; gap: 8px; }
   .profile-chemistry-compare { padding: 6px 16px; }
@@ -1086,68 +1085,15 @@
   .profile-chemistry-compare-row { display: grid; grid-template-columns: 96px 1fr 1fr; gap: 10px; padding: 10px 0; }
   .profile-chemistry-compare-row dd { margin: 0; }
   .profile-chemistry-compare-row.match dd { text-underline-offset: 4px; }
+
   /* ---- 発見 ---- */
   .profile-discover-ranking { display: grid; gap: 8px; }
   .profile-discover-rank-card { display: grid; grid-template-columns: 36px 52px 1fr auto; align-items: center; gap: 12px; padding: 10px 14px; cursor: pointer; }
   .profile-discover-rank { text-align: center; }
-  .profile-discover-avatar { width: 52px; height: 52px; overflow: hidden; }
+  .profile-discover-avatar { position: relative; width: 52px; height: 52px; overflow: hidden; }
   .profile-discover-member { display: grid; gap: 2px; padding: 0; }
   .profile-discover-match,
   .profile-discover-count { display: grid; justify-items: end; gap: 2px; }
-  /* 共通の戻るボタン＋見出し（分析と同じ） */
-  .profile-header { display: flex; align-items: center; justify-content: flex-start; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; }
-  .profile-heading { flex: 1; min-width: 0; text-align: left; }
-  .profile-title { margin: 0; line-height: .95; }
-  /* ---- 検索（案1：入力欄が主役。絞り込みは必要な時だけ開く） ---- */
-  .profile-search-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 14px; }
-  .profile-search-bar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: stretch; }
-  .profile-search-box { padding: 0 14px; min-height: var(--ui-button-h); }
-  .profile-search-box input { min-height: var(--ui-button-h); }
-  .profile-search-filter-toggle {
-    min-height: var(--ui-button-h); padding: 0 16px; cursor: pointer;
-  }
-  .profile-search-fields[hidden] { display: none; }
-  .profile-search-results-head { display: flex; justify-content: space-between; align-items: baseline; }
-  .profile-search-results-head h3 { margin: 0; }
-  .profile-search-result-list { display: grid; gap: 8px; }
-  /* 写真：枠いっぱい。頭文字は出さない */
-  .profile-member-visual,
-  .profile-detail-visual,
-  .profile-search-avatar,
-  .profile-discover-avatar,
-  .profile-chemistry-slot-avatar,
-  .profile-map-avatar { position: relative; overflow: hidden; }
-  .profile-member-visual > img,
-  .profile-detail-visual > img,
-  .profile-search-avatar > img,
-  .profile-discover-avatar > img,
-  .profile-chemistry-slot-avatar > img,
-  .profile-map-avatar > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-  .profile-chemistry-member > img { position: static; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; display: block; }
-  .profile-detail-hero { grid-template-columns: 120px minmax(0, 1fr); }
-  .profile-detail-visual { position: relative; aspect-ratio: auto; min-height: 120px; }
-  /* ボタン幅（クロスリンク・変更など） */
-  body.ui-v2 .ui-btn-wide { width: 100%; }
-  body.ui-v2 .ui-btn-wide + .ui-btn-wide { margin-top: 8px; }
-  /* 相性の候補：写真の下に名前を必ず表示（写真は枠の中で固定の比率） */
-  body.ui-v2 .profile-chemistry-member { align-items: start; }
-  body.ui-v2 .profile-chemistry-member > span { display: block; }
-  body.ui-v2 .profile-chemistry-member > i,
-  body.ui-v2 .profile-chemistry-member > img { position: relative; z-index: 0; }
-  /* 見出し横の装飾の線は表示しない（枠として見える） */
-  body.ui-v2 .profile-members-head .profile-member-accent,
-  body.ui-v2 .profile-chemistry-section-head .profile-member-accent { display: none !important; }
-  body.ui-v2 .profile-members-head > .profile-members-count { align-self: center; }
-  /* アイコンだけの戻るボタン：中の文字は出さない */
-  body.ui-v2 .profile-member-detail > .ui-back { margin-bottom: 16px; }
-  /* 相性の候補：写真 → 名前 の順。頭文字は出さない。高さは揃えない */
-  body.ui-v2 .profile-chemistry-member-grid { align-items: start; }
-  body.ui-v2 .profile-chemistry-member { grid-template-rows: auto auto; align-self: start; align-content: start; gap: 8px; }
-  body.ui-v2 .profile-chemistry-member > img,
-  body.ui-v2 .profile-chemistry-member > .profile-chemistry-photo-empty { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
-  body.ui-v2 .profile-chemistry-member > i { display: none; }
-  body.ui-v2 .profile-chemistry-member > span { min-height: 16px; align-self: start; }
-  body.ui-v2 .profile-chemistry-member > b { align-self: start; }
 </style>
 
 <!-- LyricsStyles.html -->
@@ -1184,7 +1130,6 @@
   .lyx-history { justify-self: start; }
   .lyx-join { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
   .lyx-join.is-two { grid-template-columns: 1fr 1fr; }
-  .lyx-join[hidden] { display: none; }
 
   /* グループ（2列のタイル） */
   .lyx-groups { margin-bottom: 14px; }
@@ -1221,7 +1166,6 @@
   /* カラオケの並べ方（見た目は部品 .ui-*。白背景は body.ui-light のトークン） */
   .karaoke-page { padding-top: var(--ui-top-pad); }
   .karaoke-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; padding-bottom: 20px; }
-  .karaoke-latest-shortcut[hidden] { display: none; }
   .karaoke-title { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 18px 0 22px; }
   .karaoke-title > p { flex-basis: 100%; }
 
@@ -1281,7 +1225,6 @@
   .karaoke-favorite-save { width: 100%; margin-top: 20px; }
   .karaoke-favorite-empty { padding: 28px 12px; text-align: center; }
   #karaokeFavoriteSettingsBody > .universe-loading { min-height: 160px; }
-  .toast-region { z-index: 1400; }
   @media (max-width: 520px) {
     .karaoke-favorite-settings-panel { padding: 24px 22px 34px; }
     .karaoke-favorite-member-row { grid-template-columns: 1fr; gap: 10px; padding: 16px 0; }
@@ -1434,8 +1377,9 @@
   .card-reveal-burst { position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; border-radius: 50%; opacity: 0; transform: translate(-50%, -50%); }
   .card-reveal.rarity-sr .card-reveal-burst, .card-reveal.rarity-ssr .card-reveal-burst { width: min(150vw, 640px); height: min(150vw, 640px); background: repeating-conic-gradient(from 0deg, var(--rarity-accent) 0 3deg, transparent 3deg 19deg); -webkit-mask-image: radial-gradient(circle, #000 0, transparent 70%); mask-image: radial-gradient(circle, #000 0, transparent 70%); }
   .card-reveal.rarity-ssr .card-reveal-orbit { border-width: 2px; }
-  .card-reveal-meteors::before, .card-reveal-meteors::after { content: ''; position: absolute; top: 22%; left: -28%; width: 190px; height: 2px; background: var(--ui-active-bg); opacity: 0; transform: rotate(-22deg); }
-  .card-reveal-meteors::after { top: 69%; left: auto; right: -28%; transform: rotate(-28deg); }
+  .card-reveal-meteors::before, .card-reveal-meteors::after { content: ''; position: absolute; width: 190px; height: 2px; background: var(--ui-active-bg); opacity: 0; }
+  .card-reveal-meteors::before { top: 22%; left: -28%; transform: rotate(-22deg); }
+  .card-reveal-meteors::after { top: 69%; right: -28%; transform: rotate(-28deg); }
   .card-reveal.rarity-ssr .card-reveal-meteors::before, .card-reveal.rarity-ssr .card-reveal-meteors::after { height: 3px; }
   .card-reveal-sparks { position: absolute; inset: 0; background: radial-gradient(circle at 50% 46%, var(--rarity-soft), transparent 62%); opacity: 0; }
 
@@ -1600,15 +1544,17 @@
 
 <!-- QuizStyles.html -->
 <style>
-  .quiz-app{display:grid;gap:16px;margin:0 auto}
-  .quiz-kicker,.quiz-step-label,.quiz-room-label{margin:0}
-  .quiz-muted{margin:8px 0 0}
+  /* クイズの並べ方。見た目は部品 .ui-* */
+  .quiz-page{padding-top:78px;padding-bottom:20px}
+  .quiz-app{display:grid;gap:16px;max-width:760px;margin:0 auto}
+  .quiz-step-label,.quiz-room-label{margin:0}
+  .quiz-muted{margin:8px 0 0;line-height:1.75}
   .quiz-settings{display:grid;gap:20px}
   .quiz-setting{display:grid;gap:10px}
   .quiz-setting-title{margin:0}
   .quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   .quiz-options.is-course{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .quiz-choice,.quiz-player,.quiz-award,.quiz-action{min-height:48px}
+  .quiz-choice,.quiz-player,.quiz-award{min-height:48px}
   .quiz-player-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
   .quiz-player small{display:block;margin-top:3px}
   .quiz-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
@@ -1621,16 +1567,11 @@
   .quiz-question-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .quiz-question-text{margin:4px 0 24px;overflow-wrap:anywhere}
   .quiz-question-text.is-lyrics{padding:22px 12px;text-align:center;line-height:1.8}
-  .quiz-lyrics-link{display:inline-flex;align-items:center}
   .quiz-award-step{display:grid;gap:12px}
   .quiz-award-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   @media(min-width:680px){.quiz-options.is-course{grid-template-columns:repeat(3,minmax(0,1fr))}.quiz-award-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
   @media(max-width:420px){.quiz-player-grid{grid-template-columns:1fr}.quiz-actions{grid-template-columns:1fr}}
   @media(prefers-reduced-motion:reduce){.quiz-progress span{transition:none}}
-  /* QUIZ final design audit: layout/typography only. Shared ButtonSystem remains surface authority. */
-  .quiz-page{
-    padding-bottom:20px;
-  }
   .quiz-header{
     display:flex;
     align-items:center;
@@ -1644,23 +1585,16 @@
     margin:0;
     line-height:.95;
   }
-  .quiz-app{max-width:760px;}
   .quiz-panel{padding:clamp(18px,4.5vw,26px);}
   .quiz-panel-title{
     margin:0 0 14px;
     line-height:1.35;
   }
-  .quiz-muted,
-  .quiz-v3-feedback-answer{
-    line-height:1.75;
-  }
-  .quiz-page .quiz-kicker{display:none!important;}
   @media(max-width:600px){
     .quiz-header{margin-bottom:20px;}
     .quiz-actions{gap:9px;}
   }
-  /* Canonical interaction styles formerly loaded from QuizInteractionStyles.html. */
-  .quiz-page{padding-top:78px}
+  /* 出題・答え合わせ */
   .quiz-v3-ready{text-align:center;padding:20px 0 8px}
   .quiz-v3-ready .quiz-panel-title{margin:8px 0 12px}
   .quiz-v3-ready-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:18px 0 22px}
@@ -1694,17 +1628,17 @@
   @keyframes quizV3Fade{0%{opacity:0}20%,72%{opacity:1}100%{opacity:0}}
   @media(max-width:600px){.quiz-page{padding-top:72px}.quiz-v3-search-row{grid-template-columns:1fr}.quiz-v3-search-row .quiz-action{width:100%}}
   @media(prefers-reduced-motion:reduce){.quiz-v3-feedback,.quiz-v3-inline-status.is-wrong,.quiz-v3-stage-flash,.quiz-v3-stage-flash span{animation:none}.quiz-v3-timer-bar{transition:none}}
-  /* 2026-09-12 smoke-test corrections: scoped to QUIZ only. */
+  /* 準備・ランキング */
   .quiz-ready-notes{margin:0;padding-left:1.4em;text-align:left;line-height:1.85}
   .quiz-ready-notes li+li{margin-top:2px}
-  .quiz-lyrics-link{width:100%;justify-content:center;box-sizing:border-box;min-height:48px;margin-top:14px;padding:0 14px}
+  .quiz-lyrics-link{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:48px;box-sizing:border-box;margin-top:14px;padding:0 14px}
   .quiz-ranking{display:grid;gap:0}
   .quiz-ranking-row{display:flex;align-items:baseline;gap:8px;padding:11px 2px;white-space:nowrap}
   .quiz-ranking-rank{flex:0 0 auto}
   .quiz-ranking-name{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis}
   .quiz-ranking-points{flex:0 0 auto}
   .quiz-ranking-time{flex:0 0 auto;margin-left:0}
-  /* QUIZ in-page full lyrics modal. */
+  /* 歌詞の全文（クイズの中で開く） */
   .quiz-lyrics-overlay{position:fixed;inset:0;z-index:1300;display:flex;align-items:center;justify-content:center;padding:18px}
   .quiz-lyrics-modal{width:min(680px,100%);max-height:min(86dvh,860px);display:flex;flex-direction:column;overflow:hidden}
   .quiz-lyrics-modal-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 18px 14px}
@@ -1726,110 +1660,114 @@
 
 <!-- CoverStyles.html -->
 <style>
+  /* カバーメーカーの並べ方。見た目は部品 .ui-*、担当の色だけ data-content */
+  .cover-page { min-width: 0; min-height: 100%; padding: 86px 0 96px; }
+  @media (max-width: 600px) { .cover-page { padding-top: 82px; } }
+  @media (min-width: 780px) { .cover-page { padding-bottom: 36px; } }
+  .app-shell:has(#pageContent > .cover-page) .utility-actions { z-index: 40; }
+  .cover-app { max-width: 760px; margin: 0 auto; }
+  .cover-header { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin: 0 0 28px; }
+  .cover-page.is-cover-editor .cover-header { margin-bottom: 16px; }
+  .cover-title { max-width: 100%; margin: 0; line-height: .96; }
+  .cover-section-title { margin: 0 0 16px; }
   .cover-group-tiles { margin-bottom: 14px; }
   /* 線の色（メンバー・グループの色）を部品の --accent に渡す */
   .cover-content-card, .cover-project-row { --accent: var(--cover-accent, var(--ui-line-strong)); }
 
-  .cover-page{min-height:100%;padding:22px 0 96px}
-  .cover-app{max-width:760px;margin:0 auto}
-  .cover-stack{display:grid;grid-template-columns:1fr;gap:10px}
-  .cover-choice-stack{max-width:520px;margin:0 auto}
-  .cover-content-card,.cover-project-row{width:100%;min-height:58px;text-align:left;justify-content:flex-start;padding:14px 16px}
-  .cover-content-card{min-height:54px}
-  .cover-content-card strong,.cover-project-row strong{display:block;line-height:1.35}
-  .cover-row-meta{display:block;margin-top:4px;opacity:.62}
-  .cover-empty{padding:30px 16px;text-align:center;opacity:.62}
-  .cover-search-wrap{margin:0 0 12px}
-  .cover-search{width:100%;padding:0 14px}
-  .cover-song-heading{margin:0 0 4px;line-height:1.35}
-  .cover-song-context{opacity:.6;margin-bottom:12px}
-  .cover-lyrics{padding-bottom:96px}
-  .cover-lyric-row{padding:15px 2px 16px}
-  .cover-lyric-text{white-space:pre-wrap;line-height:1.9}
-  .cover-original-label{margin:0 0 7px;opacity:.62}
-  .cover-save-bar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px max(16px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
-  .cover-save-inner{max-width:760px;margin:0 auto;display:flex;justify-content:center}
-  .cover-save-inner .ui-btn{width:min(360px,100%);min-height:50px}
-  .cover-sheet{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-end;justify-content:center;padding:18px 12px 0}
-  .cover-sheet[hidden],.cover-dialog[hidden]{display:none!important}
-  .cover-sheet-panel{width:min(620px,100%);max-height:min(72dvh,680px);overflow:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
-  .cover-sheet-title{margin:0 0 12px;text-align:center}
-  .cover-member-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .cover-member-option{ --accent: var(--member-color, var(--ui-line-strong));min-height:50px;justify-content:center;text-align:center}
-  .cover-dialog{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
-  .cover-dialog-panel{width:min(430px,100%);padding:20px}
-  .cover-dialog-message{margin:0 0 18px;line-height:1.7}
-  .cover-dialog-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .cover-saving{position:fixed;inset:0;z-index:120;display:grid;place-items:center}
-  .cover-saving[hidden]{display:none!important}
-  .cover-ratio-list{display:grid;gap:12px}
-  .cover-ratio-row{display:grid;grid-template-columns:minmax(76px,1fr) 2fr auto;gap:10px;align-items:center}
-  .cover-ratio-track{height:7px;overflow:hidden}
-  .cover-bulk-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-  .cover-bulk-select{width:100%;height:48px;padding:0 10px}
-  .cover-bulk-apply{display:block!important;width:min(260px,100%);min-height:48px;margin:0 auto}
-  .cover-project-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
-  .cover-badge{padding:3px 7px;opacity:.72}
-  .cover-view-actions{display:flex;justify-content:center;gap:10px;margin:14px 0}
-  .cover-view-actions .ui-btn{width:auto;min-width:128px;min-height:48px}
-  .cover-view-actions.is-single{display:flex}
-  @media(max-width:600px){.cover-header{margin-bottom:14px}.cover-app{max-width:none}.cover-choice-stack{max-width:none}.cover-content-card{min-height:52px}.cover-member-list{grid-template-columns:1fr 1fr}}
-  @media(min-width:780px){.cover-save-bar{position:sticky;bottom:0;margin-top:10px;padding-left:0;padding-right:0}.cover-sheet{align-items:center}.cover-sheet-panel{max-height:70vh}.cover-page{padding-bottom:36px}}
-  /* 2026-09-11: final COVER style authority absorbed from CoverPolishV2/V3/V4. */
-  .cover-page{min-width:0;padding-top:86px}
-  .app-shell:has(#pageContent > .cover-page) .utility-actions{z-index:40}
-  .cover-header{display:flex!important;flex-direction:column;align-items:flex-start;gap:14px;margin:0 0 28px}
-  .cover-title{margin:0;max-width:100%;line-height:.96}
-  .cover-section-title{margin:0 0 16px}
-  .cover-page.is-cover-choice .cover-choice-stack{max-width:none;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-  .cover-page.is-cover-choice .cover-content-card{position:relative;isolation:isolate;overflow:hidden;min-width:0;min-height:98px;padding:18px;justify-content:flex-start;align-items:center;text-align:left}
-  .cover-page.is-cover-choice .cover-content-card::after{content:'';position:absolute;z-index:-1;right:-28px;bottom:-30px;width:76px;height:76px;pointer-events:none}
-  .cover-page.is-cover-choice .cover-content-card strong{position:relative;z-index:1;display:block;line-height:1.2;overflow-wrap:anywhere}
-  .cover-page.is-cover-group .cover-content-card:last-child:nth-child(odd),.cover-page.is-cover-artist .cover-content-card:last-child:nth-child(odd){grid-column:1}
-  .cover-project-row{min-height:68px;padding:15px 17px}
-  .cover-search{height:52px}
-  .cover-page.is-cover-editor .cover-header{margin-bottom:16px}
-  .cover-page .cover-member-list{grid-template-columns:1fr;gap:10px}
-  .cover-page .cover-member-option{min-height:54px;padding:10px;justify-content:center;text-align:center}
-  .cover-page .cover-project-row{min-height:70px;padding:14px 16px}
-  .cover-page .cover-project-row strong{line-height:1.35}
-  .cover-page .cover-project-row .cover-row-meta{margin-top:5px;opacity:1}
-  .cover-page.is-cover-saved-view .cover-view-actions{margin:14px 0 18px}
-  @media(max-width:600px){.cover-page{padding-top:82px}.cover-page.is-cover-choice .cover-content-card{min-height:94px;padding:16px}}
-  @media(max-width:380px){.cover-page.is-cover-choice .cover-choice-stack{gap:9px}.cover-page.is-cover-choice .cover-content-card{min-height:90px;padding:13px}}
-  /* Confirmation actions use the same substantial tap geometry as the rest of Universe. */
-  .cover-dialog-actions .ui-btn{min-height:50px;padding:0 14px;justify-content:center;text-align:center}
-  /* 2026-09-30: COVER external source + BMSG ALLSTARS selection. */
-  .cover-page .cover-allstar-member-card{display:flex!important;flex-direction:column;justify-content:center;gap:7px}
-  .cover-member-select-state{min-height:14px}
-  .cover-choice-next{display:flex;justify-content:center;margin-top:18px}
-  .cover-choice-next .ui-btn{width:min(320px,100%);min-height:52px}
-  .cover-external-form{display:grid;gap:16px;max-width:720px;margin:0 auto}
-  .cover-field{display:grid;gap:7px}
-  .cover-field input,.cover-field textarea{width:100%;box-sizing:border-box;padding:13px 14px;line-height:1.65}
-  .cover-field input{min-height:52px}
-  .cover-field textarea{resize:vertical;min-height:112px;white-space:pre-wrap}
-  .cover-external-primary{width:min(320px,100%);min-height:52px;margin:4px auto 0}
-  .cover-external-summary{display:grid;gap:4px;margin-bottom:16px;padding:14px 16px}
-  .cover-external-preview{display:grid;gap:12px}
-  .cover-external-part{display:grid;gap:12px;padding:15px}
-  .cover-external-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-  .cover-external-actions .ui-btn{min-height:52px}
-  @media(max-width:600px){
-    .cover-external-form{max-width:none}
-    .cover-external-part{padding:13px}
-    .cover-external-actions{grid-template-columns:1fr}
-  }
+  /* 一覧 */
+  .cover-stack { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .cover-choice-stack { max-width: 520px; margin: 0 auto; }
+  .cover-content-card { justify-content: flex-start; width: 100%; min-height: 54px; padding: 14px 16px; text-align: left; }
+  .cover-project-row { justify-content: flex-start; width: 100%; min-height: 70px; padding: 14px 16px; text-align: left; }
+  .cover-content-card strong, .cover-project-row strong { display: block; line-height: 1.35; }
+  .cover-row-meta { display: block; margin-top: 4px; opacity: .62; }
+  .cover-project-row .cover-row-meta { margin-top: 5px; opacity: 1; }
+  .cover-empty { padding: 30px 16px; text-align: center; opacity: .62; }
+  .cover-search-wrap { margin: 0 0 12px; }
+  .cover-search { width: 100%; height: 52px; padding: 0 14px; }
+  .cover-project-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
+  .cover-badge { padding: 3px 7px; opacity: .72; }
+  /* グループ・メンバーを選ぶ画面：2列のタイル */
+  .cover-page.is-cover-choice .cover-choice-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: none; }
+  .cover-page.is-cover-choice .cover-content-card { position: relative; isolation: isolate; overflow: hidden; align-items: center; justify-content: flex-start; min-width: 0; min-height: 98px; padding: 18px; text-align: left; }
+  .cover-page.is-cover-choice .cover-content-card strong { position: relative; z-index: 1; display: block; line-height: 1.2; overflow-wrap: anywhere; }
+  .cover-page.is-cover-group .cover-content-card:last-child:nth-child(odd),
+  .cover-page.is-cover-artist .cover-content-card:last-child:nth-child(odd) { grid-column: 1; }
+  .cover-page .cover-allstar-member-card { display: flex; flex-direction: column; justify-content: center; gap: 7px; }
+  .cover-member-select-state { min-height: 14px; }
+  .cover-choice-next { display: flex; justify-content: center; margin-top: 18px; }
+  .cover-choice-next .ui-btn { width: min(320px, 100%); min-height: 52px; }
 
   /* 曲の詳細：題は流れる。ORIGINAL/COVER と道具の帯だけ上に止める（上のバーの下） */
   .cover-editor-head { display: grid; gap: 8px; padding-bottom: 12px; }
   .cover-toolbar { position: sticky; top: var(--ui-bar-h); z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 4px; padding: 8px 0; }
+  .cover-page.is-cover-saved-view .cover-toolbar { position: static; }
   .cover-tabs { flex: 0 1 220px; }
   .cover-tools { display: flex; flex: none; gap: 14px; }
-  .cover-page.is-cover-saved-view .cover-toolbar { position: static; }
+  .cover-song-heading { margin: 0 0 4px; line-height: 1.35; }
+  .cover-song-context { margin-bottom: 12px; opacity: .6; }
+  .cover-lyrics { padding-bottom: 96px; }
+  .cover-lyric-row { padding: 15px 2px 16px; }
+  .cover-lyric-text { white-space: pre-wrap; line-height: 1.9; }
+  .cover-original-label { margin: 0 0 7px; opacity: .62; }
   /* 歌唱者：歌詞と同じ「点＋名前」。編集中は「変更」を添える */
   .cover-assignee { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; margin-bottom: 4px; }
   .cover-register-song { margin-top: 14px; }
+  .cover-view-actions { display: flex; justify-content: center; gap: 10px; margin: 14px 0; }
+  .cover-page.is-cover-saved-view .cover-view-actions { margin: 14px 0 18px; }
+  .cover-view-actions .ui-btn { width: auto; min-width: 128px; min-height: 48px; }
+  .cover-save-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 10px max(16px, env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left)); }
+  .cover-save-inner { display: flex; justify-content: center; max-width: 760px; margin: 0 auto; }
+  .cover-save-inner .ui-btn { width: min(360px, 100%); min-height: 50px; }
+
+  /* 担当を選ぶシート・割合・まとめて変更 */
+  .cover-sheet { position: fixed; inset: 0; z-index: 90; display: flex; align-items: flex-end; justify-content: center; padding: 18px 12px 0; }
+  .cover-sheet-panel { width: min(620px, 100%); max-height: min(72dvh, 680px); overflow: auto; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); }
+  .cover-sheet-title { margin: 0 0 12px; text-align: center; }
+  .cover-member-list { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .cover-member-option { --accent: var(--member-color, var(--ui-line-strong)); justify-content: center; min-height: 54px; padding: 10px; text-align: center; }
+  .cover-ratio-list { display: grid; gap: 12px; }
+  .cover-ratio-row { display: grid; grid-template-columns: minmax(76px, 1fr) 2fr auto; align-items: center; gap: 10px; }
+  .cover-ratio-track { height: 7px; overflow: hidden; }
+  .cover-bulk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .cover-bulk-select { width: 100%; height: 48px; padding: 0 10px; }
+  .ui-btn.cover-bulk-apply { display: block; width: min(260px, 100%); min-height: 48px; margin: 0 auto; }
+  .cover-dialog { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; }
+  .cover-dialog-panel { width: min(430px, 100%); padding: 20px; }
+  .cover-dialog-message { margin: 0 0 18px; line-height: 1.7; }
+  .cover-dialog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cover-dialog-actions .ui-btn { justify-content: center; min-height: 50px; padding: 0 14px; text-align: center; }
+  .cover-saving { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; }
+
+  /* 外部の曲を登録 */
+  .cover-external-form { display: grid; gap: 16px; max-width: 720px; margin: 0 auto; }
+  .cover-field { display: grid; gap: 7px; }
+  .cover-field input, .cover-field textarea { width: 100%; box-sizing: border-box; padding: 13px 14px; line-height: 1.65; }
+  .cover-field input { min-height: 52px; }
+  .cover-field textarea { min-height: 112px; resize: vertical; white-space: pre-wrap; }
+  .cover-external-primary { width: min(320px, 100%); min-height: 52px; margin: 4px auto 0; }
+  .cover-external-summary { display: grid; gap: 4px; margin-bottom: 16px; padding: 14px 16px; }
+  .cover-external-preview { display: grid; gap: 12px; }
+  .cover-external-part { display: grid; gap: 12px; padding: 15px; }
+  .cover-external-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+  .cover-external-actions .ui-btn { min-height: 52px; }
+
+  @media (max-width: 600px) {
+    .cover-app, .cover-choice-stack, .cover-external-form { max-width: none; }
+    .cover-content-card { min-height: 52px; }
+    .cover-page.is-cover-choice .cover-content-card { min-height: 94px; padding: 16px; }
+    .cover-external-part { padding: 13px; }
+    .cover-external-actions { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 380px) {
+    .cover-page.is-cover-choice .cover-choice-stack { gap: 9px; }
+    .cover-page.is-cover-choice .cover-content-card { min-height: 90px; padding: 13px; }
+  }
+  @media (min-width: 780px) {
+    .cover-save-bar { position: sticky; bottom: 0; margin-top: 10px; padding-left: 0; padding-right: 0; }
+    .cover-sheet { align-items: center; }
+    .cover-sheet-panel { max-height: 70vh; }
+  }
 </style>
 <style data-content>
   /* 中身の見た目（絵柄・レア度・メンバーカラー）。ボタン・入力欄はここに書かない */
@@ -1838,9 +1776,7 @@
 
 <!-- PerformanceTimerStyles.html -->
 <style>
-  /* メンバーの線の色・計測中の点の色を部品の --accent に渡す */
-  .pt-member { --accent: var(--member-accent, var(--ui-line-strong)); }
-  .pt-status-dot { --accent: var(--ui-text-sub); }
+  /* 計測タイマーの並べ方。メンバーの線の色・計測中の点の色は部品の --accent に渡す */
   .pt-timer-panel.is-running .pt-status-dot { --accent: var(--ui-text); }
   .pt-timer-panel.is-paused .pt-status-dot { --accent: var(--ui-line-strong); }
   .performance-timer-page{
@@ -1851,23 +1787,22 @@
   .performance-timer-title{margin:0}
   .performance-timer-app{max-width:760px;margin:0 auto;display:grid;gap:7px}
   .pt-panel{padding:12px}
-  .pt-setup-panel{padding:9px}
+  .pt-setup-panel{order:1;padding:9px}
   .pt-search-wrap{position:relative}
   .pt-search-line{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:7px}
   .pt-search-input{width:100%;min-height:46px;padding:0 13px}
   .pt-clear{width:44px;height:46px;min-width:44px;padding:0}
   .pt-song-results{position:absolute;z-index:40;left:0;right:51px;top:51px;display:grid;max-height:250px;overflow:auto}
-  .pt-song-results[hidden]{display:none}
   .pt-song-option{min-height:48px;padding:9px 13px;text-align:left}
   .pt-song-empty{padding:14px}
   .pt-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}
   .pt-type{min-height:44px}
-  .pt-context{min-height:38px;padding:6px 11px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .pt-context{order:1;min-height:38px;padding:6px 11px;display:flex;align-items:center;justify-content:space-between;gap:10px}
   .pt-context strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .pt-context span{flex:0 0 auto}
-  .pt-timer-panel{min-height:88px;padding:9px 14px;display:grid;grid-template-columns:minmax(0,auto) 1fr;align-items:center;gap:12px}
+  .pt-timer-panel{order:2;min-height:88px;padding:9px 14px;display:grid;grid-template-columns:minmax(0,auto) 1fr;align-items:center;gap:12px}
   .pt-status-main{display:flex;align-items:center;gap:8px;min-width:0}
-  .pt-status-dot{width:10px;height:10px;flex:0 0 10px}
+  .pt-status-dot{--accent:var(--ui-text-sub);width:10px;height:10px;flex:0 0 10px}
   .pt-status-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pt-status-label.is-member{overflow:visible;text-overflow:clip}
   .pt-total{text-align:right;font-variant-numeric:tabular-nums}
@@ -1878,12 +1813,11 @@
   .pt-secondary-actions .ui-btn{min-height:44px;padding:0 8px}
   .pt-member-panel{padding:8px 10px;order:4}
   .pt-members{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-  .pt-member{width:100%;min-height:62px;padding:7px 9px;display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:4px 6px;text-align:left}
+  /* メンバーのボタン（部品 .ui-btn の並べ方を上書きするので .ui-btn と組む） */
+  .ui-btn.pt-member{--accent:var(--member-accent,var(--ui-line-strong));display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:4px 6px;width:100%;min-height:62px;padding:7px 9px;text-align:left}
   .pt-member-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .pt-member-time{min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
   .pt-member-saved{grid-column:1/-1;text-align:right;white-space:nowrap}
-  .pt-setup-panel,.pt-context{order:1}
-  .pt-timer-panel{order:2}
   .pt-event-log-wrap{margin-top:8px;padding-top:7px}
   .pt-event-log-title{margin:0 0 5px}
   .pt-event-log{height:88px;max-height:88px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-right:3px;scrollbar-gutter:stable}
@@ -1907,7 +1841,7 @@
     .performance-timer-app{gap:6px}
     .pt-setup-panel{padding:8px}
     .pt-timer-panel{min-height:78px;padding:7px 11px}
-    .pt-member{min-height:60px;padding:6px 7px}
+    .ui-btn.pt-member{min-height:60px;padding:6px 7px}
     .pt-member-time{min-width:54px}
     .pt-event-log{height:78px;max-height:78px}
   }
@@ -1930,9 +1864,7 @@
   .management-section-title { margin: 0; }
   .management-access-note { display: grid; gap: 10px; padding: 16px; margin-bottom: 20px; }
   .management-hub, .management-operation-list { margin-top: 16px; }
-  .management-editor[hidden], #managementSettingsGroup[hidden] { display: none !important; }
   /* 管理画面では大きな読み込み中は出さない（押したボタンに処理中を出す。データは一時保存ですぐ出る） */
-  .management-loading { display: none !important; }
 
   /* 編集画面：面の中に余白、項目は縦に並べ、下のボタンは2列で横いっぱい */
   .management-panel { width: min(620px, calc(100vw - 24px)); max-height: min(92vh, 900px); overflow: auto; padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
@@ -2234,7 +2166,6 @@
   <section class="management-editor-panel image-management-panel">
 
 
-    <div id="imageManagementLoading" class="ui-loading management-loading image-management-loading">読み込み中…</div>
 
     <form id="imageManagementForm" class="image-management-form" onsubmit="return submitImageManagement(event)" hidden>
       <label class="ui-field management-field image-management-field">
@@ -2563,7 +2494,6 @@
   <section class="management-editor-panel profile-management-panel">
 
 
-    <div id="profileManagementLoading" class="ui-loading management-loading profile-management-loading">読み込み中…</div>
 
     <div id="profileManagementBody" hidden>
       <div class="profile-management-selectors">
@@ -2581,7 +2511,6 @@
         </label>
       </div>
 
-      <div id="profileManagementMemberLoading" class="ui-loading management-loading profile-management-loading" hidden>読み込み中…</div>
       <form id="profileManagementForm" class="profile-management-form" onsubmit="return submitProfileManagement(event)" hidden>
         <div id="profileManagementSections"></div>
         <p id="profileManagementError" class="ui-text-danger management-error profile-management-error" role="alert" hidden></p>
@@ -2865,7 +2794,6 @@
 <div id="songLyricsManagementOverlay" class="management-editor" hidden>
   <section class="management-editor-panel slm-panel">
 
-    <div id="slmLoading" class="ui-loading management-loading slm-loading" hidden>読み込み中…</div>
     <div id="slmBody"></div>
   </section>
 </div>
@@ -2885,7 +2813,7 @@
     if(songLyricsManagementState.bootstrap){renderSlm();return;}songLyricsManagementState.busy=true;setSlmLoading(true);
     managementRunner_().withSuccessHandler(function(data){songLyricsManagementState.bootstrap=data;songLyricsManagementState.busy=false;setSlmLoading(false);renderSlm();}).withFailureHandler(function(e){songLyricsManagementState.busy=false;setSlmLoading(false);renderSlmError(readSlmError(e));}).getSongLyricsManagementBootstrap(uid);
   }
-  function setSlmLoading(flag){document.getElementById('slmLoading').hidden=!flag;document.getElementById('slmBody').hidden=flag;}
+  function setSlmLoading(flag){const body=document.getElementById('slmBody');if(body)body.hidden=flag;}
   function renderSlm(){const body=document.getElementById('slmBody');if(!body)return;if(songLyricsManagementState.view==='new')renderSlmNew(body);else if(songLyricsManagementState.view==='existingSelect')renderSlmExistingSelect(body);else if(songLyricsManagementState.view==='existingEdit')renderSlmExistingEdit(body);else startSlmExisting();}
   function slmBackHome(){managementGo_('songs');}
   function resetSlmNewState_(){songLyricsManagementState.newStep=1;songLyricsManagementState.newSong={artist:'',title:'',releaseDate:'',form:'',cdTitle:'',isTitleTrack:false};songLyricsManagementState.newCredits={lyricists:'',composers:'',choreographers:''};songLyricsManagementState.rawLyrics='';songLyricsManagementState.includeLyrics=true;songLyricsManagementState.preview=null;songLyricsManagementState.unknownQueue=[];songLyricsManagementState.ignoredGuestCandidates=[];songLyricsManagementState.ignoredGuestSource='';}
@@ -2920,7 +2848,7 @@
   function renderSlmExistingSelect(body){const artists=songLyricsManagementState.bootstrap.existingArtists||[];const songs=(songLyricsManagementState.bootstrap.songs||[]).filter(function(song){return !songLyricsManagementState.existingArtist||song.artist===songLyricsManagementState.existingArtist;});body.innerHTML='<section class="ui-panel management-card slm-card"><h3 class="ui-heading management-section-title slm-section-title">既存曲を編集</h3><div class="slm-grid">'+slmSelectField_('slmExistingArtist','アーティスト',artists,songLyricsManagementState.existingArtist,'選択してください')+slmTextField_('slmSongSearch','曲名を検索','',false)+slmSongSelectField_('slmExistingSong','曲',songs,songLyricsManagementState.existingSongId)+'</div></section><div class="ui-surface ui-divider-top management-actions slm-actions"><button class="ui-btn ui-btn-solid" type="button" onclick="loadSlmExistingSong()">編集する</button></div>';const artist=document.getElementById('slmExistingArtist'),song=document.getElementById('slmExistingSong');artist.addEventListener('change',function(){songLyricsManagementState.existingArtist=artist.value;songLyricsManagementState.existingSongId='';renderSlm();});song.addEventListener('change',function(){songLyricsManagementState.existingSongId=song.value;});document.getElementById('slmSongSearch').addEventListener('input',function(event){const q=event.target.value.toLowerCase();song.innerHTML='<option value="">選択なし</option>'+songs.filter(function(x){return x.title.toLowerCase().includes(q);}).map(function(x){return '<option value="'+escapeSlm(x.songId)+'">'+escapeSlm(x.title+' / '+x.artist)+'</option>';}).join('');});}
   function loadSlmExistingSong(){const id=document.getElementById('slmExistingSong').value;if(!id){renderSlmInlineError_('曲を選択してください。');return;}openSlmExistingSong_(id);}
   function openSlmExistingSong_(songId){songLyricsManagementState.existingSongId=String(songId);songLyricsManagementState.view='existingEdit';songLyricsManagementState.dirty={info:false,credits:false,lyrics:false};setSlmBusy_(true);managementRunner_().withSuccessHandler(function(data){setSlmBusy_(false);songLyricsManagementState.existing=data;renderSlm();}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).getSongLyricsManagementSong(getUniverseUserId(),String(songId));}
-  function renderSlmExistingEdit(body){if(!songLyricsManagementState.existing){body.innerHTML='<div class="ui-loading management-loading slm-loading">読み込み中…</div>';return;}const d=songLyricsManagementState.existing,s=d.song,c=d.credits,creditsSection=!s.personal&&slmIsBeFirst_(s.artistId||s.artist)?'<section class="ui-panel slm-edit-section">'+slmCreditsHtml_(c,true)+'<button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingCredits()">クレジットを保存</button></section>':'';body.innerHTML='<button class="ui-btn" onclick="backSlmExistingSelect()">曲の選択に戻る</button><p class="ui-muted slm-note">SongID '+escapeSlm(s.songId)+' / '+escapeSlm(s.artist)+'</p><section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">楽曲情報</h3><div class="slm-grid">'+slmDisabledField_('アーティスト',s.artist)+slmTextField_('slmEditTitle','曲名',s.title,true)+slmDateField_('slmEditRelease','リリース日',s.releaseDate)+slmSelectField_('slmEditForm','形態',songLyricsManagementState.bootstrap.forms,s.form,'未設定')+slmTextField_('slmEditCd','CDタイトル',s.cdTitle,false)+'<label class="ui-field management-field slm-field"><span>表題曲</span><span class="slm-toggle"><input id="slmEditTitleTrack" type="checkbox" '+(s.isTitleTrack?'checked':'')+'> 表題曲</span></label></div><button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingInfo()">楽曲情報を保存</button></section>'+creditsSection+(s.personal?'':'<section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">歌詞</h3><div id="slmEditParts" class="slm-parts"></div><button class="ui-btn ui-btn-solid slm-save-section" type="button" onclick="saveSlmExistingLyrics()">歌詞を保存</button></section>');body.insertAdjacentHTML('beforeend',slmCatalogSongControls_());renderSlmParts_();bindSlmEdit_();}
+  function renderSlmExistingEdit(body){if(!songLyricsManagementState.existing){body.innerHTML='';return;}const d=songLyricsManagementState.existing,s=d.song,c=d.credits,creditsSection=!s.personal&&slmIsBeFirst_(s.artistId||s.artist)?'<section class="ui-panel slm-edit-section">'+slmCreditsHtml_(c,true)+'<button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingCredits()">クレジットを保存</button></section>':'';body.innerHTML='<button class="ui-btn" onclick="backSlmExistingSelect()">曲の選択に戻る</button><p class="ui-muted slm-note">SongID '+escapeSlm(s.songId)+' / '+escapeSlm(s.artist)+'</p><section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">楽曲情報</h3><div class="slm-grid">'+slmDisabledField_('アーティスト',s.artist)+slmTextField_('slmEditTitle','曲名',s.title,true)+slmDateField_('slmEditRelease','リリース日',s.releaseDate)+slmSelectField_('slmEditForm','形態',songLyricsManagementState.bootstrap.forms,s.form,'未設定')+slmTextField_('slmEditCd','CDタイトル',s.cdTitle,false)+'<label class="ui-field management-field slm-field"><span>表題曲</span><span class="slm-toggle"><input id="slmEditTitleTrack" type="checkbox" '+(s.isTitleTrack?'checked':'')+'> 表題曲</span></label></div><button class="ui-btn slm-save-section" type="button" onclick="saveSlmExistingInfo()">楽曲情報を保存</button></section>'+creditsSection+(s.personal?'':'<section class="ui-panel management-card slm-edit-section slm-card"><h3 class="ui-heading management-section-title slm-section-title">歌詞</h3><div id="slmEditParts" class="slm-parts"></div><button class="ui-btn ui-btn-solid slm-save-section" type="button" onclick="saveSlmExistingLyrics()">歌詞を保存</button></section>');body.insertAdjacentHTML('beforeend',slmCatalogSongControls_());renderSlmParts_();bindSlmEdit_();}
   function backSlmExistingSelect(){if(hasSlmDirty_()&&!window.confirm('保存していない変更があります。\n曲選択へ戻りますか？'))return;songLyricsManagementState.view='existingSelect';songLyricsManagementState.existing=null;songLyricsManagementState.dirty={info:false,credits:false,lyrics:false};renderSlm();}
   function bindSlmEdit_(){['slmEditTitle','slmEditRelease','slmEditForm','slmEditCd','slmEditTitleTrack'].forEach(function(id){const e=document.getElementById(id);if(e){e.addEventListener('input',function(){songLyricsManagementState.dirty.info=true;});e.addEventListener('change',function(){songLyricsManagementState.dirty.info=true;});}});['slmEditLyricists','slmEditComposers','slmEditChoreographers'].forEach(function(id){const e=document.getElementById(id);if(e){e.addEventListener('input',function(){songLyricsManagementState.dirty.credits=true;});e.addEventListener('change',function(){songLyricsManagementState.dirty.credits=true;});}});}
   function slmPartInsertButton_(index){return '<button class="ui-btn ui-btn-compact ui-btn-ghost slm-part-insert" type="button" onclick="addSlmPart('+index+')">＋ PART</button>';}
@@ -2934,7 +2862,7 @@
 
   function refreshSlmBootstrap_(callback){setSlmBusy_(true);managementRunner_().withSuccessHandler(function(data){songLyricsManagementState.bootstrap=data;setSlmBusy_(false);if(typeof callback==='function')callback();}).withFailureHandler(function(e){setSlmBusy_(false);renderSlmInlineError_(readSlmError(e));}).getSongLyricsManagementBootstrap(getUniverseUserId());}
   function hasSlmDirty_(){return Object.values(songLyricsManagementState.dirty).some(Boolean);}
-  function setSlmBusy_(flag){songLyricsManagementState.busy=flag;document.querySelectorAll('#songLyricsManagementOverlay button,#songLyricsManagementOverlay input,#songLyricsManagementOverlay select,#songLyricsManagementOverlay textarea,#slmGuestConfirm button').forEach(function(el){el.disabled=!!flag;});if(flag){const body=document.getElementById('slmBody');if(body&&!document.getElementById('slmBusyText'))body.insertAdjacentHTML('afterbegin','<div id="slmBusyText" class="ui-loading management-loading slm-loading">読み込み中…</div>');}else{const node=document.getElementById('slmBusyText');if(node)node.remove();}}
+  function setSlmBusy_(flag){songLyricsManagementState.busy=flag;document.querySelectorAll('#songLyricsManagementOverlay button,#songLyricsManagementOverlay input,#songLyricsManagementOverlay select,#songLyricsManagementOverlay textarea,#slmGuestConfirm button').forEach(function(el){el.disabled=!!flag;});}
   function renderSlmInlineError_(message){const body=document.getElementById('slmBody');if(!body)return;let node=document.getElementById('slmInlineError');if(!node){node=document.createElement('p');node.id='slmInlineError';node.className='slm-error';body.prepend(node);}node.textContent=message;}
   function renderSlmError(message){document.getElementById('slmBody').innerHTML='<p class="ui-text-danger management-error slm-error">'+escapeSlm(message)+'</p>';}
   function readSlmError(error){return String(error&&error.message?error.message:error||'エラーが発生しました。').replace(/^Exception:\s*/,'');}
@@ -3850,7 +3778,6 @@
   .universe-search-subtitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .universe-search-arrow { display: none; }
   .universe-search-empty { margin: 38px 0 0; text-align: center; }
-  @media (max-width: 520px) { .universe-search-form { grid-template-columns: 1fr; } }
 </style>
 
 <!-- UserPreferences.html -->
@@ -6020,7 +5947,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   @keyframes gachaFlash { 0% { opacity: .9; } 100% { opacity: 0; } }
   @keyframes gachaRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   @keyframes gachaBurst { 0% { opacity: 1; transform: rotate(var(--a)) translateX(0) scale(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--d)) scale(.4); } }
-  @media (prefers-reduced-motion: reduce) { .song-gacha-overlay *, .song-gacha-overlay { animation: none !important; transition: none !important; } .song-gacha-overlay { opacity: 1; } .song-gacha-final-group, .song-gacha-overlay-actions { visibility: visible; opacity: 1; } }
+  /* 動きを減らす設定：動きの長さは全体の設定（Styles.html）で0になる。結果はすぐ見せる */
+  @media (prefers-reduced-motion: reduce) { .song-gacha-overlay { opacity: 1; } .song-gacha-final-group, .song-gacha-overlay-actions { visibility: visible; opacity: 1; } }
 </style>
 <script>
   const songGachaState={enabled:{},result:null,drawing:false};
@@ -7169,7 +7097,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function quizBackToLab(){if(!quizCanLeave_())return;navigateTo('lab');}
   function quizCanLeave_(){if(currentRoute!=='quiz'||!quizState.game||quizState.completed||quizState.screen==='result')return true;if(!window.confirm('このクイズを諦めますか？\n途中の成績は保存されません。'))return false;const id=quizState.game.gameId;quizState.completed=true;google.script.run.withFailureHandler(function(){}).abandonQuizGame(quizState.userId,id);return true;}
 
-  function quizFailure_(error){quizState.busy=false;const message=String(error&&error.message||error||'クイズの処理に失敗しました。');const host=quizHost_();if(host)host.innerHTML='<section class="ui-panel quiz-panel"><p class="ui-label quiz-kicker">ERROR</p><h2 class="ui-heading quiz-panel-title">読み込みに失敗しました</h2><p class="ui-muted quiz-muted">'+quizEscape_(message)+'</p><div class="quiz-actions"><button class="ui-btn ui-btn-plain quiz-action ui-btn-solid is-primary" onclick="initQuizPage({})">再試行</button><button class="ui-back" aria-label="戻る" onclick="navigateTo(\'lab\')"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button></div></section>';quizNotify_(message);}
+  function quizFailure_(error){quizState.busy=false;const message=String(error&&error.message||error||'クイズの処理に失敗しました。');const host=quizHost_();if(host)host.innerHTML='<section class="ui-panel quiz-panel"><h2 class="ui-heading quiz-panel-title">読み込みに失敗しました</h2><p class="ui-muted quiz-muted">'+quizEscape_(message)+'</p><div class="quiz-actions"><button class="ui-btn ui-btn-plain quiz-action ui-btn-solid is-primary" onclick="initQuizPage({})">再試行</button><button class="ui-back" aria-label="戻る" onclick="navigateTo(\'lab\')"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button></div></section>';quizNotify_(message);}
   function quizNotify_(message){if(typeof showToast==='function')showToast(message);}
   function quizUserName_(id){const user=quizState.users.find(function(item){return item.userId===id;});if(user)return user.displayName;const fallback=typeof UNIVERSE_USERS!=='undefined'?UNIVERSE_USERS.find(function(item){return item.id===id;}):null;return fallback?fallback.name:'';}
   function quizGenreLabel_(){return '歌詞';}
@@ -7185,7 +7113,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   window.openQuizRoomJoinV3_=function(){
     clearQuizQuestionTimer_();quizState.screen='join';const host=quizHost_();if(!host)return;
-    host.innerHTML='<section class="ui-panel quiz-panel quiz-v3-room-join"><p class="ui-label quiz-kicker">JOIN ROOM</p><h2 class="ui-heading quiz-panel-title">ルームに参加する</h2><div class="quiz-v3-room-input-row"><input id="quizRoomInputV3" class="ui-input quiz-room-input" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="4桁のルームID"><button class="ui-btn ui-btn-plain quiz-action ui-btn-solid is-primary" onclick="joinQuizRoomV3_()">参加</button></div><div><p class="ui-label quiz-setting-title">最新のルーム</p><div id="quizRecentRoomsV3" class="quiz-v3-recent">'+renderUniverseLoading()+'</div></div><div class="quiz-actions"><button class="ui-btn ui-btn-plain quiz-action" onclick="renderQuizSetup_()">戻る</button></div></section>';
+    host.innerHTML='<section class="ui-panel quiz-panel quiz-v3-room-join"><h2 class="ui-heading quiz-panel-title">ルームに参加する</h2><div class="quiz-v3-room-input-row"><input id="quizRoomInputV3" class="ui-input quiz-room-input" inputmode="numeric" maxlength="4" placeholder="0000" aria-label="4桁のルームID"><button class="ui-btn ui-btn-plain quiz-action ui-btn-solid is-primary" onclick="joinQuizRoomV3_()">参加</button></div><div><p class="ui-label quiz-setting-title">最新のルーム</p><div id="quizRecentRoomsV3" class="quiz-v3-recent">'+renderUniverseLoading()+'</div></div><div class="quiz-actions"><button class="ui-btn ui-btn-plain quiz-action" onclick="renderQuizSetup_()">戻る</button></div></section>';
     google.script.run.withSuccessHandler(renderQuizRecentRoomsV3_).withFailureHandler(function(){const el=document.getElementById('quizRecentRoomsV3');if(el)el.innerHTML='<p class="ui-muted quiz-muted">ルームを読み込めませんでした。</p>';}).getRecentQuizRooms(quizState.userId);
   };
 

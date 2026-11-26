@@ -1,13 +1,15 @@
 <style>
-  .quiz-app{display:grid;gap:16px;margin:0 auto}
-  .quiz-kicker,.quiz-step-label,.quiz-room-label{margin:0}
-  .quiz-muted{margin:8px 0 0}
+  /* クイズの並べ方。見た目は部品 .ui-* */
+  .quiz-page{padding-top:78px;padding-bottom:20px}
+  .quiz-app{display:grid;gap:16px;max-width:760px;margin:0 auto}
+  .quiz-step-label,.quiz-room-label{margin:0}
+  .quiz-muted{margin:8px 0 0;line-height:1.75}
   .quiz-settings{display:grid;gap:20px}
   .quiz-setting{display:grid;gap:10px}
   .quiz-setting-title{margin:0}
   .quiz-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   .quiz-options.is-course{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .quiz-choice,.quiz-player,.quiz-award,.quiz-action{min-height:48px}
+  .quiz-choice,.quiz-player,.quiz-award{min-height:48px}
   .quiz-player-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
   .quiz-player small{display:block;margin-top:3px}
   .quiz-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
@@ -20,16 +22,11 @@
   .quiz-question-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .quiz-question-text{margin:4px 0 24px;overflow-wrap:anywhere}
   .quiz-question-text.is-lyrics{padding:22px 12px;text-align:center;line-height:1.8}
-  .quiz-lyrics-link{display:inline-flex;align-items:center}
   .quiz-award-step{display:grid;gap:12px}
   .quiz-award-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   @media(min-width:680px){.quiz-options.is-course{grid-template-columns:repeat(3,minmax(0,1fr))}.quiz-award-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
   @media(max-width:420px){.quiz-player-grid{grid-template-columns:1fr}.quiz-actions{grid-template-columns:1fr}}
   @media(prefers-reduced-motion:reduce){.quiz-progress span{transition:none}}
-  /* QUIZ final design audit: layout/typography only. Shared ButtonSystem remains surface authority. */
-  .quiz-page{
-    padding-bottom:20px;
-  }
   .quiz-header{
     display:flex;
     align-items:center;
@@ -43,23 +40,16 @@
     margin:0;
     line-height:.95;
   }
-  .quiz-app{max-width:760px;}
   .quiz-panel{padding:clamp(18px,4.5vw,26px);}
   .quiz-panel-title{
     margin:0 0 14px;
     line-height:1.35;
   }
-  .quiz-muted,
-  .quiz-v3-feedback-answer{
-    line-height:1.75;
-  }
-  .quiz-page .quiz-kicker{display:none!important;}
   @media(max-width:600px){
     .quiz-header{margin-bottom:20px;}
     .quiz-actions{gap:9px;}
   }
-  /* Canonical interaction styles formerly loaded from QuizInteractionStyles.html. */
-  .quiz-page{padding-top:78px}
+  /* 出題・答え合わせ */
   .quiz-v3-ready{text-align:center;padding:20px 0 8px}
   .quiz-v3-ready .quiz-panel-title{margin:8px 0 12px}
   .quiz-v3-ready-meta{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:18px 0 22px}
@@ -93,17 +83,17 @@
   @keyframes quizV3Fade{0%{opacity:0}20%,72%{opacity:1}100%{opacity:0}}
   @media(max-width:600px){.quiz-page{padding-top:72px}.quiz-v3-search-row{grid-template-columns:1fr}.quiz-v3-search-row .quiz-action{width:100%}}
   @media(prefers-reduced-motion:reduce){.quiz-v3-feedback,.quiz-v3-inline-status.is-wrong,.quiz-v3-stage-flash,.quiz-v3-stage-flash span{animation:none}.quiz-v3-timer-bar{transition:none}}
-  /* 2026-09-12 smoke-test corrections: scoped to QUIZ only. */
+  /* 準備・ランキング */
   .quiz-ready-notes{margin:0;padding-left:1.4em;text-align:left;line-height:1.85}
   .quiz-ready-notes li+li{margin-top:2px}
-  .quiz-lyrics-link{width:100%;justify-content:center;box-sizing:border-box;min-height:48px;margin-top:14px;padding:0 14px}
+  .quiz-lyrics-link{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:48px;box-sizing:border-box;margin-top:14px;padding:0 14px}
   .quiz-ranking{display:grid;gap:0}
   .quiz-ranking-row{display:flex;align-items:baseline;gap:8px;padding:11px 2px;white-space:nowrap}
   .quiz-ranking-rank{flex:0 0 auto}
   .quiz-ranking-name{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis}
   .quiz-ranking-points{flex:0 0 auto}
   .quiz-ranking-time{flex:0 0 auto;margin-left:0}
-  /* QUIZ in-page full lyrics modal. */
+  /* 歌詞の全文（クイズの中で開く） */
   .quiz-lyrics-overlay{position:fixed;inset:0;z-index:1300;display:flex;align-items:center;justify-content:center;padding:18px}
   .quiz-lyrics-modal{width:min(680px,100%);max-height:min(86dvh,860px);display:flex;flex-direction:column;overflow:hidden}
   .quiz-lyrics-modal-head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 18px 14px}

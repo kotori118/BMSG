@@ -143,8 +143,9 @@
   .card-reveal-burst { position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; border-radius: 50%; opacity: 0; transform: translate(-50%, -50%); }
   .card-reveal.rarity-sr .card-reveal-burst, .card-reveal.rarity-ssr .card-reveal-burst { width: min(150vw, 640px); height: min(150vw, 640px); background: repeating-conic-gradient(from 0deg, var(--rarity-accent) 0 3deg, transparent 3deg 19deg); -webkit-mask-image: radial-gradient(circle, #000 0, transparent 70%); mask-image: radial-gradient(circle, #000 0, transparent 70%); }
   .card-reveal.rarity-ssr .card-reveal-orbit { border-width: 2px; }
-  .card-reveal-meteors::before, .card-reveal-meteors::after { content: ''; position: absolute; top: 22%; left: -28%; width: 190px; height: 2px; background: var(--ui-active-bg); opacity: 0; transform: rotate(-22deg); }
-  .card-reveal-meteors::after { top: 69%; left: auto; right: -28%; transform: rotate(-28deg); }
+  .card-reveal-meteors::before, .card-reveal-meteors::after { content: ''; position: absolute; width: 190px; height: 2px; background: var(--ui-active-bg); opacity: 0; }
+  .card-reveal-meteors::before { top: 22%; left: -28%; transform: rotate(-22deg); }
+  .card-reveal-meteors::after { top: 69%; right: -28%; transform: rotate(-28deg); }
   .card-reveal.rarity-ssr .card-reveal-meteors::before, .card-reveal.rarity-ssr .card-reveal-meteors::after { height: 3px; }
   .card-reveal-sparks { position: absolute; inset: 0; background: radial-gradient(circle at 50% 46%, var(--rarity-soft), transparent 62%); opacity: 0; }
 

@@ -48,3 +48,68 @@ test('読み込み中は共通の2種類だけ（スケルトン ui-skeleton／�
   }
   assert.deepEqual(problems, []);
 });
+
+// 上書きの積み重ねを防ぐ（2026-11-26）。!important は hidden 属性と「動きを減らす」設定の2か所だけ。
+test('!important は Styles.html の hidden 属性と動きを減らす設定だけ', () => {
+  const problems = [];
+  for (const file of fs.readdirSync(PARTIALS).filter((f) => f.endsWith('.html'))) {
+    for (const block of styleBlocks(fs.readFileSync(path.join(PARTIALS, file), 'utf8'))) {
+      for (const r of parseRules(block.css)) {
+        for (const d of r.decls) {
+          if (!/!important/.test(d.value)) continue;
+          const allowed = file === 'Styles.html' && (r.selector === '[hidden]' || r.selector === '*, *::before, *::after');
+          if (!allowed) problems.push(`${file}: ${r.selector} { ${d.prop} }`);
+        }
+      }
+    }
+  }
+  assert.deepEqual(problems, []);
+});
+
+// 同じファイルの中で、同じセレクタの同じ性質を2回書かない（後ろで前を打ち消す書き方をしない）。
+// 画面幅などの @media の中は、外の指定を条件つきで変えるものなので数えない。
+function withoutAtBlocks(css) {
+  let out = '';
+  for (let i = 0; i < css.length; i++) {
+    if (css[i] === '@' && /^@(media|supports|container)/.test(css.slice(i, i + 11))) {
+      const open = css.indexOf('{', i);
+      let depth = 1, k = open + 1;
+      while (k < css.length && depth > 0) { if (css[k] === '{') depth++; else if (css[k] === '}') depth--; k++; }
+      i = k - 1;
+      continue;
+    }
+    out += css[i];
+  }
+  return out;
+}
+// カンマで区切る（:is(…, …) や :where(…, …) の中のカンマでは切らない）
+function splitSelectors(list) {
+  const out = []; let depth = 0, cur = '';
+  for (const ch of list) {
+    if (ch === '(') depth++;
+    if (ch === ')') depth--;
+    if (ch === ',' && depth === 0) { out.push(cur.trim()); cur = ''; continue; }
+    cur += ch;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+test('同じセレクタの同じ性質を同じファイルで二度書かない', () => {
+  const problems = [];
+  for (const file of fs.readdirSync(PARTIALS).filter((f) => f.endsWith('.html'))) {
+    const seen = new Map();
+    for (const block of styleBlocks(fs.readFileSync(path.join(PARTIALS, file), 'utf8'))) {
+      for (const r of parseRules(withoutAtBlocks(block.css.replace(/\/\*[\s\S]*?\*\//g, '')))) {
+        if (r.keyframe) continue;
+        for (const sel of splitSelectors(r.selector)) {
+          for (const d of r.decls) {
+            const key = sel + ' { ' + d.prop + ' }';
+            if (seen.has(key) && seen.get(key) !== r) problems.push(`${file}: ${key}`);
+            seen.set(key, r);
+          }
+        }
+      }
+    }
+  }
+  assert.deepEqual(problems, []);
+});

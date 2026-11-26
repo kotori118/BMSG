@@ -12,13 +12,17 @@
 | `Styles.html` | 画面の枠：上のバー・下のメニュー・左のメニュー・検索・設定・通知の置き場所 | 画面ごとのもの |
 | `UniverseTheme.html` | 部品：ボタン・戻る・入力欄・見出し・面・一覧・タブ・切り替え・写真・窓・読み込み中など（16章） | 画面の名前のついたクラス |
 | 画面ごとのファイル（`KaraokeStyles.html` など） | 並べ方：display・grid・flex・gap・幅・高さ・余白・位置・重なり・動き | 色・背景・枠線・角丸・文字（書体・大きさ・太さ・字間）・影 |
-| `<style data-content>` | 中身の見た目（トレカ・ポーカーのカードの絵柄、レア度の色、メンバーカラーの帯）。`CardStyles` `PokerStyles` `CoverStyles` だけ | ボタン・入力欄・戻る |
+| `<style data-content>` | 中身の見た目（トレカ・ポーカーのカードの絵柄、レア度の色、メンバーカラーの帯、ソングガチャの演出）。`CardStyles` `PokerStyles` `CoverStyles` `SongGacha` だけ | ボタン・入力欄・戻る |
 
 - 画面のHTMLには部品の名前をつける：`class="ui-btn ui-btn-solid karaoke-start"`。`karaoke-start` は並べ方（位置・幅）だけに使う。
 - 見た目が足りないときは、画面のCSSではなく `UniverseTheme.html` に部品として足し、16章に書く。
 - 色は直接書かない（`#fff` や `rgba()` は不可）。メンバーカラーのように色を渡すときは `--accent` に入れて、部品（`ui-accent-left` など）に使わせる。
 - 色の種類は2つだけ：黒基調（`v2`）と白基調（`v2-light`：歌詞・カラオケ）。部品は同じで、トークンの値だけが変わる。
 - 検査を手元で見る：`node scripts/css-rules.mjs`（ファイルごとの件数）／`node scripts/css-rules.mjs KaraokeStyles.html`（中身）。
+- 上書きしない：同じファイルで同じセレクタの同じ性質を二度書かない（直すときは元の行を直す）。画面幅などの `@media` の中だけは例外。
+- `!important` は使わない。例外は `Styles.html` の2か所だけ：`[hidden]`（hidden 属性はどの表示指定より勝つ）と、動きを減らす設定。部品より強くしたいときは `.ui-btn.pt-member` のように部品のクラスと組む。
+- 要素を隠すときは HTML の `hidden` 属性を使う（CSS で個別に `display:none` を足さない）。
+- 動き（animation）は `@media (prefers-reduced-motion: no-preference)` の中に書く（動きを減らす設定の人には付けない）。
 
 ## 1. 色
 | 名前 | 値 | 使い道 |

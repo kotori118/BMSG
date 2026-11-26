@@ -63,7 +63,8 @@
   @keyframes gachaFlash { 0% { opacity: .9; } 100% { opacity: 0; } }
   @keyframes gachaRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
   @keyframes gachaBurst { 0% { opacity: 1; transform: rotate(var(--a)) translateX(0) scale(1); } 100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--d)) scale(.4); } }
-  @media (prefers-reduced-motion: reduce) { .song-gacha-overlay *, .song-gacha-overlay { animation: none !important; transition: none !important; } .song-gacha-overlay { opacity: 1; } .song-gacha-final-group, .song-gacha-overlay-actions { visibility: visible; opacity: 1; } }
+  /* 動きを減らす設定：動きの長さは全体の設定（Styles.html）で0になる。結果はすぐ見せる */
+  @media (prefers-reduced-motion: reduce) { .song-gacha-overlay { opacity: 1; } .song-gacha-final-group, .song-gacha-overlay-actions { visibility: visible; opacity: 1; } }
 </style>
 <script>
   const songGachaState={enabled:{},result:null,drawing:false};

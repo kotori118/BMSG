@@ -95,7 +95,8 @@
 
   /* 表（ランキングなど）：行は線で区切る。数字の列は .num で右寄せ */
   .ui-table { width: 100%; border-collapse: collapse; color: var(--ui-text); font-family: var(--ui-font); }
-  .ui-table th, .ui-table td { padding: 12px 14px; border-bottom: 1px solid var(--ui-line); font-size: var(--ui-fs-body); font-weight: 500; text-align: left; vertical-align: top; }
+  .ui-table th, .ui-table td { padding: 12px 14px; border-bottom: 1px solid var(--ui-line); text-align: left; vertical-align: top; }
+  .ui-table td { font-size: var(--ui-fs-body); font-weight: 500; }
   .ui-table th { color: var(--ui-text-sub); font-size: var(--ui-fs-body-sm); font-weight: 700; }
   .ui-table :is(td, th).num { text-align: right; font-variant-numeric: tabular-nums; }
   .ui-table tr:last-child td { border-bottom: 0; }
@@ -114,6 +115,7 @@
   .ui-btn:is(.ui-btn-solid, [aria-pressed="true"], .is-active, .is-selected, .is-on, .is-open, .active) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
   @media (hover: hover) { .ui-btn:is(.ui-btn-solid, [aria-pressed="true"], .is-active, .is-selected, .is-on, .active):not(:disabled):hover { border-color: var(--ui-active-bg); background: var(--ui-active-bg); opacity: .88; } }
   .ui-btn.ui-btn-wide { width: 100%; }
+  .ui-btn-wide + .ui-btn-wide { margin-top: 8px; }
   /* 処理中のボタン：押したボタンそのものにくるくる。押せないが薄くしない */
   .ui-btn.is-busy, .ui-btn.is-busy:disabled { opacity: 1; cursor: progress; }
   .ui-btn.is-busy::before { content: ""; width: 14px; height: 14px; flex: none; border: 1.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: universeSpinner .8s linear infinite; }
@@ -170,7 +172,7 @@
   /* ON/OFF の小さな表示 */
   /* 小さな札（状態・種類） */
   .ui-badge { display: inline-flex; align-items: center; min-height: 22px; padding: 0 8px; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
-  .ui-badge:is(.ui-badge-solid, .is-active) { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
+  .ui-badge.is-active { border-color: var(--ui-active-bg); background: var(--ui-active-bg); color: var(--ui-active-text); }
 
   /* タブ：つながった枠。選択中は塗る */
   .ui-tabs { display: flex; overflow-x: auto; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); }
@@ -221,7 +223,6 @@
 
   /* ============ 4. 重ねて出すもの ============ */
   .ui-modal { position: fixed; inset: 0; z-index: 1300; display: flex; align-items: center; justify-content: center; padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom)); background: var(--ui-scrim); }
-  .ui-modal[hidden] { display: none; }
   .ui-modal-card { display: flex; flex-direction: column; width: min(100%, 560px); max-height: 86dvh; overflow: hidden; border: 1px solid var(--ui-line-strong); border-radius: var(--ui-radius); background: var(--ui-bg); color: var(--ui-text); }
   .ui-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 14px 20px; border-bottom: 1px solid var(--ui-line); }
   .ui-modal-head h2, .ui-modal-head h3 { margin: 0; font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); }
@@ -241,7 +242,6 @@
   .ui-skeleton.ui-avatar { border-radius: 50%; }
   .ui-skeleton.ui-skeleton-card { min-height: 88px; border: 1px solid var(--ui-line); }
   .ui-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; min-height: 140px; padding: 24px 0; color: var(--ui-text-sub); font-family: var(--ui-font); font-size: var(--ui-fs-body-sm); font-weight: 500; letter-spacing: .08em; text-align: center; }
-  .ui-loading[hidden] { display: none; }
   .ui-loading::before { content: ""; width: 22px; height: 22px; border: 1.5px solid var(--ui-line); border-top-color: var(--ui-text); border-radius: 50%; animation: universeSpinner .9s linear infinite; }
   /* 通知（トースト）：塗りの帯 */
   .universe-toast { min-height: 52px; padding: 0 20px; display: flex; align-items: center; justify-content: center; border-radius: var(--ui-radius); background: var(--ui-active-bg); color: var(--ui-active-text); font-family: var(--ui-font); font-size: var(--ui-fs-body); font-weight: 700; letter-spacing: .06em; opacity: 0; transform: translateY(10px); animation: toast-in 190ms var(--ui-ease) forwards; }

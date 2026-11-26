@@ -1,7 +1,5 @@
 <style>
-  /* メンバーの線の色・計測中の点の色を部品の --accent に渡す */
-  .pt-member { --accent: var(--member-accent, var(--ui-line-strong)); }
-  .pt-status-dot { --accent: var(--ui-text-sub); }
+  /* 計測タイマーの並べ方。メンバーの線の色・計測中の点の色は部品の --accent に渡す */
   .pt-timer-panel.is-running .pt-status-dot { --accent: var(--ui-text); }
   .pt-timer-panel.is-paused .pt-status-dot { --accent: var(--ui-line-strong); }
   .performance-timer-page{
@@ -12,23 +10,22 @@
   .performance-timer-title{margin:0}
   .performance-timer-app{max-width:760px;margin:0 auto;display:grid;gap:7px}
   .pt-panel{padding:12px}
-  .pt-setup-panel{padding:9px}
+  .pt-setup-panel{order:1;padding:9px}
   .pt-search-wrap{position:relative}
   .pt-search-line{display:grid;grid-template-columns:minmax(0,1fr) 44px;gap:7px}
   .pt-search-input{width:100%;min-height:46px;padding:0 13px}
   .pt-clear{width:44px;height:46px;min-width:44px;padding:0}
   .pt-song-results{position:absolute;z-index:40;left:0;right:51px;top:51px;display:grid;max-height:250px;overflow:auto}
-  .pt-song-results[hidden]{display:none}
   .pt-song-option{min-height:48px;padding:9px 13px;text-align:left}
   .pt-song-empty{padding:14px}
   .pt-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}
   .pt-type{min-height:44px}
-  .pt-context{min-height:38px;padding:6px 11px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .pt-context{order:1;min-height:38px;padding:6px 11px;display:flex;align-items:center;justify-content:space-between;gap:10px}
   .pt-context strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .pt-context span{flex:0 0 auto}
-  .pt-timer-panel{min-height:88px;padding:9px 14px;display:grid;grid-template-columns:minmax(0,auto) 1fr;align-items:center;gap:12px}
+  .pt-timer-panel{order:2;min-height:88px;padding:9px 14px;display:grid;grid-template-columns:minmax(0,auto) 1fr;align-items:center;gap:12px}
   .pt-status-main{display:flex;align-items:center;gap:8px;min-width:0}
-  .pt-status-dot{width:10px;height:10px;flex:0 0 10px}
+  .pt-status-dot{--accent:var(--ui-text-sub);width:10px;height:10px;flex:0 0 10px}
   .pt-status-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .pt-status-label.is-member{overflow:visible;text-overflow:clip}
   .pt-total{text-align:right;font-variant-numeric:tabular-nums}
@@ -39,12 +36,11 @@
   .pt-secondary-actions .ui-btn{min-height:44px;padding:0 8px}
   .pt-member-panel{padding:8px 10px;order:4}
   .pt-members{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
-  .pt-member{width:100%;min-height:62px;padding:7px 9px;display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:4px 6px;text-align:left}
+  /* メンバーのボタン（部品 .ui-btn の並べ方を上書きするので .ui-btn と組む） */
+  .ui-btn.pt-member{--accent:var(--member-accent,var(--ui-line-strong));display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto;align-items:center;gap:4px 6px;width:100%;min-height:62px;padding:7px 9px;text-align:left}
   .pt-member-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .pt-member-time{min-width:58px;text-align:right;font-variant-numeric:tabular-nums}
   .pt-member-saved{grid-column:1/-1;text-align:right;white-space:nowrap}
-  .pt-setup-panel,.pt-context{order:1}
-  .pt-timer-panel{order:2}
   .pt-event-log-wrap{margin-top:8px;padding-top:7px}
   .pt-event-log-title{margin:0 0 5px}
   .pt-event-log{height:88px;max-height:88px;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding-right:3px;scrollbar-gutter:stable}
@@ -68,7 +64,7 @@
     .performance-timer-app{gap:6px}
     .pt-setup-panel{padding:8px}
     .pt-timer-panel{min-height:78px;padding:7px 11px}
-    .pt-member{min-height:60px;padding:6px 7px}
+    .ui-btn.pt-member{min-height:60px;padding:6px 7px}
     .pt-member-time{min-width:54px}
     .pt-event-log{height:78px;max-height:78px}
   }

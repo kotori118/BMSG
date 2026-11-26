@@ -1,4 +1,6 @@
 <style>
+  /* hidden 属性は、どの表示指定より必ず勝つ（ここだけ !important を使う） */
+  [hidden] { display: none !important; }
   /* =========================================================
      BMSG UNIVERSE 土台（全画面共通）
      画面の枠・上のバー・下のメニュー・左のメニュー・検索・設定・通知の置き場所。
@@ -145,7 +147,6 @@
 
   /* ---- 左のメニュー ---- */
   .app-menu { position: fixed; inset: 0; z-index: 150; }
-  .app-menu[hidden] { display: none; }
   .app-menu-backdrop { position: absolute; inset: 0; background: var(--ui-scrim); }
   .app-menu-panel {
     position: absolute;
@@ -229,7 +230,6 @@
     margin: 0;
     color: var(--ui-text);
     font-family: var(--ui-font-display);
-    font-size: clamp(34px, 9vw, 48px);
     font-weight: 900;
     letter-spacing: -.035em;
     line-height: .95;
@@ -253,6 +253,7 @@
 
   /* 検索 */
   .universe-search-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+  @media (max-width: 520px) { .universe-search-form { grid-template-columns: 1fr; } }
   .search-field {
     min-height: var(--ui-button-h);
     padding: 0 16px;
@@ -343,6 +344,7 @@
     color: var(--ui-text);
   }
   .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+  .overlay-title { font-size: clamp(34px, 9vw, 48px); }
   .modal-title { font-size: clamp(30px, 8vw, 40px); }
   .settings-eyebrow { margin: 0 0 6px; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); }
   .settings-group { margin-top: 22px; }
@@ -446,7 +448,7 @@
     position: fixed;
     left: 50%;
     bottom: calc(var(--ui-nav-h) + 22px + env(safe-area-inset-bottom));
-    z-index: 130;
+    z-index: 1400; /* 設定などの重ね画面より上 */
     width: min(calc(100% - 32px), 520px);
     transform: translateX(-50%);
     pointer-events: none;
