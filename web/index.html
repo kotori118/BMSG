@@ -861,7 +861,7 @@
   .home-feature-card.has-photo { position: relative; min-height: 150px; }
   .home-feature-card.has-photo .home-feature-copy { max-width: 50%; }
   .home-feature-photo { position: absolute; top: 0; right: 0; bottom: 0; width: 54%; clip-path: polygon(24% 0, 100% 0, 100% 100%, 0 100%); }
-  .home-feature-photo > img { object-position: center top; }
+  .home-feature-photo > img { object-position: center 30%; }
   .home-feature-card strong { overflow-wrap: anywhere; }
   .home-birthday-card { gap: 12px; }
   .home-birthday-copy { display: grid; gap: 7px; width: 100%; }
@@ -994,13 +994,13 @@
   .profile-heading { flex: 1; min-width: 0; text-align: left; }
   .profile-title { margin: 0; line-height: .95; }
 
-  /* 写真：枠いっぱい。頭文字は出さない */
+  /* 写真：枠いっぱい。頭文字は出さない。切れるのは下（顔のある上を見せる） */
   .profile-member-visual > img,
   .profile-detail-visual > img,
   .profile-search-avatar > img,
   .profile-discover-avatar > img,
   .profile-chemistry-slot-avatar > img,
-  .profile-map-avatar > img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+  .profile-map-avatar > img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
 
   /* ---- メンバー（ホーム） ---- */
   .profile-member-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
