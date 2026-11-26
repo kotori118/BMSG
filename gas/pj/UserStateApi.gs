@@ -3,7 +3,6 @@
  * Favorites and recent history were removed (2026-11-22) to keep HOME light.
  * Uses existing Core / Log repositories; no new sheets are created here.
  */
-const UNIVERSE_STATE_LOOKUP_CACHE_KEY_ = 'universe-state-lookup-v3';
 function getUniverseHomeBootstrap(userId) {
   const uid = normalizeUniverseStateUserId_(userId);
   const lookup = buildUniverseStateLookup_();
@@ -26,7 +25,7 @@ function normalizeUniverseStateUserId_(userId) {
 
 function buildUniverseStateLookup_() {
   const cache = CacheService.getScriptCache();
-  const cached = cache.get(UNIVERSE_STATE_LOOKUP_CACHE_KEY_);
+  const cached = cache.get(UNIVERSE_CACHE_KEYS_.HOME_LOOKUP);
   if (cached) {
     try { return JSON.parse(cached); } catch (error) {}
   }
@@ -35,6 +34,8 @@ function buildUniverseStateLookup_() {
     const id=String(row.MemberID||'').trim();
     if(id)members[id]={memberId:id,displayName:String(row.DisplayName||id),colorHex:normalizeUniverseColor_(row.ColorHex)};
   });
+  const mainImages = pickMemberMainImages_(readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.IMAGES));
+  Object.keys(members).forEach(function(id){ if (mainImages[id]) members[id].imageId = mainImages[id].driveFileId; });
   readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.PROFILES).forEach(function(row){
     const id=String(row.MemberID||'').trim();
     if(!id || !members[id]) return;
@@ -49,7 +50,7 @@ function buildUniverseStateLookup_() {
     if(id)songs[id]={songId:id,title:String(row.Title||id),artist:String(row.Artist||'')};
   });
   const lookup = {members:members,songs:songs};
-  cache.put(UNIVERSE_STATE_LOOKUP_CACHE_KEY_, JSON.stringify(lookup), UNIVERSE_CONFIG.PROFILE_CACHE_SECONDS || 300);
+  cache.put(UNIVERSE_CACHE_KEYS_.HOME_LOOKUP, JSON.stringify(lookup), UNIVERSE_CONFIG.PROFILE_CACHE_SECONDS || 300);
   return lookup;
 }
 

@@ -142,7 +142,7 @@
     const ticker=overlay.querySelector('.song-gacha-ticker');
     const group=overlay.querySelector('.song-gacha-final-group');
     overlay.classList.remove('is-final','is-ready');
-    overlay.style.setProperty('--gacha-photo',universeGroupPhotoUrl(result.group)?'url(\''+universeGroupPhotoUrl(result.group)+'\')':'none');
+    overlay.style.setProperty('--gacha-photo',universeGroupPhotoUrl(result.group,1000)?'url(\''+universeGroupPhotoUrl(result.group,1000)+'\')':'none');
     group.textContent='';
     if(reduced){
       ticker.textContent=result.song.title;group.textContent=result.group;

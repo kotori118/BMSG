@@ -38,10 +38,15 @@
     // グループ写真は DB（管理画面の「グループ写真」で登録）から読む（getGroupPhotos）
     let universeGroupPhotoIds = null;
 
-    function universeGroupPhotoUrl(name) {
+    // Drive の画像は、大きさを指定した小さい版だけを読む（元の大きさは数MBあって重い）。width は表示の約2〜3倍の幅。
+    function universeImageUrl(fileId, width) {
+      return fileId ? 'https://lh3.googleusercontent.com/d/' + encodeURIComponent(fileId) + '=w' + (width || 640) : '';
+    }
+
+    function universeGroupPhotoUrl(name, width) {
       const key = String(name || '');
       const id = universeGroupPhotoIds && universeGroupPhotoIds[key];
-      return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
+      return universeImageUrl(id, width || 640);
     }
 
     function loadUniverseGroupPhotos(done) {
@@ -58,6 +63,13 @@
     function applyUniverseGroupPhotos_() {
       document.querySelectorAll('[data-photo-name]').forEach(function (el) {
         if (el.classList.contains('ui-photo-tile')) return;
+        // 小さな写真（ホームの枠など）：中に <img> を入れて、親の枠を「写真つき」にする
+        if (el.getAttribute('data-photo-kind') === 'thumb') {
+          if (el.firstChild) return;
+          const thumbUrl = universeGroupPhotoUrl(el.getAttribute('data-photo-name'), 400);
+          if (thumbUrl) fillUniversePhotoThumb_(el, thumbUrl);
+          return;
+        }
         const url = universeGroupPhotoUrl(el.getAttribute('data-photo-name'));
         if (!url) return;
         if (el.getAttribute('data-photo-kind') === 'toggle') {
@@ -69,6 +81,12 @@
         }
         el.style.setProperty('--ui-photo', "url('" + url + "')");
       });
+    }
+
+    function fillUniversePhotoThumb_(el, url) {
+      el.innerHTML = '<img src="' + url + '" alt="" decoding="async" loading="lazy">';
+      el.hidden = false;
+      if (el.parentElement) el.parentElement.classList.add('has-photo');
     }
 
     // ユニット（グループIDが U で始まる）か。IDがないときは「BMSG 〜」の名前で判断（BMSG ALLSTARS は除く）

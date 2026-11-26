@@ -308,26 +308,7 @@ function buildProfileMembersPayload_() {
     return map;
   }, {});
 
-  const imagesByMemberId = images.reduce(function(map, image) {
-    const memberId = asId_(image.MemberID);
-    if (!memberId) return map;
-
-    const candidate = {
-      driveFileId: asId_(image.DriveFileID),
-      rarity: String(image.Rarity || '').trim().toUpperCase(),
-      isProfileMain: asBoolean_(image.IsProfileMain),
-      displayOrder: ({SSR:1,SR:2,R:3,N:4})[String(image.Rarity||'').trim().toUpperCase()] || 9999
-    };
-    const current = map[memberId];
-    const candidateRank = candidate.isProfileMain ? 0 : candidate.rarity === 'SSR' ? 1 : 2;
-    const currentRank = current ? current.isProfileMain ? 0 : current.rarity === 'SSR' ? 1 : 2 : 99;
-
-    if (!current || candidateRank < currentRank ||
-        (candidateRank === currentRank && candidate.displayOrder < current.displayOrder)) {
-      map[memberId] = candidate;
-    }
-    return map;
-  }, {});
+  const imagesByMemberId = pickMemberMainImages_(images);
 
   const mainGroups = groups.filter(function(group) {
     return String(group.RecordStatus||'ACTIVE')!=='ARCHIVED';
@@ -398,4 +379,29 @@ function buildProfileMembersPayload_() {
 
 function profileGroupKey_(groupName) {
   return String(groupName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+
+// メンバーごとの代表画像：プロフィール用に指定 → SSR → レア度の高い順。画像が未登録（ファイルIDが空）の行は選ばない。
+function pickMemberMainImages_(images) {
+  return images.reduce(function(map, image) {
+    const memberId = asId_(image.MemberID);
+    const driveFileId = asId_(image.DriveFileID);
+    if (!memberId || !driveFileId) return map;
+    const rarity = String(image.Rarity || '').trim().toUpperCase();
+    const candidate = {
+      driveFileId: driveFileId,
+      rarity: rarity,
+      isProfileMain: asBoolean_(image.IsProfileMain),
+      displayOrder: ({SSR:1,SR:2,R:3,N:4})[rarity] || 9999
+    };
+    const current = map[memberId];
+    const candidateRank = candidate.isProfileMain ? 0 : rarity === 'SSR' ? 1 : 2;
+    const currentRank = current ? current.isProfileMain ? 0 : current.rarity === 'SSR' ? 1 : 2 : 99;
+    if (!current || candidateRank < currentRank ||
+        (candidateRank === currentRank && candidate.displayOrder < current.displayOrder)) {
+      map[memberId] = candidate;
+    }
+    return map;
+  }, {});
 }

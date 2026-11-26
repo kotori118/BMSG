@@ -855,7 +855,12 @@
   .home-dynamic { display: grid; gap: 24px; margin-top: 22px; padding-bottom: 36px; }
   .home-today-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
   .home-feature-card { display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-width: 0; padding: 20px 20px 22px; overflow: hidden; }
-  .home-feature-card > b { align-self: flex-start; margin-top: 4px; }
+  .home-feature-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
+  .home-feature-copy > b { margin-top: 4px; }
+  /* 写真があるときは、文字が左・写真が右 */
+  .home-feature-card.has-photo { display: grid; grid-template-columns: minmax(0, 1fr) 104px; align-items: center; gap: 16px; }
+  .home-feature-photo { width: 104px; height: 104px; }
+  .home-feature-photo > img { object-position: center top; }
   .home-feature-card strong { overflow-wrap: anywhere; }
   .home-birthday-card { gap: 12px; }
   .home-birthday-copy { display: grid; gap: 7px; width: 100%; }
@@ -4155,10 +4160,15 @@
     // グループ写真は DB（管理画面の「グループ写真」で登録）から読む（getGroupPhotos）
     let universeGroupPhotoIds = null;
 
-    function universeGroupPhotoUrl(name) {
+    // Drive の画像は、大きさを指定した小さい版だけを読む（元の大きさは数MBあって重い）。width は表示の約2〜3倍の幅。
+    function universeImageUrl(fileId, width) {
+      return fileId ? 'https://lh3.googleusercontent.com/d/' + encodeURIComponent(fileId) + '=w' + (width || 640) : '';
+    }
+
+    function universeGroupPhotoUrl(name, width) {
       const key = String(name || '');
       const id = universeGroupPhotoIds && universeGroupPhotoIds[key];
-      return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
+      return universeImageUrl(id, width || 640);
     }
 
     function loadUniverseGroupPhotos(done) {
@@ -4175,6 +4185,13 @@
     function applyUniverseGroupPhotos_() {
       document.querySelectorAll('[data-photo-name]').forEach(function (el) {
         if (el.classList.contains('ui-photo-tile')) return;
+        // 小さな写真（ホームの枠など）：中に <img> を入れて、親の枠を「写真つき」にする
+        if (el.getAttribute('data-photo-kind') === 'thumb') {
+          if (el.firstChild) return;
+          const thumbUrl = universeGroupPhotoUrl(el.getAttribute('data-photo-name'), 400);
+          if (thumbUrl) fillUniversePhotoThumb_(el, thumbUrl);
+          return;
+        }
         const url = universeGroupPhotoUrl(el.getAttribute('data-photo-name'));
         if (!url) return;
         if (el.getAttribute('data-photo-kind') === 'toggle') {
@@ -4186,6 +4203,12 @@
         }
         el.style.setProperty('--ui-photo', "url('" + url + "')");
       });
+    }
+
+    function fillUniversePhotoThumb_(el, url) {
+      el.innerHTML = '<img src="' + url + '" alt="" decoding="async" loading="lazy">';
+      el.hidden = false;
+      if (el.parentElement) el.parentElement.classList.add('has-photo');
     }
 
     // ユニット（グループIDが U で始まる）か。IDがないときは「BMSG 〜」の名前で判断（BMSG ALLSTARS は除く）
@@ -4512,9 +4535,11 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
   function renderHomeToday_(song,member,birthdayMembers){
-    const songButton=song?'<button class="ui-card home-feature-card home-song-card" type="button" onclick="openUniverseTarget({route:\'lyrics\',params:{song:\''+escapeHtml(song.songId)+'\'}})"><span class="ui-label home-feature-label">TODAY\'S SONG</span><strong class="ui-name ui-name-lg home-song-title">'+escapeHtml(song.title)+'</strong><small class="ui-muted">'+escapeHtml(song.artist||'')+'</small><b class="ui-badge">PLAY ›</b></button>':'<article class="ui-panel home-feature-card home-song-card"><span class="ui-label home-feature-label">TODAY\'S SONG</span><strong class="ui-heading-lg">NO DATA</strong></article>';
+    const songPhotoUrl=song?universeGroupPhotoUrl(song.artist,400):'';
+    const songPhoto=song&&song.artist?'<span class="ui-thumb home-feature-photo" data-photo-name="'+escapeHtml(song.artist)+'" data-photo-kind="thumb"'+(songPhotoUrl?'':' hidden')+'>'+(songPhotoUrl?'<img src="'+songPhotoUrl+'" alt="" decoding="async">':'')+'</span>':'';
+    const songButton=song?'<button class="ui-card home-feature-card home-song-card'+(songPhotoUrl?' has-photo':'')+'" type="button" onclick="openUniverseTarget({route:\'lyrics\',params:{song:\''+escapeHtml(song.songId)+'\'}})"><span class="home-feature-copy"><span class="ui-label home-feature-label">TODAY\'S SONG</span><strong class="ui-name ui-name-lg home-song-title">'+escapeHtml(song.title)+'</strong><small class="ui-muted">'+escapeHtml(song.artist||'')+'</small><b class="ui-badge">PLAY ›</b></span>'+songPhoto+'</button>':'<article class="ui-panel home-feature-card home-song-card"><span class="ui-label home-feature-label">TODAY\'S SONG</span><strong class="ui-heading-lg">NO DATA</strong></article>';
     const members=Array.isArray(birthdayMembers)?birthdayMembers:[];
-    const memberCard=members.length?renderHomeBirthdayMembers_(members):(member?'<button class="ui-card home-feature-card home-member-card" style="--home-accent:'+escapeHtml(member.colorHex||'#9cecff')+'" type="button" onclick="openUniverseProfileMember(\''+escapeHtml(member.memberId)+'\')"><span class="ui-label home-feature-label">LUCKY MEMBER</span><strong class="ui-heading-lg">'+escapeHtml(member.displayName)+'</strong><b class="ui-badge">PROFILE ›</b></button>':'<article class="ui-panel home-feature-card home-member-card"><span class="ui-label home-feature-label">LUCKY MEMBER</span><strong class="ui-heading-lg">NO DATA</strong></article>');
+    const memberCard=members.length?renderHomeBirthdayMembers_(members):(member?'<button class="ui-card home-feature-card home-member-card'+(member.imageId?' has-photo':'')+'" style="--home-accent:'+escapeHtml(member.colorHex||'#9cecff')+'" type="button" onclick="openUniverseProfileMember(\''+escapeHtml(member.memberId)+'\')"><span class="home-feature-copy"><span class="ui-label home-feature-label">LUCKY MEMBER</span><strong class="ui-heading-lg">'+escapeHtml(member.displayName)+'</strong><b class="ui-badge">PROFILE ›</b></span>'+(member.imageId?'<span class="ui-thumb home-feature-photo"><img src="'+universeImageUrl(member.imageId,400)+'" alt="" decoding="async"></span>':'')+'</button>':'<article class="ui-panel home-feature-card home-member-card"><span class="ui-label home-feature-label">LUCKY MEMBER</span><strong class="ui-heading-lg">NO DATA</strong></article>');
     return '<section class="home-today-grid">'+songButton+memberCard+'</section>';
   }
 
@@ -6053,7 +6078,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const ticker=overlay.querySelector('.song-gacha-ticker');
     const group=overlay.querySelector('.song-gacha-final-group');
     overlay.classList.remove('is-final','is-ready');
-    overlay.style.setProperty('--gacha-photo',universeGroupPhotoUrl(result.group)?'url(\''+universeGroupPhotoUrl(result.group)+'\')':'none');
+    overlay.style.setProperty('--gacha-photo',universeGroupPhotoUrl(result.group,1000)?'url(\''+universeGroupPhotoUrl(result.group,1000)+'\')':'none');
     group.textContent='';
     if(reduced){
       ticker.textContent=result.song.title;group.textContent=result.group;
@@ -6973,7 +6998,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     }
 
     image.onload=function(){image.style.visibility='visible';image.onload=null;};
-    image.src='https://lh3.googleusercontent.com/d/'+encodeURIComponent(card.driveFileId);
+    image.src=universeImageUrl(card.driveFileId,900);
     const kicker=document.getElementById('cardRevealKicker');
 
     overlay.classList.remove('is-charging');
@@ -6994,7 +7019,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function closeCardReveal(){const overlay=document.getElementById('cardReveal');if(!overlay)return;overlay.className='card-reveal';overlay.setAttribute('aria-hidden','true');if(currentRoute==='cards')renderCardGacha();}
   function openCardCollection(){if(!cardState.ready)return;const overlay=document.getElementById('cardCollectionOverlay');if(!overlay)return;renderCardCollection();overlay.classList.add('is-open');overlay.setAttribute('aria-hidden','false');overlay.scrollTop=0;}
   function closeCardCollection(){const overlay=document.getElementById('cardCollectionOverlay');if(!overlay)return;overlay.classList.remove('is-open');overlay.setAttribute('aria-hidden','true');}
-  function renderCardCollection(){const body=document.getElementById('cardCollectionBody');const progress=document.getElementById('cardCollectionProgress');const meter=document.getElementById('cardCollectionMeterFill');if(!body||!progress)return;const cards=getCardGroupCards(cardState.currentGroup||'ALL');const collected=cards.filter(function(card){return card.isDrawn;}).length;const percent=cards.length?Math.round(collected/cards.length*100):0;progress.textContent=(cardState.currentGroup||'ALL')+'  '+collected+' / '+cards.length+'  ('+percent+'%)';if(meter)meter.style.width=percent+'%';const byMember={};cards.forEach(function(card){if(!byMember[card.memberId])byMember[card.memberId]=[];byMember[card.memberId].push(card);});body.innerHTML=Object.keys(byMember).map(function(memberId){const memberCards=byMember[memberId];const first=memberCards[0];const order={N:0,R:1,SR:2,SSR:3};memberCards.sort(function(a,b){return order[a.rarity]-order[b.rarity];});const owned=memberCards.filter(function(card){return card.isDrawn;}).length;return '<section class="card-collection-member" style="--member-color:'+escapeHtml(first.memberColor||'#9cecff')+'"><div class="card-collection-member-title-row"><div class="ui-heading card-collection-member-title">'+escapeHtml(first.memberName)+'</div><div class="ui-muted card-collection-member-count">'+owned+' / '+memberCards.length+'</div></div><div class="card-collection-grid">'+memberCards.map(function(card){const rarity=String(card.rarity||'N').toLowerCase();return '<div class="ui-thumb card-collection-item rarity-'+rarity+(card.isDrawn?' is-owned':'')+'">'+(card.isDrawn?'<img src="https://lh3.googleusercontent.com/d/'+encodeURIComponent(card.driveFileId)+'" alt="'+escapeHtml(card.memberName)+' '+escapeHtml(card.rarity)+'">':'<div class="ui-thumb card-collection-locked">?</div>')+'<span class="card-collection-rarity">'+escapeHtml(card.rarity)+'</span></div>';}).join('')+'</div></section>';}).join('')||'<div class="placeholder"><p>カードがありません。</p></div>';const reset=document.getElementById('cardResetCollectionBtn');if(reset)reset.hidden=!(cardState.totalCount>0&&cardState.collectedCount>=cardState.totalCount);if(typeof syncUniverseCrossLinks==='function')syncUniverseCrossLinks();}
+  function renderCardCollection(){const body=document.getElementById('cardCollectionBody');const progress=document.getElementById('cardCollectionProgress');const meter=document.getElementById('cardCollectionMeterFill');if(!body||!progress)return;const cards=getCardGroupCards(cardState.currentGroup||'ALL');const collected=cards.filter(function(card){return card.isDrawn;}).length;const percent=cards.length?Math.round(collected/cards.length*100):0;progress.textContent=(cardState.currentGroup||'ALL')+'  '+collected+' / '+cards.length+'  ('+percent+'%)';if(meter)meter.style.width=percent+'%';const byMember={};cards.forEach(function(card){if(!byMember[card.memberId])byMember[card.memberId]=[];byMember[card.memberId].push(card);});body.innerHTML=Object.keys(byMember).map(function(memberId){const memberCards=byMember[memberId];const first=memberCards[0];const order={N:0,R:1,SR:2,SSR:3};memberCards.sort(function(a,b){return order[a.rarity]-order[b.rarity];});const owned=memberCards.filter(function(card){return card.isDrawn;}).length;return '<section class="card-collection-member" style="--member-color:'+escapeHtml(first.memberColor||'#9cecff')+'"><div class="card-collection-member-title-row"><div class="ui-heading card-collection-member-title">'+escapeHtml(first.memberName)+'</div><div class="ui-muted card-collection-member-count">'+owned+' / '+memberCards.length+'</div></div><div class="card-collection-grid">'+memberCards.map(function(card){const rarity=String(card.rarity||'N').toLowerCase();return '<div class="ui-thumb card-collection-item rarity-'+rarity+(card.isDrawn?' is-owned':'')+'">'+(card.isDrawn?'<img src="'+universeImageUrl(card.driveFileId,320)+'" alt="'+escapeHtml(card.memberName)+' '+escapeHtml(card.rarity)+'">':'<div class="ui-thumb card-collection-locked">?</div>')+'<span class="card-collection-rarity">'+escapeHtml(card.rarity)+'</span></div>';}).join('')+'</div></section>';}).join('')||'<div class="placeholder"><p>カードがありません。</p></div>';const reset=document.getElementById('cardResetCollectionBtn');if(reset)reset.hidden=!(cardState.totalCount>0&&cardState.collectedCount>=cardState.totalCount);if(typeof syncUniverseCrossLinks==='function')syncUniverseCrossLinks();}
   function resetCardCollection(){if(!(cardState.totalCount>0&&cardState.collectedCount>=cardState.totalCount))return;if(!window.confirm('コレクションを0%へリセットしますか？'))return;google.script.run.withSuccessHandler(function(){cardState.cards.forEach(function(card){card.isDrawn=false;});cardState.collectedCount=0;renderCardCollection();cardNotify('コレクションをリセットしました。');}).withFailureHandler(cardFailure).resetTradingCardCollection(cardState.userId);}
   function cardFailure(error){const message=error&&error.message?error.message:String(error||'エラーが発生しました。');cardNotify(message);}function cardNotify(message){if(typeof showToast==='function'){showToast(message);return;}window.alert(message);}
 
@@ -7047,7 +7072,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function saveOfflinePoker(){const game=pokerState.offline;if(!game||game.saved||pokerState.busy)return;openPokerHighlightConfirm(function(){if(!pokerState.offline||pokerState.offline.saved||pokerState.busy)return;setPokerBusy(true);google.script.run.withSuccessHandler(function(result){setPokerBusy(false);game.saved=true;pokerNotify(result&&result.alreadySaved?'この神回は保存済みです。':'神回を保存しました。');renderOfflinePoker();}).withFailureHandler(function(error){setPokerBusy(false);pokerFailure(error);}).saveOfflinePokerHighlight(pokerState.userId,{gameId:game.gameId,ruleType:game.ruleType,handImageIds:game.hand.map(function(card){return card.imageId;})});});}
   function saveOnlinePokerHighlight(){if(pokerState.busy||!pokerState.room||pokerState.room.highlightSaved)return;openPokerHighlightConfirm(function(){if(pokerState.busy||!pokerState.room||pokerState.room.highlightSaved)return;setPokerBusy(true);google.script.run.withSuccessHandler(function(result){setPokerBusy(false);pokerState.room.highlightSaved=true;pokerNotify(result&&result.alreadySaved?'この神回は保存済みです。':'神回を保存しました。');renderPokerRoom();}).withFailureHandler(function(error){setPokerBusy(false);pokerFailure(error);}).savePokerHighlight(pokerState.userId,pokerState.room.roomId);});}
 
-  function renderPokerHand(hand,revealed,mode){const list=Array.isArray(hand)?hand:[];let html='<div class="poker-board">';for(let i=0;i<5;i++){const card=list[i],visible=!!(card&&i<revealed);const selected=pokerState.interaction==='exchange'?pokerState.exchangeIndices.indexOf(i)>=0:pokerState.sortIndex===i;const selectedClass=selected?(pokerState.interaction==='exchange'?' is-exchange':' is-sort'):'';const revealing=visible&&Array.isArray(pokerState.flipIndices)&&pokerState.flipIndices.indexOf(i)>=0;const action=(mode==='offline'||mode==='online')&&revealed>=5?'onclick="handlePokerCardTap('+i+',\''+mode+'\')"':'';const rarity=visible?String(card.rarity||'N').toLowerCase():'n';const memberLabel=visible?String(card.memberName||card.displayName||card.memberId||''):'';const cardClass=visible?'rarity-'+rarity+(revealing?' is-revealing':' is-face-up'):'is-back';html+='<button type="button" class="poker-slot'+selectedClass+'" '+action+' aria-label="カード '+(i+1)+'"><span class="poker-card '+cardClass+'"><span class="poker-card-face poker-card-back-face"></span>'+(visible?'<span class="poker-card-face poker-card-front-face"><img src="https://lh3.googleusercontent.com/d/'+encodeURIComponent(card.driveFileId)+'" alt="">'+(memberLabel?'<span class="poker-card-label">'+escapeHtml(memberLabel)+'</span>':'')+'</span>':'')+'</span></button>';}return html+'</div>';}
+  function renderPokerHand(hand,revealed,mode){const list=Array.isArray(hand)?hand:[];let html='<div class="poker-board">';for(let i=0;i<5;i++){const card=list[i],visible=!!(card&&i<revealed);const selected=pokerState.interaction==='exchange'?pokerState.exchangeIndices.indexOf(i)>=0:pokerState.sortIndex===i;const selectedClass=selected?(pokerState.interaction==='exchange'?' is-exchange':' is-sort'):'';const revealing=visible&&Array.isArray(pokerState.flipIndices)&&pokerState.flipIndices.indexOf(i)>=0;const action=(mode==='offline'||mode==='online')&&revealed>=5?'onclick="handlePokerCardTap('+i+',\''+mode+'\')"':'';const rarity=visible?String(card.rarity||'N').toLowerCase():'n';const memberLabel=visible?String(card.memberName||card.displayName||card.memberId||''):'';const cardClass=visible?'rarity-'+rarity+(revealing?' is-revealing':' is-face-up'):'is-back';html+='<button type="button" class="poker-slot'+selectedClass+'" '+action+' aria-label="カード '+(i+1)+'"><span class="poker-card '+cardClass+'"><span class="poker-card-face poker-card-back-face"></span>'+(visible?'<span class="poker-card-face poker-card-front-face"><img src="'+universeImageUrl(card.driveFileId,360)+'" alt="">'+(memberLabel?'<span class="poker-card-label">'+escapeHtml(memberLabel)+'</span>':'')+'</span>':'')+'</span></button>';}return html+'</div>';}
   function handlePokerCardTap(index,mode){if(pokerState.interaction==='exchange'){const pos=pokerState.exchangeIndices.indexOf(index);if(pos>=0)pokerState.exchangeIndices.splice(pos,1);else pokerState.exchangeIndices.push(index);return mode==='offline'?renderOfflinePoker():renderPokerOnlinePlay();}if(pokerState.sortIndex<0){pokerState.sortIndex=index;return mode==='offline'?renderOfflinePoker():renderPokerOnlinePlay();}if(pokerState.sortIndex===index){pokerState.sortIndex=-1;return mode==='offline'?renderOfflinePoker():renderPokerOnlinePlay();}const from=pokerState.sortIndex;pokerState.sortIndex=-1;if(mode==='offline'){const hand=pokerState.offline.hand,temp=hand[from];hand[from]=hand[index];hand[index]=temp;renderOfflinePoker();}else{const hand=pokerState.room.currentPlayer.hand.slice(),temp=hand[from];hand[from]=hand[index];hand[index]=temp;setPokerBusy(true);google.script.run.withSuccessHandler(function(room){setPokerBusy(false);pokerState.room=room;renderPokerOnlinePlay();}).withFailureHandler(function(error){setPokerBusy(false);pokerFailure(error);refreshPokerRoom();}).reorderPokerHand({userId:pokerState.userId,roomId:pokerState.room.roomId,imageIds:hand.map(function(card){return card.imageId;})});}}
   function enterPokerExchange(){pokerState.interaction='exchange';pokerState.exchangeIndices=[];pokerState.sortIndex=-1;if(pokerState.screen==='offline')renderOfflinePoker();else renderPokerOnlinePlay();}
   function cancelPokerExchange(){pokerState.interaction='sort';pokerState.exchangeIndices=[];if(pokerState.screen==='offline')renderOfflinePoker();else renderPokerOnlinePlay();}

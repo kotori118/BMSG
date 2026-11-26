@@ -5,7 +5,7 @@
  */
 const UNIVERSE_CACHE_KEYS_ = Object.freeze({
   SEARCH: 'UNIVERSE_SEARCH_INDEX_V3',
-  HOME_LOOKUP: 'universe-state-lookup-v3',
+  HOME_LOOKUP: 'universe-state-lookup-v4',
   CARD_CATALOG: 'trading_card_catalog_v3',
   PROFILE_MEMBERS: 'PROFILE_MEMBERS_V2_0_1',
   PROFILE_MAP: 'PROFILE_MAP_V1',
@@ -29,6 +29,7 @@ function clearUniverseImageMutationCaches_(memberId) {
   clearUniverseCacheKeys_([
     UNIVERSE_CACHE_KEYS_.CARD_CATALOG,
     UNIVERSE_CACHE_KEYS_.PROFILE_MEMBERS,
+    UNIVERSE_CACHE_KEYS_.HOME_LOOKUP,
     UNIVERSE_CACHE_KEYS_.PROFILE_DETAIL_PREFIX + asId_(memberId)
   ]);
 }
