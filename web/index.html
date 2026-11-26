@@ -198,7 +198,7 @@
   .utility-brand {
     position: absolute;
     left: 50%;
-    bottom: 24px;
+    bottom: 18px;
     transform: translateX(-50%);
     color: var(--ui-text);
     font-family: var(--ui-font-display);
@@ -206,7 +206,11 @@
     font-weight: 900;
     letter-spacing: .02em;
     white-space: nowrap;
-    pointer-events: none;
+    padding: 6px 4px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
   .utility-btn {
     width: 44px;
@@ -1906,7 +1910,7 @@
                 <path d="M4.5 7h15M4.5 12h15M4.5 17h15"></path>
               </svg>
             </button>
-            <span class="utility-brand" aria-hidden="true">BMSG UNIVERSE</span>
+            <button class="utility-brand" type="button" onclick="navigateTo('home')" aria-label="ホームへ">BMSG UNIVERSE</button>
             <button class="utility-btn utility-home" onclick="navigateTo('home')" aria-label="ホーム">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M4.5 10.7L12 4.5l7.5 6.2v8.1H14.8v-5.2H9.2v5.2H4.5z"></path>
