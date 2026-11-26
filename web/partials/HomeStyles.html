@@ -13,9 +13,10 @@
   .home-feature-card { display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-width: 0; padding: 20px 20px 22px; overflow: hidden; }
   .home-feature-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
   .home-feature-copy > b { margin-top: 4px; }
-  /* 写真があるときは、文字が左・写真が右 */
-  .home-feature-card.has-photo { display: grid; grid-template-columns: minmax(0, 1fr) 104px; align-items: center; gap: 16px; }
-  .home-feature-photo { width: 104px; height: 104px; }
+  /* 写真があるときは、文字が左・写真が右いっぱい（枠の上・右・下まで）。写真の左側は斜めに切る */
+  .home-feature-card.has-photo { position: relative; min-height: 150px; }
+  .home-feature-card.has-photo .home-feature-copy { max-width: 56%; }
+  .home-feature-photo { position: absolute; top: 0; right: 0; bottom: 0; width: 46%; clip-path: polygon(24% 0, 100% 0, 100% 100%, 0 100%); }
   .home-feature-photo > img { object-position: center top; }
   .home-feature-card strong { overflow-wrap: anywhere; }
   .home-birthday-card { gap: 12px; }

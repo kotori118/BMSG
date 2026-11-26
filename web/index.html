@@ -857,9 +857,10 @@
   .home-feature-card { display: flex; flex-direction: column; align-items: stretch; gap: 10px; min-width: 0; padding: 20px 20px 22px; overflow: hidden; }
   .home-feature-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; min-width: 0; }
   .home-feature-copy > b { margin-top: 4px; }
-  /* 写真があるときは、文字が左・写真が右 */
-  .home-feature-card.has-photo { display: grid; grid-template-columns: minmax(0, 1fr) 104px; align-items: center; gap: 16px; }
-  .home-feature-photo { width: 104px; height: 104px; }
+  /* 写真があるときは、文字が左・写真が右いっぱい（枠の上・右・下まで）。写真の左側は斜めに切る */
+  .home-feature-card.has-photo { position: relative; min-height: 150px; }
+  .home-feature-card.has-photo .home-feature-copy { max-width: 56%; }
+  .home-feature-photo { position: absolute; top: 0; right: 0; bottom: 0; width: 46%; clip-path: polygon(24% 0, 100% 0, 100% 100%, 0 100%); }
   .home-feature-photo > img { object-position: center top; }
   .home-feature-card strong { overflow-wrap: anywhere; }
   .home-birthday-card { gap: 12px; }
@@ -4188,7 +4189,7 @@
         // 小さな写真（ホームの枠など）：中に <img> を入れて、親の枠を「写真つき」にする
         if (el.getAttribute('data-photo-kind') === 'thumb') {
           if (el.firstChild) return;
-          const thumbUrl = universeGroupPhotoUrl(el.getAttribute('data-photo-name'), 400);
+          const thumbUrl = universeGroupPhotoUrl(el.getAttribute('data-photo-name'), 560);
           if (thumbUrl) fillUniversePhotoThumb_(el, thumbUrl);
           return;
         }
@@ -4535,11 +4536,11 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
   function renderHomeToday_(song,member,birthdayMembers){
-    const songPhotoUrl=song?universeGroupPhotoUrl(song.artist,400):'';
-    const songPhoto=song&&song.artist?'<span class="ui-thumb home-feature-photo" data-photo-name="'+escapeHtml(song.artist)+'" data-photo-kind="thumb"'+(songPhotoUrl?'':' hidden')+'>'+(songPhotoUrl?'<img src="'+songPhotoUrl+'" alt="" decoding="async">':'')+'</span>':'';
+    const songPhotoUrl=song?universeGroupPhotoUrl(song.artist,560):'';
+    const songPhoto=song&&song.artist?'<span class="ui-media home-feature-photo" data-photo-name="'+escapeHtml(song.artist)+'" data-photo-kind="thumb"'+(songPhotoUrl?'':' hidden')+'>'+(songPhotoUrl?'<img src="'+songPhotoUrl+'" alt="" decoding="async">':'')+'</span>':'';
     const songButton=song?'<button class="ui-card home-feature-card home-song-card'+(songPhotoUrl?' has-photo':'')+'" type="button" onclick="openUniverseTarget({route:\'lyrics\',params:{song:\''+escapeHtml(song.songId)+'\'}})"><span class="home-feature-copy"><span class="ui-label home-feature-label">TODAY\'S SONG</span><strong class="ui-name ui-name-lg home-song-title">'+escapeHtml(song.title)+'</strong><small class="ui-muted">'+escapeHtml(song.artist||'')+'</small><b class="ui-badge">PLAY ›</b></span>'+songPhoto+'</button>':'<article class="ui-panel home-feature-card home-song-card"><span class="ui-label home-feature-label">TODAY\'S SONG</span><strong class="ui-heading-lg">NO DATA</strong></article>';
     const members=Array.isArray(birthdayMembers)?birthdayMembers:[];
-    const memberCard=members.length?renderHomeBirthdayMembers_(members):(member?'<button class="ui-card home-feature-card home-member-card'+(member.imageId?' has-photo':'')+'" style="--home-accent:'+escapeHtml(member.colorHex||'#9cecff')+'" type="button" onclick="openUniverseProfileMember(\''+escapeHtml(member.memberId)+'\')"><span class="home-feature-copy"><span class="ui-label home-feature-label">LUCKY MEMBER</span><strong class="ui-heading-lg">'+escapeHtml(member.displayName)+'</strong><b class="ui-badge">PROFILE ›</b></span>'+(member.imageId?'<span class="ui-thumb home-feature-photo"><img src="'+universeImageUrl(member.imageId,400)+'" alt="" decoding="async"></span>':'')+'</button>':'<article class="ui-panel home-feature-card home-member-card"><span class="ui-label home-feature-label">LUCKY MEMBER</span><strong class="ui-heading-lg">NO DATA</strong></article>');
+    const memberCard=members.length?renderHomeBirthdayMembers_(members):(member?'<button class="ui-card home-feature-card home-member-card'+(member.imageId?' has-photo':'')+'" style="--home-accent:'+escapeHtml(member.colorHex||'#9cecff')+'" type="button" onclick="openUniverseProfileMember(\''+escapeHtml(member.memberId)+'\')"><span class="home-feature-copy"><span class="ui-label home-feature-label">LUCKY MEMBER</span><strong class="ui-heading-lg">'+escapeHtml(member.displayName)+'</strong><b class="ui-badge">PROFILE ›</b></span>'+(member.imageId?'<span class="ui-media home-feature-photo"><img src="'+universeImageUrl(member.imageId,560)+'" alt="" decoding="async"></span>':'')+'</button>':'<article class="ui-panel home-feature-card home-member-card"><span class="ui-label home-feature-label">LUCKY MEMBER</span><strong class="ui-heading-lg">NO DATA</strong></article>');
     return '<section class="home-today-grid">'+songButton+memberCard+'</section>';
   }
 

@@ -66,7 +66,7 @@
         // 小さな写真（ホームの枠など）：中に <img> を入れて、親の枠を「写真つき」にする
         if (el.getAttribute('data-photo-kind') === 'thumb') {
           if (el.firstChild) return;
-          const thumbUrl = universeGroupPhotoUrl(el.getAttribute('data-photo-name'), 400);
+          const thumbUrl = universeGroupPhotoUrl(el.getAttribute('data-photo-name'), 560);
           if (thumbUrl) fillUniversePhotoThumb_(el, thumbUrl);
           return;
         }
