@@ -53,7 +53,10 @@
   // 一度取ったデータは端末に置き、次からはすぐ返す（裏で最新を取り直して入れ替える）。
   // 何かを保存・登録した（get で始まらない操作が成功した）ら、一時保存はすべて捨てる。
   // 毎回変わるデータ（ルームの状態・得点・履歴など）は対象にしない。
-  var CACHE_PREFIX = 'bmsgApi:v1:';
+  // 版：GAS の返す内容を変えたとき（項目を足す・形を変える）は、この数字を上げる。
+  // 上げると、端末に残っている古い一時保存は使われず、起動時に消える。
+  var CACHE_VERSION = 2;
+  var CACHE_PREFIX = 'bmsgApi:v' + CACHE_VERSION + ':';
   var CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // これより古いものは使わず取り直す
   var CACHE_REFRESH_AFTER = 20 * 1000;     // これより新しいものは取り直さない
   var CACHEABLE = {
@@ -94,6 +97,15 @@
       }
     } catch (e) { /* 使えない環境ではメモリだけ */ }
   }
+  // 起動時：古い版の一時保存を端末から消す（使われないまま容量を取らないように）
+  (function purgeOldVersions() {
+    try {
+      for (var i = root.localStorage.length - 1; i >= 0; i--) {
+        var k = root.localStorage.key(i);
+        if (k && k.indexOf('bmsgApi:') === 0 && k.indexOf(CACHE_PREFIX) !== 0) root.localStorage.removeItem(k);
+      }
+    } catch (e) { /* 使えない環境では何もしない */ }
+  })();
   // 同じ通信が同時に走らないようにまとめる（先読みと画面の読み込みが重なったときなど）
   function fetchAndStore(action, args, key) {
     if (inflight[key]) return inflight[key];
