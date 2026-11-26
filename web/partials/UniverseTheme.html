@@ -32,6 +32,10 @@
   .ui-title.ui-title-sm { font-size: clamp(28px, 8vw, 40px); }
   .ui-heading { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: var(--ui-fs-heading); font-weight: 700; letter-spacing: var(--ui-ls-heading); line-height: 1.35; }
   .ui-heading-lg { margin: 0; color: var(--ui-text); font-family: var(--ui-font); font-size: clamp(22px, 6vw, 30px); font-weight: 700; letter-spacing: var(--ui-ls-heading); line-height: 1.25; overflow-wrap: anywhere; }
+  /* 登録した表記のまま出す（グループ名・メンバー名を見出しに使うとき、ui-title などに足す） */
+  .ui-as-is { text-transform: none; }
+  /* 小さめの見出しに名前を入れるとき：長い名前（ShowMinorSavage など）が1行に収まる大きさ */
+  .ui-title.ui-title-sm.ui-as-is { font-size: clamp(24px, 6.6vw, 34px); }
   .ui-name { margin: 0; color: var(--ui-text); font-family: var(--ui-font-display); font-size: var(--ui-fs-heading); font-weight: 900; letter-spacing: -.01em; line-height: 1.25; text-transform: none; }
   .ui-name.ui-name-lg { font-size: var(--ui-fs-title); }
   .ui-label { margin: 0; color: var(--ui-text-sub); font-family: var(--ui-font-display); font-size: var(--ui-fs-label); font-weight: 800; letter-spacing: var(--ui-ls-label); line-height: 1.3; text-transform: uppercase; }

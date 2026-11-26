@@ -98,7 +98,7 @@
       return { item, rank: currentRank };
     });
 
-    panel.innerHTML = `<div class="ui-divider profile-discover-head ui-label profile-discover-ranking-head"><div><p class="profile-panel-eyebrow">FIND SIMILAR</p><h2 class="ui-title ui-title-sm profile-members-title">${escapeHtml(baseMember.displayName)}</h2><p class="profile-discover-sub">MATCH RANKING</p></div><button class="ui-btn ui-btn-compact" type="button" onclick="changeProfileDiscoverMember()">変更</button></div><div class="profile-discover-ranking">${rankedItems.map(({ item, rank }) => renderProfileDiscoverRankingCard(item, rank, baseMember)).join('')}</div>`;
+    panel.innerHTML = `<div class="ui-divider profile-discover-head ui-label profile-discover-ranking-head"><div><p class="profile-panel-eyebrow">FIND SIMILAR</p><h2 class="ui-title ui-title-sm ui-as-is profile-members-title">${escapeHtml(baseMember.displayName)}</h2><p class="profile-discover-sub">MATCH RANKING</p></div><button class="ui-btn ui-btn-compact" type="button" onclick="changeProfileDiscoverMember()">変更</button></div><div class="profile-discover-ranking">${rankedItems.map(({ item, rank }) => renderProfileDiscoverRankingCard(item, rank, baseMember)).join('')}</div>`;
   }
 
   function renderProfileDiscoverMemberCard(member) {
