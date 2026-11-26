@@ -4,7 +4,7 @@
     songs:{title:'楽曲・歌詞',description:'曲の登録、クレジット、歌詞・歌割りを編集',actions:{add:['楽曲を追加','slm'],edit:['楽曲を編集','slm'],guests:['歌詞のゲストを管理','operations']}},
     members:{title:'メンバー・プロフィール',description:'メンバーの登録とプロフィールを管理',actions:{add:['メンバーを追加','catalog'],edit:['メンバー情報を編集','catalog'],profile:['プロフィールを編集','profile'],fields:['プロフィール項目を管理','operations']}},
     groups:{title:'グループ・ユニット',description:'グループの基本情報とユニットの所属を管理',actions:{add:['グループ・ユニットを追加','catalog'],edit:['グループ・ユニットを編集','operations'],units:['ユニットのメンバーを管理','catalog']}},
-    images:{title:'メンバー画像',description:'プロフィールやトレカで使う画像を設定',actions:{edit:['画像を登録・差し替え','image'],settings:['画像の表示設定','operations']}},
+    images:{title:'画像',description:'メンバー画像とグループ写真を登録・差し替え',actions:{member:['メンバー画像を登録・差し替え','image'],group:['グループ写真を登録・差し替え','imagegroup'],settings:['画像の表示設定','operations']}},
     maintenance:{title:'データ点検・保守',description:'データの整合性点検とバックアップ',actions:{audit:['データを点検','catalog'],history:['変更履歴を見る','operations'],backup:['バックアップ・復元','operations'],prepare:['初期整備・移行','operations'],repair:['不足データを修復','operations']}}
   });
   const managementState={params:{page:'manage'},access:null,epoch:0,dirty:false};
@@ -60,13 +60,13 @@
     root.innerHTML='<h2 class="ui-heading-lg management-section-title">'+action[0]+'</h2><div id="managementEditorHost"></div>';
     const type=action[1];
     if(type==='operations'){document.getElementById('managementEditorHost').innerHTML='<div id="managementOperationsHost"></div>';moInit_();return;}
-    const id={slm:'songLyricsManagementOverlay',catalog:'catalogManagementOverlay',profile:'profileManagementOverlay',image:'imageManagementOverlay'}[type];
+    const id={slm:'songLyricsManagementOverlay',catalog:'catalogManagementOverlay',profile:'profileManagementOverlay',image:'imageManagementOverlay',imagegroup:'imageManagementOverlay'}[type];
     const editor=document.getElementById(id);document.getElementById('managementEditorHost').appendChild(editor);editor.hidden=false;
     if(type==='slm'){
       resetSlmNewState_();songLyricsManagementState.dirty={info:false,credits:false,lyrics:false};songLyricsManagementState.bootstrap=null;
       songLyricsManagementState.view=p.action==='add'?'new':'existingSelect';songLyricsManagementState.existing=null;openSongLyricsManagement();
     }else if(type==='profile'){profileManagementState.bootstrap=null;profileManagementState.dirty=false;profileManagementState.memberId='';openProfileManagement();}
-    else if(type==='image'){resetImageManagementForm();imageManagementState.bootstrap=null;openImageManagement();}
+    else if(type==='image'||type==='imagegroup'){resetImageManagementForm();imageManagementState.bootstrap=null;imageManagementState.mode=type==='imagegroup'?'group':'member';openImageManagement();}
     else{cmState.form={};cmState.bootstrap=null;cmState.profileFields=null;cmState.audit=null;cmState.message='';cmState.tab=p.section==='members'?(p.action==='fields'?'fields':'members'):p.section==='groups'?(p.action==='units'?'units':'groups'):'audit';cmReload_();}
   }
   // 押したボタンに処理中を出す：どの編集画面でも、処理中（busy）の間だけそのボタンにくるくる

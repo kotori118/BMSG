@@ -44,11 +44,8 @@
       <button id="imageManagementSubmit" class="ui-btn ui-btn-solid ui-btn-wide image-management-primary" type="submit">画像を登録する</button>
     </form>
 
-    <section class="ui-divider-top image-management-repair image-management-group-photo">
-      <div>
-        <strong class="ui-strong">グループ写真</strong>
-        <small class="ui-muted">グループ一覧・カバーメーカーなどで使う写真です。登録すると全画面に反映されます。</small>
-      </div>
+    <section id="imageGroupPhotoSection" class="image-management-group-photo" hidden>
+      <p class="ui-muted">グループ一覧・カバーメーカーなどで使う写真です。登録すると全画面に反映されます。</p>
       <form id="imageGroupPhotoForm" class="image-management-form" onsubmit="return submitGroupPhoto(event)" hidden>
         <label class="ui-field management-field image-management-field">
           <span>グループ</span>
@@ -67,7 +64,7 @@
       </form>
     </section>
 
-    <section class="ui-divider-top image-management-repair">
+    <section id="imageRepairSection" class="ui-divider-top image-management-repair">
       <div>
         <strong class="ui-strong">画像データを修復</strong>
         <small class="ui-muted">Driveに保存されている画像を確認し、画像データとの紐付けを修復します。</small>
@@ -120,6 +117,7 @@
 <script>
   const imageManagementState = {
     bootstrap:null,busy:false,
+    mode:'member', // member＝メンバー画像のページ、group＝グループ写真のページ
     previewUrl:'',
     status:null,
     pendingFile:null,
@@ -149,7 +147,17 @@
     document.getElementById('imageManagementForm').hidden = false;
     changeImageManagementGroup();
     renderGroupPhotoOptions(data.groups);
+    applyImageManagementMode_();
     loadUniverseGroupPhotos(function(){ refreshGroupPhotoStatus(); });
+  }
+
+  // メンバー画像とグループ写真は別のページ。使うほうだけ出す
+  function applyImageManagementMode_() {
+    const group = imageManagementState.mode === 'group';
+    const show = function(id, on) { const el = document.getElementById(id); if (el) el.hidden = !on; };
+    show('imageManagementForm', !group);
+    show('imageRepairSection', !group);
+    show('imageGroupPhotoSection', group);
   }
 
   function setImageManagementLoading(loading) {

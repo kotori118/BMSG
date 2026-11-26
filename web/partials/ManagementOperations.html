@@ -40,7 +40,7 @@
     else if(p.section==='members'&&p.action==='fields'){
       cmState.profileFields=d.fields;html='<div class="management-field-operations">'+cmProfileFieldsHtml_()+'</div><section class="ui-panel management-card"><h3 class="ui-heading management-section-title">項目名・分類・表示順を編集</h3>'+moSelectHtml_(d.fields,'profileId','label')+'<div id="moEditor"></div></section>';
     }else if(p.section==='images'){
-      const options=d.images.map(function(image){const m=d.members.find(function(member){return String(member.MemberID)===String(image.MemberID);});return Object.assign({},image,{label:(m?m.DisplayName:image.MemberID)+' / '+image.Rarity});});
+      const options=d.images.map(function(image){const m=d.members.find(function(member){return String(member.MemberID)===String(image.MemberID);});return Object.assign({},image,{label:(m?m.DisplayName:String(image.MemberID).replace(/^GROUP:/,'グループ写真 / '))+' / '+image.Rarity});});
       html=moSelectHtml_(options,'ImageID','label')+'<div id="moEditor"></div>';
     }
     host.innerHTML=html;if(moState.selected)moSelect_();
