@@ -1,11 +1,6 @@
 <style>
-  .quiz-page{padding-bottom:12px}
-  .quiz-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:26px}
-  .quiz-header .title{margin:4px 0 0;line-height:.9}
-  .quiz-app{display:grid;gap:16px;max-width:760px;margin:0 auto}
-  .quiz-panel{padding:clamp(18px,4.5vw,28px)}
+  .quiz-app{display:grid;gap:16px;margin:0 auto}
   .quiz-kicker,.quiz-step-label,.quiz-room-label{margin:0}
-  .quiz-panel-title{margin:8px 0 4px}
   .quiz-muted{margin:8px 0 0}
   .quiz-settings{display:grid;gap:20px}
   .quiz-setting{display:grid;gap:10px}
@@ -25,7 +20,7 @@
   .quiz-question-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .quiz-question-text{margin:4px 0 24px;overflow-wrap:anywhere}
   .quiz-question-text.is-lyrics{padding:22px 12px;text-align:center;line-height:1.8}
-  .quiz-lyrics-link{display:inline-flex;align-items:center;min-height:44px;margin-top:10px}
+  .quiz-lyrics-link{display:inline-flex;align-items:center}
   .quiz-award-step{display:grid;gap:12px}
   .quiz-award-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   @media(min-width:680px){.quiz-options.is-course{grid-template-columns:repeat(3,minmax(0,1fr))}.quiz-award-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -33,7 +28,6 @@
   @media(prefers-reduced-motion:reduce){.quiz-progress span{transition:none}}
   /* QUIZ final design audit: layout/typography only. Shared ButtonSystem remains surface authority. */
   .quiz-page{
-    padding-top:78px;
     padding-bottom:20px;
   }
   .quiz-header{
@@ -59,12 +53,8 @@
   .quiz-v3-feedback-answer{
     line-height:1.75;
   }
-  .quiz-v3-song-option{
-    min-height:48px;
-  }
   .quiz-page .quiz-kicker{display:none!important;}
   @media(max-width:600px){
-    .quiz-page{padding-top:74px;}
     .quiz-header{margin-bottom:20px;}
     .quiz-actions{gap:9px;}
   }

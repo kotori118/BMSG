@@ -1,7 +1,3 @@
-<style>
-  /* 戻るは「もう一度引く」の下 */
-  .card-reveal-stage .card-reveal-back { position: static; margin-top: 14px; }
-</style>
 <template id="cardPageTemplate">
   <section class="view card-page" id="cardPageRoot">
     <header class="card-header">
@@ -35,11 +31,6 @@
           </div>
           <div class="card-front-face"><img id="cardRevealImage" alt="Trading card"></div>
         </div>
-      </div>
-      <div class="card-result-meta" id="cardResultMeta">
-        <div class="card-result-rarity" id="cardResultRarity"></div>
-        <div class="ui-heading card-result-name" id="cardResultName"></div>
-        <div class="ui-badge ui-badge-solid card-result-new" id="cardResultNew"></div>
       </div>
       <div class="card-result-actions" id="cardResultActions">
         <button type="button" class="ui-btn ui-btn-solid" onclick="drawTradingCardFromReveal()">もう一度引く</button>

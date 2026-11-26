@@ -77,8 +77,7 @@
   @media (prefers-reduced-motion: reduce) { .profile-member-skeleton, .ui-skeleton { animation: none; } }
   /* ---- 詳細（メンバーを開いた画面） ---- */
   .profile-member-detail { display: grid; gap: 16px; }
-  .profile-detail-hero { display: grid; grid-template-columns: 120px 1fr; overflow: hidden; }
-  .profile-detail-visual { aspect-ratio: 1; }
+  .profile-detail-hero { display: grid; overflow: hidden; }
   .profile-detail-identity { display: grid; align-content: center; gap: 6px; padding: 16px 18px; }
   .profile-detail-line { display: none; }
   .profile-detail-name { margin: 0; }
@@ -97,16 +96,15 @@
   .profile-map-member { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 4px 16px 4px 4px; }
   .profile-map-avatar { width: 44px; height: 44px; overflow: hidden; }
   /* ---- 検索 ---- */
-  .profile-search-box { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; }
+  .profile-search-box { display: flex; align-items: center; gap: 10px; }
   .profile-search-box svg { flex: none; width: 18px; height: 18px; }
-  .profile-search-box input { min-height: 40px; padding: 0; }
+  .profile-search-box input { padding: 0; }
   .profile-search-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .profile-search-field { padding: 0; }
   .profile-search-field-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; }
   .profile-search-tags { display: flex; flex-wrap: wrap; gap: 8px; }
   .profile-search-tag { min-height: var(--ui-button-h); padding: 0 16px; cursor: pointer; }
   .profile-search-results { display: grid; gap: 8px; }
-  .profile-search-result-list { display: grid; gap: 8px; }
   .profile-search-member { display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 12px; padding: 10px 14px; cursor: pointer; }
   .profile-search-avatar { width: 52px; height: 52px; overflow: hidden; }
   .profile-search-member-copy { display: grid; gap: 2px; }
@@ -180,8 +178,8 @@
   body.ui-v2 .ui-btn-wide { width: 100%; }
   body.ui-v2 .ui-btn-wide + .ui-btn-wide { margin-top: 8px; }
   /* 相性の候補：写真の下に名前を必ず表示（写真は枠の中で固定の比率） */
-  body.ui-v2 .profile-chemistry-member { grid-template-rows: auto auto; align-items: start; }
-  body.ui-v2 .profile-chemistry-member > span { display: block; min-height: 16px; }
+  body.ui-v2 .profile-chemistry-member { align-items: start; }
+  body.ui-v2 .profile-chemistry-member > span { display: block; }
   body.ui-v2 .profile-chemistry-member > i,
   body.ui-v2 .profile-chemistry-member > img { position: relative; z-index: 0; }
   /* 見出し横の装飾の線は表示しない（枠として見える） */
@@ -192,10 +190,10 @@
   body.ui-v2 .profile-member-detail > .ui-back { margin-bottom: 16px; }
   /* 相性の候補：写真 → 名前 の順。頭文字は出さない。高さは揃えない */
   body.ui-v2 .profile-chemistry-member-grid { align-items: start; }
-  body.ui-v2 .profile-chemistry-member { align-self: start; align-content: start; gap: 8px; }
+  body.ui-v2 .profile-chemistry-member { grid-template-rows: auto auto; align-self: start; align-content: start; gap: 8px; }
   body.ui-v2 .profile-chemistry-member > img,
   body.ui-v2 .profile-chemistry-member > .profile-chemistry-photo-empty { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
   body.ui-v2 .profile-chemistry-member > i { display: none; }
-  body.ui-v2 .profile-chemistry-member > span { align-self: start; }
+  body.ui-v2 .profile-chemistry-member > span { min-height: 16px; align-self: start; }
   body.ui-v2 .profile-chemistry-member > b { align-self: start; }
 </style>

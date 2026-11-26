@@ -104,7 +104,7 @@
         const on=!!songGachaState.enabled[group];
         const photo=universeGroupPhotoUrl(group);
         const look=photo?'class="ui-photo-tile ui-photo-toggle song-gacha-group" style="--ui-photo:url(\''+photo+'\')"':'class="ui-btn ui-btn-plain song-gacha-group'+(on?' is-on':'')+'"';
-        return '<button '+look+' type="button" aria-pressed="'+on+'" onclick="toggleSongGachaGroup(\''+lyricArg(group)+'\')"><strong class="ui-heading">'+escapeLyrics(group)+'</strong><span class="ui-label">'+(on?'ON':'OFF')+'</span></button>';
+        return '<button '+look+' type="button" data-photo-name="'+escapeLyrics(group)+'" data-photo-kind="toggle" aria-pressed="'+on+'" onclick="toggleSongGachaGroup(\''+lyricArg(group)+'\')"><strong class="ui-heading">'+escapeLyrics(group)+'</strong><span class="ui-label">'+(on?'ON':'OFF')+'</span></button>';
       }).join('')+'</div>'
       +'<p class="ui-label song-gacha-count">対象曲 '+pool.length+'曲</p>'
       +'<button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="drawSongGacha()"'+(!pool.length||songGachaState.drawing?' disabled':'')+'>引く</button>'

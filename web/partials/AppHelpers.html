@@ -35,21 +35,12 @@
       }).join('') + '</div>';
     }
 
-    // グループ写真。正は DB（管理画面の「グループ写真」で登録し、getGroupPhotos で読む）。
-    // DBに未登録のグループは下の旧ID（移行用）を使う。全グループを管理画面で登録できたら旧IDの表を消す。
-    const UNIVERSE_GROUP_PHOTO_LEGACY_IDS = {
-      'BE:FIRST': '1DQ6_xTcv1-jPQtDrMgi923Xrxa26y0rW',
-      'MAZZEL': '1_B6mMgMqOzUhB0wrsTO2yIGxKmJKtbpX',
-      'STARGLOW': '19IH9HqS0lMV9S-B11yFhTqMM4Zxq8OMX',
-      'HANA': '1Epbsc6-nOt1mfqDgNcmvdSo1__WLh9yu',
-      'BMSG ALLSTARS': '1Mg_mIzUzb62SpvPqrYrmffuRRldHBroO',
-      'ShowMinorSavage': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
-    };
+    // グループ写真は DB（管理画面の「グループ写真」で登録）から読む（getGroupPhotos）
     let universeGroupPhotoIds = null;
 
     function universeGroupPhotoUrl(name) {
       const key = String(name || '');
-      const id = (universeGroupPhotoIds && universeGroupPhotoIds[key]) || UNIVERSE_GROUP_PHOTO_LEGACY_IDS[key];
+      const id = universeGroupPhotoIds && universeGroupPhotoIds[key];
       return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
     }
 
@@ -57,9 +48,27 @@
       try {
         google.script.run.withSuccessHandler(function (data) {
           universeGroupPhotoIds = (data && data.photos) || {};
+          applyUniverseGroupPhotos_();
           if (done) done();
         }).withFailureHandler(function () { if (done) done(); }).getGroupPhotos();
       } catch (e) { if (done) done(); }
+    }
+
+    // 写真の読み込みより先に描いたタイル（data-photo-name つき）に、あとから写真を付ける
+    function applyUniverseGroupPhotos_() {
+      document.querySelectorAll('[data-photo-name]').forEach(function (el) {
+        if (el.classList.contains('ui-photo-tile')) return;
+        const url = universeGroupPhotoUrl(el.getAttribute('data-photo-name'));
+        if (!url) return;
+        if (el.getAttribute('data-photo-kind') === 'toggle') {
+          el.classList.remove('ui-btn', 'ui-btn-plain', 'is-on');
+          el.classList.add('ui-photo-tile', 'ui-photo-toggle');
+        } else {
+          el.classList.remove('ui-card', 'ui-accent-left');
+          el.classList.add('ui-photo-tile');
+        }
+        el.style.setProperty('--ui-photo', "url('" + url + "')");
+      });
     }
 
     // ユニット（グループIDが U で始まる）か。IDがないときは「BMSG 〜」の名前で判断（BMSG ALLSTARS は除く）
@@ -79,7 +88,7 @@
         ? 'class="ui-photo-tile ui-group-tile" style="--ui-photo:url(\'' + photo + '\')"'
         : 'class="ui-card ui-accent-left ui-group-tile" style="--accent:' + escapeHtml(opts.color || 'var(--ui-line-strong)') + '"';
       const sub = opts.sub ? '<small class="ui-label">' + escapeHtml(opts.sub) + '</small>' : '';
-      return '<button type="button" ' + look + ' onclick="' + opts.onclick + '"><strong class="ui-heading">' + escapeHtml(name) + '</strong>' + sub + '</button>';
+      return '<button type="button" ' + look + ' data-photo-name="' + escapeHtml(opts.photoName || name) + '" onclick="' + opts.onclick + '"><strong class="ui-heading">' + escapeHtml(name) + '</strong>' + sub + '</button>';
     }
 
     function scrollAppToTop(behavior = 'smooth') {

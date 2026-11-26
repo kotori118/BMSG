@@ -814,9 +814,7 @@
   /* ============ 5. 状態（読み込み中・通知・エラー） ============ */
   @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
   @keyframes uiRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  @keyframes uiRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes universeSpinner { to { transform: rotate(360deg); } }
-  @keyframes universeSkeletonSweep { to { transform: translateX(115%); } }
   /* 読み込み中は2種類だけ（17章）
      1) スケルトン：中身と同じ形の面がゆっくり光る。形が分かるとき（一覧・カード・見出し）はこちら。
         ui-skeleton を本物と同じ部品（ui-avatar・ui-card など）と並べてつけると、その形のまま光る。
@@ -1031,8 +1029,7 @@
   @media (prefers-reduced-motion: reduce) { .profile-member-skeleton, .ui-skeleton { animation: none; } }
   /* ---- 詳細（メンバーを開いた画面） ---- */
   .profile-member-detail { display: grid; gap: 16px; }
-  .profile-detail-hero { display: grid; grid-template-columns: 120px 1fr; overflow: hidden; }
-  .profile-detail-visual { aspect-ratio: 1; }
+  .profile-detail-hero { display: grid; overflow: hidden; }
   .profile-detail-identity { display: grid; align-content: center; gap: 6px; padding: 16px 18px; }
   .profile-detail-line { display: none; }
   .profile-detail-name { margin: 0; }
@@ -1051,16 +1048,15 @@
   .profile-map-member { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 4px 16px 4px 4px; }
   .profile-map-avatar { width: 44px; height: 44px; overflow: hidden; }
   /* ---- 検索 ---- */
-  .profile-search-box { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; }
+  .profile-search-box { display: flex; align-items: center; gap: 10px; }
   .profile-search-box svg { flex: none; width: 18px; height: 18px; }
-  .profile-search-box input { min-height: 40px; padding: 0; }
+  .profile-search-box input { padding: 0; }
   .profile-search-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .profile-search-field { padding: 0; }
   .profile-search-field-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; }
   .profile-search-tags { display: flex; flex-wrap: wrap; gap: 8px; }
   .profile-search-tag { min-height: var(--ui-button-h); padding: 0 16px; cursor: pointer; }
   .profile-search-results { display: grid; gap: 8px; }
-  .profile-search-result-list { display: grid; gap: 8px; }
   .profile-search-member { display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 12px; padding: 10px 14px; cursor: pointer; }
   .profile-search-avatar { width: 52px; height: 52px; overflow: hidden; }
   .profile-search-member-copy { display: grid; gap: 2px; }
@@ -1134,8 +1130,8 @@
   body.ui-v2 .ui-btn-wide { width: 100%; }
   body.ui-v2 .ui-btn-wide + .ui-btn-wide { margin-top: 8px; }
   /* 相性の候補：写真の下に名前を必ず表示（写真は枠の中で固定の比率） */
-  body.ui-v2 .profile-chemistry-member { grid-template-rows: auto auto; align-items: start; }
-  body.ui-v2 .profile-chemistry-member > span { display: block; min-height: 16px; }
+  body.ui-v2 .profile-chemistry-member { align-items: start; }
+  body.ui-v2 .profile-chemistry-member > span { display: block; }
   body.ui-v2 .profile-chemistry-member > i,
   body.ui-v2 .profile-chemistry-member > img { position: relative; z-index: 0; }
   /* 見出し横の装飾の線は表示しない（枠として見える） */
@@ -1146,11 +1142,11 @@
   body.ui-v2 .profile-member-detail > .ui-back { margin-bottom: 16px; }
   /* 相性の候補：写真 → 名前 の順。頭文字は出さない。高さは揃えない */
   body.ui-v2 .profile-chemistry-member-grid { align-items: start; }
-  body.ui-v2 .profile-chemistry-member { align-self: start; align-content: start; gap: 8px; }
+  body.ui-v2 .profile-chemistry-member { grid-template-rows: auto auto; align-self: start; align-content: start; gap: 8px; }
   body.ui-v2 .profile-chemistry-member > img,
   body.ui-v2 .profile-chemistry-member > .profile-chemistry-photo-empty { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; }
   body.ui-v2 .profile-chemistry-member > i { display: none; }
-  body.ui-v2 .profile-chemistry-member > span { align-self: start; }
+  body.ui-v2 .profile-chemistry-member > span { min-height: 16px; align-self: start; }
   body.ui-v2 .profile-chemistry-member > b { align-self: start; }
 </style>
 
@@ -1294,309 +1290,318 @@
 
 <!-- CardStyles.html -->
 <style>
-  .card-collection-member-count { white-space: nowrap; }
-.card-page{min-width:0}.card-header{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:24px}.card-title{margin:4px 0 0}.card-app{min-width:0}.card-group-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card-group-btn{min-height:96px;padding:18px;text-align:left;position:relative;overflow:hidden}.card-group-btn::after{content:'';position:absolute;inset:auto -24px -42px auto;width:94px;height:94px;pointer-events:none}.card-group-name{display:block}.card-group-sub{display:block;margin-top:7px;opacity:.55}.card-gacha-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.card-gacha-title{margin:0}.card-progress{opacity:.72}.card-draw-copy{position:relative;margin-top:12px;opacity:.6}.card-draw-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.card-draw-actions .card-draw-main{grid-column:1/-1;min-height:54px}.card-reveal-back{position:absolute;z-index:10;left:max(16px,env(safe-area-inset-left));top:max(16px,env(safe-area-inset-top));width:46px;height:46px;min-width:46px;padding:0;line-height:1}.card-result-meta{min-height:68px;text-align:center;opacity:0;transform:translateY(8px);transition:.35s ease}.card-result-name{margin-top:5px}.card-result-new{min-height:17px;margin-top:4px}.card-result-actions{height:50px;display:flex;gap:10px;margin-top:12px;opacity:0;pointer-events:none;transition:.3s ease}.orbit-a{width:300px;height:300px}.orbit-b{width:455px;height:190px;transform:translate(-50%,-50%) rotate(24deg)}.orbit-c{width:530px;height:245px;transform:translate(-50%,-50%) rotate(-34deg)}
-.card-collection-overlay{position:fixed;inset:0;z-index:230;display:none;overflow:hidden}.card-collection-overlay.is-open{display:block}.card-collection-panel{width:min(920px,100%);height:100dvh;min-height:0;margin:0 auto;padding:calc(22px + env(safe-area-inset-top)) 18px calc(42px + env(safe-area-inset-bottom));box-sizing:border-box;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}.card-collection-head{position:sticky;top:calc(-22px - env(safe-area-inset-top));z-index:3;display:flex;justify-content:space-between;gap:16px;align-items:flex-start;padding:calc(30px + env(safe-area-inset-top)) 0 18px}.card-collection-head-main{min-width:0;flex:1}.card-collection-head h2{margin:4px 0 0}.card-collection-progress{margin-top:8px}.card-collection-meter{height:4px;margin-top:10px;overflow:hidden}.card-collection-meter span{display:block;width:0;height:100%;transition:width .5s ease}.card-collection-close{width:46px;height:46px;min-width:46px;padding:0;line-height:1}.card-collection-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.card-collection-item{aspect-ratio:7/10;overflow:hidden;position:relative}.card-collection-item img{width:100%;height:100%;object-fit:cover;display:block}.card-collection-locked{height:100%;display:flex;align-items:center;justify-content:center;box-sizing:border-box}.card-reset-btn{width:100%;margin-top:34px;min-height:50px}
-@keyframes cardStarDrift{to{}}@keyframes cardOrbitPulse{0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}40%{opacity:.85}100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}}@keyframes cardBronzeRing{0%{opacity:0;transform:translate(-50%,-50%) scale(.35) rotate(-25deg)}38%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.45) rotate(90deg)}}@keyframes cardSilverOrbit{0%{opacity:0;transform:translate(-50%,-50%) scale(.3) rotate(0)}30%{opacity:1}65%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(1.55) rotate(220deg)}}@keyframes cardGoldOrbit{0%{opacity:0;transform:translate(-50%,-50%) scale(.18) rotate(0)}25%{opacity:1}62%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(1.8) rotate(420deg)}}@keyframes cardSilverBurst{0%,22%{opacity:0;transform:translate(-50%,-50%) scale(.1)}44%{opacity:.6}100%{opacity:0;transform:translate(-50%,-50%) scale(2.4)}}@keyframes cardGoldSupernova{0%,20%{opacity:0;transform:translate(-50%,-50%) scale(.08)}38%{opacity:.6}70%{opacity:.35}100%{opacity:0;transform:translate(-50%,-50%) scale(2.4)}}@keyframes cardMeteor{0%{opacity:0;transform:translateX(0) rotate(-22deg)}20%{opacity:1}100%{opacity:0;transform:translateX(155vw) rotate(-22deg)}}@keyframes cardMeteorGold{0%{opacity:0;transform:translateX(0) rotate(-22deg)}14%{opacity:1}65%{opacity:1}100%{opacity:0;transform:translateX(160vw) rotate(-22deg)}}@keyframes cardSpark{0%{opacity:0;transform:scale(.7)}35%{opacity:.75}100%{opacity:0;transform:scale(1.35)}}@keyframes cardSparkSilver{0%{opacity:0;transform:scale(.55) rotate(0)}35%,62%{opacity:1}100%{opacity:0;transform:scale(1.5) rotate(80deg)}}@keyframes cardSparkGold{0%{opacity:0;transform:scale(.4) rotate(0)}25%,45%,65%{opacity:1}100%{opacity:0;transform:scale(1.8) rotate(150deg)}}
-@media(max-width:560px){.card-header{align-items:flex-start;flex-direction:column}.card-collection-panel{padding-left:14px;padding-right:14px}.card-collection-grid{gap:6px}}@media(min-width:760px){.card-group-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-  /* Final TRADING CARD service-top authority. */
-  .card-header{display:grid!important;grid-template-columns:46px minmax(0,1fr);align-items:center;gap:14px}
-  .card-header>div{min-width:0}
-  .card-header .card-title{min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:clip}
-  .card-collection-entry{display:none!important;margin-top:14px}
-  .card-page:has(.card-group-grid):not(.is-gacha-mode) .card-collection-entry{display:block!important}
-  .card-collection-entry-btn{width:100%;min-height:54px;justify-content:center;text-align:center}
-  .card-page.is-gacha-mode .card-collection-entry{display:none!important}
+  /* トレカの並べ方。見た目は部品 .ui-*、カードの絵柄・演出は下の data-content */
+  .card-page { min-width: 0; padding-top: 86px; overscroll-behavior-y: none; }
+  .card-page.is-gacha-mode, .card-page.is-gacha-mode .card-app, .card-page.is-gacha-mode .card-gacha-scene { overscroll-behavior-y: auto; touch-action: pan-y; }
+  .card-app { min-width: 0; }
+  .card-header { display: block; margin-bottom: 30px; }
+  .card-header > div { min-width: 0; }
+  .card-header .card-title { min-width: 0; max-width: 100%; margin: 4px 0 0; overflow: hidden; white-space: nowrap; text-overflow: clip; line-height: .94; }
+  .card-page.is-gacha-mode .card-header { margin-bottom: 12px; }
+  @media (max-width: 560px) { .card-page { padding-top: 92px; } }
+
+  /* グループ選び（読み込み中の仮タイル）とコレクションへの入口 */
+  .card-group-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  @media (min-width: 760px) { .card-group-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .card-group-btn { position: relative; min-height: 96px; padding: 18px; overflow: hidden; text-align: left; }
+  .card-group-name { display: block; }
+  .card-group-sub { display: block; margin-top: 7px; opacity: .55; }
+  .card-collection-entry { display: none; margin-top: 14px; }
+  .card-page:has(.card-group-grid):not(.is-gacha-mode) .card-collection-entry { display: block; }
+  .card-collection-entry-btn { width: 100%; min-height: 54px; justify-content: center; text-align: center; }
+
+  /* 引く画面 */
+  .card-gacha-scene { position: relative; isolation: isolate; overflow: hidden; padding: 10px 0 4px; overscroll-behavior: none; }
+  .card-gacha-toolbar { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 14px; }
+  .card-collection-close, .card-gacha-tool { display: grid; place-items: center; flex: 0 0 46px; width: 46px; height: 46px; min-width: 46px; min-height: 46px; padding: 0; }
+  .card-collection-close, .card-gacha-tool.is-back { line-height: 1; }
+  .card-gacha-tool svg { width: 22px; height: 22px; }
+  .card-gacha-head { position: relative; z-index: 2; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+  .card-gacha-title { margin: 0; line-height: 1; }
+  .card-progress { padding: 7px 10px; opacity: .72; }
+  .card-draw-copy { position: relative; margin-top: 7px; opacity: .6; }
+  .card-draw-actions { position: relative; z-index: 2; display: block; margin-top: 12px; }
+  .card-draw-main { width: 100%; min-height: 54px; }
+  @media (max-width: 560px) { .card-gacha-scene { padding-top: 4px; } }
+
+  /* めくった後：もう一度引く・戻る */
+  .card-reveal.is-open { overscroll-behavior: none; touch-action: none; }
+  .card-result-actions { position: relative; z-index: 20; isolation: isolate; display: flex; gap: 10px; height: 50px; margin-top: 12px; opacity: 0; pointer-events: none; transition: .3s ease; }
+  .card-result-actions .ui-btn::before, .card-result-actions .ui-btn::after { pointer-events: none; }
+  .card-reveal.is-revealed .card-result-actions { opacity: 1; pointer-events: auto; }
+  .card-reveal-back { margin-top: 14px; }
+
+  /* コレクション */
+  .card-collection-overlay { position: fixed; inset: 0; z-index: 230; display: none; width: 100%; height: 100dvh; overflow-x: hidden; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-y: contain; touch-action: pan-y; }
+  .card-collection-overlay.is-open { display: block; }
+  .card-collection-panel { width: min(920px, 100%); height: auto; min-height: 100dvh; margin: 0 auto; padding: calc(22px + env(safe-area-inset-top)) 18px calc(56px + env(safe-area-inset-bottom)); box-sizing: border-box; overflow: visible; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
+  .card-collection-head { position: sticky; top: 0; z-index: 3; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: calc(18px + env(safe-area-inset-top)) 0 16px; }
+  .card-collection-head-main { flex: 1; min-width: 0; }
+  .card-collection-head h2 { margin: 4px 0 0; }
+  .card-collection-progress { margin-top: 8px; }
+  .card-collection-meter { height: 4px; margin-top: 10px; overflow: hidden; }
+  .card-collection-meter span { display: block; width: 0; height: 100%; transition: width .5s ease; }
+  .card-collection-body { min-height: 1px; touch-action: pan-y; }
+  .card-collection-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .card-collection-item { position: relative; aspect-ratio: 7 / 10; overflow: hidden; }
+  .card-collection-item img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .card-collection-locked { display: flex; align-items: center; justify-content: center; height: 100%; box-sizing: border-box; }
+  .card-reset-btn { width: 100%; min-height: 50px; margin-top: 34px; }
+  @media (max-width: 560px) {
+    .card-collection-panel { padding-left: 14px; padding-right: 14px; }
+    .card-collection-grid { gap: 6px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-flip-inner, .card-result-actions, .card-collection-meter span { transition: none; }
+  }
 </style>
 <style data-content>
-  /* 中身の見た目（絵柄・レア度・メンバーカラー）。ボタン・入力欄はここに書かない */
-  .card-draw-stage{min-height:430px;border:1px solid var(--ui-line);border-radius:var(--ui-radius);background:var(--ui-panel);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px;text-align:center;overflow:hidden;position:relative}
-  .card-draw-stage::before{content:'';position:absolute;width:260px;height:260px;border:1px solid var(--ui-line);border-radius:50%}
-  .card-draw-mark{position:relative;font:600 12px var(--font-display),var(--font-body),sans-serif;letter-spacing:.22em;opacity:.62}
-  .card-reveal{--rarity-accent:#9cecff;--rarity-soft:rgba(156,236,255,.18);position:fixed;inset:0;z-index:240;display:none;overflow:hidden;background:var(--ui-bg);color:var(--ui-text)}
-  .card-reveal.is-open{display:block}
-  .card-reveal::before{content:'';position:absolute;inset:-10%;background:var(--ui-active-bg);background-size:43px 43px,77px 77px;background-position:0 0,17px 29px;opacity:.4;animation:cardStarDrift 8s linear infinite}
-  .card-reveal-stage{position:relative;z-index:5;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(70px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom));box-sizing:border-box}
-  .card-reveal-kicker{min-height:20px;font:700 11px var(--font-display),var(--font-body),sans-serif;letter-spacing:.24em;color:var(--rarity-accent)}
-  .card-flip-wrap{width:min(64vw,275px);aspect-ratio:7/10;margin:18px 0 14px;perspective:1400px;position:relative;filter:drop-shadow(0 24px 42px rgba(0,0,0,.52));transition:filter .35s ease}
-  .card-flip-wrap::before{content:'';position:absolute;inset:0;border-radius:19px;opacity:0;pointer-events:none;box-shadow:0 0 25px 5px var(--rarity-soft),0 0 70px 10px var(--rarity-soft);transition:opacity .45s ease}
-  .card-reveal.is-revealed .card-flip-wrap::before{opacity:1}
-  .card-flip-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .82s cubic-bezier(.16,.8,.2,1)}
-  .card-reveal.is-revealed .card-flip-inner{transform:rotateY(180deg)}
-  .card-back-face,.card-front-face{position:absolute;inset:0;border-radius:19px;overflow:hidden;backface-visibility:hidden}
-  .card-back-face{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;border:1px solid color-mix(in srgb,var(--rarity-accent) 58%,white 8%);background:radial-gradient(circle at 50% 40%,var(--rarity-soft),transparent 42%),linear-gradient(145deg,#121b25,#030609 74%);box-shadow:inset 0 0 46px var(--rarity-soft)}
-  .card-front-face{transform:rotateY(180deg);background:#07090b;border:2px solid var(--rarity-accent);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
-  .card-front-face img{width:100%;height:100%;object-fit:cover;display:block}
-  .card-reveal.is-revealed .card-result-meta{opacity:1;transform:none}
-  .card-result-rarity{font:800 12px var(--font-display),var(--font-body),sans-serif;letter-spacing:.22em;color:var(--rarity-accent);text-shadow:0 0 14px var(--rarity-soft)}
-  .card-reveal.is-revealed .card-result-actions{opacity:1;pointer-events:auto}
-  .card-reveal-orbit{position:absolute;left:50%;top:50%;border:1px solid var(--rarity-accent);border-radius:50%;transform:translate(-50%,-50%);opacity:0}
-  .card-reveal-burst{position:absolute;left:50%;top:50%;width:20px;height:20px;border-radius:50%;transform:translate(-50%,-50%);opacity:0}
-  .card-reveal-meteors::before,.card-reveal-meteors::after{content:'';position:absolute;width:190px;height:2px;top:22%;left:-28%;background:var(--ui-active-bg);transform:rotate(-22deg);opacity:0}
-  .card-reveal-meteors::after{top:69%;left:auto;right:-28%;transform:rotate(-28deg)}
-  .card-reveal-sparks{position:absolute;inset:0;opacity:0;background:radial-gradient(circle at 50% 46%,var(--rarity-soft),transparent 62%)}
-  .card-reveal.rarity-n{--rarity-accent:#9cecff;--rarity-soft:rgba(156,236,255,.16)}
-  .card-reveal.rarity-r{--rarity-accent:#c98955;--rarity-soft:rgba(201,137,85,.24);background:radial-gradient(circle at 50% 45%,#4a2f1c 0,#22160d 50%,#10141b 100%)}
-  .card-reveal.rarity-sr{--rarity-accent:#e4edf7;--rarity-soft:rgba(210,228,245,.26);background:radial-gradient(circle at 50% 45%,#3b5068 0,#1b2735 50%,#10161f 100%)}
-  .card-reveal.rarity-ssr{--rarity-accent:#ffd76a;--rarity-soft:rgba(255,211,96,.3);background:radial-gradient(circle at 50% 45%,#5a4716 0,#2a200e 50%,#12100a 100%)}
-  .card-reveal.rarity-n .orbit-a{animation:cardOrbitPulse 1.05s ease-out}
-  .card-reveal.rarity-n .card-reveal-sparks{animation:cardSpark 1.1s ease-out}
-  .card-reveal.rarity-r .orbit-a,.card-reveal.rarity-r .orbit-b{animation:cardBronzeRing 1.45s ease-out}
-  .card-reveal.rarity-r .card-reveal-meteors::before,.card-reveal.rarity-r .card-reveal-meteors::after{animation:cardMeteor 1.2s ease-out}
-  .card-reveal.rarity-r .card-reveal-sparks{animation:cardSpark 1.45s ease-out}
-  .card-reveal.rarity-sr .card-reveal-orbit{animation:cardSilverOrbit 1.95s ease-out}
-  .card-reveal.rarity-sr .card-reveal-burst{animation:cardRayBurst 1.8s ease-out}
-  .card-reveal.rarity-sr .card-reveal-sparks{animation:cardSparkSilver 1.9s ease-out}
-  .card-reveal.rarity-ssr .card-reveal-orbit{border-width:2px;animation:cardGoldOrbit 2.55s cubic-bezier(.16,.8,.2,1)}
-  .card-reveal.rarity-ssr .card-reveal-burst{animation:cardRayBurstGold 2.4s ease-out}
-  .card-reveal.rarity-sr .card-reveal-burst,.card-reveal.rarity-ssr .card-reveal-burst{width:min(150vw,640px);height:min(150vw,640px);border-radius:50%;background:repeating-conic-gradient(from 0deg,var(--rarity-accent) 0 3deg,transparent 3deg 19deg);-webkit-mask-image:radial-gradient(circle,#000 0,transparent 70%);mask-image:radial-gradient(circle,#000 0,transparent 70%);}
-  .card-reveal.rarity-ssr .card-reveal-meteors::before,.card-reveal.rarity-ssr .card-reveal-meteors::after{height:3px;animation:cardMeteorGold 1.45s ease-out 2}
-  .card-reveal.rarity-ssr .card-reveal-sparks{animation:cardSparkGold 2.45s ease-out}
-  .card-reveal.rarity-ssr .card-flip-wrap{filter:drop-shadow(0 0 30px rgba(255,215,106,.35)) drop-shadow(0 30px 52px rgba(0,0,0,.55))}
-  .card-collection-member{margin:30px 0 38px;padding:16px 0 0;position:relative}
-  .card-collection-member::before{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:var(--ui-panel)}
-  .card-collection-member-title-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
-  .card-collection-member-title{font:700 16px var(--font-body),sans-serif;border-left:3px solid var(--member-color,#9cecff);padding-left:10px}
-  .card-collection-member-count{font:700 10px var(--font-display),var(--font-body),sans-serif;letter-spacing:.08em;color:var(--ui-text-sub)}
-  .card-collection-item.rarity-n{--slot-accent:#82909d}
-  .card-collection-item.rarity-r{--slot-accent:#b87846}
-  .card-collection-item.rarity-sr{--slot-accent:#dbe5ef}
-  .card-collection-item.rarity-ssr{--slot-accent:#f2c64f}
-  .card-collection-item.is-owned.rarity-r{box-shadow:0 0 15px rgba(184,120,70,.2),0 10px 22px rgba(0,0,0,.25)}
-  .card-collection-item.is-owned.rarity-sr{box-shadow:0 0 18px rgba(219,229,239,.23),0 10px 22px rgba(0,0,0,.25)}
-  .card-collection-item.is-owned.rarity-ssr{box-shadow:0 0 22px rgba(242,198,79,.3),0 10px 25px rgba(0,0,0,.3)}
-  .card-collection-rarity{position:absolute;left:5px;bottom:5px;padding:3px 6px;border-radius:5px;background:rgba(2,4,8,.82);border:1px solid color-mix(in srgb,var(--slot-accent) 70%,transparent);color:var(--slot-accent);font:800 8px var(--font-display),var(--font-body),sans-serif;letter-spacing:.08em}
-  @media (max-width:560px){.card-draw-stage{min-height:390px}}
-  @media (prefers-reduced-motion:reduce){.card-reveal::before,.card-reveal-orbit,.card-reveal-burst,.card-reveal-meteors::before,.card-reveal-meteors::after,.card-reveal-sparks{animation:none}}
-  @media (prefers-reduced-motion:reduce){.card-flip-inner,.card-result-meta,.card-result-actions,.card-collection-meter span{transition:none!important}}
-  .card-gacha-scene .card-space-field{display:none!important}
-  .card-gacha-scene{position:relative;isolation:isolate;overflow:hidden;border-radius:var(--ui-radius);padding:10px 0 4px;overscroll-behavior:none;}
-  .card-gacha-scene::before{content:'';position:absolute;z-index:-3;inset:0;background:var(--ui-panel);pointer-events:none;}
-  .card-space-field{position:absolute;z-index:-2;inset:0;overflow:hidden;pointer-events:none;}
-  .card-space-star{position:absolute;width:var(--s,1.5px);height:var(--s,1.5px);border-radius:50%;opacity:var(--o,.65);animation:cardSpaceTwinkle var(--d,4s) ease-in-out infinite;animation-delay:var(--delay,0s);}
-  .card-space-star.tone-white{background:var(--ui-active-bg)}
-  .card-space-star.tone-cyan{background:var(--ui-active-bg)}
-  .card-space-star.tone-red{background:var(--ui-active-bg)}
-  .card-shooting-star{position:absolute;z-index:-1;left:-38%;width:120px;height:1px;background:var(--ui-panel-2);transform:rotate(-20deg);opacity:0;animation:cardShoot var(--shoot-duration,12s) linear infinite;animation-delay:var(--shoot-delay,3s);}
-  .card-shooting-star.shoot-1{width:95px;transform:rotate(-27deg);background:var(--ui-panel-2)}
-  .card-draw-stage{position:relative;z-index:1;min-height:365px;padding:20px 18px 18px;border-color:var(--ui-line);background:linear-gradient(160deg,#243548,#101a26);}
-  .card-draw-stage::before{display:none!important;}
-  .card-draw-mark{font-size:11px;letter-spacing:.28em;color:var(--ui-text);opacity:.75;}
-  .card-rarity-track{width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:16px;}
-  .card-rarity-chip{min-width:0;padding:8px 4px 7px;border-radius:10px;text-align:center;border:1px solid rgba(255,255,255,.075);background:rgba(2,6,11,.52);}
-  .card-rarity-chip b{display:block;font:800 10px var(--font-display),var(--font-body),sans-serif;letter-spacing:.08em;}
-  .card-rarity-chip small{display:block;margin-top:4px;font:600 8px var(--font-body),var(--font-body),sans-serif;letter-spacing:.08em;opacity:.48;}
-  .card-rarity-chip.rarity-n b{color:#b9c7d0}
-  .card-rarity-chip.rarity-r b{color:#c98955}
-  .card-rarity-chip.rarity-sr b{color:#e8f2fb;text-shadow:0 0 8px rgba(220,238,255,.22)}
-  .card-rarity-chip.rarity-ssr b{color:#ffd76a;text-shadow:0 0 10px rgba(255,215,106,.26)}
-  .card-reveal{--rarity-accent:#9cecff;--rarity-soft:rgba(156,236,255,.14);background:radial-gradient(circle at 50% 40%,#2c405a 0,#16202e 58%,#0d1420 100%);}
-  .card-reveal::before{display:none!important;}
-  .card-reveal-kicker:empty{opacity:0;}
-  .card-reveal-stars{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
-  .card-reveal-stars .card-space-star,.card-reveal-stars .card-shooting-star{z-index:0;}
-  .card-flip-inner{-webkit-transform-style:preserve-3d!important;transform-style:preserve-3d!important;}
-  .card-back-face,.card-front-face{-webkit-backface-visibility:hidden!important;backface-visibility:hidden!important;outline:0!important;}
-  .card-back-face{transform:rotateY(0deg) translateZ(.6px)!important;}
-  .card-front-face{transform:rotateY(180deg) translateZ(.6px)!important;background:transparent!important;border:0!important;box-shadow:none!important;}
-  .card-front-face img{display:block;width:100%;height:100%;object-fit:cover;border-radius:0;}
-  .card-reveal.is-revealed .card-back-face{visibility:hidden;transition:visibility 0s linear .44s;}
-  .card-reveal.is-rarity-burst .card-flip-wrap::before{opacity:1!important;}
-  .card-reveal:not(.is-rarity-burst) .card-flip-wrap::before{opacity:0!important;}
-  /* カードの裏：明るめの紺で、絵柄は枠と中央の印だけ（前の重ね書きは全部消した） */
-  .card-back-face{background:linear-gradient(160deg,#4d6480 0%,#2a3b52 50%,#172334 100%);border:1px solid rgba(220,244,255,.55);box-shadow:inset 0 0 0 1px rgba(220,244,255,.3);}
-  .card-back-face::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,.045) 0 2px,transparent 2px 12px);pointer-events:none;}
-  .card-back-face::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 46%,rgba(220,244,255,.3),transparent 48%);pointer-events:none;}
-  .card-back-design{position:absolute;inset:0;display:grid;place-items:center;}
-  .card-back-seal{position:relative;z-index:2;width:46%;aspect-ratio:1;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(10,18,28,.78);border:1px solid rgba(230,246,255,.75);box-shadow:0 0 22px rgba(156,236,255,.3);}
-  .card-back-seal small{font:700 9px var(--font-display),var(--font-body),sans-serif;letter-spacing:.32em;margin-right:-.32em;color:#e8f8ff;}
-  .card-back-seal strong{margin-top:6px;font:800 13px var(--font-display),var(--font-body),sans-serif;letter-spacing:.12em;color:#fff;}
-  .card-back-seal i{width:26px;height:1px;margin-top:9px;background:#cdf3ff;}
-  .card-reveal:not(.is-rarity-burst) .card-reveal-orbit,.card-reveal:not(.is-rarity-burst) .card-reveal-burst,.card-reveal:not(.is-rarity-burst) .card-reveal-meteors,.card-reveal:not(.is-rarity-burst) .card-reveal-sparks{animation:none!important;opacity:0!important;}
-  @media (max-width:560px){.card-gacha-scene{border-radius:var(--ui-radius);padding-top:4px;}}
-  @media (max-width:560px){.card-draw-stage{min-height:345px;padding-top:16px;}}
-  @media (prefers-reduced-motion:reduce){.card-space-star,.card-shooting-star{animation:none;}}
-  .card-shooting-star{left:auto;right:-24vw;width:96px;height:1px;opacity:0;transform-origin:right center;background:var(--ui-active-bg);animation-name:cardMeteorDiagonalA;animation-timing-function:linear;animation-iteration-count:infinite;}
-  .card-shooting-star::after{content:'';position:absolute;right:-2px;top:50%;width:3px;height:3px;border-radius:50%;transform:translateY(-50%);background:var(--ui-active-bg);}
-  .card-shooting-star.shoot-0{top:8%;--shoot-duration:13.8s;animation-name:cardMeteorDiagonalA;}
-  .card-shooting-star.shoot-1{top:27%;right:-30vw;width:72px;--shoot-duration:16.2s;animation-name:cardMeteorDiagonalB;background:var(--ui-active-bg);}
-  .card-shooting-star.shoot-2{display:none!important;}
-  @media (prefers-reduced-motion:reduce){.card-shooting-star{display:none!important;}}
-  .card-flip-wrap,.card-flip-inner,.card-front-face{background:transparent!important;}
-  .card-front-face{border:0!important;box-shadow:none!important;overflow:hidden!important;}
-  .card-reveal.is-new-card .card-front-face::after{content:'NEW';position:absolute;z-index:5;left:12px;top:12px;padding:7px 11px 6px;border-radius:999px;font:800 10px var(--font-display),var(--font-body),sans-serif;letter-spacing:.12em;color:#fff;background:linear-gradient(145deg,rgba(24,31,38,.94),rgba(5,8,12,.96));border:1px solid color-mix(in srgb,var(--rarity-accent,#9cecff) 72%,white 8%);box-shadow:0 4px 16px rgba(0,0,0,.34),0 0 14px var(--rarity-soft,rgba(156,236,255,.18));}
-  .card-page.is-gacha-mode,.card-page.is-gacha-mode .card-app,.card-page.is-gacha-mode .card-gacha-scene{overscroll-behavior-y:auto;touch-action:pan-y;}
-  .card-reveal.is-open{overscroll-behavior:none;touch-action:none;}
-  .card-gacha-scene .card-space-field{display:none!important}
+  /* 中身の見た目（カードの絵柄・レア度の演出・メンバーカラー）。ボタン・入力欄はここに書かない */
 
-  /* 待ち画面：裏向きのカードの束が浮いて、光が走る */
+  /* ---- 引く画面：パネルと、裏向きのカードの束 ---- */
+  .card-gacha-scene { border-radius: var(--ui-radius); }
+  .card-gacha-scene::before { content: ''; position: absolute; z-index: -3; inset: 0; background: var(--ui-panel); pointer-events: none; }
+  .card-draw-stage { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 365px; padding: 20px 18px 18px; overflow: hidden; border: 1px solid var(--ui-line); border-radius: var(--ui-radius); background: linear-gradient(160deg, #243548, #101a26); text-align: center; }
+  @media (max-width: 560px) { .card-draw-stage { min-height: 345px; padding-top: 16px; } }
+  .card-draw-mark { position: relative; color: var(--ui-text); font: 600 11px var(--font-display), var(--font-body), sans-serif; letter-spacing: .28em; opacity: .75; }
   .card-deck { position: relative; width: 200px; height: 220px; margin: 18px auto 10px; }
-  .card-deck-card { position: absolute; left: 50%; top: 50%; width: 120px; height: 170px; margin: -85px 0 0 -60px; border: 1px solid rgba(255,255,255,.28); border-radius: 12px; background: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 6px, transparent 6px 12px), linear-gradient(160deg, #23262f, #0b0c10); box-shadow: 0 14px 30px rgba(0,0,0,.55); overflow: hidden; }
-  .card-deck-card.d1 { transform: rotate(-12deg) translateX(-22px); animation: cardDeckFloat 3.2s ease-in-out infinite; }
-  .card-deck-card.d2 { transform: rotate(9deg) translateX(22px); animation: cardDeckFloat 3.6s .4s ease-in-out infinite; }
-  .card-deck-card.d3 { display: grid; place-content: center; gap: 4px; text-align: center; color: #fff; animation: cardDeckFloatTop 2.8s ease-in-out infinite; }
+  .card-deck-card { position: absolute; left: 50%; top: 50%; width: 120px; height: 170px; margin: -85px 0 0 -60px; overflow: hidden; border: 1px solid rgba(255,255,255,.28); border-radius: 12px; background: repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 6px, transparent 6px 12px), linear-gradient(160deg, #23262f, #0b0c10); box-shadow: 0 14px 30px rgba(0,0,0,.55); }
+  .card-deck-card.d1 { transform: rotate(-12deg) translateX(-22px); }
+  .card-deck-card.d2 { transform: rotate(9deg) translateX(22px); }
+  .card-deck-card.d3 { display: grid; place-content: center; gap: 4px; color: #fff; text-align: center; }
   .card-deck-card.d3 b { font-family: var(--ui-font-display); font-size: 20px; font-weight: 900; letter-spacing: .12em; }
-  .card-deck-card.d3 small { font-family: var(--ui-font-display); font-size: 9px; font-weight: 800; letter-spacing: .4em; color: rgba(255,255,255,.6); }
-  .card-deck-card.d3::after { content: ""; position: absolute; inset: -40% -60%; background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.35) 50%, transparent 60%); transform: translateX(-60%); animation: cardDeckShine 2.6s ease-in-out infinite; }
+  .card-deck-card.d3 small { color: rgba(255,255,255,.6); font-family: var(--ui-font-display); font-size: 9px; font-weight: 800; letter-spacing: .4em; }
+  .card-deck-card.d3::after { content: ""; position: absolute; inset: -40% -60%; background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,.35) 50%, transparent 60%); transform: translateX(-60%); }
+  .card-rarity-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; width: 100%; margin-top: 16px; }
+  .card-rarity-chip { min-width: 0; padding: 8px 4px 7px; border: 1px solid rgba(255,255,255,.075); border-radius: 10px; background: rgba(2,6,11,.52); text-align: center; }
+  .card-rarity-chip b { display: block; font: 800 10px var(--font-display), var(--font-body), sans-serif; letter-spacing: .08em; }
+  .card-rarity-chip small { display: block; margin-top: 4px; font: 600 8px var(--font-body), sans-serif; letter-spacing: .08em; opacity: .48; }
+  .card-rarity-chip.rarity-n b { color: #b9c7d0; }
+  .card-rarity-chip.rarity-r b { color: #c98955; }
+  .card-rarity-chip.rarity-sr b { color: #e8f2fb; text-shadow: 0 0 8px rgba(220,238,255,.22); }
+  .card-rarity-chip.rarity-ssr b { color: #ffd76a; text-shadow: 0 0 10px rgba(255,215,106,.26); }
+
+  /* ---- めくる画面 ---- */
+  .card-reveal { --rarity-accent: #9cecff; --rarity-soft: rgba(156,236,255,.14); position: fixed; inset: 0; z-index: 240; display: none; overflow: hidden; background: radial-gradient(circle at 50% 40%, #2c405a 0, #16202e 58%, #0d1420 100%); color: var(--ui-text); }
+  .card-reveal.is-open { display: block; }
+  .card-reveal.rarity-n { --rarity-accent: #9cecff; --rarity-soft: rgba(156,236,255,.16); }
+  .card-reveal.rarity-r { --rarity-accent: #c98955; --rarity-soft: rgba(201,137,85,.24); background: radial-gradient(circle at 50% 45%, #4a2f1c 0, #22160d 50%, #10141b 100%); }
+  .card-reveal.rarity-sr { --rarity-accent: #e4edf7; --rarity-soft: rgba(210,228,245,.26); background: radial-gradient(circle at 50% 45%, #3b5068 0, #1b2735 50%, #10161f 100%); }
+  .card-reveal.rarity-ssr { --rarity-accent: #ffd76a; --rarity-soft: rgba(255,211,96,.3); background: radial-gradient(circle at 50% 45%, #5a4716 0, #2a200e 50%, #12100a 100%); }
+  .card-reveal-stage { position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: calc(70px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom)); box-sizing: border-box; }
+  .card-reveal-kicker { min-height: 20px; color: var(--rarity-accent); font: 700 11px var(--font-display), var(--font-body), sans-serif; letter-spacing: .24em; }
+  .card-reveal-kicker:empty { opacity: 0; }
+
+  /* 背景の星と流れ星 */
+  .card-reveal-stars { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .card-space-star { position: absolute; z-index: 0; width: var(--s, 1.5px); height: var(--s, 1.5px); border-radius: 50%; background: var(--ui-active-bg); opacity: var(--o, .65); }
+  .card-shooting-star { position: absolute; z-index: 0; right: -24vw; width: 96px; height: 1px; background: var(--ui-active-bg); opacity: 0; transform: rotate(-20deg); transform-origin: right center; }
+  .card-shooting-star::after { content: ''; position: absolute; right: -2px; top: 50%; width: 3px; height: 3px; border-radius: 50%; background: var(--ui-active-bg); transform: translateY(-50%); }
+  .card-shooting-star.shoot-0 { top: 8%; --shoot-duration: 13.8s; }
+  .card-shooting-star.shoot-1 { top: 27%; right: -30vw; width: 72px; --shoot-duration: 16.2s; transform: rotate(-27deg); }
+
+  /* カード：裏と表の2面を回してめくる */
+  .card-flip-wrap { position: relative; width: min(64vw, 275px); aspect-ratio: 7 / 10; margin: 18px 0 14px; perspective: 1400px; filter: drop-shadow(0 24px 42px rgba(0,0,0,.52)); transition: filter .35s ease; }
+  .card-reveal.is-charging .card-flip-wrap { filter: drop-shadow(0 0 18px rgba(255,255,255,.35)); }
+  .card-reveal.is-revealed .card-flip-wrap { filter: none; }
+  /* レア度の色の光（カードの縁から外へ） */
+  .card-flip-wrap::before { content: ''; position: absolute; inset: 0; border-radius: 19px; box-shadow: 0 0 25px 5px var(--rarity-soft), 0 0 70px 10px var(--rarity-soft); opacity: 0; pointer-events: none; transition: opacity .45s ease; }
+  .card-reveal.is-rarity-burst .card-flip-wrap::before { opacity: 1; }
+  .card-flip-inner { position: relative; width: 100%; height: 100%; -webkit-transform-style: preserve-3d; transform-style: preserve-3d; transition: transform .82s cubic-bezier(.16,.8,.2,1); }
+  .card-reveal.is-revealed .card-flip-inner { transform: rotateY(180deg); }
+  .card-back-face, .card-front-face { position: absolute; inset: 0; overflow: hidden; border-radius: 19px; outline: 0; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+  /* 裏：明るめの紺に斜めの線、中央に印 */
+  .card-back-face { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; border: 1px solid rgba(220,244,255,.55); background: linear-gradient(160deg, #4d6480 0%, #2a3b52 50%, #172334 100%); box-shadow: inset 0 0 0 1px rgba(220,244,255,.3); transform: rotateY(0deg) translateZ(.6px); }
+  .card-back-face::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, rgba(255,255,255,.045) 0 2px, transparent 2px 12px); pointer-events: none; }
+  .card-back-face::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 46%, rgba(220,244,255,.3), transparent 48%); pointer-events: none; }
+  .card-reveal.is-revealed .card-back-face { visibility: hidden; transition: visibility 0s linear .44s; }
+  .card-back-design { position: absolute; inset: 0; display: grid; place-items: center; }
+  .card-back-seal { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 46%; aspect-ratio: 1; border: 1px solid rgba(230,246,255,.75); border-radius: 50%; background: rgba(10,18,28,.78); box-shadow: 0 0 22px rgba(156,236,255,.3); }
+  .card-back-seal small { margin-right: -.32em; color: #e8f8ff; font: 700 9px var(--font-display), var(--font-body), sans-serif; letter-spacing: .32em; }
+  .card-back-seal strong { margin-top: 6px; color: #fff; font: 800 13px var(--font-display), var(--font-body), sans-serif; letter-spacing: .12em; }
+  .card-back-seal i { width: 26px; height: 1px; margin-top: 9px; background: #cdf3ff; }
+  /* 表：画像をカードいっぱいに */
+  .card-front-face { transform: rotateY(180deg) translateZ(.6px); }
+  .card-front-face img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .card-reveal.is-new-card .card-front-face::after { content: 'NEW'; position: absolute; z-index: 5; left: 12px; top: 12px; padding: 7px 11px 6px; border: 1px solid color-mix(in srgb, var(--rarity-accent, #9cecff) 72%, white 8%); border-radius: 999px; background: linear-gradient(145deg, rgba(24,31,38,.94), rgba(5,8,12,.96)); box-shadow: 0 4px 16px rgba(0,0,0,.34), 0 0 14px var(--rarity-soft, rgba(156,236,255,.18)); color: #fff; font: 800 10px var(--font-display), var(--font-body), sans-serif; letter-spacing: .12em; }
+
+  /* レア度の演出（輪・光線・流れ星・光） */
+  .card-reveal-orbit { position: absolute; left: 50%; top: 50%; border: 1px solid var(--rarity-accent); border-radius: 50%; opacity: 0; transform: translate(-50%, -50%); }
+  .orbit-a { width: 300px; height: 300px; }
+  .orbit-b { width: 455px; height: 190px; }
+  .orbit-c { width: 530px; height: 245px; }
+  .card-reveal-burst { position: absolute; left: 50%; top: 50%; width: 20px; height: 20px; border-radius: 50%; opacity: 0; transform: translate(-50%, -50%); }
+  .card-reveal.rarity-sr .card-reveal-burst, .card-reveal.rarity-ssr .card-reveal-burst { width: min(150vw, 640px); height: min(150vw, 640px); background: repeating-conic-gradient(from 0deg, var(--rarity-accent) 0 3deg, transparent 3deg 19deg); -webkit-mask-image: radial-gradient(circle, #000 0, transparent 70%); mask-image: radial-gradient(circle, #000 0, transparent 70%); }
+  .card-reveal.rarity-ssr .card-reveal-orbit { border-width: 2px; }
+  .card-reveal-meteors::before, .card-reveal-meteors::after { content: ''; position: absolute; top: 22%; left: -28%; width: 190px; height: 2px; background: var(--ui-active-bg); opacity: 0; transform: rotate(-22deg); }
+  .card-reveal-meteors::after { top: 69%; left: auto; right: -28%; transform: rotate(-28deg); }
+  .card-reveal.rarity-ssr .card-reveal-meteors::before, .card-reveal.rarity-ssr .card-reveal-meteors::after { height: 3px; }
+  .card-reveal-sparks { position: absolute; inset: 0; background: radial-gradient(circle at 50% 46%, var(--rarity-soft), transparent 62%); opacity: 0; }
+
+  /* ---- コレクション ---- */
+  .card-collection-member { position: relative; margin: 30px 0 38px; padding: 16px 0 0; }
+  .card-collection-member::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--ui-panel); }
+  .card-collection-member-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .card-collection-member-title { padding-left: 10px; border-left: 3px solid var(--member-color, #9cecff); font: 700 16px var(--font-body), sans-serif; }
+  .card-collection-member-count { color: var(--ui-text-sub); font: 700 10px var(--font-display), var(--font-body), sans-serif; letter-spacing: .08em; white-space: nowrap; }
+  .card-collection-item.rarity-n { --slot-accent: #82909d; }
+  .card-collection-item.rarity-r { --slot-accent: #b87846; }
+  .card-collection-item.rarity-sr { --slot-accent: #dbe5ef; }
+  .card-collection-item.rarity-ssr { --slot-accent: #f2c64f; }
+  .card-collection-item.is-owned.rarity-r { box-shadow: 0 0 15px rgba(184,120,70,.2), 0 10px 22px rgba(0,0,0,.25); }
+  .card-collection-item.is-owned.rarity-sr { box-shadow: 0 0 18px rgba(219,229,239,.23), 0 10px 22px rgba(0,0,0,.25); }
+  .card-collection-item.is-owned.rarity-ssr { box-shadow: 0 0 22px rgba(242,198,79,.3), 0 10px 25px rgba(0,0,0,.3); }
+  .card-collection-rarity { position: absolute; left: 5px; bottom: 5px; padding: 3px 6px; border: 1px solid color-mix(in srgb, var(--slot-accent) 70%, transparent); border-radius: 5px; background: rgba(2,4,8,.82); color: var(--slot-accent); font: 800 8px var(--font-display), var(--font-body), sans-serif; letter-spacing: .08em; }
+
+  /* ---- 動き（動きを減らす設定のときは付けない） ---- */
+  @media (prefers-reduced-motion: no-preference) {
+    .card-deck-card.d1 { animation: cardDeckFloat 3.2s ease-in-out infinite; }
+    .card-deck-card.d2 { animation: cardDeckFloat 3.6s .4s ease-in-out infinite; }
+    .card-deck-card.d3 { animation: cardDeckFloatTop 2.8s ease-in-out infinite; }
+    .card-deck-card.d3::after { animation: cardDeckShine 2.6s ease-in-out infinite; }
+    .card-space-star { animation: cardSpaceTwinkle var(--d, 4s) ease-in-out var(--delay, 0s) infinite; }
+    .card-shooting-star { animation: cardMeteorDiagonalA var(--shoot-duration, 12s) linear var(--shoot-delay, 3s) infinite; }
+    .card-shooting-star.shoot-1 { animation-name: cardMeteorDiagonalB; }
+    /* 待っている間：カードが浮いて揺れる */
+    .card-reveal.is-charging .card-flip-wrap { animation: cardCharge .6s ease-in-out infinite; }
+    /* SSR だけくるくる回ってからめくる（回転の終わりは表向き） */
+    .card-reveal.is-spin .card-flip-inner { animation: cardSpinTurn 1.2s cubic-bezier(.2,.7,.2,1) forwards; }
+    .card-reveal.rarity-n .orbit-a { animation: cardOrbitPulse 1.05s ease-out; }
+    .card-reveal.rarity-n .card-reveal-sparks { animation: cardSpark 1.1s ease-out; }
+    .card-reveal.rarity-r .orbit-a, .card-reveal.rarity-r .orbit-b { animation: cardBronzeRing 1.45s ease-out; }
+    .card-reveal.rarity-r .card-reveal-meteors::before, .card-reveal.rarity-r .card-reveal-meteors::after { animation: cardMeteor 1.2s ease-out; }
+    .card-reveal.rarity-r .card-reveal-sparks { animation: cardSpark 1.45s ease-out; }
+    .card-reveal.rarity-sr .card-reveal-orbit { animation: cardSilverOrbit 1.95s ease-out; }
+    .card-reveal.rarity-sr .card-reveal-burst { animation: cardRayBurst 1.8s ease-out; }
+    .card-reveal.rarity-sr .card-reveal-sparks { animation: cardSparkSilver 1.9s ease-out; }
+    .card-reveal.rarity-ssr .card-reveal-orbit { animation: cardGoldOrbit 2.55s cubic-bezier(.16,.8,.2,1); }
+    .card-reveal.rarity-ssr .card-reveal-burst { animation: cardRayBurstGold 2.4s ease-out; }
+    .card-reveal.rarity-ssr .card-reveal-meteors::before, .card-reveal.rarity-ssr .card-reveal-meteors::after { animation: cardMeteorGold 1.45s ease-out 2; }
+    .card-reveal.rarity-ssr .card-reveal-sparks { animation: cardSparkGold 2.45s ease-out; }
+  }
+  @media (prefers-reduced-motion: reduce) { .card-shooting-star { display: none; } }
+
   @keyframes cardDeckFloat { 0%, 100% { margin-top: -85px; } 50% { margin-top: -93px; } }
   @keyframes cardDeckFloatTop { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-10px) rotate(-1.5deg); } }
   @keyframes cardDeckShine { 0%, 55% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
-
-  /* 引く：ため（裏面が光って揺れる）→ 確定演出（レア度の色）→ めくる */
-  /* SSR だけくるくる回ってからめくる（回転の終わりは表向き） */
-  .card-reveal.is-spin .card-flip-inner { animation: cardSpinTurn 1.2s cubic-bezier(.2,.7,.2,1) forwards; }
-  .card-reveal.is-charging .card-flip-wrap { animation: cardCharge .6s ease-in-out infinite !important; filter: drop-shadow(0 0 18px rgba(255,255,255,.35)); }
-  .card-reveal.hint-n .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(255,255,255,.6)); }
-  .card-reveal.hint-r .card-flip-wrap { filter: drop-shadow(0 0 22px rgba(214,138,72,.95)) drop-shadow(0 0 48px rgba(214,138,72,.5)); }
-  .card-reveal.hint-sr .card-flip-wrap { filter: drop-shadow(0 0 24px rgba(214,228,250,1)) drop-shadow(0 0 60px rgba(170,200,255,.6)); }
-  .card-reveal.hint-ssr .card-flip-wrap { filter: drop-shadow(0 0 26px rgba(255,204,64,1)) drop-shadow(0 0 80px rgba(255,170,0,.85)); }
-  .card-reveal.is-revealed .card-flip-wrap { filter: none; }
+  @keyframes cardSpaceTwinkle { 0%, 100% { opacity: calc(var(--o, .65) * .42); transform: scale(.75); } 48% { opacity: var(--o, .65); transform: scale(1.18); } 70% { opacity: calc(var(--o, .65) * .66); transform: scale(.92); } }
+  @keyframes cardMeteorDiagonalA { 0%, 69% { opacity: 0; transform: translate3d(0,0,0) rotate(-31deg); } 71% { opacity: .92; transform: translate3d(0,0,0) rotate(-31deg); } 88% { opacity: .72; transform: translate3d(-122vw,58vh,0) rotate(-31deg); } 90%, 100% { opacity: 0; transform: translate3d(-132vw,63vh,0) rotate(-31deg); } }
+  @keyframes cardMeteorDiagonalB { 0%, 77% { opacity: 0; transform: translate3d(0,0,0) rotate(-24deg); } 79% { opacity: .72; transform: translate3d(0,0,0) rotate(-24deg); } 94% { opacity: .54; transform: translate3d(-112vw,43vh,0) rotate(-24deg); } 96%, 100% { opacity: 0; transform: translate3d(-120vw,47vh,0) rotate(-24deg); } }
   @keyframes cardCharge { 0%, 100% { transform: translateY(0) rotate(-1.2deg) scale(1); } 50% { transform: translateY(-8px) rotate(1.2deg) scale(1.02); } }
-  @keyframes cardShake { 0% { transform: translate(0, 0) rotate(0); } 25% { transform: translate(-3px, 1px) rotate(-1deg); } 50% { transform: translate(2px, -2px) rotate(1deg); } 75% { transform: translate(-2px, 2px) rotate(0); } 100% { transform: translate(0, 0) rotate(0); } }
-  @media (prefers-reduced-motion: reduce) { .card-deck-card, .card-deck-card.d3::after, .card-reveal .card-flip-wrap { animation: none !important; } }
-</style>
-
-<style>
-  /* TRADING CARD final mobile/cosmic polish. Shared ButtonSystem remains button authority. */
-  .card-page{padding-top:86px;min-width:0;overscroll-behavior-y:none;}
-  .card-header{display:block!important;margin-bottom:30px;}
-  .card-header>div{min-width:0;}
-  .card-title{line-height:.94;max-width:100%;}
-  .card-page.is-gacha-mode .card-header{margin-bottom:12px;}
-  .card-collection-close,.card-gacha-tool{width:46px;height:46px;min-width:46px;min-height:46px;padding:0;display:grid!important;place-items:center;flex:0 0 46px;}
-  .card-gacha-tool svg{width:22px;height:22px;}
-  .card-reveal-back,.card-gacha-tool.is-back{line-height:1;}
-  .card-collection-close{line-height:1;}
-  .card-gacha-toolbar{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;}
-  .card-gacha-head{position:relative;z-index:2;margin:0 0 12px;align-items:flex-end;}
-  .card-gacha-title{line-height:1;}
-  .card-progress{padding:7px 10px;}
-  .card-draw-copy{margin-top:7px;}
-  .card-draw-actions{position:relative;z-index:2;margin-top:12px;display:block!important;}
-  .card-draw-main{width:100%;}
-  .card-collection-overlay{position:fixed;inset:0;width:100%;height:100dvh;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;touch-action:pan-y;}
-  .card-collection-panel{width:min(920px,100%);height:auto;min-height:100dvh;overflow:visible;touch-action:pan-y;padding-bottom:calc(56px + env(safe-area-inset-bottom));}
-  .card-collection-head{top:0;padding:calc(18px + env(safe-area-inset-top)) 0 16px;}
-  .card-collection-body{min-height:1px;touch-action:pan-y;}
-  @keyframes cardIdleOrbit{to{transform:rotate(360deg)}}
-  @keyframes cardPortalSpin{to{transform:rotate(360deg)}}
-  @keyframes cardSpaceTwinkle{0%,100%{opacity:calc(var(--o,.65)*.42);transform:scale(.75)}48%{opacity:var(--o,.65);transform:scale(1.18)}70%{opacity:calc(var(--o,.65)*.66);transform:scale(.92)}}
-  @keyframes cardShoot{0%,13%{left:-38%;opacity:0}16%{opacity:.72}34%{left:112%;opacity:.22}36%,100%{left:112%;opacity:0}}
-  @media(max-width:560px){.card-page{padding-top:92px;}.card-header{margin-bottom:30px;}.card-title{white-space:nowrap;}}
-</style>
-
-<style>
-  /* TRADING CARD final visual refinement: printed card-back + true diagonal meteors. */
-  @keyframes cardMeteorDiagonalA{0%,69%{opacity:0;transform:translate3d(0,0,0) rotate(-31deg)}71%{opacity:.92;transform:translate3d(0,0,0) rotate(-31deg)}88%{opacity:.72;transform:translate3d(-122vw,58vh,0) rotate(-31deg)}90%,100%{opacity:0;transform:translate3d(-132vw,63vh,0) rotate(-31deg)}}
-  @keyframes cardMeteorDiagonalB{0%,77%{opacity:0;transform:translate3d(0,0,0) rotate(-24deg)}79%{opacity:.72;transform:translate3d(0,0,0) rotate(-24deg)}94%{opacity:.54;transform:translate3d(-112vw,43vh,0) rotate(-24deg)}96%,100%{opacity:0;transform:translate3d(-120vw,47vh,0) rotate(-24deg)}}
-</style>
-
-<style>
-  /* TRADING CARD visual v2: crop source-image black rim, delayed NEW badge, textless cosmic back, clean actions. */
-  .card-result-meta{display:none!important;}
-  .card-result-actions{position:relative;z-index:20;isolation:isolate;}
-  .card-result-actions .ui-btn::before,.card-result-actions .ui-btn::after{pointer-events:none;}
-</style>
-
-<style>
-  /* Card-local authority retained from cross-screen audit: persistent pre-draw UI is star-free. */
-</style>
-<style>
-@keyframes cardSpinTurn{from{transform:rotateY(0deg)}to{transform:rotateY(1260deg)}}
-@keyframes cardRayBurst{0%{opacity:0;transform:translate(-50%,-50%) scale(.2) rotate(0)}30%{opacity:.75}100%{opacity:0;transform:translate(-50%,-50%) scale(1.2) rotate(40deg)}}
-@keyframes cardRayBurstGold{0%{opacity:0;transform:translate(-50%,-50%) scale(.15) rotate(0)}25%{opacity:.9}100%{opacity:0;transform:translate(-50%,-50%) scale(1.4) rotate(90deg)}}
+  @keyframes cardSpinTurn { from { transform: rotateY(0deg); } to { transform: rotateY(1260deg); } }
+  @keyframes cardOrbitPulse { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.45); } 40% { opacity: .85; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.25); } }
+  @keyframes cardBronzeRing { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.35) rotate(-25deg); } 38% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.45) rotate(90deg); } }
+  @keyframes cardSilverOrbit { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.3) rotate(0); } 30% { opacity: 1; } 65% { opacity: .9; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.55) rotate(220deg); } }
+  @keyframes cardGoldOrbit { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.18) rotate(0); } 25% { opacity: 1; } 62% { opacity: 1; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.8) rotate(420deg); } }
+  @keyframes cardRayBurst { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.2) rotate(0); } 30% { opacity: .75; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.2) rotate(40deg); } }
+  @keyframes cardRayBurstGold { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.15) rotate(0); } 25% { opacity: .9; } 100% { opacity: 0; transform: translate(-50%,-50%) scale(1.4) rotate(90deg); } }
+  @keyframes cardMeteor { 0% { opacity: 0; transform: translateX(0) rotate(-22deg); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateX(155vw) rotate(-22deg); } }
+  @keyframes cardMeteorGold { 0% { opacity: 0; transform: translateX(0) rotate(-22deg); } 14% { opacity: 1; } 65% { opacity: 1; } 100% { opacity: 0; transform: translateX(160vw) rotate(-22deg); } }
+  @keyframes cardSpark { 0% { opacity: 0; transform: scale(.7); } 35% { opacity: .75; } 100% { opacity: 0; transform: scale(1.35); } }
+  @keyframes cardSparkSilver { 0% { opacity: 0; transform: scale(.55) rotate(0); } 35%, 62% { opacity: 1; } 100% { opacity: 0; transform: scale(1.5) rotate(80deg); } }
+  @keyframes cardSparkGold { 0% { opacity: 0; transform: scale(.4) rotate(0); } 25%, 45%, 65% { opacity: 1; } 100% { opacity: 0; transform: scale(1.8) rotate(150deg); } }
 </style>
 
 <!-- PokerStyles.html -->
 <style>
+  /* ポーカーの並べ方。見た目は部品 .ui-*、カードの絵柄は下の data-content */
+  .poker-page { max-width: 980px; margin: 0 auto; padding-top: 74px; padding-bottom: 50px; }
+  @media (max-width: 680px) { .poker-page { padding-top: 70px; } }
+  .poker-header { display: flex; align-items: center; justify-content: flex-start; gap: 14px; margin-bottom: 24px; }
+  .poker-header > div { min-width: 0; }
+  .poker-header .title { margin: 0; }
+  .poker-home-btn { order: -1; flex: none; margin: 0; }
+  .poker-app { min-height: 440px; }
+
   /* 選ぶ画面：番号つきの行（renderUniverseIndexRows）と、見出しつきの区切り */
   .poker-section { display: grid; gap: 10px; padding: 18px 0; }
   .poker-section-label { margin: 18px 0 10px; }
   .poker-section > .poker-section-label { margin: 0; }
+  .poker-section-head { display: flex; align-items: center; justify-content: flex-start; gap: 14px; margin: 0 0 18px; }
+  .poker-section-head > div { min-width: 0; }
+  .poker-section-head h2 { margin: 0; text-align: left; }
 
-  .poker-page{max-width:980px;margin:0 auto;padding-bottom:50px}
-  .poker-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:24px}.poker-header .title{margin:3px 0 0}
-  .poker-app{min-height:440px}.poker-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px}.poker-section-head h2{margin:0}.poker-section-head p{margin:5px 0 0}
-  .poker-panel{padding:18px}.poker-panel+.poker-panel{margin-top:14px}.poker-panel-label{display:block;margin-bottom:10px}.poker-join{display:grid;grid-template-columns:1fr auto;gap:10px}.poker-input{min-width:0;height:50px;box-sizing:border-box;padding:0 16px;text-align:center}.poker-join .ui-btn{min-width:110px}.poker-room-meta{display:flex;justify-content:space-between;gap:12px;align-items:flex-end}
-  .poker-player-list{display:grid;gap:8px;margin:16px 0}.poker-player-row{display:flex;align-items:center;justify-content:space-between;min-height:50px;padding:0 14px}
-  .poker-actions{display:flex;gap:10px;margin-top:16px}.poker-actions .ui-btn{flex:1;min-height:50px;padding:10px 14px}.poker-actions.is-stack{flex-direction:column}
-  .poker-status{text-align:center;margin:8px 0 16px}.poker-status strong{display:block}.poker-status span{display:block;margin-top:7px}
-  .poker-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;width:100%;perspective:1000px}.poker-card.is-back::before{content:'BMSG';position:absolute;inset:9px;display:flex;align-items:center;justify-content:center}.poker-vote-btn{width:100%;min-height:44px;margin-top:12px}
-  @media(max-width:560px){.poker-panel{padding:14px}.poker-board{gap:4px}.poker-card.is-back::before{inset:5px}.poker-actions{flex-direction:column}.poker-room-meta{align-items:flex-start;flex-direction:column}.poker-join{grid-template-columns:1fr}.poker-join .ui-btn{min-height:50px}}
-  /* 2026-09-11: final POKER style authority absorbed from PokerUiFixes + PokerPolishV2. */
-  .poker-page{padding-top:74px;}
-  .poker-header .eyebrow{display:none!important;}
-  .poker-header{align-items:center;}
-  .poker-header .title{margin:0;}
-  .poker-section-head p{display:none!important;}
-  .poker-mode-badge{display:table;margin:0 auto 12px;text-align:center;}
-  @keyframes pokerSimpleFlip{0%{transform:rotateY(88deg) scale(.96);opacity:.42;}58%{transform:rotateY(-4deg) scale(1.01);opacity:1;}100%{transform:rotateY(0deg) scale(1);opacity:1;}}
-  @media(max-width:680px){.poker-page{padding-top:70px;}}
-  .poker-header{align-items:center;justify-content:flex-start;gap:14px;}
-  .poker-header > div{min-width:0;}
-  .poker-home-btn{order:-1;margin:0;flex:none;}
-  .poker-section-head{align-items:center;justify-content:flex-start;gap:14px;}
-  .poker-section-head > div{min-width:0;}
-  .poker-section-head h2{text-align:left;}
-  .poker-confirm-overlay{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;padding:24px;}
-  .poker-confirm-panel{width:min(100%,420px);box-sizing:border-box;padding:22px;}
-  .poker-confirm-panel h3{margin:0;line-height:1.5;text-align:left;}
-  .poker-confirm-panel p{margin:10px 0 0;line-height:1.7;}
-  .poker-confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
-  .poker-confirm-actions .ui-btn{min-height:50px;}
-  @media(max-width:480px){.poker-confirm-actions{grid-template-columns:1fr;}}
-  .poker-card.is-back::before{display:none!important;}
-  @keyframes pokerRealFlip{0%{transform:rotateY(0deg) scale(.985);}44%{transform:rotateY(88deg) scale(.97);}56%{transform:rotateY(102deg) scale(.97);}100%{transform:rotateY(180deg) scale(1);}}
+  /* 部屋・参加 */
+  .poker-panel { padding: 18px; }
+  .poker-panel + .poker-panel { margin-top: 14px; }
+  .poker-panel-label { display: block; margin-bottom: 10px; }
+  .poker-join { display: grid; grid-template-columns: 1fr auto; gap: 10px; }
+  .poker-input { min-width: 0; height: 50px; box-sizing: border-box; padding: 0 16px; text-align: center; }
+  .poker-join .ui-btn { min-width: 110px; }
+  .poker-room-meta { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; }
+  .poker-player-list { display: grid; gap: 8px; margin: 16px 0; }
+  .poker-player-row { display: flex; align-items: center; justify-content: space-between; min-height: 50px; padding: 0 14px; }
+  .poker-actions { display: flex; gap: 10px; margin-top: 16px; }
+  .poker-actions .ui-btn { flex: 1; min-height: 50px; padding: 10px 14px; }
+  .poker-actions.is-stack { flex-direction: column; }
+  .poker-status { margin: 8px 0 16px; text-align: center; }
+  .poker-status strong { display: block; }
+  .poker-status span { display: block; margin-top: 7px; }
+  .poker-mode-badge { display: table; margin: 0 auto 12px; text-align: center; }
+
+  /* 手札 */
+  .poker-board { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; width: 100%; perspective: 1000px; }
+  .poker-vote-btn { width: 100%; min-height: 44px; margin-top: 12px; }
+
+  @media (max-width: 560px) {
+    .poker-panel { padding: 14px; }
+    .poker-board { gap: 4px; }
+    .poker-actions { flex-direction: column; }
+    .poker-room-meta { align-items: flex-start; flex-direction: column; }
+    .poker-join { grid-template-columns: 1fr; }
+    .poker-join .ui-btn { min-height: 50px; }
+  }
+
+  /* 確認 */
+  .poker-confirm-overlay { position: fixed; inset: 0; z-index: 12000; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .poker-confirm-panel { width: min(100%, 420px); box-sizing: border-box; padding: 22px; }
+  .poker-confirm-panel h3 { margin: 0; line-height: 1.5; text-align: left; }
+  .poker-confirm-panel p { margin: 10px 0 0; line-height: 1.7; }
+  .poker-confirm-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+  .poker-confirm-actions .ui-btn { min-height: 50px; }
+  @media (max-width: 480px) { .poker-confirm-actions { grid-template-columns: 1fr; } }
+
+  @keyframes pokerRealFlip { 0% { transform: rotateY(0deg) scale(.985); } 44% { transform: rotateY(88deg) scale(.97); } 56% { transform: rotateY(102deg) scale(.97); } 100% { transform: rotateY(180deg) scale(1); } }
 </style>
 <style data-content>
-  /* 中身の見た目（絵柄・レア度・メンバーカラー）。ボタン・入力欄はここに書かない */
-  .poker-slot{position:relative;aspect-ratio:7/10;border:0;padding:0;border-radius:var(--ui-radius);background:transparent;min-width:0}
-  .poker-card{position:absolute;inset:0;border-radius:11px;overflow:hidden;border:1px solid rgba(156,236,255,.18);background:radial-gradient(circle at 50% 22%,rgba(156,236,255,.12),transparent 42%),#090d14;box-shadow:0 12px 24px rgba(0,0,0,.34);transition:transform .22s ease,opacity .22s ease,border-color .22s ease}
-  .poker-card img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
-  .poker-card-label{position:absolute;left:4px;right:4px;bottom:4px;padding:4px 3px;border-radius:5px;background:rgba(2,4,8,.82);font:700 clamp(6px,1.7vw,9px) var(--font-display),var(--font-body),sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
-  .poker-card.rarity-r{border-color:#b87846}
-  .poker-card.rarity-sr{border-color:#dbe5ef;box-shadow:0 0 14px rgba(219,229,239,.17),0 12px 24px rgba(0,0,0,.34)}
-  .poker-card.rarity-ssr{border-color:#f2c64f;box-shadow:0 0 18px rgba(242,198,79,.25),0 12px 24px rgba(0,0,0,.38)}
-  .poker-slot.is-sort .poker-card{transform:translateY(-10px);border-color:var(--poker-cyan);box-shadow:0 0 18px rgba(156,236,255,.25)}
-  .poker-slot.is-exchange .poker-card{transform:translateY(10px);opacity:.48;border-color:#ff7b8d}
-  .poker-slot:focus-visible{outline:2px solid var(--poker-cyan);outline-offset:3px}
-  @media (max-width:560px){.poker-card{border-radius:8px}}
-  @media (prefers-reduced-motion:reduce){.poker-card{transition:none!important}}
-  .poker-card-label{display:block!important;color:#fff!important;background:rgba(2,4,8,.78)!important;font-family:var(--font-body),sans-serif!important;font-weight:700!important;letter-spacing:0!important;}
-  .poker-card.rarity-n{--poker-rarity-border:#9cecff;border-color:var(--poker-rarity-border)!important;box-shadow:0 12px 24px rgba(0,0,0,.34)!important;}
-  .poker-card.rarity-r{--poker-rarity-border:#b87846;border-color:var(--poker-rarity-border)!important;box-shadow:0 12px 24px rgba(0,0,0,.34)!important;}
-  .poker-card.rarity-sr{--poker-rarity-border:#dbe5ef;border-color:var(--poker-rarity-border)!important;box-shadow:0 12px 24px rgba(0,0,0,.34)!important;}
-  .poker-card.rarity-ssr{--poker-rarity-border:#f2c64f;border-color:var(--poker-rarity-border)!important;box-shadow:0 12px 24px rgba(0,0,0,.34)!important;}
-  .poker-slot.is-sort .poker-card{transform:translateY(-10px);border-color:var(--poker-rarity-border,#9cecff)!important;box-shadow:0 12px 24px rgba(0,0,0,.34)!important;}
-  .poker-slot.is-exchange .poker-card{transform:translateY(10px);opacity:.48;border-color:var(--poker-rarity-border,#9cecff)!important;box-shadow:0 12px 24px rgba(0,0,0,.34)!important;}
-  .poker-card.is-revealing{-webkit-backface-visibility:hidden;backface-visibility:hidden;transform-origin:center center;animation:pokerSimpleFlip .38s cubic-bezier(.22,.78,.24,1) both;}
-  @media (prefers-reduced-motion:reduce){.poker-card.is-revealing{animation:none!important;}}
-  .poker-slot{perspective:900px;transform-style:preserve-3d;transition:transform .2s ease,opacity .2s ease;}
-  .poker-card{overflow:visible!important;transform-style:preserve-3d!important;-webkit-transform-style:preserve-3d!important;transform:rotateY(0deg);transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease!important;}
-  .poker-card.is-face-up{transform:rotateY(180deg)!important;}
-  .poker-card.is-revealing{animation:pokerRealFlip .56s cubic-bezier(.2,.72,.2,1) both!important;}
-  .poker-card-face{position:absolute;inset:0;border-radius:inherit;overflow:hidden;-webkit-backface-visibility:hidden;backface-visibility:hidden;}
-  .poker-card-back-face{transform:rotateY(0deg);background:radial-gradient(circle at 50% 28%,rgba(156,236,255,.12),transparent 45%),#090d14;}
-  .poker-card-back-face::before{content:'BMSG';position:absolute;inset:8px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(156,236,255,.24);border-radius:8px;color:rgba(255,255,255,.72);font:700 clamp(7px,2vw,13px) var(--font-display),var(--font-body),sans-serif;letter-spacing:.08em;}
-  .poker-card-front-face{transform:rotateY(180deg);background:#090d14;}
-  .poker-card-front-face img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
-  .poker-card-front-face .poker-card-label{z-index:2;}
-  .poker-slot.is-sort{transform:translateY(-10px);}
-  .poker-slot.is-exchange{transform:translateY(10px);opacity:.48;}
-  .poker-slot.is-sort .poker-card,.poker-slot.is-exchange .poker-card{transform:rotateY(180deg)!important;opacity:1!important;}
-  @media (prefers-reduced-motion:reduce){.poker-card.is-revealing{animation:none!important;transform:rotateY(180deg)!important;}}
-  @media (prefers-reduced-motion:reduce){.poker-slot{transition:none;}}
+  /* 中身の見た目（カードの絵柄・レア度の枠色）。ボタン・入力欄はここに書かない */
+  .poker-slot { position: relative; min-width: 0; aspect-ratio: 7 / 10; padding: 0; border: 0; border-radius: var(--ui-radius); background: transparent; perspective: 900px; transform-style: preserve-3d; transition: transform .2s ease, opacity .2s ease; }
+  .poker-slot.is-sort { transform: translateY(-10px); }
+  .poker-slot.is-exchange { transform: translateY(10px); opacity: .48; }
+  .poker-slot:focus-visible { outline: 2px solid var(--poker-cyan); outline-offset: 3px; }
+
+  /* カード：裏と表の2面を回してめくる */
+  .poker-card { position: absolute; inset: 0; border-radius: 11px; border: 1px solid rgba(156,236,255,.18); background: radial-gradient(circle at 50% 22%, rgba(156,236,255,.12), transparent 42%), #090d14; box-shadow: 0 12px 24px rgba(0,0,0,.34); transform-style: preserve-3d; -webkit-transform-style: preserve-3d; transform: rotateY(0deg); transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease; }
+  .poker-card.is-face-up { transform: rotateY(180deg); }
+  .poker-card.is-revealing { -webkit-backface-visibility: hidden; backface-visibility: hidden; transform-origin: center center; animation: pokerRealFlip .56s cubic-bezier(.2,.72,.2,1) both; }
+  .poker-card-face { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+  .poker-card-back-face { transform: rotateY(0deg); background: radial-gradient(circle at 50% 28%, rgba(156,236,255,.12), transparent 45%), #090d14; }
+  .poker-card-back-face::before { content: 'BMSG'; position: absolute; inset: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(156,236,255,.24); border-radius: 8px; color: rgba(255,255,255,.72); font: 700 clamp(7px, 2vw, 13px) var(--font-display), var(--font-body), sans-serif; letter-spacing: .08em; }
+  .poker-card-front-face { transform: rotateY(180deg); background: #090d14; }
+  .poker-card-front-face img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+  .poker-card-label { position: absolute; z-index: 2; left: 4px; right: 4px; bottom: 4px; display: block; padding: 4px 3px; overflow: hidden; border-radius: 5px; background: rgba(2,4,8,.78); color: #fff; font: 700 clamp(6px, 1.7vw, 9px) var(--font-body), sans-serif; letter-spacing: 0; white-space: nowrap; text-overflow: ellipsis; text-align: center; }
+
+  /* レア度の枠色 */
+  .poker-card.rarity-n { --poker-rarity-border: #9cecff; border-color: var(--poker-rarity-border); }
+  .poker-card.rarity-r { --poker-rarity-border: #b87846; border-color: var(--poker-rarity-border); }
+  .poker-card.rarity-sr { --poker-rarity-border: #dbe5ef; border-color: var(--poker-rarity-border); }
+  .poker-card.rarity-ssr { --poker-rarity-border: #f2c64f; border-color: var(--poker-rarity-border); }
+  /* 並べ替え・交換で選んだカード：カードは表のまま、札ごと上下に動く */
+  .poker-slot.is-sort .poker-card, .poker-slot.is-exchange .poker-card { transform: rotateY(180deg); opacity: 1; border-color: var(--poker-rarity-border, #9cecff); }
+
+  @media (max-width: 560px) { .poker-card { border-radius: 8px; } }
+  @media (prefers-reduced-motion: reduce) {
+    .poker-slot { transition: none; }
+    .poker-card { transition: none; }
+    .poker-card.is-revealing { animation: none; transform: rotateY(180deg); }
+  }
 </style>
 
 <!-- QuizStyles.html -->
 <style>
-  .quiz-page{padding-bottom:12px}
-  .quiz-header{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:26px}
-  .quiz-header .title{margin:4px 0 0;line-height:.9}
-  .quiz-app{display:grid;gap:16px;max-width:760px;margin:0 auto}
-  .quiz-panel{padding:clamp(18px,4.5vw,28px)}
+  .quiz-app{display:grid;gap:16px;margin:0 auto}
   .quiz-kicker,.quiz-step-label,.quiz-room-label{margin:0}
-  .quiz-panel-title{margin:8px 0 4px}
   .quiz-muted{margin:8px 0 0}
   .quiz-settings{display:grid;gap:20px}
   .quiz-setting{display:grid;gap:10px}
@@ -1616,7 +1621,7 @@
   .quiz-question-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
   .quiz-question-text{margin:4px 0 24px;overflow-wrap:anywhere}
   .quiz-question-text.is-lyrics{padding:22px 12px;text-align:center;line-height:1.8}
-  .quiz-lyrics-link{display:inline-flex;align-items:center;min-height:44px;margin-top:10px}
+  .quiz-lyrics-link{display:inline-flex;align-items:center}
   .quiz-award-step{display:grid;gap:12px}
   .quiz-award-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
   @media(min-width:680px){.quiz-options.is-course{grid-template-columns:repeat(3,minmax(0,1fr))}.quiz-award-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -1624,7 +1629,6 @@
   @media(prefers-reduced-motion:reduce){.quiz-progress span{transition:none}}
   /* QUIZ final design audit: layout/typography only. Shared ButtonSystem remains surface authority. */
   .quiz-page{
-    padding-top:78px;
     padding-bottom:20px;
   }
   .quiz-header{
@@ -1650,12 +1654,8 @@
   .quiz-v3-feedback-answer{
     line-height:1.75;
   }
-  .quiz-v3-song-option{
-    min-height:48px;
-  }
   .quiz-page .quiz-kicker{display:none!important;}
   @media(max-width:600px){
-    .quiz-page{padding-top:74px;}
     .quiz-header{margin-bottom:20px;}
     .quiz-actions{gap:9px;}
   }
@@ -1729,13 +1729,9 @@
   .cover-group-tiles { margin-bottom: 14px; }
   /* 線の色（メンバー・グループの色）を部品の --accent に渡す */
   .cover-content-card, .cover-project-row { --accent: var(--cover-accent, var(--ui-line-strong)); }
-  .cover-member-option { --accent: var(--member-color, var(--ui-line-strong)); }
 
   .cover-page{min-height:100%;padding:22px 0 96px}
-  .cover-header{display:flex;align-items:center;gap:12px;margin:0 0 18px}
-  .cover-title{margin:0}
   .cover-app{max-width:760px;margin:0 auto}
-  .cover-section-title{margin:0 0 14px}
   .cover-stack{display:grid;grid-template-columns:1fr;gap:10px}
   .cover-choice-stack{max-width:520px;margin:0 auto}
   .cover-content-card,.cover-project-row{width:100%;min-height:58px;text-align:left;justify-content:flex-start;padding:14px 16px}
@@ -1744,7 +1740,7 @@
   .cover-row-meta{display:block;margin-top:4px;opacity:.62}
   .cover-empty{padding:30px 16px;text-align:center;opacity:.62}
   .cover-search-wrap{margin:0 0 12px}
-  .cover-search{width:100%;height:48px;padding:0 14px}
+  .cover-search{width:100%;padding:0 14px}
   .cover-song-heading{margin:0 0 4px;line-height:1.35}
   .cover-song-context{opacity:.6;margin-bottom:12px}
   .cover-lyrics{padding-bottom:96px}
@@ -1759,7 +1755,7 @@
   .cover-sheet-panel{width:min(620px,100%);max-height:min(72dvh,680px);overflow:auto;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
   .cover-sheet-title{margin:0 0 12px;text-align:center}
   .cover-member-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-  .cover-member-option{min-height:50px;justify-content:center;text-align:center}
+  .cover-member-option{ --accent: var(--member-color, var(--ui-line-strong));min-height:50px;justify-content:center;text-align:center}
   .cover-dialog{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px}
   .cover-dialog-panel{width:min(430px,100%);padding:20px}
   .cover-dialog-message{margin:0 0 18px;line-height:1.7}
@@ -1777,7 +1773,7 @@
   .cover-view-actions{display:flex;justify-content:center;gap:10px;margin:14px 0}
   .cover-view-actions .ui-btn{width:auto;min-width:128px;min-height:48px}
   .cover-view-actions.is-single{display:flex}
-  @media(max-width:600px){.cover-page{padding-top:14px}.cover-header{margin-bottom:14px}.cover-app{max-width:none}.cover-choice-stack{max-width:none}.cover-content-card{min-height:52px}.cover-member-list{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.cover-header{margin-bottom:14px}.cover-app{max-width:none}.cover-choice-stack{max-width:none}.cover-content-card{min-height:52px}.cover-member-list{grid-template-columns:1fr 1fr}}
   @media(min-width:780px){.cover-save-bar{position:sticky;bottom:0;margin-top:10px;padding-left:0;padding-right:0}.cover-sheet{align-items:center}.cover-sheet-panel{max-height:70vh}.cover-page{padding-bottom:36px}}
   /* 2026-09-11: final COVER style authority absorbed from CoverPolishV2/V3/V4. */
   .cover-page{min-width:0;padding-top:86px}
@@ -3516,10 +3512,6 @@
 </template>
 
 <!-- CardPage.html -->
-<style>
-  /* 戻るは「もう一度引く」の下 */
-  .card-reveal-stage .card-reveal-back { position: static; margin-top: 14px; }
-</style>
 <template id="cardPageTemplate">
   <section class="view card-page" id="cardPageRoot">
     <header class="card-header">
@@ -3553,11 +3545,6 @@
           </div>
           <div class="card-front-face"><img id="cardRevealImage" alt="Trading card"></div>
         </div>
-      </div>
-      <div class="card-result-meta" id="cardResultMeta">
-        <div class="card-result-rarity" id="cardResultRarity"></div>
-        <div class="ui-heading card-result-name" id="cardResultName"></div>
-        <div class="ui-badge ui-badge-solid card-result-new" id="cardResultNew"></div>
       </div>
       <div class="card-result-actions" id="cardResultActions">
         <button type="button" class="ui-btn ui-btn-solid" onclick="drawTradingCardFromReveal()">もう一度引く</button>
@@ -4230,21 +4217,12 @@
       }).join('') + '</div>';
     }
 
-    // グループ写真。正は DB（管理画面の「グループ写真」で登録し、getGroupPhotos で読む）。
-    // DBに未登録のグループは下の旧ID（移行用）を使う。全グループを管理画面で登録できたら旧IDの表を消す。
-    const UNIVERSE_GROUP_PHOTO_LEGACY_IDS = {
-      'BE:FIRST': '1DQ6_xTcv1-jPQtDrMgi923Xrxa26y0rW',
-      'MAZZEL': '1_B6mMgMqOzUhB0wrsTO2yIGxKmJKtbpX',
-      'STARGLOW': '19IH9HqS0lMV9S-B11yFhTqMM4Zxq8OMX',
-      'HANA': '1Epbsc6-nOt1mfqDgNcmvdSo1__WLh9yu',
-      'BMSG ALLSTARS': '1Mg_mIzUzb62SpvPqrYrmffuRRldHBroO',
-      'ShowMinorSavage': '1nFYBPJZ-62irUn-8TcDDoJQW4f9Vx4ah'
-    };
+    // グループ写真は DB（管理画面の「グループ写真」で登録）から読む（getGroupPhotos）
     let universeGroupPhotoIds = null;
 
     function universeGroupPhotoUrl(name) {
       const key = String(name || '');
-      const id = (universeGroupPhotoIds && universeGroupPhotoIds[key]) || UNIVERSE_GROUP_PHOTO_LEGACY_IDS[key];
+      const id = universeGroupPhotoIds && universeGroupPhotoIds[key];
       return id ? 'https://lh3.googleusercontent.com/d/' + id : '';
     }
 
@@ -4252,9 +4230,27 @@
       try {
         google.script.run.withSuccessHandler(function (data) {
           universeGroupPhotoIds = (data && data.photos) || {};
+          applyUniverseGroupPhotos_();
           if (done) done();
         }).withFailureHandler(function () { if (done) done(); }).getGroupPhotos();
       } catch (e) { if (done) done(); }
+    }
+
+    // 写真の読み込みより先に描いたタイル（data-photo-name つき）に、あとから写真を付ける
+    function applyUniverseGroupPhotos_() {
+      document.querySelectorAll('[data-photo-name]').forEach(function (el) {
+        if (el.classList.contains('ui-photo-tile')) return;
+        const url = universeGroupPhotoUrl(el.getAttribute('data-photo-name'));
+        if (!url) return;
+        if (el.getAttribute('data-photo-kind') === 'toggle') {
+          el.classList.remove('ui-btn', 'ui-btn-plain', 'is-on');
+          el.classList.add('ui-photo-tile', 'ui-photo-toggle');
+        } else {
+          el.classList.remove('ui-card', 'ui-accent-left');
+          el.classList.add('ui-photo-tile');
+        }
+        el.style.setProperty('--ui-photo', "url('" + url + "')");
+      });
     }
 
     // ユニット（グループIDが U で始まる）か。IDがないときは「BMSG 〜」の名前で判断（BMSG ALLSTARS は除く）
@@ -4274,7 +4270,7 @@
         ? 'class="ui-photo-tile ui-group-tile" style="--ui-photo:url(\'' + photo + '\')"'
         : 'class="ui-card ui-accent-left ui-group-tile" style="--accent:' + escapeHtml(opts.color || 'var(--ui-line-strong)') + '"';
       const sub = opts.sub ? '<small class="ui-label">' + escapeHtml(opts.sub) + '</small>' : '';
-      return '<button type="button" ' + look + ' onclick="' + opts.onclick + '"><strong class="ui-heading">' + escapeHtml(name) + '</strong>' + sub + '</button>';
+      return '<button type="button" ' + look + ' data-photo-name="' + escapeHtml(opts.photoName || name) + '" onclick="' + opts.onclick + '"><strong class="ui-heading">' + escapeHtml(name) + '</strong>' + sub + '</button>';
     }
 
     function scrollAppToTop(behavior = 'smooth') {
@@ -6065,7 +6061,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
         const on=!!songGachaState.enabled[group];
         const photo=universeGroupPhotoUrl(group);
         const look=photo?'class="ui-photo-tile ui-photo-toggle song-gacha-group" style="--ui-photo:url(\''+photo+'\')"':'class="ui-btn ui-btn-plain song-gacha-group'+(on?' is-on':'')+'"';
-        return '<button '+look+' type="button" aria-pressed="'+on+'" onclick="toggleSongGachaGroup(\''+lyricArg(group)+'\')"><strong class="ui-heading">'+escapeLyrics(group)+'</strong><span class="ui-label">'+(on?'ON':'OFF')+'</span></button>';
+        return '<button '+look+' type="button" data-photo-name="'+escapeLyrics(group)+'" data-photo-kind="toggle" aria-pressed="'+on+'" onclick="toggleSongGachaGroup(\''+lyricArg(group)+'\')"><strong class="ui-heading">'+escapeLyrics(group)+'</strong><span class="ui-label">'+(on?'ON':'OFF')+'</span></button>';
       }).join('')+'</div>'
       +'<p class="ui-label song-gacha-count">対象曲 '+pool.length+'曲</p>'
       +'<button class="ui-btn ui-btn-solid ui-btn-wide" type="button" onclick="drawSongGacha()"'+(!pool.length||songGachaState.drawing?' disabled':'')+'>引く</button>'
@@ -6986,8 +6982,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderCardLoading(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="card-group-grid" aria-hidden="true">'+Array.from({length:6},function(){return '<button type="button" class="ui-card card-group-btn" disabled><span class="ui-heading card-group-name ui-skeleton" style="display:block;width:58%;height:18px"></span><span class="ui-muted card-group-sub ui-skeleton" style="display:block;width:34%;height:10px;margin-top:9px"></span></button>';}).join('')+'</div>';}
   function renderCardGroupSelection(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="ui-group-tiles card-group-grid">'+cardState.groups.filter(function(group){if(group.name==='ALL')return true;if(group.name==='BMSG ALLSTARS')return false;return group.id?!isUniverseUnitGroup(group.id,group.name):!!universeGroupPhotoUrl(group.name);}).map(function(group){const count=getCardGroupCards(group.name).length;return renderUniverseGroupTile({name:group.name,photoName:group.name==='ALL'?'BMSG ALLSTARS':group.name,color:group.color,sub:count+' CARDS',onclick:'selectTradingCardGroup(\''+escapeHtml(group.name).replaceAll("'","\\'")+'\')'});}).join('')+'</div>';}
   function selectTradingCardGroup(groupName){cardState.currentGroup=groupName||'ALL';renderCardGacha();scrollAppToTop('smooth');}
-  function buildCardSkyMarkup(count){let html='';const total=count||42;for(let i=0;i<total;i++){const roll=Math.random();const tone=roll<.07?'red':roll<.20?'cyan':'white';const x=(2+Math.random()*96).toFixed(2);const y=(2+Math.random()*96).toFixed(2);const size=(.6+Math.random()*2.15).toFixed(2);const opacity=(.24+Math.random()*.68).toFixed(2);const duration=(2.6+Math.random()*6.2).toFixed(2);const delay=(-Math.random()*7).toFixed(2);html+='<i class="card-space-star tone-'+tone+'" style="left:'+x+'%;top:'+y+'%;--s:'+size+'px;--o:'+opacity+';--d:'+duration+'s;--delay:'+delay+'s"></i>';}for(let j=0;j<2;j++){const y=(12+Math.random()*58).toFixed(1);const delay=(2.5+j*6.5+Math.random()*3.5).toFixed(2);const duration=(10.5+Math.random()*4.5).toFixed(2);html+='<i class="card-shooting-star shoot-'+j+'" style="top:'+y+'%;--shoot-delay:'+delay+'s;--shoot-duration:'+duration+'s"></i>';}return html;}
-  function renderCardGacha(){setCardPageMode('gacha');const host=document.getElementById('cardApp');if(!host)return;const groupCards=getCardGroupCards(cardState.currentGroup);const drawn=groupCards.filter(function(card){return card.isDrawn;}).length;host.innerHTML='<div class="card-gacha-scene"><div class="card-space-field" aria-hidden="true">'+buildCardSkyMarkup(46)+'</div><div class="card-gacha-toolbar"><button type="button" class="ui-back" onclick="renderCardGroupSelection()" aria-label="グループ一覧へ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button type="button" class="ui-btn ui-btn-icon card-gacha-tool" onclick="openCardCollection()" aria-label="コレクション"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5" width="10.5" height="14" rx="2"></rect><path d="M9 5.2V4.5A1.5 1.5 0 0 1 10.5 3h7A1.5 1.5 0 0 1 19 4.5v11A1.5 1.5 0 0 1 17.5 17H15"></path><path d="M7.5 9h4.5M7.5 12h4.5M7.5 15h3"></path></svg></button></div><div class="card-gacha-head"><h2 class="ui-title ui-title-sm card-gacha-title">'+escapeHtml(cardState.currentGroup)+'</h2><div class="ui-badge card-progress">'+drawn+' / '+groupCards.length+'</div></div><div class="card-draw-stage"><div class="card-deck" aria-hidden="true"><span class="card-deck-card d1"></span><span class="card-deck-card d2"></span><span class="card-deck-card d3"><b>BMSG</b><small>UNIVERSE</small></span></div><div class="card-draw-mark">BMSG UNIVERSE</div><div class="ui-muted card-draw-copy">カードを1枚引く</div><div class="card-rarity-track" aria-label="Rarity rates"><div class="card-rarity-chip rarity-n"><b>N</b><small>70%</small></div><div class="card-rarity-chip rarity-r"><b>R</b><small>24%</small></div><div class="card-rarity-chip rarity-sr"><b>SR</b><small>5%</small></div><div class="card-rarity-chip rarity-ssr"><b>SSR</b><small>1%</small></div></div></div><div class="card-draw-actions"><button type="button" class="ui-btn ui-btn-solid ui-btn-wide card-draw-main" onclick="drawTradingCard()">引く</button></div></div>';}
+  function buildCardSkyMarkup(count){let html='';const total=count||42;for(let i=0;i<total;i++){const x=(2+Math.random()*96).toFixed(2);const y=(2+Math.random()*96).toFixed(2);const size=(.6+Math.random()*2.15).toFixed(2);const opacity=(.24+Math.random()*.68).toFixed(2);const duration=(2.6+Math.random()*6.2).toFixed(2);const delay=(-Math.random()*7).toFixed(2);html+='<i class="card-space-star" style="left:'+x+'%;top:'+y+'%;--s:'+size+'px;--o:'+opacity+';--d:'+duration+'s;--delay:'+delay+'s"></i>';}for(let j=0;j<2;j++){const y=(12+Math.random()*58).toFixed(1);const delay=(2.5+j*6.5+Math.random()*3.5).toFixed(2);const duration=(10.5+Math.random()*4.5).toFixed(2);html+='<i class="card-shooting-star shoot-'+j+'" style="top:'+y+'%;--shoot-delay:'+delay+'s;--shoot-duration:'+duration+'s"></i>';}return html;}
+  function renderCardGacha(){setCardPageMode('gacha');const host=document.getElementById('cardApp');if(!host)return;const groupCards=getCardGroupCards(cardState.currentGroup);const drawn=groupCards.filter(function(card){return card.isDrawn;}).length;host.innerHTML='<div class="card-gacha-scene"><div class="card-gacha-toolbar"><button type="button" class="ui-back" onclick="renderCardGroupSelection()" aria-label="グループ一覧へ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button type="button" class="ui-btn ui-btn-icon card-gacha-tool" onclick="openCardCollection()" aria-label="コレクション"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5" width="10.5" height="14" rx="2"></rect><path d="M9 5.2V4.5A1.5 1.5 0 0 1 10.5 3h7A1.5 1.5 0 0 1 19 4.5v11A1.5 1.5 0 0 1 17.5 17H15"></path><path d="M7.5 9h4.5M7.5 12h4.5M7.5 15h3"></path></svg></button></div><div class="card-gacha-head"><h2 class="ui-title ui-title-sm card-gacha-title">'+escapeHtml(cardState.currentGroup)+'</h2><div class="ui-badge card-progress">'+drawn+' / '+groupCards.length+'</div></div><div class="card-draw-stage"><div class="card-deck" aria-hidden="true"><span class="card-deck-card d1"></span><span class="card-deck-card d2"></span><span class="card-deck-card d3"><b>BMSG</b><small>UNIVERSE</small></span></div><div class="card-draw-mark">BMSG UNIVERSE</div><div class="ui-muted card-draw-copy">カードを1枚引く</div><div class="card-rarity-track" aria-label="Rarity rates"><div class="card-rarity-chip rarity-n"><b>N</b><small>70%</small></div><div class="card-rarity-chip rarity-r"><b>R</b><small>24%</small></div><div class="card-rarity-chip rarity-sr"><b>SR</b><small>5%</small></div><div class="card-rarity-chip rarity-ssr"><b>SSR</b><small>1%</small></div></div></div><div class="card-draw-actions"><button type="button" class="ui-btn ui-btn-solid ui-btn-wide card-draw-main" onclick="drawTradingCard()">引く</button></div></div>';}
   function getCardGroupCards(groupName){const group=cardState.groups.find(function(item){return item.name===groupName;});if(!group||groupName==='ALL')return cardState.cards.slice();const allowed={};(group.memberIds||[]).forEach(function(id){allowed[String(id)]=true;});return cardState.cards.filter(function(card){return allowed[String(card.memberId)];});}
   function seedCardRevealStars(){const host=document.querySelector('#cardReveal .card-reveal-stars');if(!host)return;host.innerHTML=buildCardSkyMarkup(58);}
   function drawTradingCard(){if(cardState.drawing)return;cardState.drawing=true;openCardRevealPending();google.script.run.withSuccessHandler(function(result){cardState.drawing=false;if(result&&result.card){const found=cardState.cards.find(function(card){return String(card.imageId)===String(result.card.imageId);});if(found)found.isDrawn=true;cardState.totalCount=Number(result.totalCount||cardState.totalCount);cardState.collectedCount=Number(result.collectedCount||cardState.collectedCount);runCardReveal(result.card,!!result.isNew);}else{closeCardReveal();cardNotify('カードを取得できませんでした。');}}).withFailureHandler(function(error){cardState.drawing=false;closeCardReveal();cardFailure(error);}).drawTradingCard(cardState.userId,cardState.currentGroup);}
@@ -6995,7 +6991,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function clearCardNewBadgeState(){if(cardNewBadgeTimer){window.clearTimeout(cardNewBadgeTimer);cardNewBadgeTimer=0;}const overlay=document.getElementById('cardReveal');if(overlay)overlay.classList.remove('is-new-card');}
 
-  function openCardRevealPending(){clearCardNewBadgeState();const overlay=document.getElementById('cardReveal');if(!overlay)return;cardState.pendingAt=(window.performance&&performance.now)?performance.now():Date.now();overlay.className='card-reveal is-open is-charging';overlay.setAttribute('aria-hidden','false');seedCardRevealStars();const kicker=document.getElementById('cardRevealKicker');if(kicker)kicker.textContent='';const image=document.getElementById('cardRevealImage');if(image){image.removeAttribute('src');image.style.visibility='hidden';}document.getElementById('cardResultRarity').textContent='';document.getElementById('cardResultName').textContent='';document.getElementById('cardResultNew').textContent='';}
+  function openCardRevealPending(){clearCardNewBadgeState();const overlay=document.getElementById('cardReveal');if(!overlay)return;cardState.pendingAt=(window.performance&&performance.now)?performance.now():Date.now();overlay.className='card-reveal is-open is-charging';overlay.setAttribute('aria-hidden','false');seedCardRevealStars();const kicker=document.getElementById('cardRevealKicker');if(kicker)kicker.textContent='';const image=document.getElementById('cardRevealImage');if(image){image.removeAttribute('src');image.style.visibility='hidden';}}
 
   function runCardReveal(card,isNew){
     clearCardNewBadgeState();
@@ -7003,8 +6999,6 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(!overlay)return;
     const rarity=String(card.rarity||'N').toLowerCase();
     const image=document.getElementById('cardRevealImage');
-    const legacy=document.getElementById('cardResultNew');
-    if(legacy)legacy.textContent='';
     const startedAt=(window.performance&&performance.now)?performance.now():Date.now();
     const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     // シンプルに：めくる。SSR だけ回転してからめくる。SR はめくった後に光る。
@@ -7023,9 +7017,6 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
     image.onload=function(){image.style.visibility='visible';image.onload=null;};
     image.src='https://lh3.googleusercontent.com/d/'+encodeURIComponent(card.driveFileId);
-    document.getElementById('cardResultRarity').textContent=String(card.rarity||'');
-    document.getElementById('cardResultName').textContent=String(card.memberName||'');
-    if(legacy)legacy.textContent='';
     const kicker=document.getElementById('cardRevealKicker');
 
     overlay.classList.remove('is-charging');

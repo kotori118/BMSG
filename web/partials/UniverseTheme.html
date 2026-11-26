@@ -232,9 +232,7 @@
   /* ============ 5. 状態（読み込み中・通知・エラー） ============ */
   @keyframes uiShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
   @keyframes uiRise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-  @keyframes uiRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
   @keyframes universeSpinner { to { transform: rotate(360deg); } }
-  @keyframes universeSkeletonSweep { to { transform: translateX(115%); } }
   /* 読み込み中は2種類だけ（17章）
      1) スケルトン：中身と同じ形の面がゆっくり光る。形が分かるとき（一覧・カード・見出し）はこちら。
         ui-skeleton を本物と同じ部品（ui-avatar・ui-card など）と並べてつけると、その形のまま光る。
