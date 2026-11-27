@@ -1709,7 +1709,9 @@
   .cover-page.is-cover-choice .cover-content-card strong { position: relative; z-index: 1; display: block; line-height: 1.2; overflow-wrap: anywhere; }
   .cover-page.is-cover-group .cover-content-card:last-child:nth-child(odd),
   .cover-page.is-cover-artist .cover-content-card:last-child:nth-child(odd) { grid-column: 1; }
-  .cover-member-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .cover-member-chips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .cover-member-tile { display: grid; align-content: end; aspect-ratio: 3 / 4; min-width: 0; padding: 8px; }
+  .cover-member-tile strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .cover-choice-next { display: flex; justify-content: center; margin-top: 18px; }
   .cover-choice-next .ui-btn { width: min(320px, 100%); min-height: 52px; }
 
@@ -7837,7 +7839,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const cards=members.map(function(member){
       const id=String(member.memberId||'');
       const active=!!selected[id];
-      return '<button type="button" class="ui-chip ui-chip-accent'+(active?' is-selected':'')+'" style="--accent:'+escapeHtml(member.color||'var(--ui-line-strong)')+'" aria-pressed="'+(active?'true':'false')+'" onclick="toggleCoverAllStarMember(\''+escapeHtml(id)+'\')">'+escapeHtml(member.name)+'</button>';
+      const photo=member.imageId?' style="--ui-photo:url(\''+escapeHtml(universeImageUrl(member.imageId,400))+'\')"':'';
+      return '<button type="button" class="ui-photo-tile ui-photo-toggle cover-member-tile" aria-pressed="'+(active?'true':'false')+'"'+photo+' onclick="toggleCoverAllStarMember(\''+escapeHtml(id)+'\')"><strong class="ui-heading">'+escapeHtml(member.name)+'</strong></button>';
     }).join('');
     app.innerHTML='<h2 class="ui-label cover-section-title">参加メンバーを選択</h2><div class="cover-member-chips">'+cards+'</div><div class="cover-choice-next"><button type="button" class="ui-btn" onclick="continueCoverAllStarsMembers()" '+((coverState.allStarMemberIds||[]).length?'':'disabled')+'>原曲を選ぶ</button></div>';
     setCanonicalCoverVisualMode('allstars');

@@ -549,13 +549,15 @@ function isCoverAllStarsGroup_(groupId) {
 }
 
 function getCoverAllStarMembers_(snapshot) {
+  const mainImages = pickMemberMainImages_(readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.IMAGES));
   return snapshot.members.slice()
     .sort(function(a,b){return Number(a.DisplayOrder||999)-Number(b.DisplayOrder||999);})
     .map(function(member){
       return {
         memberId:asId_(member.MemberID),
         name:String(member.DisplayName||''),
-        color:normalizeHex_(member.ColorHex,'#777777')
+        color:normalizeHex_(member.ColorHex,'#777777'),
+        imageId:mainImages[asId_(member.MemberID)] ? mainImages[asId_(member.MemberID)].driveFileId : ''
       };
     })
     .filter(function(member){return member.memberId && member.name;});
