@@ -19,6 +19,6 @@ jobs:
         run: |
           URL=$(grep -o "https://script.google.com[^'\"]*" web/config.js | head -1)
           test -n "$URL"
-          RESULT=$(curl -sS -L -X POST -H 'Content-Type: text/plain' --data '{"action":"runMonthlyBackup","args":[]}' --max-time 300 "$URL")
+          RESULT=$(curl -sS -L -H 'Content-Type: text/plain' --data '{"action":"runMonthlyBackup","args":[]}' --max-time 300 "$URL")
           echo "$RESULT"
           echo "$RESULT" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get('ok') else 1)"
