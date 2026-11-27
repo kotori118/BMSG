@@ -238,9 +238,9 @@
     const cards=members.map(function(member){
       const id=String(member.memberId||'');
       const active=!!selected[id];
-      return '<button type="button" class="ui-card ui-accent-left cover-content-card cover-allstar-member-card '+(active?'is-selected':'')+'" style="--cover-accent:'+escapeHtml(member.color||'var(--ui-line-strong)')+'" aria-pressed="'+(active?'true':'false')+'" onclick="toggleCoverAllStarMember(\''+escapeHtml(id)+'\')"><strong class=\"ui-heading\">'+escapeHtml(member.name)+'</strong><span class="ui-muted cover-member-select-state">'+(active?'選択中':'')+'</span></button>';
+      return '<button type="button" class="ui-chip ui-chip-accent'+(active?' is-selected':'')+'" style="--accent:'+escapeHtml(member.color||'var(--ui-line-strong)')+'" aria-pressed="'+(active?'true':'false')+'" onclick="toggleCoverAllStarMember(\''+escapeHtml(id)+'\')">'+escapeHtml(member.name)+'</button>';
     }).join('');
-    app.innerHTML='<h2 class="ui-label cover-section-title">参加メンバーを選択</h2><div class="cover-stack cover-choice-stack cover-allstar-grid">'+cards+'</div><div class="cover-choice-next"><button type="button" class="ui-btn" onclick="continueCoverAllStarsMembers()" '+((coverState.allStarMemberIds||[]).length?'':'disabled')+'>原曲を選ぶ</button></div>';
+    app.innerHTML='<h2 class="ui-label cover-section-title">参加メンバーを選択</h2><div class="cover-member-chips">'+cards+'</div><div class="cover-choice-next"><button type="button" class="ui-btn" onclick="continueCoverAllStarsMembers()" '+((coverState.allStarMemberIds||[]).length?'':'disabled')+'>原曲を選ぶ</button></div>';
     setCanonicalCoverVisualMode('allstars');
   }
 

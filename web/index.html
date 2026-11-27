@@ -1709,8 +1709,7 @@
   .cover-page.is-cover-choice .cover-content-card strong { position: relative; z-index: 1; display: block; line-height: 1.2; overflow-wrap: anywhere; }
   .cover-page.is-cover-group .cover-content-card:last-child:nth-child(odd),
   .cover-page.is-cover-artist .cover-content-card:last-child:nth-child(odd) { grid-column: 1; }
-  .cover-page .cover-allstar-member-card { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-  .cover-member-select-state { flex: none; }
+  .cover-member-chips { display: flex; flex-wrap: wrap; gap: 10px; }
   .cover-choice-next { display: flex; justify-content: center; margin-top: 18px; }
   .cover-choice-next .ui-btn { width: min(320px, 100%); min-height: 52px; }
 
@@ -7838,9 +7837,9 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const cards=members.map(function(member){
       const id=String(member.memberId||'');
       const active=!!selected[id];
-      return '<button type="button" class="ui-card ui-accent-left cover-content-card cover-allstar-member-card '+(active?'is-selected':'')+'" style="--cover-accent:'+escapeHtml(member.color||'var(--ui-line-strong)')+'" aria-pressed="'+(active?'true':'false')+'" onclick="toggleCoverAllStarMember(\''+escapeHtml(id)+'\')"><strong class=\"ui-heading\">'+escapeHtml(member.name)+'</strong><span class="ui-muted cover-member-select-state">'+(active?'選択中':'')+'</span></button>';
+      return '<button type="button" class="ui-chip ui-chip-accent'+(active?' is-selected':'')+'" style="--accent:'+escapeHtml(member.color||'var(--ui-line-strong)')+'" aria-pressed="'+(active?'true':'false')+'" onclick="toggleCoverAllStarMember(\''+escapeHtml(id)+'\')">'+escapeHtml(member.name)+'</button>';
     }).join('');
-    app.innerHTML='<h2 class="ui-label cover-section-title">参加メンバーを選択</h2><div class="cover-stack cover-choice-stack cover-allstar-grid">'+cards+'</div><div class="cover-choice-next"><button type="button" class="ui-btn" onclick="continueCoverAllStarsMembers()" '+((coverState.allStarMemberIds||[]).length?'':'disabled')+'>原曲を選ぶ</button></div>';
+    app.innerHTML='<h2 class="ui-label cover-section-title">参加メンバーを選択</h2><div class="cover-member-chips">'+cards+'</div><div class="cover-choice-next"><button type="button" class="ui-btn" onclick="continueCoverAllStarsMembers()" '+((coverState.allStarMemberIds||[]).length?'':'disabled')+'>原曲を選ぶ</button></div>';
     setCanonicalCoverVisualMode('allstars');
   }
 
