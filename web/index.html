@@ -4184,6 +4184,7 @@
 
     // グループ写真は DB（管理画面の「グループ写真」で登録）から読む（getGroupPhotos）
     let universeGroupPhotoIds = null;
+    let universeGroupUnitNames = [];
 
     // Drive の画像は、大きさを指定した小さい版だけを読む（元の大きさは数MBあって重い）。width は表示の約2〜3倍の幅。
     function universeImageUrl(fileId, width) {
@@ -4192,7 +4193,9 @@
 
     function universeGroupPhotoUrl(name, width) {
       const key = String(name || '');
-      const id = universeGroupPhotoIds && universeGroupPhotoIds[key];
+      let id = universeGroupPhotoIds && universeGroupPhotoIds[key];
+      // ユニットは自分の写真がなければ BMSG ALLSTARS の写真
+      if (!id && universeGroupPhotoIds && universeGroupUnitNames.indexOf(key) >= 0) id = universeGroupPhotoIds['BMSG ALLSTARS'];
       return universeImageUrl(id, width || 640);
     }
 
@@ -4200,6 +4203,7 @@
       try {
         google.script.run.withSuccessHandler(function (data) {
           universeGroupPhotoIds = (data && data.photos) || {};
+          universeGroupUnitNames = (data && data.units) || [];
           applyUniverseGroupPhotos_();
           if (done) done();
         }).withFailureHandler(function () { if (done) done(); }).getGroupPhotos();

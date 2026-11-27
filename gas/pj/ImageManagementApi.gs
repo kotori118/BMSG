@@ -340,7 +340,11 @@ function getGroupPhotos() {
     const fileId = String(record.DriveFileID || '').trim();
     if (fileId) photos[key.slice(IMAGE_MGMT_GROUP_PREFIX_.length)] = fileId;
   });
-  return {photos: photos};
+  // ユニット（U…。BMSG ALLSTARS 自身を除く）の名前。画面側でこれらの写真を ALLSTARS のもので代用する
+  const units = readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.GROUPS).filter(function(row){
+    return /^U/i.test(String(row.GroupID || '')) && String(row.GroupName || '').trim() !== 'BMSG ALLSTARS' && String(row.RecordStatus || 'ACTIVE') !== 'ARCHIVED';
+  }).map(function(row){return String(row.GroupName || '').trim();}).filter(Boolean);
+  return {photos: photos, units: units};
 }
 
 function saveGroupPhotoManagement(payload) {
