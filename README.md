@@ -61,6 +61,13 @@ node tests/browser/screens.mjs <出力先> data lab   # 実データで画面を
 - GAS の返す内容を変えたとき（項目を足す・形を変える）は、`web/js/gas-shim.js` の `CACHE_VERSION` を1つ上げる。上げないと、端末に残った古い保存結果が最大24時間使われる。
 - Drive の画像は `universeImageUrl(id, 幅)`（`web/partials/AppHelpers.html`）で、大きさを指定した小さい版だけを読む。
 
+## 自動バックアップ
+
+- 毎月2日 3:00（日本時間）に、`.github/workflows/backup.yml` が GAS の `runMonthlyBackup` を呼ぶ。
+- Core DB と Log DB を、Drive「バックアップ」＞「BMSG Universe」＞「月次自動」へコピーする（`gas/pj/BackupApi.gs`）。名前は `YYYY-MM-DD_HHMM｜Core DB｜BACKUP｜月次自動｜…`。
+- 同じ月にすでにあれば作らない（何度呼んでも1か月に1回分）。古いバックアップは自動では消さない（整理は個別に承認してから）。
+- 今すぐ取りたいときは、GitHub の Actions 画面の「Monthly backup」から「Run workflow」。失敗すると、そのワークフローが失敗になる（GitHub から通知が届く）。
+
 ## デプロイ
 
 `main` への push で `.github/workflows/deploy.yml` がテストを実行し、`gas/` を clasp で push・deploy する。Secrets `CLASPRC_JSON_KEY`、`SCRIPT_ID`、`DEPLOYMENT_ID` には新しい GAS プロジェクトの値を設定する。

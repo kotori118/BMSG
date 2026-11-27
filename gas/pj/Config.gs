@@ -6,6 +6,8 @@ const UNIVERSE_CONFIG = Object.freeze({
   CORE_DB_ID: '1-1AY6-BACOaGW3HIgYS0UjFMPSh-cjvYMMnJ_UYoRFY',
   LOG_DB_ID: '10vDKc_Q431iMDTTqB2A16i-Yp28oXSInoKiJXZtonRQ',
   CARD_IMAGE_FOLDER_ID: '1ayh-EAbV585JqRofClrTHjBxNTQlfQBK',
+  // 手動・作業用のバックアップ置き場（Drive「バックアップ」）。月次の自動バックアップもここへ
+  BACKUP_FOLDER_ID: '1YD-Df-gJPyes1fCRFYsOj5kL4YLidTyq',
   PROFILE_CACHE_SECONDS: 300,
   USER_IDS: Object.freeze(['U001', 'U002', 'U003']),
   USER_DISPLAY_NAMES: Object.freeze({

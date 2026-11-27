@@ -23,7 +23,7 @@ const UNIVERSE_LOG_ONLY_ACTIONS_ = Object.freeze({
   joinQuizRoom: 1, leaveKaraokeRoom: 1, leavePokerRoom: 1, reorderPokerHand: 1, resetTradingCardCollection: 1,
   saveCoverProject: 1, saveKaraokeAssignment: 1, saveKaraokeFavoriteSet: 1, saveOfflinePokerHighlight: 1,
   savePokerHighlight: 1, saveUniverseUserPreferences: 1, setCoverProjectShared: 1, startPokerRoom: 1,
-  submitQuizResult: 1, votePokerWinner: 1, parseSongLyricsManagement: 1
+  submitQuizResult: 1, votePokerWinner: 1, parseSongLyricsManagement: 1, runMonthlyBackup: 1
 });
 
 function doGet(e) {

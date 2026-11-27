@@ -89,9 +89,9 @@ test('every API action resolves to a defined function', () => {
   // Favorites and recent history were removed on 2026-11-22.
   const removed = ['getUniverseFavorites', 'setUniverseFavorite', 'recordUniverseActivity'];
   // Added after the import snapshot: group photos (2026-11-23), lyrics bodies split from the catalog (2026-11-26).
-  const added = ['getGroupPhotos', 'saveGroupPhotoManagement', 'getLyricsParts'];
+  const added = ['getGroupPhotos', 'saveGroupPhotoManagement', 'getLyricsParts', 'runMonthlyBackup'];
   assert.deepEqual(names.slice().sort(), [...report.apiActions.filter((n) => !removed.includes(n)), ...added].sort());
-  assert.equal(names.length, 99);
+  assert.equal(names.length, 100);
   for (const n of names) assert.equal(typeof actions[n].fn, 'function', n);
   for (const n of [...report.apiExcluded, ...removed]) assert.ok(!(n in actions), `${n} must not be exposed`);
   assert.equal(names.filter((n) => actions[n].read).length, 46);

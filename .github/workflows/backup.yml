@@ -1,0 +1,24 @@
+name: Monthly backup
+
+# 毎月2日 3:00（日本時間）に、Core DB と Log DB を Drive の「バックアップ」へコピーする。
+# 呼ぶのは GAS の API（runMonthlyBackup）。同じ月にすでにあれば何もしない。
+# 手動で動かすときは、GitHub の Actions 画面から「Run workflow」。
+on:
+  schedule:
+    - cron: '0 18 1 * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Call runMonthlyBackup
+        run: |
+          URL=$(grep -o "https://script.google.com[^'\"]*" web/config.js | head -1)
+          test -n "$URL"
+          RESULT=$(curl -sS -L -X POST -H 'Content-Type: text/plain' --data '{"action":"runMonthlyBackup","args":[]}' --max-time 300 "$URL")
+          echo "$RESULT"
+          echo "$RESULT" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d.get('ok') else 1)"

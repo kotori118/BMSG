@@ -85,6 +85,7 @@ function universeApiActions_() {
     repairImageManagementData: { fn: repairImageManagementData, read: false },
     resetTradingCardCollection: { fn: resetTradingCardCollection, read: false },
     runManagementOperation: { fn: runManagementOperation, read: false },
+    runMonthlyBackup: { fn: runMonthlyBackup, read: false },
     saveCoverProject: { fn: saveCoverProject, read: false },
     saveGroupPhotoManagement: { fn: saveGroupPhotoManagement, read: false },
     saveImageManagementImage: { fn: saveImageManagementImage, read: false },
