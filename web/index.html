@@ -1687,28 +1687,17 @@
   .cover-title { max-width: 100%; margin: 0; line-height: .96; }
   .cover-section-title { margin: 0 0 16px; }
   .cover-group-tiles { margin-bottom: 14px; }
-  /* 線の色（メンバー・グループの色）を部品の --accent に渡す */
-  .cover-content-card { --accent: var(--cover-accent, var(--ui-line-strong)); }
 
   /* 一覧 */
-  .cover-stack { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  .cover-choice-stack { max-width: 520px; margin: 0 auto; }
-  .cover-content-card { justify-content: flex-start; width: 100%; min-height: 54px; padding: 14px 16px; text-align: left; }
   .cover-project-row { gap: 10px; }
   .cover-project-main { display: grid; min-width: 0; flex: 1; gap: 3px; }
   .cover-project-row .cover-row-meta { overflow: hidden; margin: 0; text-overflow: ellipsis; white-space: nowrap; }
-  .cover-content-card strong { display: block; line-height: 1.35; }
   .cover-row-meta { display: block; margin-top: 4px; opacity: .62; }
   .cover-empty { padding: 30px 16px; text-align: center; opacity: .62; }
   .cover-search-wrap { margin: 0 0 12px; }
   .cover-search { width: 100%; height: 52px; padding: 0 14px; }
   .cover-project-badges { display: flex; flex: none; gap: 6px; }
   /* グループ・メンバーを選ぶ画面：2列のタイル */
-  .cover-page.is-cover-choice .cover-choice-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: none; }
-  .cover-page.is-cover-choice .cover-content-card { position: relative; isolation: isolate; overflow: hidden; align-items: center; justify-content: flex-start; min-width: 0; min-height: 56px; padding: 12px 16px; text-align: left; }
-  .cover-page.is-cover-choice .cover-content-card strong { position: relative; z-index: 1; display: block; line-height: 1.2; overflow-wrap: anywhere; }
-  .cover-page.is-cover-group .cover-content-card:last-child:nth-child(odd),
-  .cover-page.is-cover-artist .cover-content-card:last-child:nth-child(odd) { grid-column: 1; }
   .cover-member-chips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .cover-member-tile { display: grid; align-content: end; aspect-ratio: 3 / 4; min-width: 0; padding: 8px; }
   .cover-member-tile strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -1770,13 +1759,9 @@
   .cover-external-actions .ui-btn { min-height: 52px; }
 
   @media (max-width: 600px) {
-    .cover-app, .cover-choice-stack, .cover-external-form { max-width: none; }
-    .cover-content-card { min-height: 52px; }
+    .cover-app, .cover-external-form { max-width: none; }
     .cover-external-part { padding: 13px; }
     .cover-external-actions { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 380px) {
-    .cover-page.is-cover-choice .cover-choice-stack { gap: 9px; }
   }
   @media (min-width: 780px) {
     .cover-save-bar { position: sticky; bottom: 0; margin-top: 10px; padding-left: 0; padding-right: 0; }
@@ -7797,12 +7782,9 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   /* Canonical COVER runtime authority. */
   function coverCanonicalPage(){return document.querySelector('#pageContent > .cover-page')||document.querySelector('.cover-page');}
-  function decorateCanonicalCoverChoiceCards(){const page=coverCanonicalPage();if(!page)return;const groups=(coverState&&coverState.bootstrap&&coverState.bootstrap.groups)||[];const colors={};groups.forEach(function(group){colors[String(group.groupName||'')]=group.color||'var(--ui-line-strong)';});page.querySelectorAll('.cover-content-card').forEach(function(card){const label=card.querySelector('strong');const name=label?String(label.textContent||'').trim():'';if(colors[name])card.style.setProperty('--cover-accent',colors[name]);});}
   function setCanonicalCoverVisualMode(mode){
     const page=coverCanonicalPage();if(!page)return;
     ['home','group','allstars','artist','songs','external','externalPreview','projects','library','editor'].forEach(function(name){page.classList.toggle('is-cover-'+name,mode===name);});
-    page.classList.toggle('is-cover-choice',mode==='group'||mode==='artist'||mode==='allstars');
-    if(mode==='group'||mode==='artist'||mode==='allstars')decorateCanonicalCoverChoiceCards();
   }
   function currentCanonicalCoverUserId(){return typeof getUniverseUserId==='function'?String(getUniverseUserId()||''):'';}
   function ownCanonicalCoverProjects(projects){const uid=currentCanonicalCoverUserId();return (projects||[]).filter(function(project){return String(project&&project.creatorUserId||'')===uid;});}
