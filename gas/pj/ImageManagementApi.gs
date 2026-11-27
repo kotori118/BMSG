@@ -28,9 +28,19 @@ function getImageManagementBootstrap() {
     groups: Object.keys(grouped).map(function(name){
       return {name:name, members:grouped[name].sort(function(a,b){return a.displayOrder-b.displayOrder;})};
     }),
+    groupPhotoTargets: imageMgmtGroupPhotoTargets_(groups),
     rarities: IMAGE_MGMT_RARITIES_.slice(),
     acceptedTypes: ['image/jpeg','image/png']
   };
+}
+
+// グループ写真を登録できるのは、G のグループと BMSG ALLSTARS だけ（各ユニットは ALLSTARS の写真を使う）
+function imageMgmtGroupPhotoTargets_(groups) {
+  return groups.filter(function(row){
+    if (String(row.RecordStatus || 'ACTIVE') === 'ARCHIVED') return false;
+    return /^G/i.test(String(row.GroupID || '')) || String(row.GroupName || '').trim() === 'BMSG ALLSTARS';
+  }).slice().sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);})
+    .map(function(row){return String(row.GroupName || '').trim();}).filter(Boolean);
 }
 
 function getImageManagementStatus(memberId, rarity) {
@@ -359,7 +369,7 @@ function saveGroupPhotoManagement(payload) {
     const core = SpreadsheetApp.openById(UNIVERSE_CONFIG.CORE_DB_ID);
     const groupName = String(payload.groupName || '').trim();
     const groups = imageMgmtReadObjects_(core.getSheetByName(UNIVERSE_CONFIG.SHEETS.GROUPS));
-    if (!groupName || !groups.some(function(row){ return String(row.GroupName || '').trim() === groupName; })) {
+    if (!groupName || imageMgmtGroupPhotoTargets_(groups).indexOf(groupName) < 0) {
       throw new Error('グループが見つかりません。');
     }
     const mimeType = String(payload.mimeType || '').trim().toLowerCase();

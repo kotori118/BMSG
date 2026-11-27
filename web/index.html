@@ -2325,7 +2325,7 @@
     setImageManagementLoading(false);
     document.getElementById('imageManagementForm').hidden = false;
     changeImageManagementGroup();
-    renderGroupPhotoOptions(data.groups);
+    renderGroupPhotoOptions((data.groupPhotoTargets||[]).map(function(name){return {name:name};}));
     applyImageManagementMode_();
     loadUniverseGroupPhotos(function(){ refreshGroupPhotoStatus(); });
   }
