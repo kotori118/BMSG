@@ -11,7 +11,7 @@ function getCoverMakerBootstrap(userId) {
     currentUserId: uid,
     users: getCoverUsers_(),
     groups: groups,
-    sourceArtists: Array.from(new Set(snapshot.groups.map(function(g){return String(g.GroupName||'').trim();}).filter(Boolean))),
+    sourceArtists: buildCoverGroups_(snapshot).map(function(g){return String(g.GroupName||'').trim();}).filter(Boolean),
     allStarMembers: getCoverAllStarMembers_(snapshot),
     projects: []
   };
@@ -37,9 +37,18 @@ function getCoverSourceSongs(artist) {
   if(!group)throw new Error('原曲のアーティストが正しくありません。');
   const songSheet = getCoreSheetFromSpreadsheet_(ss,UNIVERSE_CONFIG.SHEETS.SONGS);
   const typed = String(songSheet.getRange(1,3).getValue()) === 'ArtistID';
-  const rows = typed
-    ? readCoverSheetMatchesFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS, 'ArtistID', asId_(group.GroupID), true)
-    : readCoverSheetMatchesFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS, 'Artist', selected, false);
+  // BMSG ALLSTARS を選んだときは、U（ユニット）の曲もまとめて出す
+  const isAllstars = String(group.GroupName || '').trim() === 'BMSG ALLSTARS';
+  const targets = isAllstars
+    ? groups.filter(function(row){return row.RecordStatus !== 'ARCHIVED' && (asId_(row.GroupID) === asId_(group.GroupID) || String(row.GroupID || '').startsWith('U'));})
+    : [group];
+  const rows = [];
+  targets.forEach(function(target){
+    const found = typed
+      ? readCoverSheetMatchesFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS, 'ArtistID', asId_(target.GroupID), true)
+      : readCoverSheetMatchesFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS, 'Artist', String(target.GroupName || '').trim(), false);
+    found.forEach(function(row){rows.push(row);});
+  });
   return resolveUniverseSongs_(ss, rows)
     .map(normalizeCoverSong_)
     .sort(compareCoverSongs_);

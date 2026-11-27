@@ -55,7 +55,7 @@
   // 毎回変わるデータ（ルームの状態・得点・履歴など）は対象にしない。
   // 版：GAS の返す内容を変えたとき（項目を足す・形を変える）は、この数字を上げる。
   // 上げると、端末に残っている古い一時保存は使われず、起動時に消える。
-  var CACHE_VERSION = 2;
+  var CACHE_VERSION = 3;
   var CACHE_PREFIX = 'bmsgApi:v' + CACHE_VERSION + ':';
   var CACHE_MAX_AGE = 24 * 60 * 60 * 1000; // これより古いものは使わず取り直す
   var CACHE_REFRESH_AFTER = 20 * 1000;     // これより新しいものは取り直さない
