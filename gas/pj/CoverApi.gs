@@ -11,7 +11,7 @@ function getCoverMakerBootstrap(userId) {
     currentUserId: uid,
     users: getCoverUsers_(),
     groups: groups,
-    sourceArtists: buildCoverGroups_(snapshot).map(function(g){return String(g.GroupName||'').trim();}).filter(Boolean),
+    sourceArtists: buildCoverGroups_(snapshot).map(function(g){return String(g.groupName||'').trim();}).filter(Boolean),
     allStarMembers: getCoverAllStarMembers_(snapshot),
     projects: []
   };
