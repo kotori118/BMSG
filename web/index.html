@@ -1688,29 +1688,29 @@
   .cover-section-title { margin: 0 0 16px; }
   .cover-group-tiles { margin-bottom: 14px; }
   /* 線の色（メンバー・グループの色）を部品の --accent に渡す */
-  .cover-content-card, .cover-project-row { --accent: var(--cover-accent, var(--ui-line-strong)); }
+  .cover-content-card { --accent: var(--cover-accent, var(--ui-line-strong)); }
 
   /* 一覧 */
   .cover-stack { display: grid; grid-template-columns: 1fr; gap: 10px; }
   .cover-choice-stack { max-width: 520px; margin: 0 auto; }
   .cover-content-card { justify-content: flex-start; width: 100%; min-height: 54px; padding: 14px 16px; text-align: left; }
-  .cover-project-row { justify-content: flex-start; width: 100%; min-height: 70px; padding: 14px 16px; text-align: left; }
-  .cover-content-card strong, .cover-project-row strong { display: block; line-height: 1.35; }
+  .cover-project-row { gap: 10px; }
+  .cover-project-main { display: grid; min-width: 0; flex: 1; gap: 3px; }
+  .cover-project-row .cover-row-meta { overflow: hidden; margin: 0; text-overflow: ellipsis; white-space: nowrap; }
+  .cover-content-card strong { display: block; line-height: 1.35; }
   .cover-row-meta { display: block; margin-top: 4px; opacity: .62; }
-  .cover-project-row .cover-row-meta { margin-top: 5px; opacity: 1; }
   .cover-empty { padding: 30px 16px; text-align: center; opacity: .62; }
   .cover-search-wrap { margin: 0 0 12px; }
   .cover-search { width: 100%; height: 52px; padding: 0 14px; }
-  .cover-project-badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 7px; }
-  .cover-badge { padding: 3px 7px; opacity: .72; }
+  .cover-project-badges { display: flex; flex: none; gap: 6px; }
   /* グループ・メンバーを選ぶ画面：2列のタイル */
   .cover-page.is-cover-choice .cover-choice-stack { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: none; }
-  .cover-page.is-cover-choice .cover-content-card { position: relative; isolation: isolate; overflow: hidden; align-items: center; justify-content: flex-start; min-width: 0; min-height: 98px; padding: 18px; text-align: left; }
+  .cover-page.is-cover-choice .cover-content-card { position: relative; isolation: isolate; overflow: hidden; align-items: center; justify-content: flex-start; min-width: 0; min-height: 56px; padding: 12px 16px; text-align: left; }
   .cover-page.is-cover-choice .cover-content-card strong { position: relative; z-index: 1; display: block; line-height: 1.2; overflow-wrap: anywhere; }
   .cover-page.is-cover-group .cover-content-card:last-child:nth-child(odd),
   .cover-page.is-cover-artist .cover-content-card:last-child:nth-child(odd) { grid-column: 1; }
-  .cover-page .cover-allstar-member-card { display: flex; flex-direction: column; justify-content: center; gap: 7px; }
-  .cover-member-select-state { min-height: 14px; }
+  .cover-page .cover-allstar-member-card { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .cover-member-select-state { flex: none; }
   .cover-choice-next { display: flex; justify-content: center; margin-top: 18px; }
   .cover-choice-next .ui-btn { width: min(320px, 100%); min-height: 52px; }
 
@@ -7983,7 +7983,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderCoverProjectRows(projects,compact,libraryMode){
     if(!projects||!projects.length)return '<div class="ui-empty cover-empty">'+(libraryMode?'共有されたカバーはまだありません。':'まだカバーがありません。')+'</div>';
     const returnScreen=libraryMode?'library':'projects';
-    return '<div class="cover-stack">'+projects.map(function(p){const creator=libraryMode&&p.creatorDisplayName?'<span class="ui-muted cover-row-meta">'+escapeHtml(p.creatorDisplayName)+' のカバー</span>':'';const badges=(p.isComplete?'':'<span class="ui-badge cover-badge is-draft">編集中</span>')+(p.isShared?'<span class="ui-badge cover-badge">共有中</span>':'');return '<button type="button" class="ui-card ui-accent-left cover-project-row" onclick="openSavedCover(\''+escapeHtml(p.projectId)+'\',\''+returnScreen+'\')"><span><strong class="ui-heading">'+escapeHtml(p.title||p.sourceTitle)+'</strong><span class="ui-muted cover-row-meta">'+escapeHtml(p.sourceArtist)+' → '+escapeHtml(p.coverGroupName)+'</span>'+creator+'<span class="cover-project-badges">'+badges+'</span></span></button>';}).join('')+'</div>';
+    return '<div class="ui-list cover-project-list">'+projects.map(function(p){const meta=escapeHtml(p.sourceArtist)+' → '+escapeHtml(p.coverGroupName)+(libraryMode&&p.creatorDisplayName?' ・ '+escapeHtml(p.creatorDisplayName):'');const badges=(p.isComplete?'':'<span class="ui-badge">編集中</span>')+(p.isShared?'<span class="ui-badge is-active">共有中</span>':'');return '<button type="button" class="ui-row cover-project-row" onclick="openSavedCover(\''+escapeHtml(p.projectId)+'\',\''+returnScreen+'\')"><span class="cover-project-main"><strong class="ui-heading">'+escapeHtml(p.title||p.sourceTitle)+'</strong><span class="ui-muted cover-row-meta">'+meta+'</span></span><span class="cover-project-badges">'+badges+'</span></button>';}).join('')+'</div>';
   }
   function renderCoverEditor(){
     const data=coverState.editor;if(!data)return;coverState.screen=data.isSaved&&!data.isCreator?'view':(coverState.screen==='view'?'view':'editor');const editing=coverState.screen==='editor'&&data.isCreator;const app=document.getElementById('coverApp');const assignmentMap=coverAssignmentMap();const memberMap=coverMemberMap();const isSavedView=coverState.screen==='view';
