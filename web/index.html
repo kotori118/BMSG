@@ -967,6 +967,17 @@
   .analysis-loading > .universe-loading { display: none; }
 </style>
 
+<!-- BeStatsStyles.html -->
+<style>
+  /* BE:STATS（活動分析）の並べ方（見た目は部品 .ui-*） */
+  .bestats-page { padding: var(--ui-top-pad) 0 40px; min-width: 0; }
+  .bestats-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; padding-bottom: 20px; }
+  .bestats-local-nav { margin: 0 0 22px; }
+  .bestats-panel { min-width: 0; max-width: 100%; min-height: 240px; }
+  .bestats-status { display: grid; gap: 12px; }
+  .bestats-source { margin: 0 0 14px; }
+</style>
+
 <!-- ProfileUniverse.html -->
 <style>
   /* =========================================================
@@ -1932,7 +1943,8 @@
         <p class="app-menu-group">データ</p>
         <button type="button" data-menu-route="profile" onclick="appMenuGo('profile')">プロフィール</button>
         <button type="button" data-menu-route="lyrics" onclick="appMenuGo('lyrics')">歌詞</button>
-        <button type="button" data-menu-route="analysis" onclick="appMenuGo('analysis')">分析</button>
+        <button type="button" data-menu-route="analysis" onclick="appMenuGo('analysis')">パート分析</button>
+        <button type="button" data-menu-route="bestats" onclick="appMenuGo('bestats')">活動分析</button>
         <p class="app-menu-group">ラボ</p>
         <button type="button" data-menu-route="quiz" onclick="appMenuGo('quiz')">クイズ</button>
         <button type="button" data-menu-route="cards" onclick="appMenuGo('cards')">トレーディングカード</button>
@@ -3446,7 +3458,7 @@
     <header class="ui-divider analysis-header">
       <button class="ui-back" type="button" data-page-back onclick="if(!universeInnerBack())navigateTo('data')" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
       <div>
-        <h1 class="ui-title analysis-title">ANALYSIS</h1>
+        <h1 class="ui-title analysis-title">PART ANALYSIS</h1>
       </div>
     </header>
 
@@ -3459,6 +3471,28 @@
     </nav>
 
     <div id="analysisPanel" class="analysis-panel" aria-live="polite"></div>
+  </section>
+</template>
+
+<!-- BeStatsPage.html -->
+<template id="beStatsPageTemplate">
+  <section class="view bestats-page">
+    <header class="ui-divider bestats-header">
+      <button class="ui-back" type="button" data-page-back onclick="if(!universeInnerBack())navigateTo('data')" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <div>
+        <h1 class="ui-title bestats-title">BE:STATS</h1>
+      </div>
+    </header>
+
+    <nav class="ui-tabs bestats-local-nav" aria-label="BE:STATS navigation">
+      <button type="button" class="ui-tab bestats-tab active" data-bestats-view="home" onclick="selectBeStatsView('home')">ホーム</button>
+      <button type="button" class="ui-tab bestats-tab" data-bestats-view="metrics" onclick="selectBeStatsView('metrics')">指標</button>
+      <button type="button" class="ui-tab bestats-tab" data-bestats-view="content" onclick="selectBeStatsView('content')">コンテンツ</button>
+      <button type="button" class="ui-tab bestats-tab" data-bestats-view="links" onclick="selectBeStatsView('links')">つながり</button>
+      <button type="button" class="ui-tab bestats-tab" data-bestats-view="songs" onclick="selectBeStatsView('songs')">楽曲</button>
+    </nav>
+
+    <div id="beStatsPanel" class="bestats-panel" aria-live="polite"></div>
   </section>
 </template>
 
@@ -3609,7 +3643,12 @@
         theme: 'v2-light'
       },
       analysis: {
-        title: 'ANALYSIS',
+        title: 'PART ANALYSIS',
+        parent: 'data',
+        theme: 'v2'
+      },
+      bestats: {
+        title: 'BE:STATS',
         parent: 'data',
         theme: 'v2'
       },
@@ -3755,9 +3794,9 @@
     if (status) status.textContent = '検索結果 ' + universeSearchResults.length + '件';
     results.innerHTML = universeSearchResults.map(function(item, index){
       return '<button type="button" class="search-result universe-search-result" data-search-index="'+index+'" onclick="openUniverseSearchResult(this)">'
-        + '<span class="ui-label universe-search-type">'+escapeHtml(item.type || '')+'</span>'
+        + '<span class="ui-label universe-search-type">'+escapeHtml(item.type === 'ANALYSIS' ? 'PART ANALYSIS' : (item.type || ''))+'</span>'
         + '<span class="search-result-name">'+escapeHtml(item.title || '')+'</span>'
-        + '<span class="ui-muted universe-search-subtitle">'+escapeHtml(item.subtitle || '')+'</span>'
+        + '<span class="ui-muted universe-search-subtitle">'+escapeHtml(String(item.subtitle || '').replace(/^ANALYSIS /, 'PART ANALYSIS '))+'</span>'
         + '<span class="universe-search-arrow" aria-hidden="true">›</span>'
         + '</button>';
     }).join('');
@@ -4379,6 +4418,7 @@
         profile: '<rect class="s" x="3" y="5" width="18" height="14" rx="2"/><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.8" cy="10.6" r="2.3"/><path d="M5.6 16.2c.6-1.7 1.8-2.6 3.2-2.6s2.6.9 3.2 2.6"/><path d="M14.5 9.5h3.5M14.5 12.5h3.5M14.5 15.5h2"/>',
         lyrics: '<path class="s" d="M6.5 3h7.8L18.5 7.2V20a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M6.5 3h7.8L18.5 7.2V20a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14.3 3v4.2h4.2"/><path d="M12.8 16.2v-5.4l3-.9"/><circle class="f" cx="11.1" cy="16.3" r="1.7"/><path d="M8.3 9h2.7M8.3 11.8h2"/>',
 analysis: '<defs><mask id="ia-m" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff"/><circle cx="16.4" cy="11.4" r="6.2" fill="#000"/></mask></defs><g mask="url(#ia-m)"><rect x="3.4" y="12.6" width="3.4" height="7.8" rx=".6"/><rect x="8.2" y="8.8" width="3.4" height="11.6" rx=".6"/><rect x="13" y="4.2" width="3.4" height="16.2" rx=".6"/></g><circle cx="16.4" cy="11.4" r="4.4"/><path d="M19.6 14.6l2.6 2.6"/><path class="b" d="M1.5 6V1.5H6M18 1.5h4.5V6M22.5 18v4.5H18M6 22.5H1.5V18"/>',
+        bestats: '<path class="s" d="M3.5 18.5l5-6 4 3.5 7.5-9.5V19a1 1 0 0 1-1 1h-14z"/><path d="M3.5 18.5l5-6 4 3.5 7.5-9.5"/><path d="M3.5 21h17"/><circle class="f" cx="20" cy="6.5" r="1.4"/>',
         quiz: '<path class="s" d="M5 4h14a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 19 16h-7.5L7 20v-4H5a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 5 4z"/><path d="M5 4h14a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 19 16h-7.5L7 20v-4H5a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 5 4z"/><path d="M10 8.2a2 2 0 1 1 2.9 1.8c-.6.3-.9.7-.9 1.4"/><circle class="f" cx="12" cy="13.6" r=".9"/>',
         cards: '<rect x="3.6" y="6.2" width="10" height="14" rx="1.4" transform="rotate(-10 8.6 13.2)"/><rect class="s" x="9.4" y="3.6" width="10.5" height="15" rx="1.5" transform="rotate(7 14.65 11.1)"/><rect x="9.4" y="3.6" width="10.5" height="15" rx="1.5" transform="rotate(7 14.65 11.1)"/><path class="f" d="m14.6 7.6 1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2.1 1.1.4-2.3-1.7-1.6 2.3-.3z"/>',
 poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff"/><rect x="1.6" y="2.6" width="13.4" height="17.8" rx="2.6" fill="#000"/></mask></defs><g mask="url(#ip-f)"><rect x="10.2" y="4.2" width="10.8" height="15.4" rx="1.8" transform="rotate(12 15.6 11.9)"/></g><rect x="2.6" y="3.6" width="11.4" height="16.2" rx="1.8"/><path d="M8.3 7.4C8.3 7.4 5 10.1 5 12.2a1.8 1.8 0 0 0 3.2 1.1l-.4 1.6h1.8l-.4-1.6A1.8 1.8 0 0 0 11.6 12.2C11.6 10.1 8.3 7.4 8.3 7.4z"/><path class="b" d="M1.5 6V1.5H6M18 1.5h4.5V6M22.5 18v4.5H18M6 22.5H1.5V18"/>',
@@ -4421,10 +4461,20 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
             <button class="ui-menu-tile category-card" onclick="navigateTo('analysis')">
               <span class="category-card-inner">
                 <span class="ui-menu-tile-meta category-card-meta">
-                  <span class="ui-menu-tile-name category-card-name">分析</span>
+                  <span class="ui-menu-tile-name category-card-name">パート分析</span>
                   <span class="category-card-desc">BE:FIRSTの歌唱とセンターの秒数</span>
                 </span>
                 <span class="ui-menu-tile-symbol category-card-symbol">${categoryIconSvg('analysis')}</span>
+              </span>
+            </button>
+
+            <button class="ui-menu-tile category-card" onclick="navigateTo('bestats')">
+              <span class="category-card-inner">
+                <span class="ui-menu-tile-meta category-card-meta">
+                  <span class="ui-menu-tile-name category-card-name">活動分析</span>
+                  <span class="category-card-desc">BE:FIRSTの数字と活動の記録</span>
+                </span>
+                <span class="ui-menu-tile-symbol category-card-symbol">${categoryIconSvg('bestats')}</span>
               </span>
             </button>
           </div>
@@ -6765,7 +6815,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 <!-- AnalysisScripts.html -->
 <script>
   let analysisData=null,analysisView='top',analysisCharts=[],analysisMember='',analysisYear='all',analysisSongId='',analysisOtherView='',analysisCreatorType='lyricists';
-  function renderAnalysis(){const t=document.getElementById('analysisPageTemplate');return t?t.innerHTML:'<section class="view"><h1>ANALYSIS</h1></section>';}
+  function renderAnalysis(){const t=document.getElementById('analysisPageTemplate');return t?t.innerHTML:'<section class="view"><h1>PART ANALYSIS</h1></section>';}
   function initAnalysisPage(){analysisView='top';const panel=document.getElementById('analysisPanel');if(!panel)return;if(!analysisData){panel.innerHTML=analysisSkeletonMarkup();google.script.run.withSuccessHandler(function(data){analysisData=data;renderAnalysisView();}).withFailureHandler(function(err){panel.innerHTML='<div class="ui-panel analysis-card"><h2 class="ui-heading">読み込みに失敗しました</h2><p class="ui-muted analysis-muted">'+escapeHtml(String(err&&err.message||err))+'</p><button class="ui-btn" onclick="retryAnalysis()">再試行</button></div>';}).getAnalysisBootstrap();}else renderAnalysisView();}
   function retryAnalysis(){analysisData=null;initAnalysisPage();}
   function selectAnalysisView(view){analysisView=view;analysisOtherView='';document.querySelectorAll('.analysis-tab').forEach(b=>b.classList.toggle('active',b.dataset.analysisView===view));renderAnalysisView();}
@@ -6978,6 +7028,86 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
 
+</script>
+
+<!-- BeStatsScripts.html -->
+<script>
+  // BE:STATS（活動分析）。データは R2 の JSON だけを読む（GAS は使わない）。
+  // 置き場の URL は web/config.js の BMSG_BESTATS_URL。画面の確認用に ?sample=1 で web/bestats-sample/ のサンプルを読む。
+  const BESTATS_FILES = ['metrics.json', 'youtube.json', 'tv.json', 'live.json', 'songs.json', 'events.json'];
+  const BESTATS_VIEWS = ['home', 'metrics', 'content', 'links', 'songs'];
+  const BESTATS_VIEW_LABELS = {home: 'ホーム', metrics: '指標', content: 'コンテンツ', links: 'つながり', songs: '楽曲'};
+  let beStatsState = {view: 'home', sample: false, loading: false, data: null, manifest: null, error: ''};
+
+  function renderBeStats() {
+    const t = document.getElementById('beStatsPageTemplate');
+    return t ? t.innerHTML : '<section class="view"><h1>BE:STATS</h1></section>';
+  }
+
+  function beStatsBaseUrl_() {
+    if (beStatsState.sample) return 'bestats-sample';
+    return String(window.BMSG_BESTATS_URL || '').replace(/\/+$/, '');
+  }
+
+  function initBeStatsPage(params) {
+    params = params || {};
+    beStatsState.sample = params.sample === '1' || params.sample === 1;
+    beStatsState.view = BESTATS_VIEWS.indexOf(params.view) >= 0 ? params.view : 'home';
+    renderBeStatsView();
+    if (beStatsState.data && beStatsState.dataSample === beStatsState.sample) return;
+    loadBeStatsData_();
+  }
+
+  function selectBeStatsView(view) {
+    if (BESTATS_VIEWS.indexOf(view) < 0) return;
+    beStatsState.view = view;
+    renderBeStatsView();
+    const state = {page: 'bestats', view: view};
+    if (beStatsState.sample) state.sample = '1';
+    google.script.history.replace(state, state, '');
+  }
+
+  // manifest を読み、その version を付けて各ファイルを読む（古い保存を避けるため）。1つでも失敗したら、全体を「読み込めません」にする。
+  function loadBeStatsData_() {
+    const base = beStatsBaseUrl_();
+    beStatsState.loading = true; beStatsState.error = ''; beStatsState.data = null;
+    renderBeStatsView();
+    const getJson = function (url) {
+      return fetch(url, {cache: 'no-cache'}).then(function (res) {
+        if (!res.ok) throw new Error(url + ' ' + res.status);
+        return res.json();
+      });
+    };
+    getJson(base + '/manifest.json').then(function (manifest) {
+      const v = encodeURIComponent(manifest.version || '');
+      return Promise.all(BESTATS_FILES.map(function (name) { return getJson(base + '/' + name + '?v=' + v); })).then(function (list) {
+        const data = {};
+        BESTATS_FILES.forEach(function (name, i) { data[name.replace('.json', '')] = list[i]; });
+        beStatsState.manifest = manifest; beStatsState.data = data; beStatsState.dataSample = beStatsState.sample;
+      });
+    }).catch(function (error) {
+      console.error(error);
+      beStatsState.error = 'データを読み込めませんでした。';
+    }).then(function () {
+      beStatsState.loading = false;
+      if (currentRoute === 'bestats') renderBeStatsView();
+    });
+  }
+
+  function renderBeStatsView() {
+    const panel = document.getElementById('beStatsPanel');
+    if (!panel) return;
+    document.querySelectorAll('.bestats-tab').forEach(function (b) { b.classList.toggle('active', b.dataset.bestatsView === beStatsState.view); });
+    if (beStatsState.loading) { panel.innerHTML = renderUniverseLoading(); return; }
+    if (beStatsState.error) {
+      panel.innerHTML = '<p class="ui-text-danger">' + escapeHtml(beStatsState.error) + '</p><button type="button" class="ui-btn" onclick="loadBeStatsData_()">再読み込み</button>';
+      return;
+    }
+    if (!beStatsState.data) { panel.innerHTML = ''; return; }
+    const m = beStatsState.manifest || {};
+    const source = '<p class="ui-muted bestats-source">データ ' + escapeHtml(m.dataEnd || '') + ' まで' + (beStatsState.sample ? '（サンプル）' : '') + '</p>';
+    panel.innerHTML = source + '<div class="ui-empty">' + escapeHtml(BESTATS_VIEW_LABELS[beStatsState.view]) + 'は準備中です。</div>';
+  }
 </script>
 
 <!-- CardScripts.html -->
@@ -8386,7 +8516,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     let actions=detail.querySelector('.universe-profile-crosslinks');
     if(!actions){
       actions=document.createElement('div');actions.className='universe-crosslink-row universe-profile-crosslinks';
-      if(String(member.primaryGroupName||'')==='BE:FIRST')actions.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'member',member:member.displayName});}));
+      if(String(member.primaryGroupName||'')==='BE:FIRST')actions.appendChild(createUniverseCrossLinkButton_('PART ANALYSIS',function(){navigateToWithParams('analysis',{view:'member',member:member.displayName});}));
       actions.appendChild(createUniverseCrossLinkButton_('CREDITS',function(){toggleUniverseProfileCredits_(member.memberId);}));
       const hero=detail.querySelector('.profile-detail-hero');if(hero)hero.insertAdjacentElement('afterend',actions);else detail.prepend(actions);
     }
@@ -8429,7 +8559,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const existing=target.querySelector('.universe-lyrics-analysis-link');
     if(!isBeFirst){if(existing)existing.remove();return;}
     if(existing)return;
-    target.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'song',song:songId});},'universe-lyrics-analysis-link'));
+    target.appendChild(createUniverseCrossLinkButton_('PART ANALYSIS',function(){navigateToWithParams('analysis',{view:'song',song:songId});},'universe-lyrics-analysis-link'));
   }
 
   function syncUniverseAnalysisCrossLinks_(){
@@ -8680,6 +8810,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     else if(route==='lyrics'){pageContent.innerHTML=renderLyrics();initLyricsPage(routeParams||{});}
     else if(route==='karaoke'){pageContent.innerHTML=renderKaraoke();initKaraokePage(routeParams||{});}
     else if(route==='analysis'){pageContent.innerHTML=renderAnalysis();initAnalysisPage(routeParams||{});}
+    else if(route==='bestats'){pageContent.innerHTML=renderBeStats();initBeStatsPage(routeParams||{});}
     else if(route==='cards'){pageContent.innerHTML=renderCards();initCardPage(routeParams||{});}
     else if(route==='poker'){pageContent.innerHTML=renderPoker();initPokerPage(routeParams||{});}
     else if(route==='quiz'){pageContent.innerHTML=renderQuiz();initQuizPage(routeParams||{});}

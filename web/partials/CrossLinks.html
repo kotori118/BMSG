@@ -53,7 +53,7 @@
     let actions=detail.querySelector('.universe-profile-crosslinks');
     if(!actions){
       actions=document.createElement('div');actions.className='universe-crosslink-row universe-profile-crosslinks';
-      if(String(member.primaryGroupName||'')==='BE:FIRST')actions.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'member',member:member.displayName});}));
+      if(String(member.primaryGroupName||'')==='BE:FIRST')actions.appendChild(createUniverseCrossLinkButton_('PART ANALYSIS',function(){navigateToWithParams('analysis',{view:'member',member:member.displayName});}));
       actions.appendChild(createUniverseCrossLinkButton_('CREDITS',function(){toggleUniverseProfileCredits_(member.memberId);}));
       const hero=detail.querySelector('.profile-detail-hero');if(hero)hero.insertAdjacentElement('afterend',actions);else detail.prepend(actions);
     }
@@ -96,7 +96,7 @@
     const existing=target.querySelector('.universe-lyrics-analysis-link');
     if(!isBeFirst){if(existing)existing.remove();return;}
     if(existing)return;
-    target.appendChild(createUniverseCrossLinkButton_('ANALYSIS',function(){navigateToWithParams('analysis',{view:'song',song:songId});},'universe-lyrics-analysis-link'));
+    target.appendChild(createUniverseCrossLinkButton_('PART ANALYSIS',function(){navigateToWithParams('analysis',{view:'song',song:songId});},'universe-lyrics-analysis-link'));
   }
 
   function syncUniverseAnalysisCrossLinks_(){

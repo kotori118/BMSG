@@ -74,9 +74,9 @@
     if (status) status.textContent = '検索結果 ' + universeSearchResults.length + '件';
     results.innerHTML = universeSearchResults.map(function(item, index){
       return '<button type="button" class="search-result universe-search-result" data-search-index="'+index+'" onclick="openUniverseSearchResult(this)">'
-        + '<span class="ui-label universe-search-type">'+escapeHtml(item.type || '')+'</span>'
+        + '<span class="ui-label universe-search-type">'+escapeHtml(item.type === 'ANALYSIS' ? 'PART ANALYSIS' : (item.type || ''))+'</span>'
         + '<span class="search-result-name">'+escapeHtml(item.title || '')+'</span>'
-        + '<span class="ui-muted universe-search-subtitle">'+escapeHtml(item.subtitle || '')+'</span>'
+        + '<span class="ui-muted universe-search-subtitle">'+escapeHtml(String(item.subtitle || '').replace(/^ANALYSIS /, 'PART ANALYSIS '))+'</span>'
         + '<span class="universe-search-arrow" aria-hidden="true">›</span>'
         + '</button>';
     }).join('');

@@ -1,6 +1,6 @@
 <script>
   let analysisData=null,analysisView='top',analysisCharts=[],analysisMember='',analysisYear='all',analysisSongId='',analysisOtherView='',analysisCreatorType='lyricists';
-  function renderAnalysis(){const t=document.getElementById('analysisPageTemplate');return t?t.innerHTML:'<section class="view"><h1>ANALYSIS</h1></section>';}
+  function renderAnalysis(){const t=document.getElementById('analysisPageTemplate');return t?t.innerHTML:'<section class="view"><h1>PART ANALYSIS</h1></section>';}
   function initAnalysisPage(){analysisView='top';const panel=document.getElementById('analysisPanel');if(!panel)return;if(!analysisData){panel.innerHTML=analysisSkeletonMarkup();google.script.run.withSuccessHandler(function(data){analysisData=data;renderAnalysisView();}).withFailureHandler(function(err){panel.innerHTML='<div class="ui-panel analysis-card"><h2 class="ui-heading">読み込みに失敗しました</h2><p class="ui-muted analysis-muted">'+escapeHtml(String(err&&err.message||err))+'</p><button class="ui-btn" onclick="retryAnalysis()">再試行</button></div>';}).getAnalysisBootstrap();}else renderAnalysisView();}
   function retryAnalysis(){analysisData=null;initAnalysisPage();}
   function selectAnalysisView(view){analysisView=view;analysisOtherView='';document.querySelectorAll('.analysis-tab').forEach(b=>b.classList.toggle('active',b.dataset.analysisView===view));renderAnalysisView();}

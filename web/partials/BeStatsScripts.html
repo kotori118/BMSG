@@ -1,0 +1,78 @@
+<script>
+  // BE:STATS（活動分析）。データは R2 の JSON だけを読む（GAS は使わない）。
+  // 置き場の URL は web/config.js の BMSG_BESTATS_URL。画面の確認用に ?sample=1 で web/bestats-sample/ のサンプルを読む。
+  const BESTATS_FILES = ['metrics.json', 'youtube.json', 'tv.json', 'live.json', 'songs.json', 'events.json'];
+  const BESTATS_VIEWS = ['home', 'metrics', 'content', 'links', 'songs'];
+  const BESTATS_VIEW_LABELS = {home: 'ホーム', metrics: '指標', content: 'コンテンツ', links: 'つながり', songs: '楽曲'};
+  let beStatsState = {view: 'home', sample: false, loading: false, data: null, manifest: null, error: ''};
+
+  function renderBeStats() {
+    const t = document.getElementById('beStatsPageTemplate');
+    return t ? t.innerHTML : '<section class="view"><h1>BE:STATS</h1></section>';
+  }
+
+  function beStatsBaseUrl_() {
+    if (beStatsState.sample) return 'bestats-sample';
+    return String(window.BMSG_BESTATS_URL || '').replace(/\/+$/, '');
+  }
+
+  function initBeStatsPage(params) {
+    params = params || {};
+    beStatsState.sample = params.sample === '1' || params.sample === 1;
+    beStatsState.view = BESTATS_VIEWS.indexOf(params.view) >= 0 ? params.view : 'home';
+    renderBeStatsView();
+    if (beStatsState.data && beStatsState.dataSample === beStatsState.sample) return;
+    loadBeStatsData_();
+  }
+
+  function selectBeStatsView(view) {
+    if (BESTATS_VIEWS.indexOf(view) < 0) return;
+    beStatsState.view = view;
+    renderBeStatsView();
+    const state = {page: 'bestats', view: view};
+    if (beStatsState.sample) state.sample = '1';
+    google.script.history.replace(state, state, '');
+  }
+
+  // manifest を読み、その version を付けて各ファイルを読む（古い保存を避けるため）。1つでも失敗したら、全体を「読み込めません」にする。
+  function loadBeStatsData_() {
+    const base = beStatsBaseUrl_();
+    beStatsState.loading = true; beStatsState.error = ''; beStatsState.data = null;
+    renderBeStatsView();
+    const getJson = function (url) {
+      return fetch(url, {cache: 'no-cache'}).then(function (res) {
+        if (!res.ok) throw new Error(url + ' ' + res.status);
+        return res.json();
+      });
+    };
+    getJson(base + '/manifest.json').then(function (manifest) {
+      const v = encodeURIComponent(manifest.version || '');
+      return Promise.all(BESTATS_FILES.map(function (name) { return getJson(base + '/' + name + '?v=' + v); })).then(function (list) {
+        const data = {};
+        BESTATS_FILES.forEach(function (name, i) { data[name.replace('.json', '')] = list[i]; });
+        beStatsState.manifest = manifest; beStatsState.data = data; beStatsState.dataSample = beStatsState.sample;
+      });
+    }).catch(function (error) {
+      console.error(error);
+      beStatsState.error = 'データを読み込めませんでした。';
+    }).then(function () {
+      beStatsState.loading = false;
+      if (currentRoute === 'bestats') renderBeStatsView();
+    });
+  }
+
+  function renderBeStatsView() {
+    const panel = document.getElementById('beStatsPanel');
+    if (!panel) return;
+    document.querySelectorAll('.bestats-tab').forEach(function (b) { b.classList.toggle('active', b.dataset.bestatsView === beStatsState.view); });
+    if (beStatsState.loading) { panel.innerHTML = renderUniverseLoading(); return; }
+    if (beStatsState.error) {
+      panel.innerHTML = '<p class="ui-text-danger">' + escapeHtml(beStatsState.error) + '</p><button type="button" class="ui-btn" onclick="loadBeStatsData_()">再読み込み</button>';
+      return;
+    }
+    if (!beStatsState.data) { panel.innerHTML = ''; return; }
+    const m = beStatsState.manifest || {};
+    const source = '<p class="ui-muted bestats-source">データ ' + escapeHtml(m.dataEnd || '') + ' まで' + (beStatsState.sample ? '（サンプル）' : '') + '</p>';
+    panel.innerHTML = source + '<div class="ui-empty">' + escapeHtml(BESTATS_VIEW_LABELS[beStatsState.view]) + 'は準備中です。</div>';
+  }
+</script>

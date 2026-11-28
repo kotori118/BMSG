@@ -1,0 +1,20 @@
+<template id="beStatsPageTemplate">
+  <section class="view bestats-page">
+    <header class="ui-divider bestats-header">
+      <button class="ui-back" type="button" data-page-back onclick="if(!universeInnerBack())navigateTo('data')" aria-label="戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button>
+      <div>
+        <h1 class="ui-title bestats-title">BE:STATS</h1>
+      </div>
+    </header>
+
+    <nav class="ui-tabs bestats-local-nav" aria-label="BE:STATS navigation">
+      <button type="button" class="ui-tab bestats-tab active" data-bestats-view="home" onclick="selectBeStatsView('home')">ホーム</button>
+      <button type="button" class="ui-tab bestats-tab" data-bestats-view="metrics" onclick="selectBeStatsView('metrics')">指標</button>
+      <button type="button" class="ui-tab bestats-tab" data-bestats-view="content" onclick="selectBeStatsView('content')">コンテンツ</button>
+      <button type="button" class="ui-tab bestats-tab" data-bestats-view="links" onclick="selectBeStatsView('links')">つながり</button>
+      <button type="button" class="ui-tab bestats-tab" data-bestats-view="songs" onclick="selectBeStatsView('songs')">楽曲</button>
+    </nav>
+
+    <div id="beStatsPanel" class="bestats-panel" aria-live="polite"></div>
+  </section>
+</template>

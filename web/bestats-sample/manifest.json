@@ -1,0 +1,25 @@
+{
+  "version": "2026-11-29T22:30:00+09:00",
+  "generatedAt": "2026-11-29T22:30:12+09:00",
+  "dataEnd": "2026-11-29",
+  "files": {
+    "metrics.json": {
+      "rows": 700
+    },
+    "youtube.json": {
+      "rows": 3
+    },
+    "tv.json": {
+      "rows": 3
+    },
+    "live.json": {
+      "rows": 2
+    },
+    "songs.json": {
+      "rows": 12
+    },
+    "events.json": {
+      "rows": 17
+    }
+  }
+}
