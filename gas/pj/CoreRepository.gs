@@ -68,8 +68,9 @@ function universeCacheGetChunked_(cache, key) {
 }
 
 // 読み取りの結果を版つきで保存する。builder は保存がないときだけ呼ばれる。
-function universeCoreCached_(name, builder) {
-  if (!universeRequestContext_.read) return builder();
+// 書き込みの操作でも使いたい（Core DB を書き換えない操作）ときは useInWrite を true にする。
+function universeCoreCached_(name, builder, useInWrite) {
+  if (!universeRequestContext_.read && !useInWrite) return builder();
   let cache;
   try { cache = CacheService.getScriptCache(); } catch (error) { return builder(); }
   let key = '';

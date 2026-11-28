@@ -1,15 +1,18 @@
 // Originally imported from kotori118/BMSG-PJ CardApi.gs (2026-11-21). This repository is now the source: edit this file directly.
 const CARD_RARITY_WEIGHTS_ = Object.freeze({N:70,R:24,SR:5,SSR:1});
 const CARD_RARITY_ORDER_ = Object.freeze({N:0,R:1,SR:2,SSR:3});
-const CARD_CATALOG_CACHE_KEY_ = 'trading_card_catalog_v3';
 const CARD_COLLECTION_CACHE_PREFIX_ = 'trading_card_collection_v1_';
-const CARD_CACHE_SECONDS_ = 300;
+const CARD_CACHE_SECONDS_ = 21600; // 所持カードの控え。書くのは引く・リセットだけで、どちらもここを更新する
 
 function getTradingCardBootstrap(userId) {
   const uid = validateCardUser_(userId);
   const model = getCardCatalogModel_();
-  const collected = readCardCollectionIds_(uid);
-  cacheCardCollectionIds_(uid, collected);
+  // 所持カードは控え（キャッシュ）を先に見る。なければ Log DB を読んで控えを作る
+  let collected = getCachedCardCollectionIds_(uid);
+  if (!collected) {
+    collected = readCardCollectionIds_(uid);
+    cacheCardCollectionIds_(uid, collected);
+  }
   return {
     groups: model.groups,
     cards: model.cards.map(function(card){return Object.assign({}, card, {isDrawn: !!collected[card.imageId]});}),
@@ -63,20 +66,15 @@ function resetTradingCardCollection(userId) {
 }
 
 function getCardCatalogModel_() {
-  const cache = CacheService.getScriptCache();
-  const cached = cache.get(CARD_CATALOG_CACHE_KEY_);
-  if (cached) {
-    try { return JSON.parse(cached); } catch (e) {}
-  }
-  const core = getCoreSpreadsheet_();
-  const groups = readCoreSheetObjectsFromSpreadsheet_(core, UNIVERSE_CONFIG.SHEETS.GROUPS);
-  const members = readCoreSheetObjectsFromSpreadsheet_(core, UNIVERSE_CONFIG.SHEETS.MEMBERS);
-  const memberships = readCoreSheetObjectsFromSpreadsheet_(core, UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS);
-  const images = readCoreSheetObjectsFromSpreadsheet_(core, UNIVERSE_CONFIG.SHEETS.IMAGES);
-  const model = buildCardCatalog_(groups, members, memberships, images);
-  const serialized = JSON.stringify(model);
-  if (serialized.length < 95000) cache.put(CARD_CATALOG_CACHE_KEY_, serialized, CARD_CACHE_SECONDS_);
-  return model;
+  // Core DB の版つきキャッシュ（DB が変わると自動で作り直す。1件の大きさの上限もない）
+  return universeCoreCached_('card-catalog', function() {
+    const core = getCoreSpreadsheet_();
+    const groups = readCoreSheetObjectsFromSpreadsheet_(core, UNIVERSE_CONFIG.SHEETS.GROUPS);
+    const members = readCoreSheetObjectsFromSpreadsheet_(core, UNIVERSE_CONFIG.SHEETS.MEMBERS);
+    const memberships = readCoreSheetObjectsFromSpreadsheet_(core, UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS);
+    const images = readCoreSheetObjectsFromSpreadsheet_(core, UNIVERSE_CONFIG.SHEETS.IMAGES);
+    return buildCardCatalog_(groups, members, memberships, images);
+  }, true); // 引く（書き込み）ときも使う。カタログは Core DB が変わると作り直される
 }
 
 function buildCardCatalog_(groups, members, memberships, images) {
