@@ -35,19 +35,17 @@ function getCoverSourceSongs(artist) {
   const groups = readCoreSheetObjectsFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.GROUPS);
   const group = groups.find(function(row){return row.GroupName === selected && row.RecordStatus !== 'ARCHIVED';});
   if(!group)throw new Error('原曲のアーティストが正しくありません。');
-  const songSheet = getCoreSheetFromSpreadsheet_(ss,UNIVERSE_CONFIG.SHEETS.SONGS);
-  const typed = String(songSheet.getRange(1,3).getValue()) === 'ArtistID';
   // BMSG ALLSTARS を選んだときは、U（ユニット）の曲もまとめて出す
-  const isAllstars = universeIsAllstarsGroup_(group);
-  const targets = isAllstars
+  const targets = universeIsAllstarsGroup_(group)
     ? groups.filter(function(row){return universeIsActiveGroup_(row) && (universeIsAllstarsGroup_(row) || universeIsUnitGroup_(row));})
     : [group];
-  const rows = [];
-  targets.forEach(function(target){
-    const found = typed
-      ? readCoverSheetMatchesFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS, 'ArtistID', asId_(target.GroupID), true)
-      : readCoverSheetMatchesFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS, 'Artist', String(target.GroupName || '').trim(), false);
-    found.forEach(function(row){rows.push(row);});
+  const ids = {}, names = {};
+  targets.forEach(function(target){ ids[asId_(target.GroupID)] = true; names[String(target.GroupName || '').trim()] = true; });
+  // 曲の表は1回だけ読んで、メモリ上で絞る
+  const songs = readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS);
+  const typed = !!songs.length && Object.prototype.hasOwnProperty.call(songs[0], 'ArtistID');
+  const rows = songs.filter(function(row){
+    return typed ? !!ids[asId_(row.ArtistID)] : !!names[String(row.Artist == null ? '' : row.Artist).trim()];
   });
   return resolveUniverseSongs_(ss, rows)
     .map(normalizeCoverSong_)
@@ -189,7 +187,7 @@ function getCoverProject(payload) {
 
   const selectedMemberIds = isCoverAllStarsGroup_(groupId) ? getCoverProjectMemberIds_(memberSheet, projectId) : [];
   const members = getCoverDestinationMembers_(snapshot, groupId, selectedMemberIds);
-  const assignments = readSheetObjects_(getCoverLogSheet_(UNIVERSE_CONFIG.SHEETS.COVER_ASSIGNMENTS))
+  const assignments = readLogSheetObjectsCached_(UNIVERSE_CONFIG.SHEETS.COVER_ASSIGNMENTS)
     .filter(function(row){ return asId_(row.CoverProjectID) === projectId; })
     .map(function(row){ return {order:Number(row.Order || 0),memberId:asId_(row.MemberID)}; })
     .sort(function(a,b){ return a.order-b.order; });
@@ -477,6 +475,8 @@ function getCoverScopedSnapshot_(groupId, songId) {
 }
 
 function readCoverSheetMatchesFromSpreadsheet_(ss, name, field, expected, compareAsId) {
+  // 読み取りの要求：保存済みの表から探す（シートを開かない。曲・歌詞は何度も呼ばれるので速くなる）
+  if (universeRequestContext_.read) return readCoverSheetMatchesCached_(ss, name, field, expected, compareAsId);
   const sheet = ss.getSheetByName(name);
   if (!sheet) throw new Error('Core DB sheet not found: ' + name);
   const lastRow = sheet.getLastRow();
@@ -510,12 +510,36 @@ function readCoverSheetMatchesFromSpreadsheet_(ss, name, field, expected, compar
   return records;
 }
 
-function readCoverSheetFromSpreadsheet_(ss, name) {
-  const values = universeCoreCached_('sheet-range:' + name, function() {
+// 表の値（1行目はヘッダー）。読み取りの要求では保存済みのものを使う
+function readCoverSheetValues_(ss, name) {
+  return universeCoreCached_('sheet-range:' + name, function() {
     const sheet = ss.getSheetByName(name);
     if (!sheet) throw new Error('Core DB sheet not found: ' + name);
     return sheet.getDataRange().getValues();
   });
+}
+
+function readCoverSheetMatchesCached_(ss, name, field, expected, compareAsId) {
+  const values = readCoverSheetValues_(ss, name);
+  if (values.length < 2) return [];
+  const headers = values[0].map(function(v){return String(v || '').trim();});
+  const column = headers.indexOf(field);
+  if (column < 0) throw new Error(name + ' sheet field not found: ' + field);
+  const target = compareAsId ? asId_(expected) : String(expected == null ? '' : expected).trim();
+  const records = [];
+  for (let i = 1; i < values.length; i++) {
+    const row = values[i];
+    const value = compareAsId ? asId_(row[column]) : String(row[column] == null ? '' : row[column]).trim();
+    if (value !== target) continue;
+    const record = {};
+    headers.forEach(function(header, index){ if (header) record[header] = row[index]; });
+    records.push(record);
+  }
+  return records;
+}
+
+function readCoverSheetFromSpreadsheet_(ss, name) {
+  const values = readCoverSheetValues_(ss, name);
   if (values.length < 2) return [];
   const headers = values[0].map(function(v){return String(v || '').trim();});
   return values.slice(1).filter(function(row){return row.some(function(v){return v !== '' && v !== null;});}).map(function(row){
@@ -729,15 +753,15 @@ function buildCoverProjectSummaries_(snapshot, predicate) {
   const sourceRowsByProject = {};
   const memberIdsByProject = {};
 
-  readSheetObjects_(getCoverLogSheet_(UNIVERSE_CONFIG.SHEETS.COVER_ASSIGNMENTS)).forEach(function(row){
+  readLogSheetObjectsCached_(UNIVERSE_CONFIG.SHEETS.COVER_ASSIGNMENTS).forEach(function(row){
     const id = asId_(row.CoverProjectID); if(!assignmentsByProject[id])assignmentsByProject[id]=[];
     assignmentsByProject[id].push({order:Number(row.Order||0),memberId:asId_(row.MemberID)});
   });
-  readSheetObjects_(getCoverLogSheet_(UNIVERSE_CONFIG.SHEETS.COVER_SOURCE_SNAPSHOTS)).forEach(function(row){
+  readLogSheetObjectsCached_(UNIVERSE_CONFIG.SHEETS.COVER_SOURCE_SNAPSHOTS).forEach(function(row){
     const id = asId_(row.CoverProjectID); if(!sourceRowsByProject[id])sourceRowsByProject[id]=[];
     sourceRowsByProject[id].push(row);
   });
-  readSheetObjects_(getCoverLogSheet_(UNIVERSE_CONFIG.SHEETS.COVER_PROJECT_MEMBERS)).forEach(function(row){
+  readLogSheetObjectsCached_(UNIVERSE_CONFIG.SHEETS.COVER_PROJECT_MEMBERS).forEach(function(row){
     const id = asId_(row.CoverProjectID); if(!memberIdsByProject[id])memberIdsByProject[id]=[];
     memberIdsByProject[id].push({displayOrder:Number(row.DisplayOrder||0),memberId:asId_(row.MemberID)});
   });
@@ -745,7 +769,7 @@ function buildCoverProjectSummaries_(snapshot, predicate) {
     memberIdsByProject[id].sort(function(a,b){return a.displayOrder-b.displayOrder;});
   });
 
-  return readSheetObjects_(getCoverLogSheet_(UNIVERSE_CONFIG.SHEETS.COVER_PROJECTS))
+  return readLogSheetObjectsCached_(UNIVERSE_CONFIG.SHEETS.COVER_PROJECTS)
     .filter(predicate)
     .map(function(row){
       const projectId = asId_(row.CoverProjectID);
@@ -805,7 +829,8 @@ function asCoverBoolean_(value) {
 }
 
 function validateCoverUser_(userId) { const id=asId_(userId); if(UNIVERSE_CONFIG.USER_IDS.indexOf(id)<0)throw new Error('利用ユーザーを選択してください。'); return id; }
-function getCoverLogSheet_(name) { const sheet=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID).getSheetByName(name); if(!sheet)throw new Error('Log sheet not found: '+name); return sheet; }
+let coverLogSpreadsheet_ = null; // 1回の実行の中では Log DB を開き直さない
+function getCoverLogSheet_(name) { if(!coverLogSpreadsheet_)coverLogSpreadsheet_=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID); const sheet=coverLogSpreadsheet_.getSheetByName(name); if(!sheet)throw new Error('Log sheet not found: '+name); return sheet; }
 function withCoverLock_(callback){const lock=LockService.getScriptLock();lock.waitLock(20000);try{return callback();}finally{lock.releaseLock();}}
 function normalizeHex_(value,fallback){const s=String(value||'').trim();return /^#[0-9a-f]{6}$/i.test(s)?s:fallback;}
 function toCoverIso_(value){if(!value)return '';const d=new Date(value);return Number.isFinite(d.getTime())?d.toISOString():'';}

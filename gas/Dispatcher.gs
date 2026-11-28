@@ -35,6 +35,7 @@ function doPost(e) {
 }
 
 function universeApiHandle_(method, e) {
+  let wroteLog = false; // 書き込みの操作を始めたら true（途中で失敗しても、Log の保存した読み取りは捨てる）
   try {
     const request = universeApiParseRequest_(method, e);
     if (!request.action) return { ok: true, data: { service: UNIVERSE_API_SERVICE_ } };
@@ -47,11 +48,14 @@ function universeApiHandle_(method, e) {
       throw universeApiError_('METHOD_NOT_ALLOWED', 'この操作はPOSTで呼び出してください: ' + request.action);
     }
     universeRequestContext_.read = !!entry.read;
+    wroteLog = !entry.read;
     const data = entry.fn.apply(null, request.args);
+    if (wroteLog) invalidateLogReadCache_();
     // DB（歌詞・メンバー・画像など）を変える書き込みのあとは、保存した読み取りをまとめて無効にする
     if (!entry.read && !UNIVERSE_LOG_ONLY_ACTIONS_[request.action]) invalidateCoreReadCache_();
     return { ok: true, data: typeof data === 'undefined' ? null : data };
   } catch (error) {
+    if (wroteLog) invalidateLogReadCache_();
     const code = error && error.universeApiCode;
     if (!code) console.error(error);
     return { ok: false, error: { code: code || 'ACTION_FAILED', message: String((error && error.message) || error) } };
