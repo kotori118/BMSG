@@ -1,0 +1,224 @@
+<script>
+  // BE:STATS コンテンツ：媒体（TV出演・ライブ披露・YouTube）→ 期間と集計 → 内訳のタグ → 中身
+  const BS_CONTENT_MEDIA = [['tv', 'TV出演'], ['live', 'ライブ披露'], ['youtube', 'YouTube']];
+  const BS_CONTENT_TAGS = {
+    tv: [['count', '出演回数'], ['program', '番組別'], ['songs', '披露曲'], ['history', '出演履歴']],
+    live: [['count', '公演回数'], ['history', '公演履歴'], ['region', '開催地域'], ['songs', '披露曲'], ['tour', 'ツアー'], ['order', '曲順']],
+    youtube: [['count', '投稿本数'], ['genre', 'ジャンル'], ['related', '関連動画']]
+  };
+  const BS_YT_STEP = 20;
+
+  function bsContentState_() {
+    if (!beStatsState.contentView) beStatsState.contentView = {media: 'tv', period: 'all', agg: 'month', tag: {tv: 'count', live: 'count', youtube: 'count'}, open: {}, genre: '', ytShown: BS_YT_STEP};
+    return beStatsState.contentView;
+  }
+
+  function setBeStatsMedia(media) { bsContentState_().media = media; renderBeStatsView(); }
+  function setBeStatsContentTag(tag) { const s = bsContentState_(); s.tag[s.media] = tag; renderBeStatsView(); }
+  function setBeStatsContentPeriod(period) { const s = bsContentState_(); s.period = period; if (period !== 'all') s.agg = 'month'; renderBeStatsView(); }
+  function setBeStatsContentAgg(agg) { bsContentState_().agg = agg; renderBeStatsView(); }
+  function toggleBeStatsOpen(key) { const s = bsContentState_(); s.open[key] = !s.open[key]; renderBeStatsView(); }
+  function selectBeStatsGenre(genre) { const s = bsContentState_(); s.genre = s.genre === genre ? '' : genre; s.ytShown = BS_YT_STEP; renderBeStatsView(); }
+  function showMoreBeStatsVideos() { const s = bsContentState_(); s.ytShown += BS_YT_STEP; renderBeStatsView(); }
+
+  // その媒体の「日付つきの記録」の一覧（期間の選択肢と集計の元）
+  function bsContentItems_(media) {
+    const d = beStatsState.data;
+    if (media === 'tv') return d.tv.appearances.map(function (a) { return {date: a.date, ref: a}; });
+    if (media === 'live') return d.live.shows.map(function (s) { return {date: s.date, ref: s}; });
+    return d.youtube.videos.map(function (v) { return {date: v.date, ref: v, type: v.type, genre: v.genre}; });
+  }
+
+  function bsRank_(rows) {
+    if (!rows.length) return '<div class="ui-empty">この期間の記録はありません</div>';
+    const top = rows[0].count || 1;
+    return '<div class="bestats-rank">' + rows.map(function (r) {
+      return '<div class="bestats-rank-row"><span class="bestats-rank-label">' + escapeHtml(r.label) + '</span><span class="ui-num bestats-rank-count">' + r.count + '</span>'
+        + '<span class="ui-progress bestats-rank-bar"><span class="ui-progress-fill" style="width:' + (r.count / top * 100).toFixed(1) + '%"></span></span></div>';
+    }).join('') + '</div>';
+  }
+
+  function bsAccordion_(key, headHtml, bodyHtml) {
+    const s = bsContentState_(), open = !!s.open[key];
+    return '<div class="bestats-acc"><button type="button" class="ui-row bestats-acc-head" aria-expanded="' + (open ? 'true' : 'false') + '" onclick="toggleBeStatsOpen(\'' + escapeHtml(key) + '\')">' + headHtml + '</button>'
+      + (open ? '<div class="bestats-acc-body">' + bodyHtml + '</div>' : '') + '</div>';
+  }
+
+  function bsSongTitleOf_(songId) {
+    const hit = (beStatsState.data.songs.songs || []).find(function (s) { return String(s.SongID) === String(songId); });
+    return hit ? hit.Title : String(songId);
+  }
+
+  function renderBeStatsContent(panel) {
+    const d = beStatsState.data, dataEnd = (beStatsState.manifest || {}).dataEnd;
+    const s = bsContentState_();
+    const items = bsContentItems_(s.media).filter(function (it) { return it.date <= dataEnd; });
+    const firstDate = items.length ? items.reduce(function (m, it) { return it.date < m ? it.date : m; }, items[0].date) : dataEnd;
+    const years = Array.from(new Set(items.map(function (it) { return it.date.slice(0, 4); }))).sort().reverse();
+    const range = bsContentRange(s.period, dataEnd, firstDate);
+    const tags = BS_CONTENT_TAGS[s.media];
+    if (!tags.some(function (t) { return t[0] === s.tag[s.media]; })) s.tag[s.media] = tags[0][0];
+    const tag = s.tag[s.media];
+
+    const mediaTabs = '<div class="ui-tabs bestats-media" role="group" aria-label="媒体">' + BS_CONTENT_MEDIA.map(function (m) {
+      return '<button type="button" class="ui-tab' + (m[0] === s.media ? ' active' : '') + '" onclick="setBeStatsMedia(\'' + m[0] + '\')">' + m[1] + '</button>';
+    }).join('') + '</div>';
+    const periodSelect = '<select class="ui-input" aria-label="期間" onchange="setBeStatsContentPeriod(this.value)">'
+      + '<option value="all"' + (s.period === 'all' ? ' selected' : '') + '>全期間</option>'
+      + '<option value="365"' + (s.period === '365' ? ' selected' : '') + '>直近1年</option>'
+      + years.map(function (y) { return '<option value="' + y + '"' + (s.period === y ? ' selected' : '') + '>' + y + '年</option>'; }).join('') + '</select>';
+    const aggSelect = '<select class="ui-input" aria-label="集計" onchange="setBeStatsContentAgg(this.value)">'
+      + '<option value="month"' + (s.agg === 'month' ? ' selected' : '') + '>月ごと</option>'
+      + '<option value="year"' + (s.agg === 'year' ? ' selected' : '') + (s.period === 'all' ? '' : ' disabled') + '>年ごと</option></select>';
+    const tagChips = '<div class="bestats-tags" role="group" aria-label="内訳">' + tags.map(function (t) {
+      return '<button type="button" class="ui-chip" aria-pressed="' + (t[0] === tag ? 'true' : 'false') + '" onclick="setBeStatsContentTag(\'' + t[0] + '\')">' + t[1] + '</button>';
+    }).join('') + '</div>';
+
+    let body = '';
+    if (s.media === 'tv') body = renderBeStatsTv_(tag, range, dataEnd, tags[0][0] === tag);
+    else if (s.media === 'live') body = renderBeStatsLive_(tag, range, dataEnd, tags[0][0] === tag);
+    else body = renderBeStatsYoutube_(tag, range, dataEnd, tags[0][0] === tag);
+
+    panel.innerHTML = '<div class="bestats-controls">' + mediaTabs + '<div class="bestats-content-controls">' + periodSelect + aggSelect + '</div>' + tagChips + '</div>' + body;
+    if (beStatsState.pendingChart) { const c = beStatsState.pendingChart; beStatsState.pendingChart = null; drawBeStatsBarChart_(c); }
+  }
+
+  // グラフと期間の合計（最初のタグだけ）
+  function bsCountChartBlock_(title, items, range, dataEnd, keyFn, keyLabels, totalLabel) {
+    const s = bsContentState_();
+    const b = bsBucketize(items, range.from, range.to, s.agg, keyFn);
+    beStatsState.pendingChart = {
+      labels: b.months.map(function (m) { return bsBucketLabel(m, s.agg, dataEnd); }),
+      keys: b.keys, counts: b.counts, keyLabels: keyLabels || {}, stacked: b.keys.length > 1
+    };
+    return '<section class="bestats-section"><p class="ui-label bestats-total-label">' + escapeHtml(totalLabel) + '</p><p class="ui-num ui-num-xl bestats-big">' + b.total + '</p>'
+      + '<h2 class="ui-label bestats-section-title">' + escapeHtml(title) + '</h2><div class="ui-panel bestats-chart"><canvas id="beStatsBarChart" aria-label="' + escapeHtml(title) + '"></canvas></div></section>';
+  }
+
+  function drawBeStatsBarChart_(c) {
+    destroyBeStatsChart();
+    const canvas = document.getElementById('beStatsBarChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const text = bsCssVar_('--ui-text'), sub = bsCssVar_('--ui-text-sub'), grid = bsCssVar_('--ui-line');
+    const colors = c.keys.length > 1 ? [bsCssVar_('--ui-media-youtube'), sub] : [text];
+    beStatsChart = new Chart(canvas, {
+      type: 'bar',
+      data: {labels: c.labels, datasets: c.keys.map(function (k, i) { return {label: c.keyLabels[k] || '', data: c.counts[k], backgroundColor: colors[i % colors.length], borderWidth: 0}; })},
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        plugins: {legend: {display: c.stacked, labels: {color: sub, boxWidth: 10}}},
+        scales: {
+          x: {stacked: true, grid: {display: false}, ticks: {color: sub, maxRotation: 0, autoSkip: c.labels.length > 12, maxTicksLimit: 8}},
+          y: {stacked: true, beginAtZero: true, grid: {color: grid}, ticks: {color: sub, precision: 0, maxTicksLimit: 5}}
+        }
+      }
+    });
+  }
+
+  // ---- TV出演 ----
+  function renderBeStatsTv_(tag, range, dataEnd, isFirst) {
+    const d = beStatsState.data.tv;
+    const inRange = d.appearances.filter(function (a) { return a.date >= range.from && a.date <= range.to; });
+    const programName = {}, programCategory = {};
+    d.programs.forEach(function (p) { programName[p.programId] = p.name; programCategory[p.programId] = p.category; });
+    if (tag === 'count') return bsCountChartBlock_('出演回数', d.appearances.map(function (a) { return {date: a.date}; }), range, dataEnd, null, null, '期間の合計（出演）');
+    if (tag === 'program') {
+      const rows = bsCountBy(inRange, function (a) { return a.programId; });
+      if (!rows.length) return '<div class="ui-empty">この期間の記録はありません</div>';
+      return '<div class="ui-list">' + rows.map(function (r) {
+        const dates = inRange.filter(function (a) { return a.programId === r.key; }).map(function (a) { return a.date; }).sort().reverse();
+        return bsAccordion_('tv-' + r.key, '<span class="bestats-row-main"><strong class="ui-strong">' + escapeHtml(programName[r.key] || r.key) + '</strong></span><span class="ui-num bestats-rank-count">' + r.count + '</span>',
+          dates.map(function (x) { return '<p class="ui-muted bestats-acc-line">' + bsSlashDate(x) + '</p>'; }).join(''));
+      }).join('') + '</div>';
+    }
+    if (tag === 'songs') {
+      return bsRank_(bsTvSongRanking(d.appearances, range.from, range.to, bsSongTitleOf_).map(function (r) { return {label: r.title, count: r.count}; }));
+    }
+    // 出演履歴：夏特番と年末特番の表（期間には影響されない）
+    const years = Array.from(new Set(d.matrix.reduce(function (acc, m) { return acc.concat(Object.keys(m.years)); }, []))).sort();
+    const table = function (category) {
+      const progs = d.programs.filter(function (p) { return p.category === category; });
+      if (!progs.length) return '';
+      const byProgram = {}; d.matrix.forEach(function (m) { byProgram[m.programId] = m.years; });
+      return '<h2 class="ui-label bestats-section-title">' + escapeHtml(category) + '</h2><div class="bestats-table-wrap"><table class="ui-table bestats-matrix"><thead><tr><th>番組</th>'
+        + years.map(function (y) { return '<th class="num">’' + escapeHtml(y.slice(2)) + '</th>'; }).join('') + '</tr></thead><tbody>'
+        + progs.map(function (p) { return '<tr><td>' + escapeHtml(p.name) + '</td>' + years.map(function (y) { return '<td class="num">' + escapeHtml(bsMatrixSymbol((byProgram[p.programId] || {})[y])) + '</td>'; }).join('') + '</tr>'; }).join('')
+        + '</tbody></table></div>';
+    };
+    return '<section class="bestats-section">' + table('夏特番') + table('年末特番') + '<p class="ui-muted bestats-legend">○ 出演　× 記録なし　予 出演予定（披露曲未定）　－ 発表前</p></section>';
+  }
+
+  // ---- ライブ披露 ----
+  function renderBeStatsLive_(tag, range, dataEnd, isFirst) {
+    const d = beStatsState.data.live;
+    const inRange = d.shows.filter(function (x) { return x.date >= range.from && x.date <= range.to && x.date <= dataEnd; });
+    const showLine = function (x) { return '<span class="bestats-row-main"><span><span class="ui-muted">' + bsSlashDate(x.date) + '</span>　' + escapeHtml(x.slot || '') + '</span><strong class="ui-strong">' + escapeHtml(x.title) + '</strong><span class="ui-muted">' + escapeHtml(x.region || '') + '</span></span>'; };
+    if (tag === 'count') return bsCountChartBlock_('公演回数', d.shows.map(function (x) { return {date: x.date}; }), range, dataEnd, null, null, '期間の合計（公演）');
+    if (tag === 'history') {
+      const list = inRange.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+      return list.length ? '<div class="ui-list">' + list.map(function (x) { return '<div class="ui-row ui-row-plain bestats-act">' + showLine(x) + '</div>'; }).join('') + '</div>' : '<div class="ui-empty">この期間の記録はありません</div>';
+    }
+    if (tag === 'region') return bsRank_(bsCountBy(inRange, function (x) { return x.region; }).map(function (r) { return {label: r.key, count: r.count}; }));
+    if (tag === 'songs') return bsRank_(bsLiveSongRanking(d.shows, range.from, range.to).map(function (r) { return {label: r.title, count: r.count}; }));
+    if (tag === 'tour') {
+      if (!d.tours.length) return '<div class="ui-empty">ツアーの記録はありません</div>';
+      const tours = d.tours.slice().sort(function (a, b) { return a.start < b.start ? 1 : -1; });
+      return '<div class="ui-list">' + tours.map(function (t) {
+        const pct = t.shows ? Math.round(t.showsWithSetlist / t.shows * 100) : 0;
+        const shows = d.shows.filter(function (x) { return x.tourId === t.tourId; }).sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+        return bsAccordion_('tour-' + t.tourId, '<span class="bestats-row-main"><strong class="ui-strong">' + escapeHtml(t.name) + '</strong><span class="ui-muted">セトリ ' + t.showsWithSetlist + '/' + t.shows + '（' + pct + '%）</span></span>',
+          shows.map(function (x) {
+            const setlist = (x.setlist || []).slice().sort(function (a, b) { return a.order - b.order; });
+            return bsAccordion_('show-' + x.eventId, '<span class="bestats-row-main"><span><span class="ui-muted">' + bsSlashDate(x.date) + '</span>　' + escapeHtml(x.slot || '') + '</span></span>',
+              setlist.length ? '<ol class="bestats-setlist">' + setlist.map(function (sg) { return '<li>' + escapeHtml(sg.title || String(sg.songId)) + '</li>'; }).join('') + '</ol>' : '<p class="ui-muted bestats-acc-line">セトリ未登録</p>');
+          }).join(''));
+      }).join('') + '</div>';
+    }
+    // 曲順：公演ごとの OP / MAINラスト / アンコール
+    const list = inRange.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+    if (!list.length) return '<div class="ui-empty">この期間の記録はありません</div>';
+    return '<div class="bestats-table-wrap"><table class="ui-table bestats-order"><thead><tr><th>公演</th><th>OP</th><th>MAINラスト</th><th>アンコール</th></tr></thead><tbody>'
+      + list.map(function (x) {
+        const m = bsSetlistMarks(x.setlist);
+        return '<tr><td>' + bsSlashDate(x.date) + '<br>' + escapeHtml(x.slot || '') + '</td>'
+          + (m ? '<td>' + escapeHtml(m.op) + '</td><td>' + escapeHtml(m.mainLast || '—') + '</td><td>' + (m.encore.length ? m.encore.map(escapeHtml).join('<br>') : 'なし') + '</td>' : '<td colspan="3" class="ui-muted">セトリ未登録</td>')
+          + '</tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+
+  // ---- YouTube（Shorts を含める） ----
+  function renderBeStatsYoutube_(tag, range, dataEnd, isFirst) {
+    const s = bsContentState_();
+    const all = beStatsState.data.youtube.videos.filter(function (v) { return v.date <= dataEnd; });
+    const inRange = all.filter(function (v) { return v.date >= range.from && v.date <= range.to; });
+    const picked = s.genre ? inRange.filter(function (v) { return v.genre === s.genre; }) : inRange;
+    const typeLabels = {normal: '通常動画', shorts: 'Shorts'};
+    if (tag === 'count') {
+      const title = s.genre ? s.genre + 'の推移（ジャンルの一覧で選択中）' : '投稿本数';
+      return bsCountChartBlock_(title, all.filter(function (v) { return !s.genre || v.genre === s.genre; }).map(function (v) { return {date: v.date, type: v.type}; }), range, dataEnd, function (v) { return v.type; }, typeLabels, '期間の合計（投稿）');
+    }
+    if (tag === 'genre') {
+      const stats = bsGenreStats(inRange);
+      const years = Array.from(new Set(inRange.map(function (v) { return v.date.slice(0, 4); }))).sort();
+      const row = function (g, label, key) {
+        const head = '<span class="bestats-row-main"><strong class="ui-strong">' + escapeHtml(label) + '</strong><span class="ui-muted">通常 ' + g.normal + '　Shorts ' + g.shorts + '　' + (g.share * 100).toFixed(1) + '%</span>'
+          + '<span class="ui-muted">' + years.map(function (y) { return y + '：' + (g.byYear[y] || 0); }).join('　') + '</span></span><span class="ui-num bestats-rank-count">' + g.total + '</span>';
+        return '<button type="button" class="ui-row bestats-genre" aria-pressed="' + (s.genre === key ? 'true' : 'false') + '" onclick="selectBeStatsGenre(\'' + escapeHtml(key).replace(/'/g, '&#39;') + '\')">' + head + '</button>';
+      };
+      const total = {normal: inRange.filter(function (v) { return v.type !== 'shorts'; }).length, shorts: inRange.filter(function (v) { return v.type === 'shorts'; }).length, share: 1, total: inRange.length, byYear: {}};
+      inRange.forEach(function (v) { const y = v.date.slice(0, 4); total.byYear[y] = (total.byYear[y] || 0) + 1; });
+      let html = '<div class="ui-list">' + row(total, 'すべてのジャンル', '') + stats.map(function (g) { return row(g, g.genre, g.genre); }).join('') + '</div>';
+      if (s.genre) html += '<h2 class="ui-label bestats-section-title bestats-genre-title">' + escapeHtml(s.genre) + '</h2>' + bsVideoList_(picked, s.ytShown);
+      return html;
+    }
+    return bsVideoList_(inRange, s.ytShown);
+  }
+
+  function bsVideoList_(videos, shown) {
+    const list = videos.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+    if (!list.length) return '<div class="ui-empty">この期間の記録はありません</div>';
+    return '<div class="ui-list">' + list.slice(0, shown).map(function (v) {
+      return '<div class="ui-row ui-row-plain bestats-act"><span class="ui-badge">' + (v.type === 'shorts' ? 'Shorts' : '動画') + '</span><span class="bestats-row-main"><span class="ui-muted">' + bsSlashDate(v.date) + '</span><span>' + escapeHtml(v.title) + '</span></span></div>';
+    }).join('') + '</div>' + (list.length > shown ? '<button type="button" class="ui-btn ui-btn-wide bestats-more" onclick="showMoreBeStatsVideos()">もっと見る</button>' : '');
+  }
+</script>

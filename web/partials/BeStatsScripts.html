@@ -74,10 +74,10 @@
     if (!beStatsState.data) { panel.innerHTML = ''; return; }
     const m = beStatsState.manifest || {};
     const source = '<p class="ui-muted bestats-source">データ ' + escapeHtml(m.dataEnd || '') + ' まで' + (beStatsState.sample ? '（サンプル）' : '') + '</p>';
-    if (beStatsState.view === 'home' || beStatsState.view === 'metrics') {
+    if (beStatsState.view === 'home' || beStatsState.view === 'metrics' || beStatsState.view === 'content') {
       panel.innerHTML = source + '<div id="beStatsBody"></div>';
       const body = document.getElementById('beStatsBody');
-      if (beStatsState.view === 'home') renderBeStatsHome(body); else renderBeStatsMetrics(body);
+      if (beStatsState.view === 'home') renderBeStatsHome(body); else if (beStatsState.view === 'metrics') renderBeStatsMetrics(body); else renderBeStatsContent(body);
       return;
     }
     panel.innerHTML = source + '<div class="ui-empty">' + escapeHtml(BESTATS_VIEW_LABELS[beStatsState.view]) + 'は準備中です。</div>';

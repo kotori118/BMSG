@@ -185,4 +185,115 @@
     const done = items.filter(function (i) { return i.date <= today; }).sort(function (a, b) { return a.date < b.date ? 1 : -1; });
     return {planned: planned, done: done};
   }
+
+  // ---- コンテンツ（TV出演・ライブ披露・YouTube）の集計 ----
+
+  // 期間の選び方（全期間 / 直近1年 / 年）から日付の範囲。firstDate はその媒体の一番古い日付
+  function bsContentRange(period, dataEnd, firstDate) {
+    if (/^\d{4}$/.test(String(period))) {
+      const y = String(period);
+      return {from: y + '-01-01', to: y + '-12-31' < dataEnd ? y + '-12-31' : dataEnd};
+    }
+    if (period === '365') return {from: bsAddDays(dataEnd, -364), to: dataEnd};
+    return {from: firstDate && firstDate < dataEnd ? firstDate : dataEnd, to: dataEnd};
+  }
+
+  // 月ごと／年ごとの棒。items: [{date, ...}]、keyFn で積み上げの種類を分ける。
+  // 返り値 {labels, months（各棒の年月 or 年）, keys, counts:{key:[…]}, totals:[…], total}
+  function bsBucketize(items, from, to, agg, keyFn) {
+    const months = [];
+    if (agg === 'year') {
+      for (let y = Number(from.slice(0, 4)); y <= Number(to.slice(0, 4)); y++) months.push(String(y));
+    } else {
+      let y = Number(from.slice(0, 4)), m = Number(from.slice(5, 7));
+      const endY = Number(to.slice(0, 4)), endM = Number(to.slice(5, 7));
+      while (y < endY || (y === endY && m <= endM)) {
+        months.push(y + '-' + (m < 10 ? '0' : '') + m);
+        m++; if (m > 12) { m = 1; y++; }
+      }
+    }
+    const index = {}; months.forEach(function (label, i) { index[label] = i; });
+    const keys = [], counts = {};
+    const totals = months.map(function () { return 0; });
+    let total = 0;
+    (items || []).forEach(function (it) {
+      if (it.date < from || it.date > to) return;
+      const i = index[agg === 'year' ? it.date.slice(0, 4) : it.date.slice(0, 7)];
+      if (i === undefined) return;
+      const key = keyFn ? keyFn(it) : 'all';
+      if (!counts[key]) { counts[key] = months.map(function () { return 0; }); keys.push(key); }
+      counts[key][i]++; totals[i]++; total++;
+    });
+    if (!keys.length) { keys.push('all'); counts.all = totals.slice(); }
+    return {months: months, keys: keys, counts: counts, totals: totals, total: total};
+  }
+
+  // 棒の下の名前。年ごとの今年は「2026（11月まで）」
+  function bsBucketLabel(label, agg, dataEnd) {
+    if (agg === 'year') return label === dataEnd.slice(0, 4) ? label + '（' + Number(dataEnd.slice(5, 7)) + '月まで）' : label;
+    return label.slice(2).replace('-', '/');
+  }
+
+  // 数えて、多い順（同じ数は名前の順）。[{key, count}]
+  function bsCountBy(list, keyFn) {
+    const map = {};
+    list.forEach(function (it) { const k = keyFn(it); if (k === '' || k === null || k === undefined) return; map[k] = (map[k] || 0) + 1; });
+    return Object.keys(map).map(function (k) { return {key: k, count: map[k]}; }).sort(function (a, b) { return b.count - a.count || (a.key < b.key ? -1 : 1); });
+  }
+
+  // TVの披露曲：期間内の出演で、曲ごとの披露件数
+  function bsTvSongRanking(appearances, from, to, titleOf) {
+    const rows = [];
+    (appearances || []).forEach(function (a) {
+      if (a.date < from || a.date > to) return;
+      (a.songs || []).forEach(function (s) { rows.push({songId: String(s.songId)}); });
+    });
+    return bsCountBy(rows, function (r) { return r.songId; }).map(function (r) { return {songId: r.key, title: titleOf(r.key), count: r.count}; });
+  }
+
+  // ライブの披露曲：披露した公演数（披露集計対象のみ。同じ公演で同じ曲が複数あっても1回）
+  function bsLiveSongRanking(shows, from, to) {
+    const map = {};
+    (shows || []).forEach(function (sh) {
+      if (sh.date < from || sh.date > to) return;
+      const seen = {};
+      (sh.setlist || []).forEach(function (s) {
+        if (!s.counted || seen[s.songId]) return;
+        seen[s.songId] = true;
+        (map[s.songId] = map[s.songId] || {songId: String(s.songId), title: s.title || String(s.songId), count: 0}).count++;
+      });
+    });
+    return Object.keys(map).map(function (k) { return map[k]; }).sort(function (a, b) { return b.count - a.count || (a.title < b.title ? -1 : 1); });
+  }
+
+  // 曲順：OP（一番小さい曲順）／MAINラスト（MAIN の中で一番大きい曲順）／アンコール（ENCORE 全部）
+  function bsSetlistMarks(setlist) {
+    const list = (setlist || []).slice().sort(function (a, b) { return a.order - b.order; });
+    if (!list.length) return null;
+    const mains = list.filter(function (s) { return s.section === 'MAIN'; });
+    return {
+      op: list[0].title,
+      mainLast: mains.length ? mains[mains.length - 1].title : null,
+      encore: list.filter(function (s) { return s.section === 'ENCORE'; }).map(function (s) { return s.title; })
+    };
+  }
+
+  // YouTube のジャンル別：件数・割合・通常動画とShortsの内訳・年ごとの件数。多い順
+  function bsGenreStats(videos) {
+    const all = videos.length, map = {};
+    videos.forEach(function (v) {
+      const g = v.genre;
+      const e = (map[g] = map[g] || {genre: g, total: 0, normal: 0, shorts: 0, byYear: {}});
+      e.total++; if (v.type === 'shorts') e.shorts++; else e.normal++;
+      const y = v.date.slice(0, 4); e.byYear[y] = (e.byYear[y] || 0) + 1;
+    });
+    return Object.keys(map).map(function (k) { map[k].share = all ? map[k].total / all : 0; return map[k]; })
+      .sort(function (a, b) { return b.total - a.total || (a.genre < b.genre ? -1 : 1); });
+  }
+
+  // 出演履歴の表の記号。○ ×、予は「予」、？（発表前）は「－」
+  function bsMatrixSymbol(value) {
+    if (value === '○' || value === '×' || value === '予') return value;
+    return '－';
+  }
 </script>

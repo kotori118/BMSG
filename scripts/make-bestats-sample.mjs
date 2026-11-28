@@ -47,35 +47,77 @@ const songs = Array.from({length: 12}, (_, i) => ({
   SongID: String(1001 + i), Title: `サンプル曲${i + 1}`, ArtistID: 'G1', ReleaseDate: addDays('2025-01-10', i * 45), Form: i % 3 === 0 ? 'シングル' : 'アルバム', CDTitle: `サンプルCD${Math.floor(i / 3) + 1}`, IsTitleTrack: i % 3 === 0,
 }));
 
+// 決まった並びの疑似乱数（毎回同じサンプルになる）
+let seed = 12345;
+const rand = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
+const pick = (list) => list[Math.floor(rand() * list.length)];
+const dateIn = (from, days) => addDays(from, Math.floor(rand() * days));
+
 const programs = [
   {programId: 'PG001', name: 'サンプル歌謡祭', station: 'サンプルテレビ系', category: '年末特番'},
+  {programId: 'PG002', name: 'サンプルベストアーティスト', station: 'サンプルテレビ系', category: '年末特番'},
+  {programId: 'PG003', name: 'サンプル紅白', station: 'サンプルテレビ系', category: '年末特番'},
   {programId: 'PG010', name: 'サンプル夏フェス', station: 'サンプルテレビ系', category: '夏特番'},
+  {programId: 'PG011', name: 'サンプル音楽の日', station: 'サンプルテレビ系', category: '夏特番'},
   {programId: 'PG020', name: 'サンプルミュージック', station: 'サンプルテレビ系', category: 'レギュラー'},
+  {programId: 'PG021', name: 'サンプルライブショー', station: 'サンプルテレビ系', category: 'レギュラー'},
+  {programId: 'PG030', name: 'サンプルスペシャル', station: 'サンプルテレビ系', category: '特番・その他'},
 ];
-const appearances = [
-  {appearanceId: 'AP0001', programId: 'PG001', date: '2025-12-31', songs: [{order: 1, songId: '1003'}]},
-  {appearanceId: 'AP0002', programId: 'PG010', date: '2026-07-25', songs: [{order: 1, songId: '1006'}, {order: 2, songId: '1007'}]},
-  {appearanceId: 'AP0003', programId: 'PG020', date: '2026-10-10', songs: [{order: 1, songId: '1010'}]},
-];
-const matrix = [
-  {programId: 'PG001', years: {2024: '×', 2025: '○', 2026: '？'}},
-  {programId: 'PG010', years: {2024: '×', 2025: '×', 2026: '○'}},
-  {programId: 'PG020', years: {2024: '○', 2025: '×', 2026: '予'}},
-];
+const appearances = [];
+for (let i = 0; i < 46; i++) {
+  const date = dateIn('2023-01-05', 1420);
+  if (date > DATA_END) continue;
+  const prog = pick(programs);
+  const count = 1 + Math.floor(rand() * 3);
+  appearances.push({appearanceId: 'AP' + String(i + 1).padStart(4, '0'), programId: prog.programId, date,
+    songs: Array.from({length: count}, (_, k) => ({order: k + 1, songId: pick(songs).SongID}))});
+}
+appearances.sort((a, b) => a.date.localeCompare(b.date));
+const years = [2023, 2024, 2025, 2026];
+const matrix = programs.map((p) => ({programId: p.programId, years: Object.fromEntries(years.map((y) => {
+  const has = appearances.some((a) => a.programId === p.programId && a.date.startsWith(String(y)));
+  return [y, y === 2026 && p.category === '年末特番' ? (p.programId === 'PG002' ? '予' : '？') : (has ? '○' : '×')];
+}))}));
 
-const shows = [
-  {eventId: 'EVT001', date: '2026-05-01', tourId: 'TR001', title: 'サンプルツアー', venue: 'サンプルホール', region: '東京都', slot: '昼公演',
-    setlist: [{order: 1, songId: '1001', title: 'サンプル曲1', section: 'MAIN', counted: true}, {order: 2, songId: '1002', title: 'サンプル曲2', section: 'MAIN', counted: true}, {order: 3, songId: '1003', title: 'サンプル曲3', section: 'ENCORE', counted: true}]},
-  {eventId: 'EVT002', date: '2026-05-02', tourId: 'TR001', title: 'サンプルツアー', venue: 'サンプルホール', region: '大阪府', slot: '夜公演', setlist: []},
-  {eventId: 'EVT003', date: '2026-12-20', tourId: 'TR002', title: 'サンプル年末ライブ', venue: 'サンプルアリーナ', region: '東京都', slot: '夜公演', setlist: []},
+const regions = ['東京都', '大阪府', '愛知県', '福岡県', '北海道', '宮城県'];
+const tours = [
+  {tourId: 'TR001', name: 'サンプルツアー 2025', start: '2025-04-01', end: '2025-07-31'},
+  {tourId: 'TR002', name: 'サンプルアリーナツアー 2026', start: '2026-03-01', end: '2026-06-30'},
+  {tourId: 'TR003', name: 'サンプルファンミーティング', start: '2026-09-01', end: '2026-10-31'},
+  {tourId: 'TR004', name: 'サンプル年末ライブ', start: '2026-12-20', end: '2026-12-20'},
 ];
-const tours = [{tourId: 'TR001', name: 'サンプルツアー', start: '2026-05-01', end: '2026-05-02', shows: 2, showsWithSetlist: 1}, {tourId: 'TR002', name: 'サンプル年末ライブ', start: '2026-12-20', end: '2026-12-20', shows: 1, showsWithSetlist: 0}];
+const shows = [];
+let showNo = 1;
+tours.forEach((t, ti) => {
+  const n = ti === 3 ? 1 : 6 + ti * 2;
+  for (let k = 0; k < n; k++) {
+    const date = ti === 3 ? t.start : addDays(t.start, Math.floor(k * (bsDays(t.start, t.end) / Math.max(n - 1, 1))));
+    const hasSetlist = ti !== 3 && !(ti === 2 && k % 3 === 2);
+    const setCount = 14 + Math.floor(rand() * 5);
+    const setlist = hasSetlist ? Array.from({length: setCount}, (_, o) => {
+      const song = pick(songs);
+      return {order: o + 1, songId: song.SongID, title: song.Title, section: o >= setCount - 3 ? 'ENCORE' : 'MAIN', counted: true};
+    }) : [];
+    shows.push({eventId: 'EVT' + String(showNo++).padStart(3, '0'), date, tourId: t.tourId, title: t.name, venue: 'サンプル会場' + (k + 1), region: pick(regions), slot: k % 2 ? '夜公演' : '昼公演', setlist});
+  }
+});
+function bsDays(a, b) { return Math.round((new Date(b + 'T00:00:00Z') - new Date(a + 'T00:00:00Z')) / 86400000); }
+tours.forEach((t) => {
+  const own = shows.filter((x) => x.tourId === t.tourId);
+  t.shows = own.length; t.showsWithSetlist = own.filter((x) => x.setlist.length).length;
+});
 
-const videos = [
-  {videoId: 'SAMPLE000001', date: '2026-11-10', title: 'サンプル MV', type: 'normal', genre: 'MV・パフォーマンス', songId: '1011', liveRef: null, tvRef: null},
-  {videoId: 'SAMPLE000002', date: '2026-11-12', title: 'サンプル Vlog', type: 'normal', genre: 'Vlog', songId: null, liveRef: 'TR001', tvRef: null},
-  {videoId: 'SAMPLE000003', date: '2026-11-15', title: 'サンプル Short', type: 'shorts', genre: '楽曲関連Short', songId: '1011', liveRef: null, tvRef: null},
-];
+const genres = ['MV・パフォーマンス', 'Vlog', 'Behind', 'ダンス', 'テレビ歌唱', 'ライブ本編', 'バラエティ'];
+const shortGenres = ['楽曲関連Short', 'その他Short'];
+const videos = [];
+for (let i = 0; i < 160; i++) {
+  const date = dateIn('2023-02-01', 1390);
+  if (date > DATA_END) continue;
+  const shorts = rand() < 0.4;
+  videos.push({videoId: 'SAMPLE' + String(i + 1).padStart(6, '0'), date, title: (shorts ? 'サンプル Short ' : 'サンプル動画 ') + (i + 1), type: shorts ? 'shorts' : 'normal',
+    genre: shorts ? pick(shortGenres) : pick(genres), songId: rand() < 0.5 ? pick(songs).SongID : null, liveRef: null, tvRef: null});
+}
+videos.sort((a, b) => b.date.localeCompare(a.date));
 
 const events = [
   ...songs.map((s) => ({date: s.ReleaseDate, kind: 'release', name: s.Title})),

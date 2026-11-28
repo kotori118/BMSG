@@ -7,7 +7,7 @@ import vm from 'node:vm';
 // 画面に触らない計算（web/partials/BeStatsCalc.html の <script>）をそのまま動かす
 const file = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', 'web', 'partials', 'BeStatsCalc.html');
 const source = fs.readFileSync(file, 'utf8').replace(/^<script>\n?/, '').replace(/<\/script>\s*$/, '');
-const names = ['bsAddDays', 'bsDaysBetween', 'bsSeries', 'bsValueOn', 'bsFormatCount', 'bsFormatSigned', 'bsFormatPercent', 'bsMilestonesUpTo', 'bsMilestoneLabel', 'bsNotableMoves', 'bsRange', 'bsLast30', 'bsDayChange', 'bsAfter30', 'bsYearlyAverages', 'bsEventsInRange', 'bsActivityItems'];
+const names = ['bsAddDays', 'bsDaysBetween', 'bsSeries', 'bsValueOn', 'bsFormatCount', 'bsFormatSigned', 'bsFormatPercent', 'bsMilestonesUpTo', 'bsMilestoneLabel', 'bsNotableMoves', 'bsRange', 'bsLast30', 'bsDayChange', 'bsAfter30', 'bsYearlyAverages', 'bsEventsInRange', 'bsActivityItems', 'bsContentRange', 'bsBucketize', 'bsBucketLabel', 'bsCountBy', 'bsTvSongRanking', 'bsLiveSongRanking', 'bsSetlistMarks', 'bsGenreStats', 'bsMatrixSymbol'];
 const context = vm.createContext({});
 vm.runInContext(source + `\nthis.api = {${names.join(',')}};`, context);
 const api = context.api;
@@ -125,4 +125,63 @@ test('直近の活動：Shorts は入れない。今日より後が予定', () =
   const r = api.bsActivityItems(data, '2026-11-28');
   assert.deepEqual(Array.from(r.planned, (i) => i.type), ['LIVE']);
   assert.deepEqual(Array.from(r.done, (i) => i.title), ['動画', '番組']);
+});
+
+test('コンテンツ：期間の範囲と月ごと・年ごとの棒', () => {
+  assert.deepEqual({...api.bsContentRange('all', '2026-11-29', '2025-11-05')}, {from: '2025-11-05', to: '2026-11-29'});
+  assert.deepEqual({...api.bsContentRange('365', '2026-11-29', '2021-01-01')}, {from: '2025-11-30', to: '2026-11-29'});
+  assert.deepEqual({...api.bsContentRange('2026', '2026-11-29', '2021-01-01')}, {from: '2026-01-01', to: '2026-11-29'});
+  const items = [{date: '2025-12-31'}, {date: '2026-01-02'}, {date: '2026-01-20'}, {date: '2026-03-05'}, {date: '2027-01-01'}];
+  const m = api.bsBucketize(items, '2025-12-01', '2026-03-31', 'month');
+  assert.deepEqual(Array.from(m.months), ['2025-12', '2026-01', '2026-02', '2026-03']);
+  assert.deepEqual(Array.from(m.totals), [1, 2, 0, 1]);
+  assert.equal(m.total, 4);
+  const y = api.bsBucketize(items, '2025-01-01', '2026-12-31', 'year');
+  assert.deepEqual(Array.from(y.totals), [1, 3]);
+  assert.equal(api.bsBucketLabel('2026', 'year', '2026-11-29'), '2026（11月まで）');
+  assert.equal(api.bsBucketLabel('2025', 'year', '2026-11-29'), '2025');
+  assert.equal(api.bsBucketLabel('2026-01', 'month', '2026-11-29'), '26/01');
+});
+
+test('コンテンツ：積み上げ（通常動画とShorts）', () => {
+  const items = [{date: '2026-01-02', type: 'normal'}, {date: '2026-01-03', type: 'shorts'}, {date: '2026-01-04', type: 'shorts'}];
+  const m = api.bsBucketize(items, '2026-01-01', '2026-01-31', 'month', (v) => v.type);
+  assert.deepEqual(Array.from(m.keys), ['normal', 'shorts']);
+  assert.deepEqual(Array.from(m.counts.normal), [1]);
+  assert.deepEqual(Array.from(m.counts.shorts), [2]);
+});
+
+test('コンテンツ：TV・ライブの披露曲ランキングは期間内、ライブは披露集計対象のみ・同じ公演は1回', () => {
+  const apps = [{date: '2026-01-01', songs: [{songId: '1'}, {songId: '2'}]}, {date: '2026-02-01', songs: [{songId: '1'}]}, {date: '2020-01-01', songs: [{songId: '9'}]}];
+  const tv = api.bsTvSongRanking(apps, '2026-01-01', '2026-12-31', (id) => '曲' + id);
+  assert.deepEqual(Array.from(tv, (r) => [r.title, r.count]), [['曲1', 2], ['曲2', 1]]);
+  const shows = [
+    {date: '2026-05-01', setlist: [{songId: '1', title: 'A', counted: true}, {songId: '1', title: 'A', counted: true}, {songId: '2', title: 'B', counted: false}]},
+    {date: '2026-05-02', setlist: [{songId: '1', title: 'A', counted: true}]},
+  ];
+  const live = api.bsLiveSongRanking(shows, '2026-01-01', '2026-12-31');
+  assert.deepEqual(Array.from(live, (r) => [r.title, r.count]), [['A', 2]]);
+});
+
+test('コンテンツ：曲順（OP・MAINラスト・アンコール）', () => {
+  const setlist = [
+    {order: 3, title: 'C', section: 'MAIN'}, {order: 1, title: 'A', section: 'MAIN'}, {order: 2, title: 'B', section: 'MAIN'},
+    {order: 4, title: 'E1', section: 'ENCORE'}, {order: 5, title: 'E2', section: 'ENCORE'},
+  ];
+  const marks = api.bsSetlistMarks(setlist);
+  assert.equal(marks.op, 'A'); assert.equal(marks.mainLast, 'C'); assert.deepEqual(Array.from(marks.encore), ['E1', 'E2']);
+  assert.equal(api.bsSetlistMarks([]), null);
+  assert.deepEqual(Array.from(api.bsSetlistMarks([{order: 1, title: 'A', section: 'MAIN'}]).encore), []);
+});
+
+test('コンテンツ：ジャンル別と出演履歴の記号', () => {
+  const videos = [
+    {genre: 'Vlog', type: 'normal', date: '2025-01-01'}, {genre: 'Vlog', type: 'normal', date: '2026-01-01'},
+    {genre: '楽曲関連Short', type: 'shorts', date: '2026-02-01'},
+  ];
+  const stats = api.bsGenreStats(videos);
+  assert.deepEqual(Array.from(stats, (g) => [g.genre, g.total, g.normal, g.shorts]), [['Vlog', 2, 2, 0], ['楽曲関連Short', 1, 0, 1]]);
+  assert.equal(Math.round(stats[0].share * 100), 67);
+  assert.deepEqual({...stats[0].byYear}, {2025: 1, 2026: 1});
+  assert.deepEqual(['○', '×', '予', '？', ''].map(api.bsMatrixSymbol), ['○', '×', '予', '－', '－']);
 });
