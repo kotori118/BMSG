@@ -26,7 +26,7 @@
   function resetSlmNewState_(){songLyricsManagementState.newStep=1;songLyricsManagementState.newSong={artist:'',title:'',releaseDate:'',form:'',cdTitle:'',isTitleTrack:false};songLyricsManagementState.newCredits={lyricists:'',composers:'',choreographers:''};songLyricsManagementState.rawLyrics='';songLyricsManagementState.includeLyrics=true;songLyricsManagementState.preview=null;songLyricsManagementState.unknownQueue=[];songLyricsManagementState.ignoredGuestCandidates=[];songLyricsManagementState.ignoredGuestSource='';}
   function startSlmExisting(){songLyricsManagementState.view='existingSelect';songLyricsManagementState.existing=null;songLyricsManagementState.dirty={info:false,credits:false,lyrics:false};renderSlm();}
   function slmIsPersonal_(id){return /^M\d+$/.test(String(id||''));}
-  function slmIsBeFirst_(id){return id==='G1'||id==='BE:FIRST';}
+  function slmIsBeFirst_(id){return isUniverseBeFirst(id);}
   // 形態・CDタイトル・表題曲は BE:FIRST の曲だけ集めている。BE:FIRST 以外のグループ・ユニット（G／U）では出さない。個人（M）は今まで通り
   function slmHidesCdInfo_(id){id=String(id||'');return /^[GU]\d+$/.test(id)&&!slmIsBeFirst_(id);}
   function syncSlmCdFields_(prefix,artistId,clearWhenHidden){

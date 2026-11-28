@@ -48,7 +48,7 @@
       const key = String(name || '');
       let id = universeGroupPhotoIds && universeGroupPhotoIds[key];
       // ユニットは自分の写真がなければ BMSG ALLSTARS の写真
-      if (!id && universeGroupPhotoIds && universeGroupUnitNames.indexOf(key) >= 0) id = universeGroupPhotoIds['BMSG ALLSTARS'];
+      if (!id && universeGroupPhotoIds && universeGroupUnitNames.indexOf(key) >= 0) id = universeGroupPhotoIds[UNIVERSE_ALLSTARS_NAME];
       return universeImageUrl(id, width || 640);
     }
 
@@ -93,12 +93,26 @@
       if (el.parentElement) el.parentElement.classList.add('has-photo');
     }
 
+    // グループの決まりに使う ID と名前（ここだけに書く。GAS 側は UNIVERSE_CONFIG.GROUP_IDS）
+    const UNIVERSE_BEFIRST_ID = 'G1';
+    const UNIVERSE_ALLSTARS_ID = 'U8';
+    const UNIVERSE_ALLSTARS_NAME = 'BMSG ALLSTARS';
+    // BMSG ALLSTARS か（ID か名前のどちらかで判定）
+    function isUniverseAllstars(id, name) {
+      return String(id || '') === UNIVERSE_ALLSTARS_ID || String(name || '') === UNIVERSE_ALLSTARS_NAME;
+    }
+    // BE:FIRST か（ID。古いデータは名前で入っていることがある）
+    function isUniverseBeFirst(idOrName) {
+      const v = String(idOrName || '');
+      return v === UNIVERSE_BEFIRST_ID || v === 'BE:FIRST';
+    }
+
     // ユニット（グループIDが U で始まる）か。IDがないときは「BMSG 〜」の名前で判断（BMSG ALLSTARS は除く）
     function isUniverseUnitGroup(id, name) {
       const gid = String(id || '');
       if (gid) return /^U/i.test(gid);
       const n = String(name || '');
-      return /^BMSG /.test(n) && n !== 'BMSG ALLSTARS';
+      return /^BMSG /.test(n) && n !== UNIVERSE_ALLSTARS_NAME;
     }
 
     // グループのタイル（共通部品 .ui-group-tile）。写真があれば写真、なければ線の色つきの面。

@@ -37,8 +37,7 @@ function getImageManagementBootstrap() {
 // グループ写真を登録できるのは、G のグループと BMSG ALLSTARS だけ（各ユニットは ALLSTARS の写真を使う）
 function imageMgmtGroupPhotoTargets_(groups) {
   return groups.filter(function(row){
-    if (String(row.RecordStatus || 'ACTIVE') === 'ARCHIVED') return false;
-    return /^G/i.test(String(row.GroupID || '')) || String(row.GroupName || '').trim() === 'BMSG ALLSTARS';
+    return universeIsActiveGroup_(row) && universeIsListedGroup_(row);
   }).slice().sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);})
     .map(function(row){return String(row.GroupName || '').trim();}).filter(Boolean);
 }
@@ -352,7 +351,7 @@ function getGroupPhotos() {
   });
   // ユニット（U…。BMSG ALLSTARS 自身を除く）の名前。画面側でこれらの写真を ALLSTARS のもので代用する
   const units = readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.GROUPS).filter(function(row){
-    return /^U/i.test(String(row.GroupID || '')) && String(row.GroupName || '').trim() !== 'BMSG ALLSTARS' && String(row.RecordStatus || 'ACTIVE') !== 'ARCHIVED';
+    return universeIsActiveGroup_(row) && universeIsUnitGroup_(row);
   }).map(function(row){return String(row.GroupName || '').trim();}).filter(Boolean);
   return {photos: photos, units: units};
 }

@@ -129,6 +129,18 @@
 - グループの切り替え（プロフィール上部）：G（グループ）だけを並べる。U（ユニット）は出さない。
 - 分析へのリンク（プロフィール）：BE:FIRST のメンバーだけに出す。
 
+## 14.1 グループの決まり（ID で判定する）
+- グループの名前は DB で変えられるので、決まりは ID で判定する。ID と名前は1か所だけに書く。
+  - 画面：`AppHelpers.html` の `UNIVERSE_BEFIRST_ID`（G1）、`UNIVERSE_ALLSTARS_ID`（U8）、`UNIVERSE_ALLSTARS_NAME`。判定は `isUniverseAllstars()`、`isUniverseBeFirst()`、`isUniverseUnitGroup()`。
+  - GAS：`Config.gs` の `UNIVERSE_CONFIG.GROUP_IDS`。判定は `universeIsMainGroup_()`（G）、`universeIsUnitGroup_()`（U。ALLSTARS を除く）、`universeIsAllstarsGroup_()`、`universeIsListedGroup_()`（G と ALLSTARS）、`universeIsActiveGroup_()`。
+- 選ぶ画面（歌詞・トレカ・カバー・クイズ）に出すのは G のグループと BMSG ALLSTARS。ユニットの曲は ALLSTARS の中に入れる。
+- グループ写真を登録できるのは G のグループと BMSG ALLSTARS だけ。ユニットは ALLSTARS の写真を使う。
+- BE:FIRST だけ、楽曲の形態・CDタイトル・表題曲・クレジットを入力する（ほかのグループ・ユニットでは欄を出さない）。分析も BE:FIRST が基準。
+
+## 14.2 管理画面の入力チェック
+- 必須の欄が空のとき・同じ曲名がすでにあるとき：メッセージを「次へ」のすぐ上に赤で出し、通知（トースト）も出して、その欄へスクロールして入力できる状態にする。
+- 同じ曲名（全角半角・大文字小文字・空白の違いは同じとみなす）は、アーティストが違っても登録できない。サーバー側でも同じ曲名＋アーティストは断る。
+
 ## 15. 戻るボタン・変更ボタン（全画面で共通）
 - 戻る（文字つき）`.ui-back`：高さ48px、枠なし、矢印（線）と「BACK」、下に細い線。
 - 戻るは `.ui-back`（BACK つき）の1種類だけ。矢印だけの戻るは使わない（テストで検査）。
@@ -158,7 +170,8 @@
 | | `ui-surface` / `ui-stage` | 画面と同じ地／画面いっぱいの面 |
 | 写真 | `ui-avatar` / `ui-thumb` / `ui-media` | 丸／角丸／角なし（写真は枠いっぱい） |
 | | `ui-photo-tile` / `ui-photo-banner` | 写真の上に名前（`--ui-photo` に `url()`）／写真の帯 |
-| | `ui-group-tiles` + `ui-group-tile` | グループのタイル（歌詞・カバー・トレカ）。ユニット（ID が U〜）は `isUniverseUnitGroup()` で外す。描画は `renderUniverseGroupTile()`、写真は `UNIVERSE_GROUP_PHOTO_IDS`（AppHelpers） |
+| | `ui-group-tiles` + `ui-group-tile` | グループのタイル（歌詞・カバー・トレカ）。並べるのは G のグループと BMSG ALLSTARS（ユニットは ALLSTARS の中にまとめる）。描画は `renderUniverseGroupTile()`、写真は `universeGroupPhotoUrl()`（AppHelpers。DB の 09_Images から `getGroupPhotos` で読む。ユニットに写真がなければ ALLSTARS の写真） |
+| | `ui-photo-tile` + `ui-photo-toggle` | 写真で選ぶタイル（カバーメーカーの参加メンバー）。選んでいないものは白黒で薄く（`aria-pressed`） |
 | 色の受け渡し | `ui-accent-left` / `ui-accent-bottom` / `ui-dot` | `--accent` の色で線・点 |
 | 表 | `ui-dl` | 項目と値（dt / dd） |
 | | `ui-table` | 表（数字の列は `.num`） |

@@ -173,8 +173,8 @@
 
   // コース一覧がまだ届かないときの仮の一覧。グループはDBの一覧（LYRICS_GROUPS）から作る
   function quizFallbackCourses_(){
-    const groups=(typeof LYRICS_GROUPS!=='undefined'?LYRICS_GROUPS:[]).filter(function(n){return n!=='BMSG ALLSTARS';}).map(function(n){return {value:String(n).toUpperCase(),label:String(n)};});
-    return groups.concat([{value:'ALL',label:'BMSG ALLSTARS'}]);
+    const groups=(typeof LYRICS_GROUPS!=='undefined'?LYRICS_GROUPS:[]).filter(function(n){return n!==UNIVERSE_ALLSTARS_NAME;}).map(function(n){return {value:String(n).toUpperCase(),label:String(n)};});
+    return groups.concat([{value:'ALL',label:UNIVERSE_ALLSTARS_NAME}]);
   }
 
   renderQuizSetup_=function(){

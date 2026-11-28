@@ -2827,7 +2827,7 @@
   function resetSlmNewState_(){songLyricsManagementState.newStep=1;songLyricsManagementState.newSong={artist:'',title:'',releaseDate:'',form:'',cdTitle:'',isTitleTrack:false};songLyricsManagementState.newCredits={lyricists:'',composers:'',choreographers:''};songLyricsManagementState.rawLyrics='';songLyricsManagementState.includeLyrics=true;songLyricsManagementState.preview=null;songLyricsManagementState.unknownQueue=[];songLyricsManagementState.ignoredGuestCandidates=[];songLyricsManagementState.ignoredGuestSource='';}
   function startSlmExisting(){songLyricsManagementState.view='existingSelect';songLyricsManagementState.existing=null;songLyricsManagementState.dirty={info:false,credits:false,lyrics:false};renderSlm();}
   function slmIsPersonal_(id){return /^M\d+$/.test(String(id||''));}
-  function slmIsBeFirst_(id){return id==='G1'||id==='BE:FIRST';}
+  function slmIsBeFirst_(id){return isUniverseBeFirst(id);}
   // 形態・CDタイトル・表題曲は BE:FIRST の曲だけ集めている。BE:FIRST 以外のグループ・ユニット（G／U）では出さない。個人（M）は今まで通り
   function slmHidesCdInfo_(id){id=String(id||'');return /^[GU]\d+$/.test(id)&&!slmIsBeFirst_(id);}
   function syncSlmCdFields_(prefix,artistId,clearWhenHidden){
@@ -4180,7 +4180,7 @@
       const key = String(name || '');
       let id = universeGroupPhotoIds && universeGroupPhotoIds[key];
       // ユニットは自分の写真がなければ BMSG ALLSTARS の写真
-      if (!id && universeGroupPhotoIds && universeGroupUnitNames.indexOf(key) >= 0) id = universeGroupPhotoIds['BMSG ALLSTARS'];
+      if (!id && universeGroupPhotoIds && universeGroupUnitNames.indexOf(key) >= 0) id = universeGroupPhotoIds[UNIVERSE_ALLSTARS_NAME];
       return universeImageUrl(id, width || 640);
     }
 
@@ -4225,12 +4225,26 @@
       if (el.parentElement) el.parentElement.classList.add('has-photo');
     }
 
+    // グループの決まりに使う ID と名前（ここだけに書く。GAS 側は UNIVERSE_CONFIG.GROUP_IDS）
+    const UNIVERSE_BEFIRST_ID = 'G1';
+    const UNIVERSE_ALLSTARS_ID = 'U8';
+    const UNIVERSE_ALLSTARS_NAME = 'BMSG ALLSTARS';
+    // BMSG ALLSTARS か（ID か名前のどちらかで判定）
+    function isUniverseAllstars(id, name) {
+      return String(id || '') === UNIVERSE_ALLSTARS_ID || String(name || '') === UNIVERSE_ALLSTARS_NAME;
+    }
+    // BE:FIRST か（ID。古いデータは名前で入っていることがある）
+    function isUniverseBeFirst(idOrName) {
+      const v = String(idOrName || '');
+      return v === UNIVERSE_BEFIRST_ID || v === 'BE:FIRST';
+    }
+
     // ユニット（グループIDが U で始まる）か。IDがないときは「BMSG 〜」の名前で判断（BMSG ALLSTARS は除く）
     function isUniverseUnitGroup(id, name) {
       const gid = String(id || '');
       if (gid) return /^U/i.test(gid);
       const n = String(name || '');
-      return /^BMSG /.test(n) && n !== 'BMSG ALLSTARS';
+      return /^BMSG /.test(n) && n !== UNIVERSE_ALLSTARS_NAME;
     }
 
     // グループのタイル（共通部品 .ui-group-tile）。写真があれば写真、なければ線の色つきの面。
@@ -5582,7 +5596,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 <!-- LyricsScripts.html -->
 <script>
   const lyricsState={catalog:[],partsBySong:{},groupColors:{},group:'',unit:'',query:'',song:null,editing:null,editingIndex:-1,editDraft:null,editDirty:false,editSaving:false,singerOptions:[],initialParams:{},karaokeRoom:null,karaokeHistory:[],karaokeRoomReady:false,karaokeBusy:false,karaokeRoomRequestId:0};
-  const LYRICS_GROUPS=['BE:FIRST','MAZZEL','STARGLOW','HANA','BMSG ALLSTARS'];
+  const LYRICS_GROUPS=['BE:FIRST','MAZZEL','STARGLOW','HANA',UNIVERSE_ALLSTARS_NAME];
   const LYRICS_UNITS=['ALL'];
   // 全曲の歌詞本文を1回だけ読む。読み終わるまでに来た呼び出しは、読み終わったときにまとめて続ける。
   // 歌詞とカラオケで同じものを使う。
@@ -5605,8 +5619,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function renderLyrics(){return document.getElementById('lyricsPageTemplate').innerHTML.replace('__LYRICS_LOADING__',renderUniverseLoading());}
   function applyLyricsData(data){
     lyricsState.catalog=data.songs||[];
-    if(Array.isArray(data.mainGroups)){LYRICS_GROUPS.splice(0,LYRICS_GROUPS.length,...data.mainGroups.filter(function(n){return n!=='BMSG ALLSTARS';}),'BMSG ALLSTARS');}
-    if(Array.isArray(data.unitGroups)){const tail=['BMSG ALLSTARS'];LYRICS_UNITS.splice(0,LYRICS_UNITS.length,'ALL',...data.unitGroups.filter(function(n){return n!=='ALL'&&tail.indexOf(n)<0;}),...tail,'その他ユニット');}
+    if(Array.isArray(data.mainGroups)){LYRICS_GROUPS.splice(0,LYRICS_GROUPS.length,...data.mainGroups.filter(function(n){return n!==UNIVERSE_ALLSTARS_NAME;}),UNIVERSE_ALLSTARS_NAME);}
+    if(Array.isArray(data.unitGroups)){const tail=[UNIVERSE_ALLSTARS_NAME];LYRICS_UNITS.splice(0,LYRICS_UNITS.length,'ALL',...data.unitGroups.filter(function(n){return n!=='ALL'&&tail.indexOf(n)<0;}),...tail,'その他ユニット');}
     const units=[...new Set(lyricsState.catalog.filter(function(s){return s.category==='UNIT';}).map(function(s){return s.unitCategory;}))];units.forEach(function(n){if(n&&!LYRICS_UNITS.includes(n))LYRICS_UNITS.push(n);});
     // 本文は一覧と別に、裏で読む（getLyricsParts）。古い応答に本文が入っていればそれを使う
     if(data.partsBySong){lyricsState.partsBySong=data.partsBySong;lyricsState.partsLoaded=true;}else ensureLyricsParts_();
@@ -5619,7 +5633,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     }else if(params.group){
       lyricsState.group=params.group;
       lyricsState.unit=params.unit||'';
-      if(params.group==='BMSG ALLSTARS')renderLyricsAllStars();
+      if(params.group===UNIVERSE_ALLSTARS_NAME)renderLyricsAllStars();
       else renderLyricsGroupSongs();
     }else showLyricsGroups(false);
   }
@@ -5637,7 +5651,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function lyricArg(value){return encodeURIComponent(String(value));}
   function lyricsGroupColor(name){return lyricsState.groupColors[name]||'#ffffff';}
     function unitSongs(unit){return lyricsState.catalog.filter(function(song){if(unit==='ALL')return song.category==='UNIT';return song.category==='UNIT'&&song.unitCategory===unit;});}
-  function groupSongs(group){if(group==='BMSG ALLSTARS')return unitSongs('ALL');return lyricsState.catalog.filter(function(song){return song.category===group;});}
+  function groupSongs(group){if(group===UNIVERSE_ALLSTARS_NAME)return unitSongs('ALL');return lyricsState.catalog.filter(function(song){return song.category===group;});}
       function updateLyricsKaraokeRoom(){
     const target=document.getElementById('lyricsKaraokeRoom');
     if(target)target.innerHTML=renderLyricsKaraokeRoom();
@@ -5746,12 +5760,12 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     renderRoute('karaoke',params);
   }
 
-  function showLyricsGroup(encoded,pushUrl){const group=decodeURIComponent(encoded);lyricsState.group=group;lyricsState.unit='';lyricsState.query='';if(pushUrl!==false)setLyricsUrl({group:group});if(group==='BMSG ALLSTARS')renderLyricsAllStars();else renderLyricsGroupSongs();scrollLyricsTop();}
+  function showLyricsGroup(encoded,pushUrl){const group=decodeURIComponent(encoded);lyricsState.group=group;lyricsState.unit='';lyricsState.query='';if(pushUrl!==false)setLyricsUrl({group:group});if(group===UNIVERSE_ALLSTARS_NAME)renderLyricsAllStars();else renderLyricsGroupSongs();scrollLyricsTop();}
       function openLyricsAllStarsSong(encodedUnit,encodedSong){lyricsState.unit=decodeURIComponent(encodedUnit);openLyricsSong(encodedSong);}
   function songTime(song){const time=Date.parse(song.releaseDate||'');return Number.isFinite(time)?time:0;}
-  function activeSongs(){const songs=lyricsState.group==='BMSG ALLSTARS'?unitSongs(lyricsState.unit||'ALL'):groupSongs(lyricsState.group);return songs.slice().sort(function(a,b){return songTime(b)-songTime(a)||(Number(b.songId)||0)-(Number(a.songId)||0);});}
-  function activeTitle(){return lyricsState.group==='BMSG ALLSTARS'?(lyricsState.unit||'ALL'):lyricsState.group;}
-  function backFromSongs(){if(lyricsState.group==='BMSG ALLSTARS'){setLyricsUrl({group:lyricsState.group});renderLyricsAllStars();}else showLyricsGroups();}
+  function activeSongs(){const songs=lyricsState.group===UNIVERSE_ALLSTARS_NAME?unitSongs(lyricsState.unit||'ALL'):groupSongs(lyricsState.group);return songs.slice().sort(function(a,b){return songTime(b)-songTime(a)||(Number(b.songId)||0)-(Number(a.songId)||0);});}
+  function activeTitle(){return lyricsState.group===UNIVERSE_ALLSTARS_NAME?(lyricsState.unit||'ALL'):lyricsState.group;}
+  function backFromSongs(){if(lyricsState.group===UNIVERSE_ALLSTARS_NAME){setLyricsUrl({group:lyricsState.group});renderLyricsAllStars();}else showLyricsGroups();}
     function openLyricsSong(encoded,pushUrl){if(!lyricsState.partsLoaded){const view=document.getElementById('lyricsView');if(view)view.innerHTML=renderUniverseLoading();ensureLyricsParts_(function(){openLyricsSong(encoded,pushUrl);});return;}const songId=decodeURIComponent(encoded);const meta=lyricsState.catalog.find(function(item){return item.songId===songId;});if(!meta){showLyricsError('曲が見つかりません。');return;}lyricsState.song={songId:songId,title:meta.title,artist:meta.artist,parts:lyricsState.partsBySong[songId]||[]};lyricsState.editDraft=null;lyricsState.editDirty=false;lyricsState.editing=null;lyricsState.editingIndex=-1;if(pushUrl!==false)setLyricsUrl({group:lyricsState.group,unit:lyricsState.unit,song:songId});renderLyricsSong();scrollLyricsTop();}
   function renderLyricsSinger(part){const items=(part.singers&&part.singers.length)?part.singers:[{name:part.singer,color:'#777777',harmony:''}];return items.map(function(singer){const mark=singer.harmony==='up'?' ↑':singer.harmony==='down'?' ↓':'';const label=singer.harmony==='sub'?'('+singer.name+')':singer.name+mark;return '<span style="color:'+escapeLyrics(singer.color)+'">'+escapeLyrics(label)+'</span>';}).join('<span class="lyrics-singer-separator"> / </span>');}
   function lyricsMicrophoneIcon(){return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="3" width="8" height="12" rx="4"></rect><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8.5 21h7"></path></svg>';}
@@ -5882,7 +5896,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   // グループの曲一覧
   function renderLyricsGroupSongs() {
     const songs = activeSongs().filter(function (song) { const q = lyricsState.query; return !q || song.title.toLowerCase().startsWith(q); });
-    const backLabel = lyricsState.group === 'BMSG ALLSTARS' ? 'BMSG ALLSTARSに戻る' : 'グループ選択に戻る';
+    const backLabel = lyricsState.group === UNIVERSE_ALLSTARS_NAME ? 'BMSG ALLSTARSに戻る' : 'グループ選択に戻る';
     document.getElementById('lyricsView').innerHTML =
       lyricsGroupHeader_(activeTitle(), backLabel, 'backFromSongs()') +
       `<input id="lyricsSearch" class="ui-input lyx-search" type="search" placeholder="曲名を検索" value="${escapeLyrics(lyricsState.query)}">` +
@@ -5903,7 +5917,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const units = LYRICS_UNITS.filter(function (unit) { return unit !== 'ALL' && unit !== 'その他ユニット' && unitSongs(unit).length; });
     if (unitSongs('その他ユニット').length) units.push('その他ユニット');
     document.getElementById('lyricsView').innerHTML =
-      lyricsGroupHeader_('BMSG ALLSTARS', 'グループ選択に戻る', 'showLyricsGroups()') +
+      lyricsGroupHeader_(UNIVERSE_ALLSTARS_NAME, 'グループ選択に戻る', 'showLyricsGroups()') +
       `<section class="lyx-units">${units.map(function (unit) {
         const songs = unitSongs(unit).slice().sort(function (a, b) { return songTime(b) - songTime(a) || (Number(b.songId) || 0) - (Number(a.songId) || 0); });
         const unitPhotoUrl = universeGroupPhotoUrl(unit);
@@ -6027,7 +6041,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   }
 
   function songGachaSongsForGroup(group){
-    return group==='BMSG ALLSTARS'?unitSongs('ALL'):groupSongs(group);
+    return group===UNIVERSE_ALLSTARS_NAME?unitSongs('ALL'):groupSongs(group);
   }
 
   function songGachaPool(){
@@ -6152,7 +6166,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const result=songGachaState.result;
     if(!result)return null;
     lyricsState.group=result.group;
-    lyricsState.unit=result.group==='BMSG ALLSTARS'?(result.song.unitCategory||''):'';
+    lyricsState.unit=result.group===UNIVERSE_ALLSTARS_NAME?(result.song.unitCategory||''):'';
     return result;
   }
 
@@ -6360,7 +6374,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(!karaokeState.song)return{};
     const meta=karaokeState.songs.find(function(item){return String(item.songId)===String(karaokeState.song.songId);})||{};
     const group=karaokeState.backParams.group||meta.category||'';
-    const unit=karaokeState.backParams.unit||(group==='BMSG ALLSTARS'?(meta.unitCategory||''):'');
+    const unit=karaokeState.backParams.unit||(group===UNIVERSE_ALLSTARS_NAME?(meta.unitCategory||''):'');
     return{song:karaokeState.song.songId,group:group,unit:unit};
   }
 
@@ -6976,7 +6990,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
   function setCardPageMode(mode){const root=document.getElementById('cardPageRoot');if(!root)return;root.classList.toggle('is-gacha-mode',mode==='gacha');}
   function initCardPage(){portalizeCardOverlays();const userId=typeof getUniverseUserId==='function'?getUniverseUserId():'';if(!userId){cardState.ready=false;cardState.userId='';const host=document.getElementById('cardApp');if(host)host.innerHTML='<div class="placeholder"><p>USERを選択してください。</p></div>';if(typeof openUserChooser==='function')openUserChooser(true);return;}cardState.userId=userId;renderCardLoading();google.script.run.withSuccessHandler(function(data){cardState.ready=true;cardState.groups=data.groups||[];cardState.cards=data.cards||[];cardState.totalCount=Number(data.totalCount||0);cardState.collectedCount=Number(data.collectedCount||0);const preferred=typeof getUniversePreferredGroupName==='function'?getUniversePreferredGroupName():'';const hasPreferred=preferred&&cardState.groups.some(function(group){return group.name===preferred;});cardState.currentGroup=hasPreferred?preferred:'ALL';if(hasPreferred)renderCardGacha();else renderCardGroupSelection();if(typeof syncUniverseCrossLinks==='function')syncUniverseCrossLinks();}).withFailureHandler(cardFailure).getTradingCardBootstrap(userId);}
   function renderCardLoading(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="card-group-grid" aria-hidden="true">'+Array.from({length:6},function(){return '<button type="button" class="ui-card card-group-btn" disabled><span class="ui-heading card-group-name ui-skeleton" style="display:block;width:58%;height:18px"></span><span class="ui-muted card-group-sub ui-skeleton" style="display:block;width:34%;height:10px;margin-top:9px"></span></button>';}).join('')+'</div>';}
-  function renderCardGroupSelection(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="ui-group-tiles card-group-grid">'+cardState.groups.filter(function(group){if(group.name==='ALL')return true;if(group.name==='BMSG ALLSTARS')return false;return group.id?!isUniverseUnitGroup(group.id,group.name):!!universeGroupPhotoUrl(group.name);}).map(function(group){const count=getCardGroupCards(group.name).length;return renderUniverseGroupTile({name:group.name,photoName:group.name==='ALL'?'BMSG ALLSTARS':group.name,color:group.color,sub:count+' CARDS',onclick:'selectTradingCardGroup(\''+escapeHtml(group.name).replaceAll("'","\\'")+'\')'});}).join('')+'</div>';}
+  function renderCardGroupSelection(){setCardPageMode('groups');const host=document.getElementById('cardApp');if(!host)return;host.innerHTML='<div class="ui-group-tiles card-group-grid">'+cardState.groups.filter(function(group){if(group.name==='ALL')return true;if(group.name===UNIVERSE_ALLSTARS_NAME)return false;return group.id?!isUniverseUnitGroup(group.id,group.name):!!universeGroupPhotoUrl(group.name);}).map(function(group){const count=getCardGroupCards(group.name).length;return renderUniverseGroupTile({name:group.name,photoName:group.name==='ALL'?UNIVERSE_ALLSTARS_NAME:group.name,color:group.color,sub:count+' CARDS',onclick:'selectTradingCardGroup(\''+escapeHtml(group.name).replaceAll("'","\\'")+'\')'});}).join('')+'</div>';}
   function selectTradingCardGroup(groupName){cardState.currentGroup=groupName||'ALL';renderCardGacha();scrollAppToTop('smooth');}
   function buildCardSkyMarkup(count){let html='';const total=count||42;for(let i=0;i<total;i++){const x=(2+Math.random()*96).toFixed(2);const y=(2+Math.random()*96).toFixed(2);const size=(.6+Math.random()*2.15).toFixed(2);const opacity=(.24+Math.random()*.68).toFixed(2);const duration=(2.6+Math.random()*6.2).toFixed(2);const delay=(-Math.random()*7).toFixed(2);html+='<i class="card-space-star" style="left:'+x+'%;top:'+y+'%;--s:'+size+'px;--o:'+opacity+';--d:'+duration+'s;--delay:'+delay+'s"></i>';}for(let j=0;j<2;j++){const y=(12+Math.random()*58).toFixed(1);const delay=(2.5+j*6.5+Math.random()*3.5).toFixed(2);const duration=(10.5+Math.random()*4.5).toFixed(2);html+='<i class="card-shooting-star shoot-'+j+'" style="top:'+y+'%;--shoot-delay:'+delay+'s;--shoot-duration:'+duration+'s"></i>';}return html;}
   function renderCardGacha(){setCardPageMode('gacha');const host=document.getElementById('cardApp');if(!host)return;const groupCards=getCardGroupCards(cardState.currentGroup);const drawn=groupCards.filter(function(card){return card.isDrawn;}).length;host.innerHTML='<div class="card-gacha-scene"><div class="card-gacha-toolbar"><button type="button" class="ui-back" onclick="renderCardGroupSelection()" aria-label="グループ一覧へ戻る"><svg class="ui-back-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 5.5L8 12l6.5 6.5"></path></svg><span class="ui-back-label">BACK</span></button><button type="button" class="ui-btn ui-btn-icon card-gacha-tool" onclick="openCardCollection()" aria-label="コレクション"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="5" width="10.5" height="14" rx="2"></rect><path d="M9 5.2V4.5A1.5 1.5 0 0 1 10.5 3h7A1.5 1.5 0 0 1 19 4.5v11A1.5 1.5 0 0 1 17.5 17H15"></path><path d="M7.5 9h4.5M7.5 12h4.5M7.5 15h3"></path></svg></button></div><div class="card-gacha-head"><h2 class="ui-title ui-title-sm ui-as-is card-gacha-title">'+escapeHtml(cardState.currentGroup)+'</h2><div class="ui-badge card-progress">'+drawn+' / '+groupCards.length+'</div></div><div class="card-draw-stage"><div class="card-deck" aria-hidden="true"><span class="card-deck-card d1"></span><span class="card-deck-card d2"></span><span class="card-deck-card d3"><b>BMSG</b><small>UNIVERSE</small></span></div><div class="card-draw-mark">BMSG UNIVERSE</div><div class="ui-muted card-draw-copy">カードを1枚引く</div><div class="card-rarity-track" aria-label="Rarity rates"><div class="card-rarity-chip rarity-n"><b>N</b><small>70%</small></div><div class="card-rarity-chip rarity-r"><b>R</b><small>24%</small></div><div class="card-rarity-chip rarity-sr"><b>SR</b><small>5%</small></div><div class="card-rarity-chip rarity-ssr"><b>SSR</b><small>1%</small></div></div></div><div class="card-draw-actions"><button type="button" class="ui-btn ui-btn-solid ui-btn-wide card-draw-main" onclick="drawTradingCard()">引く</button></div></div>';}
@@ -7350,8 +7364,8 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   // コース一覧がまだ届かないときの仮の一覧。グループはDBの一覧（LYRICS_GROUPS）から作る
   function quizFallbackCourses_(){
-    const groups=(typeof LYRICS_GROUPS!=='undefined'?LYRICS_GROUPS:[]).filter(function(n){return n!=='BMSG ALLSTARS';}).map(function(n){return {value:String(n).toUpperCase(),label:String(n)};});
-    return groups.concat([{value:'ALL',label:'BMSG ALLSTARS'}]);
+    const groups=(typeof LYRICS_GROUPS!=='undefined'?LYRICS_GROUPS:[]).filter(function(n){return n!==UNIVERSE_ALLSTARS_NAME;}).map(function(n){return {value:String(n).toUpperCase(),label:String(n)};});
+    return groups.concat([{value:'ALL',label:UNIVERSE_ALLSTARS_NAME}]);
   }
 
   renderQuizSetup_=function(){
@@ -7625,7 +7639,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     coverState.songs=[];
     coverState.externalDraft=null;
     coverState.externalParts=[];
-    if(String(coverState.coverGroup.groupId)==='U8'||String(coverState.coverGroup.groupName)==='BMSG ALLSTARS'){
+    if(isUniverseAllstars(coverState.coverGroup.groupId,coverState.coverGroup.groupName)){
       coverState.allStarMemberIds=[];
       openCoverAllStarsMemberSelect();
       return;
@@ -7766,7 +7780,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if(coverState.screen==='group')return renderCoverHome();
     if(coverState.screen==='allstars')return openCoverGroupSelect();
     if(coverState.screen==='artist'){
-      if(coverState.coverGroup&&(String(coverState.coverGroup.groupId)==='U8'||String(coverState.coverGroup.groupName)==='BMSG ALLSTARS'))return openCoverAllStarsMemberSelect();
+      if(coverState.coverGroup&&(isUniverseAllstars(coverState.coverGroup.groupId,coverState.coverGroup.groupName)))return openCoverAllStarsMemberSelect();
       return openCoverGroupSelect();
     }
     if(coverState.screen==='songs')return openCoverArtistSelect();
@@ -7797,7 +7811,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
 
   function openCoverGroupSelect(){
     coverState.screen='group';const groups=coverState.bootstrap&&coverState.bootstrap.groups||[];const app=document.getElementById('coverApp');
-    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="ui-group-tiles cover-group-tiles">'+groups.filter(function(g){return String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS'||!isUniverseUnitGroup(g.groupId,g.groupName);}).map(function(g){return renderUniverseGroupTile({name:g.groupName,color:g.color,sub:(String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS')?'メンバー全員から選ぶ':'',onclick:'selectCoverGroup(\''+escapeHtml(g.groupId)+'\')'});}).join('')+'</div>';
+    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="ui-group-tiles cover-group-tiles">'+groups.filter(function(g){return isUniverseAllstars(g.groupId,g.groupName)||!isUniverseUnitGroup(g.groupId,g.groupName);}).map(function(g){return renderUniverseGroupTile({name:g.groupName,color:g.color,sub:(isUniverseAllstars(g.groupId,g.groupName))?'メンバー全員から選ぶ':'',onclick:'selectCoverGroup(\''+escapeHtml(g.groupId)+'\')'});}).join('')+'</div>';
     setCanonicalCoverVisualMode('group');
   }
 

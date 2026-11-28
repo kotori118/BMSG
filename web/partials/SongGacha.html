@@ -77,7 +77,7 @@
   }
 
   function songGachaSongsForGroup(group){
-    return group==='BMSG ALLSTARS'?unitSongs('ALL'):groupSongs(group);
+    return group===UNIVERSE_ALLSTARS_NAME?unitSongs('ALL'):groupSongs(group);
   }
 
   function songGachaPool(){
@@ -202,7 +202,7 @@
     const result=songGachaState.result;
     if(!result)return null;
     lyricsState.group=result.group;
-    lyricsState.unit=result.group==='BMSG ALLSTARS'?(result.song.unitCategory||''):'';
+    lyricsState.unit=result.group===UNIVERSE_ALLSTARS_NAME?(result.song.unitCategory||''):'';
     return result;
   }
 

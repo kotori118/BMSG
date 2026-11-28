@@ -8,6 +8,8 @@ const UNIVERSE_CONFIG = Object.freeze({
   CARD_IMAGE_FOLDER_ID: '1ayh-EAbV585JqRofClrTHjBxNTQlfQBK',
   // 手動・作業用のバックアップ置き場（Drive「バックアップ」）。月次の自動バックアップもここへ
   BACKUP_FOLDER_ID: '1YD-Df-gJPyes1fCRFYsOj5kL4YLidTyq',
+  // グループの決まりに使う ID。名前は DB で変えられるので、判定は ID で行う
+  GROUP_IDS: Object.freeze({ BE_FIRST: 'G1', ALLSTARS: 'U8' }),
   PROFILE_CACHE_SECONDS: 300,
   USER_IDS: Object.freeze(['U001', 'U002', 'U003']),
   USER_DISPLAY_NAMES: Object.freeze({
@@ -28,3 +30,13 @@ const UNIVERSE_CONFIG = Object.freeze({
     COVER_SOURCE_SNAPSHOTS: 'COVER_SourceSnapshots', COVER_PROJECT_MEMBERS: 'COVER_ProjectMembers'
   })
 });
+
+// ---- グループの種類（01_Groups の行で判定）----
+// G…＝メイングループ、U…＝ユニット。BMSG ALLSTARS（U8）はユニットをまとめる例外で、メインと同じ扱い
+function universeGroupId_(row) { return String(row && row.GroupID || '').trim(); }
+function universeIsActiveGroup_(row) { return String(row && row.RecordStatus || 'ACTIVE') !== 'ARCHIVED'; }
+function universeIsAllstarsGroup_(row) { return universeGroupId_(row) === UNIVERSE_CONFIG.GROUP_IDS.ALLSTARS; }
+function universeIsMainGroup_(row) { return /^G/i.test(universeGroupId_(row)); }
+function universeIsUnitGroup_(row) { return /^U/i.test(universeGroupId_(row)) && !universeIsAllstarsGroup_(row); }
+// 選ぶ画面に出すグループ（G と BMSG ALLSTARS）
+function universeIsListedGroup_(row) { return universeIsMainGroup_(row) || universeIsAllstarsGroup_(row); }

@@ -130,7 +130,7 @@ function maintainCatalogGroupForUniverse(payload){
       const log=SpreadsheetApp.openById(UNIVERSE_CONFIG.LOG_DB_ID);
       log.getSheets().forEach(function(sheet){if(sheet.getName()==='CATALOG_Audit')return;const tab=readTable_(sheet);if(tab.map.Course==null)return;tab.rows.forEach(function(r){if(String(r.values[tab.map.Course]).toUpperCase()===before.GroupName.toUpperCase())edits.push.apply(edits,catalogEditCells_(tab,r,{Course:name.toUpperCase()}));});});
     }
-    if(id==='G1'&&name!==before.GroupName)throw new Error('BE:FIRSTは分析の基準名のため変更できません。');
+    if(id===UNIVERSE_CONFIG.GROUP_IDS.BE_FIRST&&name!==before.GroupName)throw new Error('BE:FIRSTは分析の基準名のため変更できません。');
     return catalogCommitCells_(edits,'GROUP',id,'EDIT',before,changes,actor);
   });
 }
@@ -153,13 +153,13 @@ function correctCatalogSongArtistForUniverse(payload){
         throw new Error('歌詞が登録されているため個人曲には変更できません。');
     }
     const credits=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.SONG_CREDITS,['SongID']),metrics=catalogTable_(ss,UNIVERSE_CONFIG.SHEETS.PERFORMANCE_METRICS,['SongID']);
-    if(universeServiceBeFirst_(t,row)&&identity.id!=='G1'){
+    if(universeServiceBeFirst_(t,row)&&identity.id!==UNIVERSE_CONFIG.GROUP_IDS.BE_FIRST){
       const meaningful=function(tab){return tab.rows.some(function(r){return id_(r.values[tab.map.SongID])===id&&r.values.some(function(v,i){return !['SongID','Title'].includes(tab.header[i])&&v!==''&&v!==null&&v!==0;});});};
       if(meaningful(credits)||meaningful(metrics))throw new Error('制作クレジット・秒数データがあります。内容を空にしてからアーティストを訂正してください。');
     }
     const appended=[];
     try{
-      if(identity.id==='G1'){
+      if(identity.id===UNIVERSE_CONFIG.GROUP_IDS.BE_FIRST){
         if(!credits.rows.some(function(r){return id_(r.values[credits.map.SongID])===id;})){
           const v=new Array(credits.header.length).fill('');v[credits.map.SongID]=id;if(credits.map.Title!=null)v[credits.map.Title]=before.Title;
           appended.push({sheet:credits.sheet,row:appendStyledRow_(credits.sheet,v)});

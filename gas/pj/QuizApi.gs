@@ -294,7 +294,7 @@ function getQuizUsers_() { const map = {}; readSheetObjects_(getLogSheet_(UNIVER
 function quizMainGroupNames_(groups){return groups.filter(function(g){return String(g.GroupID||'').startsWith('G');}).map(function(g){return String(g.GroupName||'').trim();});}
 function getQuizCourses_(){
   // Gのグループ＋BMSG ALLSTARS（グループユニットを含む全部）。
-  const groups=readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.GROUPS);return groups.filter(function(g){return String(g.RecordStatus||'ACTIVE')!=='ARCHIVED'&&String(g.GroupID||'').startsWith('G');}).slice().sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);}).map(function(g){return {value:String(g.GroupName).toUpperCase(),label:String(g.GroupName)};}).filter(function(g){return g.value!=='ALL';}).concat([{value:'ALL',label:'BMSG ALLSTARS'}]);
+  const groups=readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.GROUPS);return groups.filter(function(g){return universeIsActiveGroup_(g)&&universeIsMainGroup_(g);}).slice().sort(function(a,b){return Number(a.DisplayOrder||9999)-Number(b.DisplayOrder||9999);}).map(function(g){return {value:String(g.GroupName).toUpperCase(),label:String(g.GroupName)};}).filter(function(g){return g.value!=='ALL';}).concat([{value:'ALL',label:'BMSG ALLSTARS'}]);
 }
 function quizParseJson_(value, fallback) { try { const parsed = JSON.parse(String(value || '')); return parsed === null ? fallback : parsed; } catch (error) { return fallback; } }
 function quizIso_(value) { const date = new Date(value); return Number.isFinite(date.getTime()) ? date.toISOString() : ''; }

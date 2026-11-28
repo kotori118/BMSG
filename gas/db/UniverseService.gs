@@ -274,7 +274,7 @@ function universeServicePersonalSong_(table, row) {
 }
 function universeServiceBeFirst_(table, row) {
   return !universeServicePersonalSong_(table,row) &&
-    (table.map.ArtistID != null ? universeServiceStoredArtist_(table,row) === 'G1' : universeServiceStoredArtist_(table,row) === 'BE:FIRST');
+    (table.map.ArtistID != null ? universeServiceStoredArtist_(table,row) === UNIVERSE_CONFIG.GROUP_IDS.BE_FIRST : universeServiceStoredArtist_(table,row) === 'BE:FIRST');
 }
 function universeServiceArtistIdentity_(ss, value) {
   const groups = readTable_(requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.GROUPS));
@@ -422,7 +422,7 @@ function createSongWithPartsCore_(ss, song, credits, parsedParts, context) {
 
     let creditsSheet = null;
     let creditsTable = null;
-    if (artist.id === 'G1') {
+    if (artist.id === UNIVERSE_CONFIG.GROUP_IDS.BE_FIRST) {
       creditsSheet = requireSheet_(ss, UNIVERSE_CONFIG.SHEETS.SONG_CREDITS);
       creditsTable = readTable_(creditsSheet);
       requireColumns_(creditsTable, ['SongID','Lyricists','Composers','Choreographers']);
@@ -450,7 +450,7 @@ function createSongWithPartsCore_(ss, song, credits, parsedParts, context) {
       rollback.push({sheet:partsSheet,row:appendStyledRow_(partsSheet, values)});
     });
 
-    if (artist.id === 'G1') {
+    if (artist.id === UNIVERSE_CONFIG.GROUP_IDS.BE_FIRST) {
       const metric=ensurePerformanceMetricRowForSong_(ss,reservation.issuedId);
       if(metric.created)rollback.push({sheet:metric.sheet,row:metric.row});
     }
@@ -459,7 +459,7 @@ function createSongWithPartsCore_(ss, song, credits, parsedParts, context) {
     const verifyPartsTable = readTable_(partsSheet);
     const verifyParts = verifyPartsTable.rows.filter(function(r){ return id_(r.values[verifyPartsTable.map.SongID]) === reservation.issuedId; });
     const verifyCredits = creditsSheet ? readTable_(creditsSheet).rows.filter(function(r){ return id_(r.values[creditsTable.map.SongID]) === reservation.issuedId; }) : [];
-    if (verifySongs.length !== 1 || verifyParts.length !== parts.length || (artist.id === 'G1' && verifyCredits.length !== 1)) throw new Error('登録後の照合に失敗しました。');
+    if (verifySongs.length !== 1 || verifyParts.length !== parts.length || (artist.id === UNIVERSE_CONFIG.GROUP_IDS.BE_FIRST && verifyCredits.length !== 1)) throw new Error('登録後の照合に失敗しました。');
     finalizeIdReservation_(reservation, true, '新規曲登録完了: ' + song.title);
     return {ok:true, songId:reservation.issuedId, title:song.title, artist:artist.name};
   } catch (e) {

@@ -35,7 +35,7 @@
     coverState.songs=[];
     coverState.externalDraft=null;
     coverState.externalParts=[];
-    if(String(coverState.coverGroup.groupId)==='U8'||String(coverState.coverGroup.groupName)==='BMSG ALLSTARS'){
+    if(isUniverseAllstars(coverState.coverGroup.groupId,coverState.coverGroup.groupName)){
       coverState.allStarMemberIds=[];
       openCoverAllStarsMemberSelect();
       return;
@@ -176,7 +176,7 @@
     if(coverState.screen==='group')return renderCoverHome();
     if(coverState.screen==='allstars')return openCoverGroupSelect();
     if(coverState.screen==='artist'){
-      if(coverState.coverGroup&&(String(coverState.coverGroup.groupId)==='U8'||String(coverState.coverGroup.groupName)==='BMSG ALLSTARS'))return openCoverAllStarsMemberSelect();
+      if(coverState.coverGroup&&(isUniverseAllstars(coverState.coverGroup.groupId,coverState.coverGroup.groupName)))return openCoverAllStarsMemberSelect();
       return openCoverGroupSelect();
     }
     if(coverState.screen==='songs')return openCoverArtistSelect();
@@ -207,7 +207,7 @@
 
   function openCoverGroupSelect(){
     coverState.screen='group';const groups=coverState.bootstrap&&coverState.bootstrap.groups||[];const app=document.getElementById('coverApp');
-    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="ui-group-tiles cover-group-tiles">'+groups.filter(function(g){return String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS'||!isUniverseUnitGroup(g.groupId,g.groupName);}).map(function(g){return renderUniverseGroupTile({name:g.groupName,color:g.color,sub:(String(g.groupId)==='U8'||String(g.groupName)==='BMSG ALLSTARS')?'メンバー全員から選ぶ':'',onclick:'selectCoverGroup(\''+escapeHtml(g.groupId)+'\')'});}).join('')+'</div>';
+    app.innerHTML='<h2 class="ui-label cover-section-title">歌うアーティスト</h2><div class="ui-group-tiles cover-group-tiles">'+groups.filter(function(g){return isUniverseAllstars(g.groupId,g.groupName)||!isUniverseUnitGroup(g.groupId,g.groupName);}).map(function(g){return renderUniverseGroupTile({name:g.groupName,color:g.color,sub:(isUniverseAllstars(g.groupId,g.groupName))?'メンバー全員から選ぶ':'',onclick:'selectCoverGroup(\''+escapeHtml(g.groupId)+'\')'});}).join('')+'</div>';
     setCanonicalCoverVisualMode('group');
   }
 

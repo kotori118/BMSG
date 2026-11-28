@@ -51,7 +51,7 @@
   // グループの曲一覧
   function renderLyricsGroupSongs() {
     const songs = activeSongs().filter(function (song) { const q = lyricsState.query; return !q || song.title.toLowerCase().startsWith(q); });
-    const backLabel = lyricsState.group === 'BMSG ALLSTARS' ? 'BMSG ALLSTARSに戻る' : 'グループ選択に戻る';
+    const backLabel = lyricsState.group === UNIVERSE_ALLSTARS_NAME ? 'BMSG ALLSTARSに戻る' : 'グループ選択に戻る';
     document.getElementById('lyricsView').innerHTML =
       lyricsGroupHeader_(activeTitle(), backLabel, 'backFromSongs()') +
       `<input id="lyricsSearch" class="ui-input lyx-search" type="search" placeholder="曲名を検索" value="${escapeLyrics(lyricsState.query)}">` +
@@ -72,7 +72,7 @@
     const units = LYRICS_UNITS.filter(function (unit) { return unit !== 'ALL' && unit !== 'その他ユニット' && unitSongs(unit).length; });
     if (unitSongs('その他ユニット').length) units.push('その他ユニット');
     document.getElementById('lyricsView').innerHTML =
-      lyricsGroupHeader_('BMSG ALLSTARS', 'グループ選択に戻る', 'showLyricsGroups()') +
+      lyricsGroupHeader_(UNIVERSE_ALLSTARS_NAME, 'グループ選択に戻る', 'showLyricsGroups()') +
       `<section class="lyx-units">${units.map(function (unit) {
         const songs = unitSongs(unit).slice().sort(function (a, b) { return songTime(b) - songTime(a) || (Number(b.songId) || 0) - (Number(a.songId) || 0); });
         const unitPhotoUrl = universeGroupPhotoUrl(unit);

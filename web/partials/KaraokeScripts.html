@@ -192,7 +192,7 @@
     if(!karaokeState.song)return{};
     const meta=karaokeState.songs.find(function(item){return String(item.songId)===String(karaokeState.song.songId);})||{};
     const group=karaokeState.backParams.group||meta.category||'';
-    const unit=karaokeState.backParams.unit||(group==='BMSG ALLSTARS'?(meta.unitCategory||''):'');
+    const unit=karaokeState.backParams.unit||(group===UNIVERSE_ALLSTARS_NAME?(meta.unitCategory||''):'');
     return{song:karaokeState.song.songId,group:group,unit:unit};
   }
 

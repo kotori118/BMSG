@@ -5,7 +5,6 @@
  * from BMSG_Universe_DB. The legacy ANALYSIS spreadsheet remains read-only.
  */
 
-const ANALYSIS_GROUP_ID = 'G1';
 const ANALYSIS_KEYWORDS = ['夢','愛','涙','君','僕','未来','世界','時代','頂点','光','明日','Amazing','Crazy'];
 
 function getAnalysisBootstrap() {
@@ -23,11 +22,11 @@ function buildAnalysisDataset_() {
   const metrics = readAnalysisMetrics_(spreadsheet);
 
   const groupMemberIds = new Set(groupMembersRows
-    .filter(function(row){ return asId_(row.GroupID) === ANALYSIS_GROUP_ID; })
+    .filter(function(row){ return asId_(row.GroupID) === UNIVERSE_CONFIG.GROUP_IDS.BE_FIRST; })
     .map(function(row){ return asId_(row.MemberID); }));
 
   const members = membersRows
-    .filter(function(row){ return groupMemberIds.has(asId_(row.MemberID)) || asId_(row.GroupID) === ANALYSIS_GROUP_ID; })
+    .filter(function(row){ return groupMemberIds.has(asId_(row.MemberID)) || asId_(row.GroupID) === UNIVERSE_CONFIG.GROUP_IDS.BE_FIRST; })
     .map(function(row){
       return {
         id: asId_(row.MemberID),
