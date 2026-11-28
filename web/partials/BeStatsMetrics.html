@@ -1,0 +1,138 @@
+<script>
+  // BE:STATS 指標：1つの指標を選んで推移を見る
+  const BS_PERIODS = [['7', '7日'], ['30', '30日'], ['90', '90日'], ['365', '直近1年'], ['all', '全期間']];
+  let beStatsChart = null;
+
+  function bsMetricsState_() {
+    if (!beStatsState.metricsView) beStatsState.metricsView = {id: '', period: '90', year: '', showEvents: true};
+    return beStatsState.metricsView;
+  }
+
+  function setBeStatsMetric(id) { bsMetricsState_().id = id; renderBeStatsView(); }
+  function setBeStatsPeriod(period) { const s = bsMetricsState_(); s.period = period; s.year = ''; renderBeStatsView(); }
+  function setBeStatsYear(year) { const s = bsMetricsState_(); s.year = year; renderBeStatsView(); }
+  function toggleBeStatsEvents() { const s = bsMetricsState_(); s.showEvents = !s.showEvents; renderBeStatsView(); }
+
+  function destroyBeStatsChart() { if (beStatsChart) { try { beStatsChart.destroy(); } catch (e) {} beStatsChart = null; } }
+
+  function bsCssVar_(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  // 出来事の縦線（点線）と名前を、線の上に直接描く。年末・夏は期間なので薄い帯にする
+  const bsEventsPlugin = {
+    id: 'bsEvents',
+    afterDatasetsDraw: function (chart, args, opts) {
+      const events = (opts && opts.events) || [];
+      if (!events.length) return;
+      const ctx = chart.ctx, area = chart.chartArea, x = chart.scales.x;
+      const labels = chart.data.labels;
+      const indexOf = function (date) {
+        let i = 0;
+        while (i < labels.length && labels[i] < date) i++;
+        return Math.min(i, labels.length - 1);
+      };
+      const text = bsCssVar_('--ui-text'), line = bsCssVar_('--ui-line-strong'), band = bsCssVar_('--ui-line');
+      ctx.save();
+      ctx.font = '11px sans-serif';
+      ctx.textBaseline = 'top';
+      let lastRight = -1e9, row = 0;
+      events.forEach(function (e) {
+        if (e.end) {
+          const x1 = x.getPixelForValue(indexOf(e.date)), x2 = x.getPixelForValue(indexOf(e.end <= labels[labels.length - 1] ? e.end : labels[labels.length - 1]));
+          ctx.fillStyle = band; ctx.fillRect(x1, area.top, Math.max(x2 - x1, 1), area.bottom - area.top);
+          return;
+        }
+        const px = x.getPixelForValue(indexOf(e.date));
+        ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+        ctx.beginPath(); ctx.moveTo(px, area.top); ctx.lineTo(px, area.bottom); ctx.stroke();
+        ctx.setLineDash([]);
+        const w = ctx.measureText(e.name).width;
+        const left = px + 3 + w > area.right ? px - 3 - w : px + 3;
+        if (left > lastRight + 4) {
+          ctx.fillStyle = text; ctx.fillText(e.name, left, area.top + 2 + (row % 2) * 13);
+          lastRight = left + w; row++;
+        }
+      });
+      ctx.restore();
+    }
+  };
+
+  function renderBeStatsMetrics(panel) {
+    const d = beStatsState.data, dataEnd = (beStatsState.manifest || {}).dataEnd;
+    const metrics = d.metrics.metrics, daily = d.metrics.daily;
+    const s = bsMetricsState_();
+    if (!s.id || !metrics.some(function (m) { return m.id === s.id; })) s.id = metrics[0].id;
+    const metric = metrics.find(function (m) { return m.id === s.id; });
+    const series = bsSeries(daily, metric.id);
+    const firstDate = daily.length ? daily[0].date : dataEnd;
+    const years = Array.from(new Set(daily.map(function (r) { return r.date.slice(0, 4); }))).sort();
+    const range = bsRange(firstDate, dataEnd, s.period, s.year);
+    const rows = daily.filter(function (r) { return r.date >= range.from && r.date <= range.to; });
+    const last = series.length ? series[series.length - 1] : null;
+    const l30 = bsLast30(series);
+    const events = bsEventsInRange(d.events.events, range.from, range.to);
+
+    const metricSelect = '<select class="ui-input" aria-label="指標" onchange="setBeStatsMetric(this.value)">'
+      + metrics.map(function (m) { return '<option value="' + escapeHtml(m.id) + '"' + (m.id === s.id ? ' selected' : '') + '>' + escapeHtml(m.name) + '</option>'; }).join('') + '</select>';
+    const periodTabs = '<div class="ui-tabs bestats-periods" role="group" aria-label="期間">'
+      + BS_PERIODS.map(function (p) { return '<button type="button" class="ui-tab' + (!s.year && s.period === p[0] ? ' active' : '') + '" onclick="setBeStatsPeriod(\'' + p[0] + '\')">' + p[1] + '</button>'; }).join('') + '</div>';
+    const yearSelect = '<select class="ui-input" aria-label="年" onchange="setBeStatsYear(this.value)"><option value="">年を選ぶ（指定なし）</option>'
+      + years.map(function (y) { return '<option value="' + y + '"' + (String(s.year) === y ? ' selected' : '') + '>' + y + '年</option>'; }).join('') + '</select>';
+
+    const head = '<div class="bestats-controls">' + metricSelect + periodTabs + yearSelect + '</div>'
+      + '<section class="bestats-section"><p class="ui-num ui-num-xl bestats-big">' + escapeHtml(bsFormatCount(last ? last.value : 0)) + '</p>'
+      + '<p class="ui-muted">' + escapeHtml(metric.unit) + '　直近30日で ' + (l30 ? escapeHtml(bsFormatSigned(l30.delta)) + (l30.rate === null ? '' : '（' + escapeHtml(bsFormatPercent(l30.rate)) + '）') : '—') + '</p></section>';
+
+    const chart = '<section class="bestats-section"><div class="bestats-chart-head"><h2 class="ui-label bestats-section-title">推移</h2>'
+      + '<button type="button" class="ui-chip" aria-pressed="' + (s.showEvents ? 'true' : 'false') + '" onclick="toggleBeStatsEvents()">出来事を表示</button></div>'
+      + '<div class="ui-panel bestats-chart"><canvas id="beStatsMetricChart" aria-label="' + escapeHtml(metric.name) + 'の推移"></canvas></div></section>';
+
+    let yearly = '';
+    if (s.period === 'all' && !s.year) {
+      const avgs = bsYearlyAverages(series), top = Math.max.apply(null, avgs.map(function (a) { return a.avg; })) || 1;
+      yearly = '<section class="bestats-section"><h2 class="ui-label bestats-section-title">年ごとの平均</h2><div class="bestats-yearly">'
+        + avgs.map(function (a) {
+          return '<div class="bestats-yearly-row"><span class="ui-muted">' + a.year + '年</span><span class="ui-progress"><span class="ui-progress-fill" style="width:' + (a.avg / top * 100).toFixed(1) + '%"></span></span><span class="ui-num bestats-yearly-value">' + escapeHtml(bsFormatCount(a.avg)) + '</span></div>';
+        }).join('') + '</div></section>';
+    }
+
+    const eventList = '<section class="bestats-section"><h2 class="ui-label bestats-section-title">出来事</h2>'
+      + (events.length ? '<div class="ui-list">' + events.map(function (e) {
+        const a = bsAfter30(series, e.date);
+        return '<div class="ui-row ui-row-plain bestats-event"><span class="bestats-row-main"><span><span class="ui-muted">' + bsSlashDate(e.date) + '</span> <span class="ui-badge">' + escapeHtml(BS_EVENT_KIND_LABELS[e.kind] || e.kind) + '</span> <strong class="ui-strong">' + escapeHtml(e.name) + '</strong></span>'
+          + '<span class="ui-muted">後30日 ' + (a ? escapeHtml(bsFormatSigned(a.delta)) + (a.rate === null ? '' : '（' + escapeHtml(bsFormatPercent(a.rate)) + '）') : '—') + '</span></span></div>';
+      }).join('') + '</div>' : '<div class="ui-empty">この期間に出来事はありません</div>')
+      + '</section>';
+
+    panel.innerHTML = head + chart + yearly + eventList;
+    drawBeStatsMetricChart_(rows, metric, s.showEvents ? events : []);
+  }
+
+  function drawBeStatsMetricChart_(rows, metric, events) {
+    destroyBeStatsChart();
+    const canvas = document.getElementById('beStatsMetricChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const color = bsCssVar_('--ui-media-' + metric.media) || bsCssVar_('--ui-text');
+    const sub = bsCssVar_('--ui-text-sub'), grid = bsCssVar_('--ui-line');
+    beStatsChart = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: rows.map(function (r) { return r.date; }),
+        datasets: [{data: rows.map(function (r) { return typeof r[metric.id] === 'number' ? r[metric.id] : null; }), borderColor: color, borderWidth: 2, pointRadius: 0, pointHoverRadius: 3, tension: 0.15, spanGaps: false}]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        interaction: {mode: 'index', intersect: false},
+        plugins: {
+          legend: {display: false},
+          tooltip: {callbacks: {label: function (c) { return c.parsed.y === null ? '' : bsFullNumber(c.parsed.y, metric.unit); }}},
+          bsEvents: {events: events.slice().sort(function (x, y) { return x.date < y.date ? -1 : x.date > y.date ? 1 : 0; })}
+        },
+        scales: {
+          x: {grid: {display: false}, ticks: {color: sub, maxTicksLimit: 5, maxRotation: 0, callback: function (v) { return String(this.getLabelForValue(v)).slice(0, 7).replace('-', '/'); }}},
+          y: {grid: {color: grid}, ticks: {color: sub, maxTicksLimit: 5, callback: function (v) { return bsFormatCount(v); }}}
+        }
+      },
+      plugins: [bsEventsPlugin]
+    });
+  }
+</script>

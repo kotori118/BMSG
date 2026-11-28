@@ -173,6 +173,8 @@
 | | `ui-group-tiles` + `ui-group-tile` | グループのタイル（歌詞・カバー・トレカ）。並べるのは G のグループと BMSG ALLSTARS（ユニットは ALLSTARS の中にまとめる）。描画は `renderUniverseGroupTile()`、写真は `universeGroupPhotoUrl()`（AppHelpers。DB の 09_Images から `getGroupPhotos` で読む。ユニットに写真がなければ ALLSTARS の写真） |
 | | `ui-photo-tile` + `ui-photo-toggle` | 写真で選ぶタイル（カバーメーカーの参加メンバー）。選んでいないものは白黒で薄く（`aria-pressed`） |
 | 色の受け渡し | `ui-accent-left` / `ui-accent-bottom` / `ui-dot` | `--accent` の色で線・点 |
+| | `ui-spark` | 小さな推移線（svg の polyline。色は `--accent`。BE:STATS の数字の図鑑） |
+| | `--ui-media-youtube` など | 媒体の色（YouTube・Spotify・Instagram・X・TikTok）。BE:STATS のグラフの線と小さな点だけに使う。値は UniverseTokens |
 | 表 | `ui-dl` | 項目と値（dt / dd） |
 | | `ui-table` | 表（数字の列は `.num`） |
 | | `ui-progress` + `ui-progress-fill` | 割合の帯（`is-danger` で赤） |

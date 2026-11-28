@@ -19,9 +19,11 @@ const METRICS = [
   {id: 'youtube_subscribers', name: 'YouTube 登録者', media: 'youtube', unit: '人', start: 2300000, perDay: 330, step: 10000},
   {id: 'instagram_followers_official', name: 'Instagram フォロワー', media: 'instagram', unit: '人', start: 1000000, perDay: 280},
   {id: 'x_followers_official', name: 'X フォロワー', media: 'x', unit: '人', start: 1100000, perDay: 120},
-  {id: 'tiktok_followers_official', name: 'TikTok フォロワー', media: 'tiktok', unit: '人', start: 700000, perDay: 150},
+  {id: 'tiktok_followers_official', name: 'TikTok フォロワー', media: 'tiktok', unit: '人', start: 700000, perDay: 3000},
 ];
 const DAYS = 700;
+// 画面確認用：節目への到達（最後の7日以内）と、30日で3%以上の伸びがホームに出るように作る
+const CROSS = {instagram_followers_official: {value: 1500000, daysAgo: 3}, youtube_subscribers: {value: 2500000, daysAgo: 1}};
 const startDate = addDays(DATA_END, -(DAYS - 1));
 const daily = [];
 for (let i = 0; i < DAYS; i++) {
@@ -29,6 +31,11 @@ for (let i = 0; i < DAYS; i++) {
   for (const m of METRICS) {
     if (i < 30 && m.id === 'tiktok_followers_official') { row[m.id] = null; continue; } // 欠測のサンプル
     let v = m.start + Math.round(m.perDay * i + Math.sin(i / 9) * m.perDay * 6);
+    const cross = CROSS[m.id];
+    if (cross) { // crossIndex の日に初めて cross.value 以上になる直線
+      const crossIndex = DAYS - 1 - cross.daysAgo;
+      v = cross.value + Math.round(m.perDay * (i - crossIndex));
+    }
     if (m.step) v = Math.floor(v / m.step) * m.step; // 登録者は1,000人単位でしか変わらない
     if (m.id === 'youtube_total_views') v = m.start + Math.floor(i / 7) * m.perDay * 7; // 更新日以外は同じ値
     row[m.id] = v;
@@ -60,8 +67,9 @@ const shows = [
   {eventId: 'EVT001', date: '2026-05-01', tourId: 'TR001', title: 'サンプルツアー', venue: 'サンプルホール', region: '東京都', slot: '昼公演',
     setlist: [{order: 1, songId: '1001', title: 'サンプル曲1', section: 'MAIN', counted: true}, {order: 2, songId: '1002', title: 'サンプル曲2', section: 'MAIN', counted: true}, {order: 3, songId: '1003', title: 'サンプル曲3', section: 'ENCORE', counted: true}]},
   {eventId: 'EVT002', date: '2026-05-02', tourId: 'TR001', title: 'サンプルツアー', venue: 'サンプルホール', region: '大阪府', slot: '夜公演', setlist: []},
+  {eventId: 'EVT003', date: '2026-12-20', tourId: 'TR002', title: 'サンプル年末ライブ', venue: 'サンプルアリーナ', region: '東京都', slot: '夜公演', setlist: []},
 ];
-const tours = [{tourId: 'TR001', name: 'サンプルツアー', start: '2026-05-01', end: '2026-05-02', shows: 2, showsWithSetlist: 1}];
+const tours = [{tourId: 'TR001', name: 'サンプルツアー', start: '2026-05-01', end: '2026-05-02', shows: 2, showsWithSetlist: 1}, {tourId: 'TR002', name: 'サンプル年末ライブ', start: '2026-12-20', end: '2026-12-20', shows: 1, showsWithSetlist: 0}];
 
 const videos = [
   {videoId: 'SAMPLE000001', date: '2026-11-10', title: 'サンプル MV', type: 'normal', genre: 'MV・パフォーマンス', songId: '1011', liveRef: null, tvRef: null},

@@ -1,0 +1,188 @@
+<script>
+  // BE:STATS の計算（画面に触らない関数だけ。tests/bestats-calc.test.mjs が同じものを動かして確かめる）。
+  // 日付は 'YYYY-MM-DD'。欠測（null）は計算に使わない（前後の値で補わない）。
+  const BS_MINUS = '−';
+  const BS_EVENT_KIND_LABELS = {release: 'リリース', tv: 'TV出演', year_end: '年末', summer: '夏'};
+
+  function bsAddDays(iso, n) {
+    const d = new Date(iso + 'T00:00:00Z');
+    d.setUTCDate(d.getUTCDate() + n);
+    return d.toISOString().slice(0, 10);
+  }
+
+  function bsDaysBetween(from, to) {
+    return Math.round((new Date(to + 'T00:00:00Z') - new Date(from + 'T00:00:00Z')) / 86400000);
+  }
+
+  // 指標1つの値の並び（欠測を除く、日付の古い順）。[{date, value}]
+  function bsSeries(daily, id) {
+    const out = [];
+    (daily || []).forEach(function (row) {
+      const v = row[id];
+      if (typeof v === 'number' && isFinite(v)) out.push({date: row.date, value: v});
+    });
+    return out;
+  }
+
+  // その日の値（無ければ null。前後の値では補わない）
+  function bsValueOn(series, date) {
+    for (let i = series.length - 1; i >= 0; i--) {
+      if (series[i].date === date) return series[i].value;
+      if (series[i].date < date) return null;
+    }
+    return null;
+  }
+
+  // 大きい数は万・億（18.0億 / 120.4万）。1万未満は桁区切り。データなしは 0。
+  function bsFormatCount(n) {
+    if (typeof n !== 'number' || !isFinite(n)) return '0';
+    const a = Math.abs(n), sign = n < 0 ? BS_MINUS : '';
+    if (a >= 1e8) return sign + (a / 1e8).toFixed(1) + '億';
+    if (a >= 1e4) return sign + (a / 1e4).toFixed(1) + '万';
+    return sign + Math.round(a).toLocaleString('en-US');
+  }
+
+  // 増減（+1,234 / −567）
+  function bsFormatSigned(n) {
+    if (typeof n !== 'number' || !isFinite(n)) return '0';
+    if (n === 0) return '0';
+    return (n > 0 ? '+' : BS_MINUS) + bsFormatCount(Math.abs(n));
+  }
+
+  // 率（+8.33%）
+  function bsFormatPercent(rate) {
+    if (typeof rate !== 'number' || !isFinite(rate)) return '';
+    const pct = rate * 100;
+    if (Math.abs(pct) < 0.005) return '0.00%';
+    return (pct > 0 ? '+' : BS_MINUS) + Math.abs(pct).toFixed(2) + '%';
+  }
+
+  // 節目：人 …10万・50万・100万、以降 50万ごと／回 …1,000万・5,000万・1億、以降 1億ごと
+  function bsMilestonesUpTo(unit, maxValue) {
+    const list = [];
+    if (unit === '人') {
+      [100000, 500000, 1000000].forEach(function (t) { if (t <= maxValue) list.push(t); });
+      for (let t = 1500000; t <= maxValue; t += 500000) list.push(t);
+    } else {
+      [10000000, 50000000, 100000000].forEach(function (t) { if (t <= maxValue) list.push(t); });
+      for (let t = 200000000; t <= maxValue; t += 100000000) list.push(t);
+    }
+    return list;
+  }
+
+  function bsMilestoneLabel(threshold, unit) {
+    let text;
+    if (threshold >= 1e8) text = String(threshold / 1e8) + '億';
+    else text = (threshold / 1e4).toLocaleString('en-US') + '万';
+    return text + unit;
+  }
+
+  // 注目の動き。metrics: [{id,name,media,unit}]、daily、dataEnd。最大 limit 件。
+  //  1) dataEnd から7日以内に初めて節目以上になったもの  2) 直近30日で3%以上伸びたもの（増加率の高い順）
+  function bsNotableMoves(metrics, daily, dataEnd, limit) {
+    limit = limit || 5;
+    const windowStart = bsAddDays(dataEnd, -6);
+    const milestones = [], growth = [];
+    metrics.forEach(function (m) {
+      const series = bsSeries(daily, m.id);
+      if (series.length < 2) return;
+      let runningMax = series[0].value;
+      for (let i = 1; i < series.length; i++) {
+        const cur = series[i];
+        if (cur.date >= windowStart && cur.date <= dataEnd && cur.value > runningMax) {
+          bsMilestonesUpTo(m.unit, cur.value).forEach(function (t) {
+            if (t > runningMax && t <= cur.value) {
+              milestones.push({kind: 'milestone', metric: m, date: cur.date, value: cur.value, threshold: t, headline: bsMilestoneLabel(t, m.unit) + 'に到達'});
+            }
+          });
+        }
+        if (cur.value > runningMax) runningMax = cur.value;
+      }
+      const last = series[series.length - 1];
+      const base = bsValueOn(series, bsAddDays(last.date, -30));
+      if (base !== null && base > 0) {
+        const rate = (last.value - base) / base;
+        if (rate >= 0.03) growth.push({kind: 'growth', metric: m, date: last.date, value: last.value, rate: rate, headline: '直近30日で ' + bsFormatPercent(rate)});
+      }
+    });
+    milestones.sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : b.threshold - a.threshold; });
+    growth.sort(function (a, b) { return b.rate - a.rate; });
+    return milestones.concat(growth).slice(0, limit);
+  }
+
+  // 期間ボタンと年の選択から、表示する日付の範囲を返す。period: '7'|'30'|'90'|'365'|'all'、year: '' または 2025 など
+  function bsRange(firstDate, dataEnd, period, year) {
+    if (year) {
+      const y = String(year);
+      const to = y + '-12-31' < dataEnd ? y + '-12-31' : dataEnd;
+      const from = y + '-01-01' > firstDate ? y + '-01-01' : firstDate;
+      return {from: from, to: to};
+    }
+    if (period === 'all') return {from: firstDate, to: dataEnd};
+    const days = Number(period) || 90;
+    const from = bsAddDays(dataEnd, -(days - 1));
+    return {from: from > firstDate ? from : firstDate, to: dataEnd};
+  }
+
+  // 直近30日の増減：V(最終日) − V(最終日−30日)
+  function bsLast30(series) {
+    if (!series.length) return null;
+    const last = series[series.length - 1];
+    const base = bsValueOn(series, bsAddDays(last.date, -30));
+    if (base === null) return null;
+    return {delta: last.value - base, rate: base > 0 ? (last.value - base) / base : null};
+  }
+
+  // 前日比：（今日 − 前日）÷ 前日。前日の値が無ければ null
+  function bsDayChange(series) {
+    if (!series.length) return null;
+    const last = series[series.length - 1];
+    const prev = bsValueOn(series, bsAddDays(last.date, -1));
+    if (prev === null || prev <= 0) return null;
+    return (last.value - prev) / prev;
+  }
+
+  // 出来事の日 d の後30日：V(d+29日) − V(d−1日)。最終日を超えるときは最終日まで。どちらかの値が無ければ null
+  function bsAfter30(series, date) {
+    if (!series.length) return null;
+    const before = bsValueOn(series, bsAddDays(date, -1));
+    const lastDate = series[series.length - 1].date;
+    let endDate = bsAddDays(date, 29);
+    if (endDate > lastDate) endDate = lastDate;
+    const after = bsValueOn(series, endDate);
+    if (before === null || after === null) return null;
+    return {delta: after - before, rate: before > 0 ? (after - before) / before : null};
+  }
+
+  // 年ごとの平均（その年の日次値の平均。今年は最終日まで）。[{year, avg}]
+  function bsYearlyAverages(series) {
+    const byYear = {};
+    series.forEach(function (p) {
+      const y = p.date.slice(0, 4);
+      (byYear[y] = byYear[y] || {sum: 0, n: 0});
+      byYear[y].sum += p.value; byYear[y].n += 1;
+    });
+    return Object.keys(byYear).sort().map(function (y) { return {year: y, avg: byYear[y].sum / byYear[y].n}; });
+  }
+
+  // 出来事の一覧（範囲内・新しい順）。同じ日は元の順のまま
+  function bsEventsInRange(events, from, to) {
+    return (events || []).filter(function (e) {
+      const end = e.end || e.date;
+      return e.date <= to && end >= from;
+    }).slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+  }
+
+  // 直近の活動：TV出演・ライブ公演・YouTube通常動画（Shorts は入れない）。today 以前＝実績、より後＝予定
+  function bsActivityItems(data, today) {
+    const programName = {};
+    ((data.tv && data.tv.programs) || []).forEach(function (p) { programName[p.programId] = p.name; });
+    const items = [];
+    ((data.tv && data.tv.appearances) || []).forEach(function (a) { items.push({date: a.date, type: 'TV', title: programName[a.programId] || a.programId}); });
+    ((data.live && data.live.shows) || []).forEach(function (s) { items.push({date: s.date, type: 'LIVE', title: s.title + (s.venue ? '　' + s.venue : '')}); });
+    ((data.youtube && data.youtube.videos) || []).forEach(function (v) { if (v.type === 'normal') items.push({date: v.date, type: 'YouTube', title: v.title}); });
+    const planned = items.filter(function (i) { return i.date > today; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    const done = items.filter(function (i) { return i.date <= today; }).sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+    return {planned: planned, done: done};
+  }
+</script>

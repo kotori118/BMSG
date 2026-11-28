@@ -65,6 +65,7 @@
     const panel = document.getElementById('beStatsPanel');
     if (!panel) return;
     document.querySelectorAll('.bestats-tab').forEach(function (b) { b.classList.toggle('active', b.dataset.bestatsView === beStatsState.view); });
+    if (typeof destroyBeStatsChart === 'function') destroyBeStatsChart();
     if (beStatsState.loading) { panel.innerHTML = renderUniverseLoading(); return; }
     if (beStatsState.error) {
       panel.innerHTML = '<p class="ui-text-danger">' + escapeHtml(beStatsState.error) + '</p><button type="button" class="ui-btn" onclick="loadBeStatsData_()">再読み込み</button>';
@@ -73,6 +74,12 @@
     if (!beStatsState.data) { panel.innerHTML = ''; return; }
     const m = beStatsState.manifest || {};
     const source = '<p class="ui-muted bestats-source">データ ' + escapeHtml(m.dataEnd || '') + ' まで' + (beStatsState.sample ? '（サンプル）' : '') + '</p>';
+    if (beStatsState.view === 'home' || beStatsState.view === 'metrics') {
+      panel.innerHTML = source + '<div id="beStatsBody"></div>';
+      const body = document.getElementById('beStatsBody');
+      if (beStatsState.view === 'home') renderBeStatsHome(body); else renderBeStatsMetrics(body);
+      return;
+    }
     panel.innerHTML = source + '<div class="ui-empty">' + escapeHtml(BESTATS_VIEW_LABELS[beStatsState.view]) + 'は準備中です。</div>';
   }
 </script>

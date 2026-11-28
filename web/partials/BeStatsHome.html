@@ -1,0 +1,86 @@
+<script>
+  // BE:STATS ホーム：注目の動き → 数字の図鑑 → 直近の活動（この順番で固定）
+  const BS_HOME_CARD_IDS = ['spotify_monthly_listeners', 'youtube_total_views', 'spotify_followers', 'youtube_subscribers', 'instagram_followers_official', 'x_followers_official'];
+  const BS_ACTIVITY_STEP = 5;
+
+  function bsSlashDate(iso) { return String(iso || '').replace(/-/g, '/'); }
+  function bsFullNumber(v, unit) { return Math.round(v).toLocaleString('en-US') + (unit || ''); }
+  function bsTodayJst() {
+    return new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10);
+  }
+  function bsMediaAccent(media) { return 'var(--ui-media-' + escapeHtml(media || 'x') + ')'; }
+
+  function bsSparkline(series, endDate) {
+    const from = bsAddDays(endDate, -29);
+    const pts = series.filter(function (p) { return p.date >= from; });
+    if (pts.length < 2) return '';
+    const vals = pts.map(function (p) { return p.value; });
+    const min = Math.min.apply(null, vals), max = Math.max.apply(null, vals), span = max - min || 1;
+    const total = bsDaysBetween(pts[0].date, pts[pts.length - 1].date) || 1;
+    const points = pts.map(function (p) {
+      const x = bsDaysBetween(pts[0].date, p.date) / total * 100;
+      const y = 26 - (p.value - min) / span * 24;
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    return '<svg class="ui-spark" viewBox="0 0 100 28" preserveAspectRatio="none" aria-hidden="true"><polyline vector-effect="non-scaling-stroke" points="' + points + '"/></svg>';
+  }
+
+  function renderBeStatsNotable_(metrics, daily, dataEnd) {
+    const moves = bsNotableMoves(metrics, daily, dataEnd, 5);
+    if (!moves.length) return '';
+    return '<section class="bestats-section"><h2 class="ui-label bestats-section-title">注目の動き</h2><div class="ui-list">'
+      + moves.map(function (mv) {
+        return '<div class="ui-row ui-row-plain bestats-move" style="--accent:' + bsMediaAccent(mv.metric.media) + '"><span class="bestats-row-main">'
+          + '<strong class="ui-heading">' + escapeHtml(mv.headline) + '</strong>'
+          + '<span class="ui-muted"><span class="ui-dot"></span> ' + escapeHtml(mv.metric.name) + '　' + bsSlashDate(mv.date) + '　' + escapeHtml(bsFullNumber(mv.value, mv.metric.unit)) + '</span>'
+          + '</span></div>';
+      }).join('') + '</div></section>';
+  }
+
+  function renderBeStatsCards_(metrics, daily) {
+    const byId = {}; metrics.forEach(function (m) { byId[m.id] = m; });
+    const cards = BS_HOME_CARD_IDS.filter(function (id) { return byId[id]; }).map(function (id) {
+      const m = byId[id], series = bsSeries(daily, id);
+      const last = series.length ? series[series.length - 1] : null;
+      const change = bsDayChange(series);
+      return '<article class="ui-panel bestats-card" style="--accent:' + bsMediaAccent(m.media) + '">'
+        + '<span class="ui-label bestats-card-name"><span class="ui-dot"></span> ' + escapeHtml(m.name) + '</span>'
+        + '<p class="ui-num bestats-card-value">' + escapeHtml(bsFormatCount(last ? last.value : 0)) + '</p>'
+        + '<span class="ui-muted">前日比 ' + (change === null ? '—' : escapeHtml(bsFormatPercent(change))) + '</span>'
+        + (last ? bsSparkline(series, last.date) : '')
+        + '</article>';
+    }).join('');
+    return '<section class="bestats-section"><h2 class="ui-label bestats-section-title">数字の図鑑</h2><div class="bestats-cards">' + cards + '</div></section>';
+  }
+
+  function renderBeStatsActivity_() {
+    const act = bsActivityItems(beStatsState.data, bsTodayJst());
+    const shown = beStatsState.activityShown || BS_ACTIVITY_STEP;
+    const rows = function (list) {
+      return list.map(function (i) {
+        return '<div class="ui-row ui-row-plain bestats-act"><span class="ui-badge">' + escapeHtml(i.type) + '</span><span class="bestats-row-main"><span class="ui-muted">' + bsSlashDate(i.date) + '</span><span>' + escapeHtml(i.title) + '</span></span></div>';
+      }).join('');
+    };
+    const planned = act.planned.slice(0, shown), done = act.done.slice(0, shown);
+    const hasMore = act.planned.length > shown || act.done.length > shown;
+    return '<section class="bestats-section"><h2 class="ui-label bestats-section-title">直近の活動</h2>'
+      + (planned.length ? '<p class="ui-muted bestats-sub-title">予定</p><div class="ui-list">' + rows(planned) + '</div>' : '')
+      + '<p class="ui-muted bestats-sub-title">実績</p>'
+      + (done.length ? '<div class="ui-list">' + rows(done) + '</div>' : '<div class="ui-empty">まだありません。</div>')
+      + (hasMore ? '<button type="button" class="ui-btn ui-btn-wide bestats-more" onclick="showMoreBeStatsActivity()">もっと見る</button>' : '')
+      + '</section>';
+  }
+
+  function showMoreBeStatsActivity() {
+    beStatsState.activityShown = (beStatsState.activityShown || BS_ACTIVITY_STEP) + BS_ACTIVITY_STEP;
+    renderBeStatsView();
+  }
+
+  function renderBeStatsHome(panel) {
+    const d = beStatsState.data, m = beStatsState.manifest || {};
+    const metrics = d.metrics.metrics, daily = d.metrics.daily;
+    panel.innerHTML = renderBeStatsNotable_(metrics, daily, m.dataEnd || (daily.length ? daily[daily.length - 1].date : ''))
+      + renderBeStatsCards_(metrics, daily)
+      + renderBeStatsActivity_();
+  }
+</script>
