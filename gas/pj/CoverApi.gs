@@ -12,20 +12,20 @@ function getCoverMakerBootstrap(userId) {
     users: getCoverUsers_(),
     groups: groups,
     sourceArtists: buildCoverGroups_(snapshot).map(function(g){return String(g.groupName||'').trim();}).filter(Boolean),
-    allStarMembers: getCoverAllStarMembers_(snapshot),
+    allStarMembers: getCoverAllStarMembers_(snapshot, true),
     projects: []
   };
 }
 
 function getCoverProjects(userId) {
   const uid = validateCoverUser_(userId);
-  const snapshot = getCoverCoreSnapshot_();
+  const snapshot = getCoverSummarySnapshot_();
   return listCoverProjects_(snapshot, uid);
 }
 
 function getCoverLibrary(userId) {
   validateCoverUser_(userId);
-  const snapshot = getCoverCoreSnapshot_();
+  const snapshot = getCoverSummarySnapshot_();
   return listSharedCoverProjects_(snapshot);
 }
 
@@ -449,6 +449,30 @@ function getCoverCoreSnapshot_() {
   };
 }
 
+// 作品の一覧用の軽い表。曲は題名とアーティストだけ、歌詞はパートの順番と歌い手だけ（歌詞の本文は読まない）。
+// 重い歌詞の表を毎回読まないよう、軽くしたものを DB の版つきで保存する。
+function getCoverSummarySnapshot_() {
+  const ss = getCoreSpreadsheet_();
+  return {
+    groups: readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.GROUPS),
+    members: readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.MEMBERS),
+    groupMembers: readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.GROUP_MEMBERS),
+    songs: universeCoreCached_('cover-songs-light', function() {
+      return resolveUniverseSongs_(ss, readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.SONGS))
+        .map(function(row){ return {SongID:row.SongID, Title:row.Title, Artist:row.Artist}; });
+    }),
+    lyricsBySong: universeCoreCached_('cover-lyrics-light', function() {
+      const bySong = {};
+      readCoverSheetFromSpreadsheet_(ss, UNIVERSE_CONFIG.SHEETS.LYRICS_PARTS).forEach(function(row) {
+        const id = asId_(row.SongID);
+        if (!bySong[id]) bySong[id] = [];
+        bySong[id].push({SongID:row.SongID, PartOrder:row.PartOrder, Singer:row.Singer});
+      });
+      return bySong;
+    })
+  };
+}
+
 function getCoverBootstrapSnapshot_() {
   const ss = getCoreSpreadsheet_();
   return {
@@ -572,8 +596,9 @@ function isCoverAllStarsGroup_(groupId) {
   return asId_(groupId) === COVER_ALLSTARS_GROUP_ID_;
 }
 
-function getCoverAllStarMembers_(snapshot) {
-  const mainImages = pickMemberMainImages_(readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.IMAGES));
+// withImage: メンバー選択の写真が要るときだけ true（作品の一覧などでは画像の表を読まない）
+function getCoverAllStarMembers_(snapshot, withImage) {
+  const mainImages = withImage ? pickMemberMainImages_(readCoreSheetObjects_(UNIVERSE_CONFIG.SHEETS.IMAGES)) : {};
   return snapshot.members.slice()
     .sort(function(a,b){return Number(a.DisplayOrder||999)-Number(b.DisplayOrder||999);})
     .map(function(member){
@@ -790,7 +815,7 @@ function buildCoverProjectSummaries_(snapshot, predicate) {
         const song = songMap[asId_(row.SourceSongID)] || {};
         sourceTitle = String(song.Title || '');
         sourceArtist = String(song.Artist || '');
-        parts = snapshot.lyrics.filter(function(part){return asId_(part.SongID) === asId_(row.SourceSongID);});
+        parts = snapshot.lyricsBySong ? (snapshot.lyricsBySong[asId_(row.SourceSongID)] || []) : snapshot.lyrics.filter(function(part){return asId_(part.SongID) === asId_(row.SourceSongID);});
       }
       const selectedIds = (memberIdsByProject[projectId] || []).map(function(item){return item.memberId;});
       const members = getCoverDestinationMembers_(snapshot, groupId, selectedIds);
