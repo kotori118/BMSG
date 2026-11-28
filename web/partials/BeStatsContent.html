@@ -33,7 +33,7 @@
     if (!rows.length) return '<div class="ui-empty">この期間の記録はありません</div>';
     const top = rows[0].count || 1;
     return '<div class="bestats-rank">' + rows.map(function (r) {
-      return '<div class="bestats-rank-row"><span class="bestats-rank-label">' + escapeHtml(r.label) + '</span><span class="ui-num bestats-rank-count">' + r.count + '</span>'
+      return '<div class="bestats-rank-row"><span class="bestats-rank-label">' + escapeHtml(r.label) + '</span><span class="ui-strong bestats-rank-count">' + r.count + '</span>'
         + '<span class="ui-progress bestats-rank-bar"><span class="ui-progress-fill" style="width:' + (r.count / top * 100).toFixed(1) + '%"></span></span></div>';
     }).join('') + '</div>';
   }
@@ -100,7 +100,7 @@
     const canvas = document.getElementById('beStatsBarChart');
     if (!canvas || typeof Chart === 'undefined') return;
     const text = bsCssVar_('--ui-text'), sub = bsCssVar_('--ui-text-sub'), grid = bsCssVar_('--ui-line');
-    const colors = c.keys.length > 1 ? [bsCssVar_('--ui-media-youtube'), sub] : [text];
+    const colors = c.colors ? c.colors.map(bsCssVar_) : (c.keys.length > 1 ? [bsCssVar_('--ui-media-youtube'), sub] : [text]);
     beStatsChart = new Chart(canvas, {
       type: 'bar',
       data: {labels: c.labels, datasets: c.keys.map(function (k, i) { return {label: c.keyLabels[k] || '', data: c.counts[k], backgroundColor: colors[i % colors.length], borderWidth: 0}; })},
@@ -127,7 +127,7 @@
       if (!rows.length) return '<div class="ui-empty">この期間の記録はありません</div>';
       return '<div class="ui-list">' + rows.map(function (r) {
         const dates = inRange.filter(function (a) { return a.programId === r.key; }).map(function (a) { return a.date; }).sort().reverse();
-        return bsAccordion_('tv-' + r.key, '<span class="bestats-row-main"><strong class="ui-strong">' + escapeHtml(programName[r.key] || r.key) + '</strong></span><span class="ui-num bestats-rank-count">' + r.count + '</span>',
+        return bsAccordion_('tv-' + r.key, '<span class="bestats-row-main"><strong class="ui-strong">' + escapeHtml(programName[r.key] || r.key) + '</strong></span><span class="ui-strong bestats-rank-count">' + r.count + '</span>',
           dates.map(function (x) { return '<p class="ui-muted bestats-acc-line">' + bsSlashDate(x) + '</p>'; }).join(''));
       }).join('') + '</div>';
     }
@@ -202,7 +202,7 @@
       const years = Array.from(new Set(inRange.map(function (v) { return v.date.slice(0, 4); }))).sort();
       const row = function (g, label, key) {
         const head = '<span class="bestats-row-main"><strong class="ui-strong">' + escapeHtml(label) + '</strong><span class="ui-muted">通常 ' + g.normal + '　Shorts ' + g.shorts + '　' + (g.share * 100).toFixed(1) + '%</span>'
-          + '<span class="ui-muted">' + years.map(function (y) { return y + '：' + (g.byYear[y] || 0); }).join('　') + '</span></span><span class="ui-num bestats-rank-count">' + g.total + '</span>';
+          + '<span class="ui-muted">' + years.map(function (y) { return y + '：' + (g.byYear[y] || 0); }).join('　') + '</span></span><span class="ui-strong bestats-rank-count">' + g.total + '</span>';
         return '<button type="button" class="ui-row bestats-genre" aria-pressed="' + (s.genre === key ? 'true' : 'false') + '" onclick="selectBeStatsGenre(\'' + escapeHtml(key).replace(/'/g, '&#39;') + '\')">' + head + '</button>';
       };
       const total = {normal: inRange.filter(function (v) { return v.type !== 'shorts'; }).length, shorts: inRange.filter(function (v) { return v.type === 'shorts'; }).length, share: 1, total: inRange.length, byYear: {}};

@@ -33,6 +33,11 @@
     --ui-media-instagram: #e1306c;
     --ui-media-x: #d9d9d9;
     --ui-media-tiktok: #25f4ee;
+    /* グラフの系列の色（積み上げ・比べる棒）。黒基調に合わせた白・灰・赤・濃い灰 */
+    --ui-series-1: #ffffff;
+    --ui-series-2: #a6a6a6;
+    --ui-series-3: #ff4b4b;
+    --ui-series-4: #6b6b6b;
     --ui-danger: #e5484d;
     --ui-scrim: rgba(0, 0, 0, .64);
     --ui-bar-bg: rgba(14, 14, 14, .92);
@@ -121,6 +126,10 @@
     --ui-bar-bg: rgba(255, 255, 255, .92);
     --ui-field-bg: #ffffff;
     --ui-field-focus: #ffffff;
+    --ui-series-1: #111111;
+    --ui-series-2: #7a7a7a;
+    --ui-series-3: #d42f2f;
+    --ui-series-4: #b5b5b5;
   }
 </style>
 
@@ -1029,6 +1038,14 @@
   .bestats-legend { margin: 8px 0 0; }
   .bestats-genre { gap: 10px; }
   .bestats-genre-title { margin: 18px 0 10px; }
+
+  /* つながり */
+  .bestats-add { margin-top: 10px; }
+  .bestats-chart-top { margin-top: 14px; }
+  .bestats-rank-detail { grid-column: 1 / -1; }
+  .bestats-long-row { display: grid; gap: 6px; }
+  .bestats-long-bar { display: grid; grid-template-columns: minmax(0, 1fr) 44px; align-items: center; gap: 10px; }
+  .bestats-key { white-space: nowrap; }
 </style>
 
 <!-- ProfileUniverse.html -->
@@ -7382,6 +7399,108 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if (value === '○' || value === '×' || value === '予') return value;
     return '－';
   }
+
+  // ---- つながり ----
+
+  // 範囲の最初の日を100にした値（各日 ÷ 最初の日 × 100）。最初の日が欠測なら、範囲内で最初に値がある日を100にする。欠測は null のまま。
+  function bsNormalizeRows(rows, id) {
+    let base = null;
+    for (let i = 0; i < rows.length; i++) {
+      const v = rows[i][id];
+      if (typeof v === 'number' && isFinite(v) && v > 0) { base = v; break; }
+    }
+    return rows.map(function (r) {
+      const v = r[id];
+      return base !== null && typeof v === 'number' && isFinite(v) ? v / base * 100 : null;
+    });
+  }
+
+  // 年末・夏など期間のある出来事の数字：V(終わりの日) − V(始まりの前日)。換算しない。終わりが最終日を超えるときは最終日まで
+  function bsDeltaBetween(series, startDate, endDate) {
+    if (!series.length) return null;
+    const before = bsValueOn(series, bsAddDays(startDate, -1));
+    const lastDate = series[series.length - 1].date;
+    const after = bsValueOn(series, endDate > lastDate ? lastDate : endDate);
+    if (before === null || after === null) return null;
+    return {delta: after - before, rate: before > 0 ? (after - before) / before : null};
+  }
+
+  // 曲ごとの露出の日付。TV＝披露曲明細、ライブ＝披露集計対象（同じ公演の同じ曲は1回）、通常動画・Shorts＝SongID が一致する動画。
+  // songs は対象の曲（BE:FIRST の曲）。返り値 {songId: {tv:[日付], live:[日付], normal:[日付], shorts:[日付]}}
+  function bsSongExposures(songs, data) {
+    const map = {};
+    songs.forEach(function (s) { map[String(s.SongID)] = {tv: [], live: [], normal: [], shorts: []}; });
+    ((data.tv && data.tv.appearances) || []).forEach(function (a) {
+      (a.songs || []).forEach(function (sg) { const e = map[String(sg.songId)]; if (e) e.tv.push(a.date); });
+    });
+    ((data.live && data.live.shows) || []).forEach(function (sh) {
+      const seen = {};
+      (sh.setlist || []).forEach(function (sg) {
+        const id = String(sg.songId), e = map[id];
+        if (e && sg.counted && !seen[id]) { seen[id] = true; e.live.push(sh.date); }
+      });
+    });
+    ((data.youtube && data.youtube.videos) || []).forEach(function (v) {
+      const e = v.songId ? map[String(v.songId)] : null;
+      if (e) (v.type === 'shorts' ? e.shorts : e.normal).push(v.date);
+    });
+    return map;
+  }
+
+  function bsExposureCount(exp, from, to) {
+    const n = function (list) { return list.filter(function (d) { return d >= from && d <= to; }).length; };
+    const out = {tv: n(exp.tv), live: n(exp.live), normal: n(exp.normal), shorts: n(exp.shorts)};
+    out.total = out.tv + out.live + out.normal + out.shorts;
+    return out;
+  }
+
+  // 発売後N日（発売日〜発売日+N−1）の露出で順位。その期間がまだ終わっていない曲は順位に入れず、pending に題名を返す
+  function bsAfterRelease(songs, exposures, days, dataEnd) {
+    const ranked = [], pending = [];
+    songs.forEach(function (s) {
+      if (!s.ReleaseDate) return;
+      const to = bsAddDays(s.ReleaseDate, days - 1);
+      if (to > dataEnd) { pending.push(s.Title); return; }
+      const c = bsExposureCount(exposures[String(s.SongID)], s.ReleaseDate, to);
+      ranked.push({song: s, counts: c});
+    });
+    ranked.sort(function (a, b) { return b.counts.total - a.counts.total || (a.song.Title < b.song.Title ? -1 : 1); });
+    return {ranked: ranked, pending: pending};
+  }
+
+  // 1曲の発売後の内訳。windows ごとに {days, counts, complete}
+  function bsSongWindows(song, exposure, windows, dataEnd) {
+    if (!song.ReleaseDate) return [];
+    return windows.map(function (days) {
+      const to = bsAddDays(song.ReleaseDate, days - 1);
+      return {days: days, counts: bsExposureCount(exposure, song.ReleaseDate, to > dataEnd ? dataEnd : to), complete: to <= dataEnd};
+    });
+  }
+
+  // 長期：TVとライブの披露件数を、発売1年目（発売日〜+364日）と2年目以降で比べる。2年目以降がまだ来ていない曲は入れない
+  function bsLongTerm(songs, exposures, dataEnd) {
+    const rows = [];
+    songs.forEach(function (s) {
+      if (!s.ReleaseDate) return;
+      const secondStart = bsAddDays(s.ReleaseDate, 365);
+      if (secondStart > dataEnd) return;
+      const exp = exposures[String(s.SongID)];
+      const first = bsExposureCount(exp, s.ReleaseDate, bsAddDays(s.ReleaseDate, 364));
+      const later = bsExposureCount(exp, secondStart, dataEnd);
+      rows.push({song: s, first: first.tv + first.live, later: later.tv + later.live});
+    });
+    return rows.sort(function (a, b) { return (b.first + b.later) - (a.first + a.later) || (a.song.Title < b.song.Title ? -1 : 1); });
+  }
+
+  // 選曲：TVとライブの組み合わせ（全期間）。{both, liveOnly, tvOnly, none} それぞれ曲の配列
+  function bsSelectionBuckets(songs, exposures) {
+    const out = {both: [], liveOnly: [], tvOnly: [], none: []};
+    songs.forEach(function (s) {
+      const e = exposures[String(s.SongID)], tv = e.tv.length > 0, live = e.live.length > 0;
+      (tv && live ? out.both : live ? out.liveOnly : tv ? out.tvOnly : out.none).push(s);
+    });
+    return out;
+  }
 </script>
 
 <!-- BeStatsHome.html -->
@@ -7566,7 +7685,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
       const avgs = bsYearlyAverages(series), top = Math.max.apply(null, avgs.map(function (a) { return a.avg; })) || 1;
       yearly = '<section class="bestats-section"><h2 class="ui-label bestats-section-title">年ごとの平均</h2><div class="bestats-yearly">'
         + avgs.map(function (a) {
-          return '<div class="bestats-yearly-row"><span class="ui-muted">' + a.year + '年</span><span class="ui-progress"><span class="ui-progress-fill" style="width:' + (a.avg / top * 100).toFixed(1) + '%"></span></span><span class="ui-num bestats-yearly-value">' + escapeHtml(bsFormatCount(a.avg)) + '</span></div>';
+          return '<div class="bestats-yearly-row"><span class="ui-muted">' + a.year + '年</span><span class="ui-progress"><span class="ui-progress-fill" style="width:' + (a.avg / top * 100).toFixed(1) + '%"></span></span><span class="ui-strong bestats-yearly-value">' + escapeHtml(bsFormatCount(a.avg)) + '</span></div>';
         }).join('') + '</div></section>';
     }
 
@@ -7648,7 +7767,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if (!rows.length) return '<div class="ui-empty">この期間の記録はありません</div>';
     const top = rows[0].count || 1;
     return '<div class="bestats-rank">' + rows.map(function (r) {
-      return '<div class="bestats-rank-row"><span class="bestats-rank-label">' + escapeHtml(r.label) + '</span><span class="ui-num bestats-rank-count">' + r.count + '</span>'
+      return '<div class="bestats-rank-row"><span class="bestats-rank-label">' + escapeHtml(r.label) + '</span><span class="ui-strong bestats-rank-count">' + r.count + '</span>'
         + '<span class="ui-progress bestats-rank-bar"><span class="ui-progress-fill" style="width:' + (r.count / top * 100).toFixed(1) + '%"></span></span></div>';
     }).join('') + '</div>';
   }
@@ -7715,7 +7834,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     const canvas = document.getElementById('beStatsBarChart');
     if (!canvas || typeof Chart === 'undefined') return;
     const text = bsCssVar_('--ui-text'), sub = bsCssVar_('--ui-text-sub'), grid = bsCssVar_('--ui-line');
-    const colors = c.keys.length > 1 ? [bsCssVar_('--ui-media-youtube'), sub] : [text];
+    const colors = c.colors ? c.colors.map(bsCssVar_) : (c.keys.length > 1 ? [bsCssVar_('--ui-media-youtube'), sub] : [text]);
     beStatsChart = new Chart(canvas, {
       type: 'bar',
       data: {labels: c.labels, datasets: c.keys.map(function (k, i) { return {label: c.keyLabels[k] || '', data: c.counts[k], backgroundColor: colors[i % colors.length], borderWidth: 0}; })},
@@ -7742,7 +7861,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
       if (!rows.length) return '<div class="ui-empty">この期間の記録はありません</div>';
       return '<div class="ui-list">' + rows.map(function (r) {
         const dates = inRange.filter(function (a) { return a.programId === r.key; }).map(function (a) { return a.date; }).sort().reverse();
-        return bsAccordion_('tv-' + r.key, '<span class="bestats-row-main"><strong class="ui-strong">' + escapeHtml(programName[r.key] || r.key) + '</strong></span><span class="ui-num bestats-rank-count">' + r.count + '</span>',
+        return bsAccordion_('tv-' + r.key, '<span class="bestats-row-main"><strong class="ui-strong">' + escapeHtml(programName[r.key] || r.key) + '</strong></span><span class="ui-strong bestats-rank-count">' + r.count + '</span>',
           dates.map(function (x) { return '<p class="ui-muted bestats-acc-line">' + bsSlashDate(x) + '</p>'; }).join(''));
       }).join('') + '</div>';
     }
@@ -7817,7 +7936,7 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
       const years = Array.from(new Set(inRange.map(function (v) { return v.date.slice(0, 4); }))).sort();
       const row = function (g, label, key) {
         const head = '<span class="bestats-row-main"><strong class="ui-strong">' + escapeHtml(label) + '</strong><span class="ui-muted">通常 ' + g.normal + '　Shorts ' + g.shorts + '　' + (g.share * 100).toFixed(1) + '%</span>'
-          + '<span class="ui-muted">' + years.map(function (y) { return y + '：' + (g.byYear[y] || 0); }).join('　') + '</span></span><span class="ui-num bestats-rank-count">' + g.total + '</span>';
+          + '<span class="ui-muted">' + years.map(function (y) { return y + '：' + (g.byYear[y] || 0); }).join('　') + '</span></span><span class="ui-strong bestats-rank-count">' + g.total + '</span>';
         return '<button type="button" class="ui-row bestats-genre" aria-pressed="' + (s.genre === key ? 'true' : 'false') + '" onclick="selectBeStatsGenre(\'' + escapeHtml(key).replace(/'/g, '&#39;') + '\')">' + head + '</button>';
       };
       const total = {normal: inRange.filter(function (v) { return v.type !== 'shorts'; }).length, shorts: inRange.filter(function (v) { return v.type === 'shorts'; }).length, share: 1, total: inRange.length, byYear: {}};
@@ -7835,6 +7954,208 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     return '<div class="ui-list">' + list.slice(0, shown).map(function (v) {
       return '<div class="ui-row ui-row-plain bestats-act"><span class="ui-badge">' + (v.type === 'shorts' ? 'Shorts' : '動画') + '</span><span class="bestats-row-main"><span class="ui-muted">' + bsSlashDate(v.date) + '</span><span>' + escapeHtml(v.title) + '</span></span></div>';
     }).join('') + '</div>' + (list.length > shown ? '<button type="button" class="ui-btn ui-btn-wide bestats-more" onclick="showMoreBeStatsVideos()">もっと見る</button>' : '');
+  }
+</script>
+
+<!-- BeStatsLinks.html -->
+<script>
+  // BE:STATS つながり：推移 / 発売後 / 活動 / 長期 / 選曲
+  const BS_LINK_TAGS = [['trend', '推移'], ['after', '発売後'], ['activity', '活動'], ['long', '長期'], ['select', '選曲']];
+  const BS_LINK_DEFAULT_METRICS = ['youtube_subscribers', 'spotify_followers', 'instagram_followers_official', 'x_followers_official', 'tiktok_followers_official'];
+  const BS_EVENT_KINDS = ['release', 'tv', 'year_end', 'summer'];
+  const BS_LINK_STEP = 20;
+  const BS_EXPOSURE_LABELS = {tv: 'TV', live: 'ライブ', normal: '動画', shorts: 'Shorts'};
+
+  function bsLinksState_() {
+    if (!beStatsState.linksView) {
+      beStatsState.linksView = {tag: 'trend', metrics: BS_LINK_DEFAULT_METRICS.slice(), period: '365', year: '', kinds: {release: true, tv: true, year_end: true, summer: true}, focus: '', afterDays: 30, song: '', open: {}, shown: BS_LINK_STEP};
+    }
+    return beStatsState.linksView;
+  }
+
+  function setBeStatsLinkTag(tag) { const s = bsLinksState_(); s.tag = tag; s.shown = BS_LINK_STEP; renderBeStatsView(); }
+  function setBeStatsLinkPeriod(p) { const s = bsLinksState_(); s.period = p; s.year = ''; renderBeStatsView(); }
+  function setBeStatsLinkYear(y) { bsLinksState_().year = y; renderBeStatsView(); }
+  function removeBeStatsLinkMetric(id) { const s = bsLinksState_(); s.metrics = s.metrics.filter(function (m) { return m !== id; }); renderBeStatsView(); }
+  function addBeStatsLinkMetric(id) { const s = bsLinksState_(); if (id && s.metrics.indexOf(id) < 0) s.metrics.push(id); renderBeStatsView(); }
+  function toggleBeStatsLinkKind(kind) { const s = bsLinksState_(); s.kinds[kind] = !s.kinds[kind]; renderBeStatsView(); }
+  function setBeStatsLinkFocus(id) { bsLinksState_().focus = id; renderBeStatsView(); }
+  function setBeStatsAfterDays(days) { const s = bsLinksState_(); s.afterDays = Number(days); s.shown = BS_LINK_STEP; renderBeStatsView(); }
+  function toggleBeStatsLinkOpen(key) { const s = bsLinksState_(); s.open[key] = !s.open[key]; renderBeStatsView(); }
+  function showMoreBeStatsLinks() { const s = bsLinksState_(); s.shown += BS_LINK_STEP; renderBeStatsView(); }
+  function setBeStatsLinkSong(title) {
+    const s = bsLinksState_(), want = String(title || '').trim().toLowerCase();
+    const hit = beStatsState.data.songs.songs.find(function (x) { return String(x.Title).trim().toLowerCase() === want; });
+    s.song = hit ? String(hit.SongID) : '';
+    renderBeStatsView();
+  }
+
+  function bsSongs_() { return beStatsState.data.songs.songs; }
+  function bsExposures_() {
+    if (!beStatsState.exposures) beStatsState.exposures = bsSongExposures(bsSongs_(), beStatsState.data);
+    return beStatsState.exposures;
+  }
+
+  function renderBeStatsLinks(panel) {
+    const s = bsLinksState_();
+    const chips = '<div class="bestats-tags" role="group" aria-label="内訳">' + BS_LINK_TAGS.map(function (t) {
+      return '<button type="button" class="ui-chip" aria-pressed="' + (t[0] === s.tag ? 'true' : 'false') + '" onclick="setBeStatsLinkTag(\'' + t[0] + '\')">' + t[1] + '</button>';
+    }).join('') + '</div>';
+    let body = '';
+    if (s.tag === 'trend') body = renderBeStatsLinkTrend_(s);
+    else if (s.tag === 'after') body = renderBeStatsLinkAfter_(s);
+    else if (s.tag === 'activity') body = renderBeStatsLinkActivity_(s);
+    else if (s.tag === 'long') body = renderBeStatsLinkLong_(s);
+    else body = renderBeStatsLinkSelect_(s);
+    panel.innerHTML = '<div class="bestats-controls">' + chips + '</div>' + body;
+    const c = beStatsState.pendingLinkChart;
+    if (c) { beStatsState.pendingLinkChart = null; if (c.kind === 'trend') drawBeStatsTrendChart_(c); else { drawBeStatsBarChart_(c); } }
+  }
+
+  // ---- 推移 ----
+  function renderBeStatsLinkTrend_(s) {
+    const d = beStatsState.data, dataEnd = (beStatsState.manifest || {}).dataEnd;
+    const metrics = d.metrics.metrics, daily = d.metrics.daily;
+    const byId = {}; metrics.forEach(function (m) { byId[m.id] = m; });
+    s.metrics = s.metrics.filter(function (id) { return byId[id]; });
+    const firstDate = daily.length ? daily[0].date : dataEnd;
+    const years = Array.from(new Set(daily.map(function (r) { return r.date.slice(0, 4); }))).sort();
+    const range = bsRange(firstDate, dataEnd, s.period, s.year);
+    const rows = daily.filter(function (r) { return r.date >= range.from && r.date <= range.to; });
+
+    const selectedChips = '<div class="bestats-tags">' + s.metrics.map(function (id) {
+      return '<button type="button" class="ui-chip ui-chip-accent" style="--accent:' + bsMediaAccent(byId[id].media) + '" aria-label="' + escapeHtml(byId[id].name) + 'を外す" onclick="removeBeStatsLinkMetric(\'' + id + '\')">' + escapeHtml(byId[id].name) + ' ×</button>';
+    }).join('') + '</div>';
+    const rest = metrics.filter(function (m) { return s.metrics.indexOf(m.id) < 0; });
+    const addSelect = rest.length ? '<select class="ui-input" aria-label="指標を追加する" onchange="addBeStatsLinkMetric(this.value)"><option value="">指標を追加する</option>'
+      + rest.map(function (m) { return '<option value="' + escapeHtml(m.id) + '">' + escapeHtml(m.name) + '</option>'; }).join('') + '</select>' : '';
+    const periodTabs = '<div class="ui-tabs bestats-periods" role="group" aria-label="期間">' + BS_PERIODS.map(function (p) {
+      return '<button type="button" class="ui-tab' + (!s.year && s.period === p[0] ? ' active' : '') + '" onclick="setBeStatsLinkPeriod(\'' + p[0] + '\')">' + p[1] + '</button>';
+    }).join('') + '</div>';
+    const yearSelect = '<select class="ui-input" aria-label="年" onchange="setBeStatsLinkYear(this.value)"><option value="">年を選ぶ（指定なし）</option>'
+      + years.map(function (y) { return '<option value="' + y + '"' + (String(s.year) === y ? ' selected' : '') + '>' + y + '年</option>'; }).join('') + '</select>';
+    const kindChips = '<div class="bestats-tags" role="group" aria-label="出来事の種類">' + BS_EVENT_KINDS.map(function (k) {
+      return '<button type="button" class="ui-chip" aria-pressed="' + (s.kinds[k] ? 'true' : 'false') + '" onclick="toggleBeStatsLinkKind(\'' + k + '\')">' + BS_EVENT_KIND_LABELS[k] + '</button>';
+    }).join('') + '</div>';
+
+    const events = bsEventsInRange(d.events.events, range.from, range.to).filter(function (e) { return s.kinds[e.kind]; });
+    // 指標ごとに「期間の最初の日 = 100」にそろえた線。同じ媒体の2本目からは点線
+    const seenMedia = {};
+    const datasets = s.metrics.map(function (id) {
+      const m = byId[id], n = seenMedia[m.media] = (seenMedia[m.media] || 0) + 1;
+      return {label: m.name, media: m.media, dash: n > 1, data: bsNormalizeRows(rows, id)};
+    });
+    beStatsState.pendingLinkChart = {kind: 'trend', labels: rows.map(function (r) { return r.date; }), datasets: datasets,
+      events: events.slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; })};
+
+    if (s.metrics.indexOf(s.focus) < 0) s.focus = s.metrics[0] || '';
+    const focusSelect = s.metrics.length ? '<select class="ui-input" aria-label="数字を見る指標" onchange="setBeStatsLinkFocus(this.value)">'
+      + s.metrics.map(function (id) { return '<option value="' + escapeHtml(id) + '"' + (id === s.focus ? ' selected' : '') + '>' + escapeHtml(byId[id].name) + '</option>'; }).join('') + '</select>' : '';
+    const series = s.focus ? bsSeries(daily, s.focus) : [];
+    const list = events.length ? '<div class="ui-list">' + events.map(function (e) {
+      const r = e.end ? bsDeltaBetween(series, e.date, e.end) : bsAfter30(series, e.date);
+      const text = (e.end ? '期間の合計 ' : '後30日 ') + (r ? bsFormatSigned(r.delta) + (r.rate === null ? '' : '（' + bsFormatPercent(r.rate) + '）') : '—');
+      return '<div class="ui-row ui-row-plain bestats-event"><span class="bestats-row-main"><span><span class="ui-muted">' + bsSlashDate(e.date) + '</span> <span class="ui-badge">' + escapeHtml(BS_EVENT_KIND_LABELS[e.kind] || e.kind) + '</span> <strong class="ui-strong">' + escapeHtml(e.name) + '</strong></span><span class="ui-muted">' + escapeHtml(text) + '</span></span></div>';
+    }).join('') + '</div>' : '<div class="ui-empty">この期間に出来事はありません</div>';
+
+    return '<div class="bestats-controls">' + periodTabs + yearSelect + '</div>'
+      + '<section class="bestats-section"><h2 class="ui-label bestats-section-title">指標（期間の最初の日 = 100）</h2>' + (s.metrics.length ? selectedChips : '<div class="ui-empty">指標を選んでください</div>') + (addSelect ? '<div class="bestats-add">' + addSelect + '</div>' : '') + '</section>'
+      + '<section class="bestats-section"><h2 class="ui-label bestats-section-title">出来事の種類</h2>' + kindChips + '<div class="ui-panel bestats-chart bestats-chart-top"><canvas id="beStatsTrendChart" aria-label="指標の推移"></canvas></div></section>'
+      + '<section class="bestats-section"><h2 class="ui-label bestats-section-title">出来事（新しい順）</h2>' + (focusSelect ? '<div class="bestats-add">' + focusSelect + '</div>' : '') + list + '</section>';
+  }
+
+  function drawBeStatsTrendChart_(c) {
+    destroyBeStatsChart();
+    const canvas = document.getElementById('beStatsTrendChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const sub = bsCssVar_('--ui-text-sub'), grid = bsCssVar_('--ui-line');
+    beStatsChart = new Chart(canvas, {
+      type: 'line',
+      data: {labels: c.labels, datasets: c.datasets.map(function (ds) {
+        return {label: ds.label, data: ds.data, borderColor: bsCssVar_('--ui-media-' + ds.media), borderWidth: 2, borderDash: ds.dash ? [6, 4] : [], pointRadius: 0, pointHoverRadius: 3, tension: 0.15, spanGaps: false};
+      })},
+      options: {
+        responsive: true, maintainAspectRatio: false, animation: false,
+        interaction: {mode: 'index', intersect: false},
+        plugins: {legend: {display: false}, tooltip: {callbacks: {label: function (x) { return x.parsed.y === null ? '' : x.dataset.label + ' ' + x.parsed.y.toFixed(1); }}}, bsEvents: {events: c.events}},
+        scales: {
+          x: {grid: {display: false}, ticks: {color: sub, maxTicksLimit: 5, maxRotation: 0, callback: function (v) { return String(this.getLabelForValue(v)).slice(0, 7).replace('-', '/'); }}},
+          y: {grid: {color: grid}, ticks: {color: sub, maxTicksLimit: 5, callback: function (v) { return Math.round(v); }}}
+        }
+      },
+      plugins: [bsEventsPlugin]
+    });
+  }
+
+  // ---- 発売後 ----
+  function bsDaysTabs_(s) {
+    return '<div class="ui-tabs bestats-periods" role="group" aria-label="発売後の日数">' + [30, 90, 365].map(function (n) {
+      return '<button type="button" class="ui-tab' + (s.afterDays === n ? ' active' : '') + '" onclick="setBeStatsAfterDays(' + n + ')">発売後' + n + '日</button>';
+    }).join('') + '</div>';
+  }
+
+  function renderBeStatsLinkAfter_(s) {
+    const dataEnd = (beStatsState.manifest || {}).dataEnd;
+    const r = bsAfterRelease(bsSongs_(), bsExposures_(), s.afterDays, dataEnd);
+    const top = r.ranked.length ? Math.max(1, r.ranked[0].counts.total) : 1;
+    const rows = r.ranked.slice(0, s.shown).map(function (x, i) {
+      const c = x.counts;
+      return '<div class="bestats-rank-row bestats-after-row"><span class="bestats-rank-label"><span class="ui-muted">' + (i + 1) + '</span>　' + escapeHtml(x.song.Title) + '</span><span class="ui-strong bestats-rank-count">' + c.total + '</span>'
+        + '<span class="ui-muted bestats-rank-detail">' + Object.keys(BS_EXPOSURE_LABELS).map(function (k) { return BS_EXPOSURE_LABELS[k] + ' ' + c[k]; }).join('　') + '</span>'
+        + '<span class="ui-progress bestats-rank-bar"><span class="ui-progress-fill" style="width:' + (c.total / top * 100).toFixed(1) + '%"></span></span></div>';
+    }).join('');
+    return '<div class="bestats-controls">' + bsDaysTabs_(s) + '</div><section class="bestats-section">'
+      + '<p class="ui-muted bestats-source">露出 ＝ TV出演＋ライブ披露＋通常動画＋Shorts の件数</p>'
+      + (rows ? '<div class="bestats-rank">' + rows + '</div>' : '<div class="ui-empty">順位に入れられる曲がありません</div>')
+      + (r.ranked.length > s.shown ? '<button type="button" class="ui-btn ui-btn-wide bestats-more" onclick="showMoreBeStatsLinks()">もっと見る</button>' : '')
+      + (r.pending.length ? '<p class="ui-muted bestats-legend">期間が終わっていないため入れていない：' + r.pending.map(escapeHtml).join('、') + '</p>' : '')
+      + '</section>';
+  }
+
+  // ---- 活動 ----
+  function renderBeStatsLinkActivity_(s) {
+    const dataEnd = (beStatsState.manifest || {}).dataEnd, songs = bsSongs_();
+    const song = songs.find(function (x) { return String(x.SongID) === s.song; });
+    const input = '<input class="ui-input" type="search" list="beStatsSongList" placeholder="曲名を入力して選ぶ" aria-label="曲" value="' + escapeHtml(song ? song.Title : '') + '" onchange="setBeStatsLinkSong(this.value)">'
+      + '<datalist id="beStatsSongList">' + songs.map(function (x) { return '<option value="' + escapeHtml(x.Title) + '"></option>'; }).join('') + '</datalist>';
+    if (!song) return '<div class="bestats-controls">' + input + '</div><div class="ui-empty">曲を選ぶと、発売後30日・90日・365日の内訳が出ます</div>';
+    if (!song.ReleaseDate) return '<div class="bestats-controls">' + input + '</div><div class="ui-empty">この曲は発売日が未登録です</div>';
+    const wins = bsSongWindows(song, bsExposures_()[s.song], [30, 90, 365], dataEnd);
+    const keys = Object.keys(BS_EXPOSURE_LABELS);
+    beStatsState.pendingLinkChart = {kind: 'bar', labels: wins.map(function (w) { return '発売後' + w.days + '日' + (w.complete ? '' : '（途中）'); }), keys: keys,
+      counts: Object.fromEntries(keys.map(function (k) { return [k, wins.map(function (w) { return w.counts[k]; })]; })), keyLabels: BS_EXPOSURE_LABELS, stacked: true,
+      colors: ['--ui-series-1', '--ui-series-2', '--ui-series-3', '--ui-series-4']};
+    const table = '<div class="bestats-table-wrap"><table class="ui-table"><thead><tr><th>期間</th>' + keys.map(function (k) { return '<th class="num">' + BS_EXPOSURE_LABELS[k] + '</th>'; }).join('') + '<th class="num">計</th></tr></thead><tbody>'
+      + wins.map(function (w) { return '<tr><td>' + w.days + '日' + (w.complete ? '' : '（途中）') + '</td>' + keys.map(function (k) { return '<td class="num">' + w.counts[k] + '</td>'; }).join('') + '<td class="num">' + w.counts.total + '</td></tr>'; }).join('') + '</tbody></table></div>';
+    return '<div class="bestats-controls">' + input + '</div><section class="bestats-section"><h2 class="ui-label bestats-section-title">' + escapeHtml(song.Title) + '　発売 ' + bsSlashDate(song.ReleaseDate) + '</h2>'
+      + '<div class="ui-panel bestats-chart"><canvas id="beStatsBarChart" aria-label="発売後の内訳"></canvas></div></section><section class="bestats-section">' + table + '</section>';
+  }
+
+  // ---- 長期 ----
+  function renderBeStatsLinkLong_(s) {
+    const dataEnd = (beStatsState.manifest || {}).dataEnd;
+    const rows = bsLongTerm(bsSongs_(), bsExposures_(), dataEnd);
+    const top = rows.reduce(function (m, r) { return Math.max(m, r.first, r.later); }, 1);
+    const html = rows.slice(0, s.shown).map(function (r) {
+      return '<div class="bestats-long-row"><span class="bestats-rank-label">' + escapeHtml(r.song.Title) + '</span>'
+        + '<span class="bestats-long-bar" style="--accent:var(--ui-series-1)"><span class="ui-progress"><span class="ui-progress-fill" style="width:' + (r.first / top * 100).toFixed(1) + '%"></span></span><span class="ui-strong bestats-rank-count">' + r.first + '</span></span>'
+        + '<span class="bestats-long-bar" style="--accent:var(--ui-series-2)"><span class="ui-progress"><span class="ui-progress-fill" style="width:' + (r.later / top * 100).toFixed(1) + '%"></span></span><span class="ui-strong bestats-rank-count">' + r.later + '</span></span></div>';
+    }).join('');
+    return '<section class="bestats-section"><p class="ui-muted bestats-source">TVとライブの披露件数。<span class="bestats-key" style="--accent:var(--ui-series-1)"><span class="ui-dot"></span> 発売1年目</span>　<span class="bestats-key" style="--accent:var(--ui-series-2)"><span class="ui-dot"></span> 2年目以降</span></p>'
+      + (html ? '<div class="bestats-rank">' + html + '</div>' : '<div class="ui-empty">2年目以降が来た曲がありません</div>')
+      + (rows.length > s.shown ? '<button type="button" class="ui-btn ui-btn-wide bestats-more" onclick="showMoreBeStatsLinks()">もっと見る</button>' : '') + '</section>';
+  }
+
+  // ---- 選曲 ----
+  function renderBeStatsLinkSelect_(s) {
+    const b = bsSelectionBuckets(bsSongs_(), bsExposures_());
+    const groups = [['both', 'TVとライブの両方'], ['liveOnly', 'ライブのみ'], ['tvOnly', 'TVのみ'], ['none', 'どちらもなし']];
+    const total = bsSongs_().length;
+    return '<section class="bestats-section"><p class="ui-muted bestats-source">TVとライブでの披露（全期間）。全 ' + total + ' 曲</p><div class="ui-list">' + groups.map(function (g) {
+      const list = b[g[0]], open = !!s.open['sel-' + g[0]];
+      return '<div class="bestats-acc"><button type="button" class="ui-row bestats-acc-head" aria-expanded="' + (open ? 'true' : 'false') + '" onclick="toggleBeStatsLinkOpen(\'sel-' + g[0] + '\')"><span class="bestats-row-main"><strong class="ui-strong">' + g[1] + '</strong></span><span class="ui-strong bestats-rank-count">' + list.length + '</span></button>'
+        + (open ? '<div class="bestats-acc-body">' + (list.length ? list.map(function (x) { return '<p class="bestats-acc-line">' + escapeHtml(x.Title) + '</p>'; }).join('') : '<p class="ui-muted bestats-acc-line">なし</p>') + '</div>' : '') + '</div>';
+    }).join('') + '</div></section>';
   }
 </script>
 
@@ -7915,10 +8236,10 @@ poker: '<defs><mask id="ip-f" maskUnits="userSpaceOnUse" x="0" y="0" width="24" 
     if (!beStatsState.data) { panel.innerHTML = ''; return; }
     const m = beStatsState.manifest || {};
     const source = '<p class="ui-muted bestats-source">データ ' + escapeHtml(m.dataEnd || '') + ' まで' + (beStatsState.sample ? '（サンプル）' : '') + '</p>';
-    if (beStatsState.view === 'home' || beStatsState.view === 'metrics' || beStatsState.view === 'content') {
+    if (beStatsState.view === 'home' || beStatsState.view === 'metrics' || beStatsState.view === 'content' || beStatsState.view === 'links') {
       panel.innerHTML = source + '<div id="beStatsBody"></div>';
       const body = document.getElementById('beStatsBody');
-      if (beStatsState.view === 'home') renderBeStatsHome(body); else if (beStatsState.view === 'metrics') renderBeStatsMetrics(body); else renderBeStatsContent(body);
+      if (beStatsState.view === 'home') renderBeStatsHome(body); else if (beStatsState.view === 'metrics') renderBeStatsMetrics(body); else if (beStatsState.view === 'content') renderBeStatsContent(body); else renderBeStatsLinks(body);
       return;
     }
     panel.innerHTML = source + '<div class="ui-empty">' + escapeHtml(BESTATS_VIEW_LABELS[beStatsState.view]) + 'は準備中です。</div>';

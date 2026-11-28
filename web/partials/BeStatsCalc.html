@@ -296,4 +296,106 @@
     if (value === '○' || value === '×' || value === '予') return value;
     return '－';
   }
+
+  // ---- つながり ----
+
+  // 範囲の最初の日を100にした値（各日 ÷ 最初の日 × 100）。最初の日が欠測なら、範囲内で最初に値がある日を100にする。欠測は null のまま。
+  function bsNormalizeRows(rows, id) {
+    let base = null;
+    for (let i = 0; i < rows.length; i++) {
+      const v = rows[i][id];
+      if (typeof v === 'number' && isFinite(v) && v > 0) { base = v; break; }
+    }
+    return rows.map(function (r) {
+      const v = r[id];
+      return base !== null && typeof v === 'number' && isFinite(v) ? v / base * 100 : null;
+    });
+  }
+
+  // 年末・夏など期間のある出来事の数字：V(終わりの日) − V(始まりの前日)。換算しない。終わりが最終日を超えるときは最終日まで
+  function bsDeltaBetween(series, startDate, endDate) {
+    if (!series.length) return null;
+    const before = bsValueOn(series, bsAddDays(startDate, -1));
+    const lastDate = series[series.length - 1].date;
+    const after = bsValueOn(series, endDate > lastDate ? lastDate : endDate);
+    if (before === null || after === null) return null;
+    return {delta: after - before, rate: before > 0 ? (after - before) / before : null};
+  }
+
+  // 曲ごとの露出の日付。TV＝披露曲明細、ライブ＝披露集計対象（同じ公演の同じ曲は1回）、通常動画・Shorts＝SongID が一致する動画。
+  // songs は対象の曲（BE:FIRST の曲）。返り値 {songId: {tv:[日付], live:[日付], normal:[日付], shorts:[日付]}}
+  function bsSongExposures(songs, data) {
+    const map = {};
+    songs.forEach(function (s) { map[String(s.SongID)] = {tv: [], live: [], normal: [], shorts: []}; });
+    ((data.tv && data.tv.appearances) || []).forEach(function (a) {
+      (a.songs || []).forEach(function (sg) { const e = map[String(sg.songId)]; if (e) e.tv.push(a.date); });
+    });
+    ((data.live && data.live.shows) || []).forEach(function (sh) {
+      const seen = {};
+      (sh.setlist || []).forEach(function (sg) {
+        const id = String(sg.songId), e = map[id];
+        if (e && sg.counted && !seen[id]) { seen[id] = true; e.live.push(sh.date); }
+      });
+    });
+    ((data.youtube && data.youtube.videos) || []).forEach(function (v) {
+      const e = v.songId ? map[String(v.songId)] : null;
+      if (e) (v.type === 'shorts' ? e.shorts : e.normal).push(v.date);
+    });
+    return map;
+  }
+
+  function bsExposureCount(exp, from, to) {
+    const n = function (list) { return list.filter(function (d) { return d >= from && d <= to; }).length; };
+    const out = {tv: n(exp.tv), live: n(exp.live), normal: n(exp.normal), shorts: n(exp.shorts)};
+    out.total = out.tv + out.live + out.normal + out.shorts;
+    return out;
+  }
+
+  // 発売後N日（発売日〜発売日+N−1）の露出で順位。その期間がまだ終わっていない曲は順位に入れず、pending に題名を返す
+  function bsAfterRelease(songs, exposures, days, dataEnd) {
+    const ranked = [], pending = [];
+    songs.forEach(function (s) {
+      if (!s.ReleaseDate) return;
+      const to = bsAddDays(s.ReleaseDate, days - 1);
+      if (to > dataEnd) { pending.push(s.Title); return; }
+      const c = bsExposureCount(exposures[String(s.SongID)], s.ReleaseDate, to);
+      ranked.push({song: s, counts: c});
+    });
+    ranked.sort(function (a, b) { return b.counts.total - a.counts.total || (a.song.Title < b.song.Title ? -1 : 1); });
+    return {ranked: ranked, pending: pending};
+  }
+
+  // 1曲の発売後の内訳。windows ごとに {days, counts, complete}
+  function bsSongWindows(song, exposure, windows, dataEnd) {
+    if (!song.ReleaseDate) return [];
+    return windows.map(function (days) {
+      const to = bsAddDays(song.ReleaseDate, days - 1);
+      return {days: days, counts: bsExposureCount(exposure, song.ReleaseDate, to > dataEnd ? dataEnd : to), complete: to <= dataEnd};
+    });
+  }
+
+  // 長期：TVとライブの披露件数を、発売1年目（発売日〜+364日）と2年目以降で比べる。2年目以降がまだ来ていない曲は入れない
+  function bsLongTerm(songs, exposures, dataEnd) {
+    const rows = [];
+    songs.forEach(function (s) {
+      if (!s.ReleaseDate) return;
+      const secondStart = bsAddDays(s.ReleaseDate, 365);
+      if (secondStart > dataEnd) return;
+      const exp = exposures[String(s.SongID)];
+      const first = bsExposureCount(exp, s.ReleaseDate, bsAddDays(s.ReleaseDate, 364));
+      const later = bsExposureCount(exp, secondStart, dataEnd);
+      rows.push({song: s, first: first.tv + first.live, later: later.tv + later.live});
+    });
+    return rows.sort(function (a, b) { return (b.first + b.later) - (a.first + a.later) || (a.song.Title < b.song.Title ? -1 : 1); });
+  }
+
+  // 選曲：TVとライブの組み合わせ（全期間）。{both, liveOnly, tvOnly, none} それぞれ曲の配列
+  function bsSelectionBuckets(songs, exposures) {
+    const out = {both: [], liveOnly: [], tvOnly: [], none: []};
+    songs.forEach(function (s) {
+      const e = exposures[String(s.SongID)], tv = e.tv.length > 0, live = e.live.length > 0;
+      (tv && live ? out.both : live ? out.liveOnly : tv ? out.tvOnly : out.none).push(s);
+    });
+    return out;
+  }
 </script>

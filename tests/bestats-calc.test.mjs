@@ -7,7 +7,7 @@ import vm from 'node:vm';
 // 画面に触らない計算（web/partials/BeStatsCalc.html の <script>）をそのまま動かす
 const file = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', 'web', 'partials', 'BeStatsCalc.html');
 const source = fs.readFileSync(file, 'utf8').replace(/^<script>\n?/, '').replace(/<\/script>\s*$/, '');
-const names = ['bsAddDays', 'bsDaysBetween', 'bsSeries', 'bsValueOn', 'bsFormatCount', 'bsFormatSigned', 'bsFormatPercent', 'bsMilestonesUpTo', 'bsMilestoneLabel', 'bsNotableMoves', 'bsRange', 'bsLast30', 'bsDayChange', 'bsAfter30', 'bsYearlyAverages', 'bsEventsInRange', 'bsActivityItems', 'bsContentRange', 'bsBucketize', 'bsBucketLabel', 'bsCountBy', 'bsTvSongRanking', 'bsLiveSongRanking', 'bsSetlistMarks', 'bsGenreStats', 'bsMatrixSymbol'];
+const names = ['bsAddDays', 'bsDaysBetween', 'bsSeries', 'bsValueOn', 'bsFormatCount', 'bsFormatSigned', 'bsFormatPercent', 'bsMilestonesUpTo', 'bsMilestoneLabel', 'bsNotableMoves', 'bsRange', 'bsLast30', 'bsDayChange', 'bsAfter30', 'bsYearlyAverages', 'bsEventsInRange', 'bsActivityItems', 'bsContentRange', 'bsBucketize', 'bsBucketLabel', 'bsCountBy', 'bsTvSongRanking', 'bsLiveSongRanking', 'bsSetlistMarks', 'bsGenreStats', 'bsMatrixSymbol', 'bsNormalizeRows', 'bsDeltaBetween', 'bsSongExposures', 'bsExposureCount', 'bsAfterRelease', 'bsSongWindows', 'bsLongTerm', 'bsSelectionBuckets'];
 const context = vm.createContext({});
 vm.runInContext(source + `\nthis.api = {${names.join(',')}};`, context);
 const api = context.api;
@@ -184,4 +184,58 @@ test('コンテンツ：ジャンル別と出演履歴の記号', () => {
   assert.equal(Math.round(stats[0].share * 100), 67);
   assert.deepEqual({...stats[0].byYear}, {2025: 1, 2026: 1});
   assert.deepEqual(['○', '×', '予', '？', ''].map(api.bsMatrixSymbol), ['○', '×', '予', '－', '－']);
+});
+
+test('つながり：範囲の最初の日を100にそろえる（最初が欠測なら最初に値がある日）', () => {
+  const rows = [{a: 200, b: null}, {a: 220, b: 50}, {a: null, b: 100}];
+  const round = (list) => Array.from(list, (v) => (v === null ? null : Math.round(v * 100) / 100));
+  assert.deepEqual(round(api.bsNormalizeRows(rows, 'a')), [100, 110, null]);
+  assert.deepEqual(round(api.bsNormalizeRows(rows, 'b')), [null, 100, 200]);
+  assert.deepEqual(Array.from(api.bsNormalizeRows([{a: null}], 'a')), [null]);
+});
+
+test('つながり：期間のある出来事の数字は最初と最後の差（換算しない）', () => {
+  const rows = [];
+  for (let i = 0; i <= 60; i++) rows.push({date: api.bsAddDays('2026-10-01', i), v: 1000 + i * 10});
+  const s = api.bsSeries(rows, 'v');
+  assert.deepEqual({...api.bsDeltaBetween(s, '2026-10-11', '2026-10-20')}, {delta: 100, rate: 100 / 1090});
+  assert.equal(api.bsDeltaBetween(s, '2026-11-25', '2027-01-05').delta, (1000 + 60 * 10) - (1000 + 54 * 10));
+  assert.equal(api.bsDeltaBetween(s, '2026-09-01', '2026-09-30'), null);
+});
+
+const songsList = [
+  {SongID: '1', Title: 'A', ReleaseDate: '2025-01-01'},
+  {SongID: '2', Title: 'B', ReleaseDate: '2026-11-20'},
+  {SongID: '3', Title: 'C', ReleaseDate: '2025-06-01'},
+];
+const exposureData = {
+  tv: {appearances: [{date: '2025-01-10', songs: [{songId: '1'}]}, {date: '2026-03-01', songs: [{songId: '1'}, {songId: '9'}]}]},
+  live: {shows: [{date: '2025-01-20', setlist: [{songId: '1', counted: true}, {songId: '1', counted: true}, {songId: '3', counted: false}]}]},
+  youtube: {videos: [{date: '2025-01-05', songId: '1', type: 'normal'}, {date: '2025-01-06', songId: '1', type: 'shorts'}, {date: '2025-06-02', songId: '3', type: 'normal'}]},
+};
+
+test('つながり：曲ごとの露出（ライブは同じ公演で1回、対象の曲だけ）', () => {
+  const ex = api.bsSongExposures(songsList, exposureData);
+  assert.deepEqual({...api.bsExposureCount(ex['1'], '2025-01-01', '2025-12-31')}, {tv: 1, live: 1, normal: 1, shorts: 1, total: 4});
+  assert.equal(ex['9'], undefined);
+  assert.equal(api.bsExposureCount(ex['3'], '2025-06-01', '2025-12-31').live, 0);
+});
+
+test('つながり：発売後の順位は期間が終わった曲だけ。終わっていない曲は pending', () => {
+  const ex = api.bsSongExposures(songsList, exposureData);
+  const r = api.bsAfterRelease(songsList, ex, 30, '2026-11-29');
+  assert.deepEqual(Array.from(r.ranked, (x) => x.song.Title), ['A', 'C']);
+  assert.equal(r.ranked[0].counts.total, 4);
+  assert.deepEqual(Array.from(r.pending), ['B']);
+  const w = api.bsSongWindows(songsList[1], ex['2'], [30, 90, 365], '2026-11-29');
+  assert.deepEqual(Array.from(w, (x) => x.complete), [false, false, false]);
+});
+
+test('つながり：長期は2年目以降が来た曲だけ。選曲は組み合わせ', () => {
+  const ex = api.bsSongExposures(songsList, exposureData);
+  const rows = api.bsLongTerm(songsList, ex, '2026-11-29');
+  assert.deepEqual(Array.from(rows, (r) => [r.song.Title, r.first, r.later]), [['A', 2, 1], ['C', 0, 0]]);
+  const b = api.bsSelectionBuckets(songsList, ex);
+  assert.deepEqual(Array.from(b.both, (s) => s.Title), ['A']);
+  assert.deepEqual(Array.from(b.none, (s) => s.Title), ['B', 'C']);
 });

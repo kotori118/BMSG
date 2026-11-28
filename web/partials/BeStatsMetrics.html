@@ -91,7 +91,7 @@
       const avgs = bsYearlyAverages(series), top = Math.max.apply(null, avgs.map(function (a) { return a.avg; })) || 1;
       yearly = '<section class="bestats-section"><h2 class="ui-label bestats-section-title">年ごとの平均</h2><div class="bestats-yearly">'
         + avgs.map(function (a) {
-          return '<div class="bestats-yearly-row"><span class="ui-muted">' + a.year + '年</span><span class="ui-progress"><span class="ui-progress-fill" style="width:' + (a.avg / top * 100).toFixed(1) + '%"></span></span><span class="ui-num bestats-yearly-value">' + escapeHtml(bsFormatCount(a.avg)) + '</span></div>';
+          return '<div class="bestats-yearly-row"><span class="ui-muted">' + a.year + '年</span><span class="ui-progress"><span class="ui-progress-fill" style="width:' + (a.avg / top * 100).toFixed(1) + '%"></span></span><span class="ui-strong bestats-yearly-value">' + escapeHtml(bsFormatCount(a.avg)) + '</span></div>';
         }).join('') + '</div></section>';
     }
 
